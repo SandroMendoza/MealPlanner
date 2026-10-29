@@ -61,6 +61,7 @@ workflows:
     scripts:
       - name: Build Kotlin shared framework for iOS Simulator (fail fast on Kotlin errors)
         script: |
+          chmod +x ./gradlew
           ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64 --stacktrace
 
       - name: Build iosApp for Simulator (unsigned, compile-check only)
@@ -144,6 +145,7 @@ workflows:
     scripts:
       - name: Build Kotlin shared framework for device (release)
         script: |
+          chmod +x ./gradlew
           ./gradlew :shared:linkReleaseFrameworkIosArm64 --stacktrace
 
       - name: Set up code signing on Xcode project (auto-fetches/creates cert + ad hoc profile via App Store Connect API)
