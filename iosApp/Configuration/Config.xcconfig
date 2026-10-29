@@ -5,3 +5,10 @@ PRODUCT_BUNDLE_IDENTIFIER=com.meal.planner.MealPlanner$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1
 MARKETING_VERSION=1.0
+
+// SQLDelight's NativeSqliteDriver (via Touchlab's sqliter cinterop) binds directly
+// to the system libsqlite3 C API. The Kotlin/Native compiler resolves those symbols
+// when building Shared.framework, but the final app binary link step still needs to
+// be told to link against the system library explicitly, or it fails with
+// "Undefined symbols for architecture arm64: _sqlite3_bind_blob" etc.
+OTHER_LDFLAGS=$(inherited) -lsqlite3
