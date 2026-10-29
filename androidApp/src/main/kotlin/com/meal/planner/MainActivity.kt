@@ -9,14 +9,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.meal.planner.di.appModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
-import org.koin.core.context.GlobalContext
 import org.koin.core.context.startKoin
+import org.koin.mp.KoinPlatformTools
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        if (GlobalContext.getOrNull() == null) {
+        if (KoinPlatformTools.defaultContext().getOrNull() == null) {
             startKoin {
                 androidLogger()
                 androidContext(this@MainActivity)

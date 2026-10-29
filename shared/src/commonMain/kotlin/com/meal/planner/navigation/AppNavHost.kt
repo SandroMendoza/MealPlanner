@@ -25,6 +25,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.savedstate.read
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.calendar.MealCalendarScreen
 import com.meal.planner.calendar.RecipePickerScreen
@@ -114,7 +115,7 @@ fun AppNavHost() {
                 route = Routes.RECIPE_DETAIL_PATTERN,
                 arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
             ) { entry ->
-                val recipeId = entry.arguments?.getString("recipeId").orEmpty()
+                val recipeId = entry.arguments?.read { getStringOrNull("recipeId") }.orEmpty()
                 RecipeDetailScreen(
                     recipeId = recipeId,
                     onBack = { navController.popBackStack() },
@@ -125,7 +126,7 @@ fun AppNavHost() {
                 route = Routes.RECIPE_EDIT_PATTERN,
                 arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
             ) { entry ->
-                val recipeId = entry.arguments?.getString("recipeId").orEmpty()
+                val recipeId = entry.arguments?.read { getStringOrNull("recipeId") }.orEmpty()
                 RecipeFormScreen(
                     recipeId = recipeId,
                     onDone = { navController.popBackStack() }
@@ -145,8 +146,8 @@ fun AppNavHost() {
                     navArgument("mealType") { type = NavType.StringType }
                 )
             ) { entry ->
-                val date = LocalDate.parse(entry.arguments?.getString("date").orEmpty())
-                val mealType = MealType.valueOf(entry.arguments?.getString("mealType").orEmpty())
+                val date = LocalDate.parse(entry.arguments?.read { getStringOrNull("date") }.orEmpty())
+                val mealType = MealType.valueOf(entry.arguments?.read { getStringOrNull("mealType") }.orEmpty())
                 RecipePickerScreen(
                     date = date,
                     mealType = mealType,
