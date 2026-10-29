@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,12 +23,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.IngredientFormRow
 import com.meal.presentation.recipes.InstructionFormRow
 import com.meal.presentation.recipes.RecipeFormViewModel
@@ -43,6 +45,7 @@ fun RecipeFormScreen(
         parameters = { parametersOf(recipeId.orEmpty()) }
     )
 ) {
+    val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.saved) {
@@ -50,9 +53,15 @@ fun RecipeFormScreen(
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(if (uiState.isEditMode) "Edit Recipe" else "New Recipe") },
+                title = {
+                    Text(
+                        if (uiState.isEditMode) "Edit Recipe" else "New Recipe",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
                 navigationIcon = {
                     TextButton(onClick = onDone) { Text("Cancel") }
                 },
@@ -69,10 +78,12 @@ fun RecipeFormScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(spacing.lg),
+            verticalArrangement = Arrangement.spacedBy(spacing.md)
         ) {
-            uiState.errorMessage?.let { Text(text = it) }
+            uiState.errorMessage?.let {
+                Text(text = it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium)
+            }
 
             OutlinedTextField(
                 value = uiState.name,
@@ -87,8 +98,8 @@ fun RecipeFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Text("Category")
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SectionLabel("Category")
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(FoodCategory.entries.toList()) { category ->
                     FilterChip(
                         selected = uiState.category == category,
@@ -98,8 +109,8 @@ fun RecipeFormScreen(
                 }
             }
 
-            Text("Meal types")
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SectionLabel("Meal types")
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(MealType.entries.toList()) { mealType ->
                     FilterChip(
                         selected = mealType in uiState.mealTypes,
@@ -109,7 +120,7 @@ fun RecipeFormScreen(
                 }
             }
 
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 OutlinedTextField(
                     value = uiState.preparationTimeMinutes,
                     onValueChange = viewModel::updatePreparationTime,
@@ -137,7 +148,7 @@ fun RecipeFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Text("Ingredients")
+            SectionLabel("Ingredients")
             uiState.ingredients.forEachIndexed { index, row ->
                 IngredientRowEditor(
                     row = row,
@@ -149,14 +160,14 @@ fun RecipeFormScreen(
                 Text("+ Add ingredient")
             }
 
-            Text("Instructions")
+            SectionLabel("Instructions")
             uiState.instructions.forEachIndexed { index, row ->
                 Row(
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("${index + 1}.")
+                    Text("${index + 1}.", style = MaterialTheme.typography.bodyMedium)
                     OutlinedTextField(
                         value = row.description,
                         onValueChange = { viewModel.updateInstructionRow(index, InstructionFormRow(it)) },
@@ -174,6 +185,7 @@ fun RecipeFormScreen(
             Button(
                 onClick = { viewModel.save() },
                 enabled = uiState.canSave && !uiState.isSaving,
+                shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.fillMaxWidth().wrapContentWidth()
             ) {
                 Text(if (uiState.isSaving) "Saving..." else "Save Recipe")
@@ -183,14 +195,20 @@ fun RecipeFormScreen(
 }
 
 @Composable
+private fun SectionLabel(text: String) {
+    Text(text = text, style = MaterialTheme.typography.titleMedium)
+}
+
+@Composable
 private fun IngredientRowEditor(
     row: IngredientFormRow,
     onChange: (IngredientFormRow) -> Unit,
     onRemove: () -> Unit
 ) {
+    val spacing = MealPlannerTokens.spacing
     Row(
-        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
         modifier = Modifier.fillMaxWidth()
     ) {
         OutlinedTextField(

@@ -40,11 +40,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
 import com.meal.domain.model.enums.MealType
+import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
@@ -60,12 +60,14 @@ fun HomeScreen(
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val spacing = MealPlannerTokens.spacing
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+            .padding(spacing.lg)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -75,38 +77,38 @@ fun HomeScreen(
             Column {
                 Text(
                     text = "Good morning, ${uiState.greetingName}",
-                    style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Bold
+                    style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
                     text = "Let's plan your meals.",
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             IconButton(
                 onClick = {},
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(MealPlannerTokens.iconSize.xl.minus(4.dp))
                     .background(MaterialTheme.colorScheme.surface, CircleShape)
             ) {
                 Icon(Icons.Default.Notifications, contentDescription = "Notifications")
             }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(spacing.sectionGap))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Today's plan", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text("Today's plan", style = MaterialTheme.typography.titleLarge)
             TextButton(onClick = onViewAllClick) {
-                Text("View all", color = MaterialTheme.colorScheme.primary)
+                Text("View all", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             }
         }
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(spacing.sm))
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -115,31 +117,35 @@ fun HomeScreen(
         ) {
             when {
                 uiState.isLoading -> Box(
-                    modifier = Modifier.fillMaxWidth().padding(32.dp),
+                    modifier = Modifier.fillMaxWidth().padding(spacing.xxxl),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator()
                 }
                 uiState.todaysEntries.isEmpty() -> Text(
                     text = "No meals planned for today.",
-                    modifier = Modifier.padding(24.dp)
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(spacing.xxl)
                 )
                 else -> Column {
                     uiState.todaysEntries.forEachIndexed { index, entry ->
                         TodayPlanRow(entry = entry, onClick = { onMealClick(entry.recipe.id) })
-                        if (index != uiState.todaysEntries.lastIndex) HorizontalDivider()
+                        if (index != uiState.todaysEntries.lastIndex) {
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        }
                     }
                 }
             }
         }
 
-        Spacer(Modifier.height(24.dp))
+        Spacer(Modifier.height(spacing.sectionGap))
 
-        Text("Quick actions", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+        Text("Quick actions", style = MaterialTheme.typography.titleLarge)
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(spacing.sm))
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+        Row(horizontalArrangement = Arrangement.spacedBy(spacing.md), modifier = Modifier.fillMaxWidth()) {
             QuickActionCard(
                 modifier = Modifier.weight(1f),
                 label = "Add a meal",
@@ -162,16 +168,17 @@ fun HomeScreen(
 
 @Composable
 private fun TodayPlanRow(entry: MealPlanEntry, onClick: () -> Unit) {
+    val spacing = MealPlannerTokens.spacing
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(16.dp),
+            .padding(spacing.lg),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(MealPlannerTokens.iconSize.xl)
                 .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.small),
             contentAlignment = Alignment.Center
         ) {
@@ -181,14 +188,14 @@ private fun TodayPlanRow(entry: MealPlanEntry, onClick: () -> Unit) {
                 tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
         }
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(spacing.md))
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = entry.mealType.name.lowercase().replaceFirstChar { it.uppercase() },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Text(text = entry.recipe.name, fontWeight = FontWeight.Bold)
+            Text(text = entry.recipe.name, style = MaterialTheme.typography.titleMedium)
         }
         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
     }
@@ -210,24 +217,25 @@ private fun QuickActionCard(
     icon: ImageVector,
     onClick: () -> Unit
 ) {
+    val spacing = MealPlannerTokens.spacing
     Card(
         modifier = modifier.clickable(onClick = onClick),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = containerColor, contentColor = contentColor)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp).height(110.dp),
+            modifier = Modifier.padding(spacing.lg).height(110.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
                 modifier = Modifier
-                    .size(36.dp)
+                    .size(MealPlannerTokens.iconSize.lg)
                     .background(contentColor.copy(alpha = 0.15f), CircleShape),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(icon, contentDescription = null, tint = contentColor)
             }
-            Text(label, fontWeight = FontWeight.Bold, color = contentColor)
+            Text(label, style = MaterialTheme.typography.titleMedium, color = contentColor)
         }
     }
 }

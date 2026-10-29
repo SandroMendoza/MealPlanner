@@ -3,34 +3,10 @@ package com.meal.planner.theme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.unit.dp
-
-private val GreenPrimary = Color(0xFF4B7A33)
-private val GreenPrimaryDark = Color(0xFF2E4A1F)
-private val CreamBackground = Color(0xFFF5F3EA)
-private val CardWhite = Color(0xFFFFFFFF)
-private val PaleGreenContainer = Color(0xFFE3ECD9)
-private val DarkText = Color(0xFF1F2A17)
-private val GrayText = Color(0xFF6B7280)
-
-private val MealPlannerColorScheme = lightColorScheme(
-    primary = GreenPrimary,
-    onPrimary = Color.White,
-    primaryContainer = PaleGreenContainer,
-    onPrimaryContainer = GreenPrimaryDark,
-    secondary = GreenPrimary,
-    secondaryContainer = PaleGreenContainer,
-    onSecondaryContainer = GreenPrimaryDark,
-    background = CreamBackground,
-    onBackground = DarkText,
-    surface = CardWhite,
-    onSurface = DarkText,
-    surfaceVariant = CreamBackground,
-    onSurfaceVariant = GrayText
-)
 
 private val MealPlannerShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
@@ -40,11 +16,41 @@ private val MealPlannerShapes = Shapes(
     extraLarge = RoundedCornerShape(28.dp)
 )
 
+/**
+ * Global design system entry point. Wrap the app root in this once;
+ * screens then read tokens via MaterialTheme.colorScheme / .typography / .shapes
+ * and MealPlannerTheme.spacing / .radius / .iconSize.
+ */
 @Composable
 fun MealPlannerTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = MealPlannerColorScheme,
-        shapes = MealPlannerShapes,
-        content = content
-    )
+    CompositionLocalProvider(
+        LocalSpacing provides MealPlannerSpacing(),
+        LocalRadius provides MealPlannerRadius(),
+        LocalIconSize provides MealPlannerIconSize()
+    ) {
+        MaterialTheme(
+            colorScheme = MealPlannerColorScheme,
+            typography = MealPlannerTypography,
+            shapes = MealPlannerShapes,
+            content = content
+        )
+    }
+}
+
+/** Convenience accessors mirroring MaterialTheme's `MaterialTheme.colorScheme` style. */
+object MealPlannerTokens {
+    val spacing: MealPlannerSpacing
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalSpacing.current
+
+    val radius: MealPlannerRadius
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalRadius.current
+
+    val iconSize: MealPlannerIconSize
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalIconSize.current
 }
