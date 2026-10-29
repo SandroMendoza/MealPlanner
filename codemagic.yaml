@@ -1,0 +1,204 @@
+# codemagic.yaml
+#
+# Verified against Codemagic's official docs on 2026-10-29:
+#   - https://docs.codemagic.io/yaml-code-signing/ios-simulator-builds/
+#   - https://docs.codemagic.io/yaml-code-signing/signing-ios/
+#   - https://docs.codemagic.io/yaml-code-signing/alternative-code-signing-methods/
+#   - https://docs.codemagic.io/yaml-quick-start/building-a-kmm-app/
+#   - https://docs.codemagic.io/testing/ios-provisioning/
+#   - https://docs.codemagic.io/yaml-publishing/build-dashboards/
+#   - https://kotlinlang.org/docs/multiplatform/multiplatform-direct-integration.html
+#   - codemagic-ci-cd/codemagic-sample-projects (kotlin-multiplatform-mobile,
+#     ios/ios-automatic-code-signing-demo-project)
+#
+# Project facts this file is built against (read directly from the repo):
+#   - shared/build.gradle.kts: iosArm64() + iosSimulatorArm64() targets,
+#     binaries.framework { baseName = "Shared" }  -> produces Shared.framework
+#   - iosApp/iosApp.xcodeproj already has the standard KMP "Run Script" build
+#     phase that calls the Gradle task `embedAndSignAppleFrameworkForXcode`.
+#     That means xcodebuild ITSELF invokes Gradle during build/archive - the
+#     explicit `./gradlew` steps below are an optional fast-fail pre-check so
+#     CI logs clearly separate "Kotlin compile error" from "Xcode error", and
+#     so the Gradle cache is warm before Xcode's script phase runs. They are
+#     not strictly required but are what you asked for.
+#   - iosApp/Configuration/Config.xcconfig currently has:
+#       TEAM_ID=
+#       PRODUCT_BUNDLE_IDENTIFIER=com.meal.planner.MealPlanner$(TEAM_ID)
+#     With TEAM_ID blank, the EFFECTIVE bundle id Xcode actually builds with
+#     is "com.meal.planner.MealPlanner" (the $(TEAM_ID) substitutes to
+#     nothing). See the written explanation for why this needs to be fixed
+#     before ad-hoc signing will work reliably.
+
+workflows:
+
+  # ===========================================================================
+  # WORKFLOW 1: ios-build-only
+  # Compiles the Kotlin shared framework and builds the iOS app for the
+  # Simulator with code signing turned OFF. Only catches compile errors.
+  # Produces NO installable artifact for a real device.
+  #
+  # ACCOUNT REQUIREMENTS: none beyond a free Codemagic account. No Apple
+  # Developer Program membership, no certificates, no provisioning profiles.
+  # A free/non-paid Apple ID is not even needed for this workflow.
+  # ===========================================================================
+  ios-build-only:
+    name: iOS Build Only (Simulator, Unsigned)
+    max_build_duration: 30
+    instance_type: mac_mini_m2          # cheapest Apple-silicon machine; mac_mini_m4 also available
+    environment:
+      vars:
+        XCODE_PROJECT: "iosApp/iosApp.xcodeproj"
+        XCODE_SCHEME: "iosApp"
+      xcode: latest
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: "*"
+          include: true
+      cancel_previous_builds: true
+    scripts:
+      - name: Build Kotlin shared framework for iOS Simulator (fail fast on Kotlin errors)
+        script: |
+          ./gradlew :shared:linkDebugFrameworkIosSimulatorArm64 --stacktrace
+
+      - name: Build iosApp for Simulator (unsigned, compile-check only)
+        script: |
+          xcodebuild build \
+            -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -configuration Debug \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO
+    artifacts:
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+    publishing:
+      email:
+        recipients:
+          - your-personal-email@example.com   # TODO: put your personal email here
+        notify:
+          success: false
+          failure: true
+
+
+  # ===========================================================================
+  # WORKFLOW 2: ios-ad-hoc
+  # Builds the Kotlin shared framework (release), then produces a SIGNED,
+  # installable .ipa for ad-hoc distribution to real devices, using
+  # Codemagic's automatic ("cloud") code signing via an App Store Connect
+  # API key integration.
+  #
+  # ACCOUNT REQUIREMENTS (see full explanation below the YAML):
+  #   - PAID Apple Developer Program membership ($99/yr). Required for:
+  #       * creating an App Store Connect API key
+  #       * creating/auto-generating a Distribution certificate
+  #       * creating/auto-generating an Ad Hoc provisioning profile
+  #       * registering device UDIDs for ad-hoc distribution
+  #     None of this works with a free/personal Apple ID. Codemagic's cloud
+  #     signing (the `integrations.app_store_connect` + `xcode-project
+  #     use-profiles` mechanism below) CANNOT function without a paid
+  #     Apple Developer Program membership - confirmed against Codemagic's
+  #     own docs (see explanation).
+  #   - A Codemagic "App Store Connect API key" integration created under
+  #     Codemagic Team settings -> Integrations -> Apple Developer Portal,
+  #     referenced below by the name you gave it (placeholder:
+  #     "codemagic_api_key" - rename to match what you created).
+  # ===========================================================================
+  ios-ad-hoc:
+    name: iOS Ad Hoc (Signed IPA for direct device install)
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      # Name of the App Store Connect API key integration you create in the
+      # Codemagic UI (Team settings > Integrations > App Store Connect).
+      # This is NOT an API key value pasted into YAML - it's a reference by
+      # the name you gave the integration when you added it.
+      app_store_connect: codemagic_api_key
+    environment:
+      ios_signing:
+        # ad_hoc = install directly on registered test devices without
+        # TestFlight/App Store. Other valid values: app_store | development | enterprise.
+        distribution_type: ad_hoc
+        # This MUST be the literal, final bundle id Xcode actually builds
+        # with - NOT an xcconfig expression. Today this project's
+        # PRODUCT_BUNDLE_IDENTIFIER resolves to "com.meal.planner.MealPlanner"
+        # because TEAM_ID is blank. Fix Config.xcconfig first (see explanation),
+        # then put the literal final value here.
+        bundle_identifier: com.meal.planner.MealPlanner
+      vars:
+        XCODE_PROJECT: "iosApp/iosApp.xcodeproj"
+        XCODE_SCHEME: "iosApp"
+      xcode: latest
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: "main"
+          include: true
+      cancel_previous_builds: false
+    scripts:
+      - name: Build Kotlin shared framework for device (release)
+        script: |
+          ./gradlew :shared:linkReleaseFrameworkIosArm64 --stacktrace
+
+      - name: Set up code signing on Xcode project (auto-fetches/creates cert + ad hoc profile via App Store Connect API)
+        script: |
+          xcode-project use-profiles --project "$XCODE_PROJECT"
+
+      # --- Recommended / officially documented approach -------------------
+      # `xcode-project build-ipa` is Codemagic's own CLI wrapper around
+      # `xcodebuild archive` + `xcodebuild -exportArchive`, using the
+      # exportOptions.plist that `use-profiles` just generated. This is the
+      # command used in every current Codemagic sample/quick-start doc for
+      # exactly this scenario, so it's the lowest-risk choice:
+      - name: Build signed ipa for ad hoc distribution
+        script: |
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+      # --- Equivalent manual form, if you want explicit archive/export steps
+      # (uncomment this block and remove the build-ipa step above if you
+      # prefer manual control). `use-profiles` writes its generated export
+      # options plist to $HOME/export_options.plist by default:
+      #
+      # - name: Archive
+      #   script: |
+      #     xcodebuild archive \
+      #       -project "$XCODE_PROJECT" \
+      #       -scheme "$XCODE_SCHEME" \
+      #       -configuration Release \
+      #       -archivePath "$CM_BUILD_DIR/build/ios/archive/$XCODE_SCHEME.xcarchive"
+      # - name: Export signed ipa
+      #   script: |
+      #     xcodebuild -exportArchive \
+      #       -archivePath "$CM_BUILD_DIR/build/ios/archive/$XCODE_SCHEME.xcarchive" \
+      #       -exportOptionsPlist "$HOME/export_options.plist" \
+      #       -exportPath "$CM_BUILD_DIR/build/ios/ipa"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+      - /tmp/xcodebuild_logs/*.log
+
+    publishing:
+      # Makes the .ipa downloadable as a Codemagic build artifact (always
+      # works, needs only a free Codemagic account). Combine this with a
+      # Codemagic "Build dashboard" (configured in the Codemagic web UI, NOT
+      # in codemagic.yaml - there is no YAML key for it) to get a public,
+      # no-login link to the artifact list. IMPORTANT: that link lets
+      # someone DOWNLOAD the raw .ipa file - it is not an OTA
+      # (itms-services://) install link, so tapping it on an iPhone just
+      # downloads a file Safari can't install. See explanation below for
+      # how to actually get it onto a device with no Mac.
+      email:
+        recipients:
+          - your-personal-email@example.com   # TODO: put your personal email here
+        notify:
+          success: true
+          failure: true

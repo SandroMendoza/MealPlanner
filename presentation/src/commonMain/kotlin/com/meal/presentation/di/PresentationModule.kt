@@ -1,0 +1,30 @@
+package com.meal.presentation.di
+
+import com.meal.presentation.calendar.MealCalendarViewModel
+import com.meal.presentation.home.HomeViewModel
+import com.meal.presentation.recipes.RecipeDetailViewModel
+import com.meal.presentation.recipes.RecipeFormViewModel
+import com.meal.presentation.recipes.RecipeViewModel
+import com.meal.presentation.shopping.ShoppingListViewModel
+import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.module
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
+@OptIn(ExperimentalUuidApi::class)
+val presentationModule = module {
+    viewModel { RecipeViewModel(get()) }
+    viewModel { params -> RecipeDetailViewModel(params.get(), get(), get()) }
+    viewModel { params ->
+        val recipeIdString = params.get<String>()
+        RecipeFormViewModel(
+            recipeId = recipeIdString.takeIf { it.isNotBlank() }?.let { Uuid.parse(it) },
+            getRecipeByIdUseCase = get(),
+            addRecipeUseCase = get(),
+            updateRecipeUseCase = get()
+        )
+    }
+    viewModel { MealCalendarViewModel(get(), get()) }
+    viewModel { ShoppingListViewModel(get(), get()) }
+    viewModel { HomeViewModel(get()) }
+}

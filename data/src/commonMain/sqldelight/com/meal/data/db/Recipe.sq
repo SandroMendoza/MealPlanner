@@ -1,0 +1,79 @@
+CREATE TABLE RecipeEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    category TEXT NOT NULL,
+    preparationTimeMinutes INTEGER NOT NULL,
+    servings INTEGER NOT NULL,
+    calories INTEGER,
+    imageUrl TEXT,
+    isDeleted INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE TABLE RecipeMealTypeEntity (
+    recipeId TEXT NOT NULL,
+    mealType TEXT NOT NULL,
+    FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id)
+);
+
+CREATE TABLE IngredientEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    recipeId TEXT NOT NULL,
+    name TEXT NOT NULL,
+    quantity REAL NOT NULL,
+    unit TEXT NOT NULL,
+    FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id)
+);
+
+CREATE TABLE InstructionEntity (
+    recipeId TEXT NOT NULL,
+    stepNumber INTEGER NOT NULL,
+    description TEXT NOT NULL,
+    PRIMARY KEY (recipeId, stepNumber),
+    FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id)
+);
+
+selectActiveRecipes:
+SELECT * FROM RecipeEntity WHERE isDeleted = 0;
+
+selectRecipeById:
+SELECT * FROM RecipeEntity WHERE id = ?;
+
+selectMealTypesForRecipe:
+SELECT * FROM RecipeMealTypeEntity WHERE recipeId = ?;
+
+selectIngredientsForRecipe:
+SELECT * FROM IngredientEntity WHERE recipeId = ?;
+
+selectInstructionsForRecipe:
+SELECT * FROM InstructionEntity WHERE recipeId = ? ORDER BY stepNumber;
+
+insertRecipe:
+INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, calories, imageUrl, isDeleted)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0);
+
+updateRecipe:
+UPDATE RecipeEntity
+SET name = ?, description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, calories = ?, imageUrl = ?
+WHERE id = ?;
+
+softDeleteRecipe:
+UPDATE RecipeEntity SET isDeleted = 1 WHERE id = ?;
+
+insertMealType:
+INSERT INTO RecipeMealTypeEntity(recipeId, mealType) VALUES (?, ?);
+
+deleteMealTypesForRecipe:
+DELETE FROM RecipeMealTypeEntity WHERE recipeId = ?;
+
+insertIngredient:
+INSERT INTO IngredientEntity(id, recipeId, name, quantity, unit) VALUES (?, ?, ?, ?, ?);
+
+deleteIngredientsForRecipe:
+DELETE FROM IngredientEntity WHERE recipeId = ?;
+
+insertInstruction:
+INSERT INTO InstructionEntity(recipeId, stepNumber, description) VALUES (?, ?, ?);
+
+deleteInstructionsForRecipe:
+DELETE FROM InstructionEntity WHERE recipeId = ?;

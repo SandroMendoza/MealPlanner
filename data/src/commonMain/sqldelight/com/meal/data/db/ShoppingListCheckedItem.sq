@@ -1,0 +1,14 @@
+CREATE TABLE ShoppingListCheckedItemEntity (
+    weekStart TEXT NOT NULL,
+    itemKey TEXT NOT NULL,
+    PRIMARY KEY (weekStart, itemKey)
+);
+
+selectCheckedKeysForWeek:
+SELECT itemKey FROM ShoppingListCheckedItemEntity WHERE weekStart = :weekStart;
+
+setChecked:
+INSERT OR IGNORE INTO ShoppingListCheckedItemEntity(weekStart, itemKey) VALUES (?, ?);
+
+setUnchecked:
+DELETE FROM ShoppingListCheckedItemEntity WHERE weekStart = :weekStart AND itemKey = :itemKey;

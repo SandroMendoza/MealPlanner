@@ -1,0 +1,22 @@
+CREATE TABLE MealSlotEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    date TEXT NOT NULL,
+    mealType TEXT NOT NULL,
+    recipeId TEXT NOT NULL,
+    UNIQUE(date, mealType)
+);
+
+selectSlotsForWeek:
+SELECT * FROM MealSlotEntity WHERE date >= :startDate AND date <= :endDate;
+
+selectFutureSlotDatesForRecipe:
+SELECT DISTINCT date FROM MealSlotEntity WHERE recipeId = :recipeId AND date >= :fromDate ORDER BY date;
+
+deleteSlotsForRecipeOnOrAfter:
+DELETE FROM MealSlotEntity WHERE recipeId = :recipeId AND date >= :fromDate;
+
+upsertSlot:
+INSERT OR REPLACE INTO MealSlotEntity(id, date, mealType, recipeId) VALUES (?, ?, ?, ?);
+
+deleteSlot:
+DELETE FROM MealSlotEntity WHERE date = :date AND mealType = :mealType;
