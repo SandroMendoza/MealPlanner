@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Cookie
 import androidx.compose.material.icons.filled.DinnerDining
 import androidx.compose.material.icons.filled.LunchDining
 import androidx.compose.ui.graphics.vector.ImageVector
+import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 
 fun MealType.icon(): ImageVector = when (this) {
@@ -16,3 +17,6 @@ fun MealType.icon(): ImageVector = when (this) {
 }
 
 fun MealType.displayName(): String = name.lowercase().replaceFirstChar { it.uppercase() }
+
+fun FoodCategory.displayName(): String =
+    name.lowercase().split('_').joinToString(" ") { it.replaceFirstChar(Char::uppercase) }

@@ -64,7 +64,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun MealCalendarScreen(
-    onSlotClick: (LocalDate, MealType) -> Unit,
+    onSlotClick: (LocalDate, MealType, Uuid?) -> Unit,
     onRecipeClick: (Uuid) -> Unit = {},
     viewModel: MealCalendarViewModel = koinViewModel()
 ) {
@@ -77,10 +77,10 @@ fun MealCalendarScreen(
     }
 
     val entriesByMealType = remember(uiState.entries, selectedDate) {
-        MealType.entries.associateWith { uiState.entryFor(selectedDate, it) }
+        MealType.entries.associateWith { uiState.entriesFor(selectedDate, it) }
     }
     val firstEmptyMealType = remember(entriesByMealType) {
-        MealType.entries.firstOrNull { entriesByMealType[it] == null }
+        MealType.entries.firstOrNull { entriesByMealType[it].isNullOrEmpty() }
     }
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
@@ -136,10 +136,10 @@ fun MealCalendarScreen(
                     items(MealType.entries) { mealType ->
                         MealSection(
                             mealType = mealType,
-                            entry = entriesByMealType[mealType],
-                            onAdd = { onSlotClick(selectedDate, mealType) },
-                            onChange = { onSlotClick(selectedDate, mealType) },
-                            onRemove = { viewModel.removeSlot(selectedDate, mealType) },
+                            entries = entriesByMealType[mealType].orEmpty(),
+                            onAdd = { onSlotClick(selectedDate, mealType, null) },
+                            onChangeEntry = { entry -> onSlotClick(selectedDate, mealType, entry.id) },
+                            onRemoveEntry = { entry -> viewModel.removeSlot(entry.id) },
                             onOpenRecipe = onRecipeClick
                         )
                     }
@@ -147,7 +147,7 @@ fun MealCalendarScreen(
             }
 
             Button(
-                onClick = { firstEmptyMealType?.let { onSlotClick(selectedDate, it) } },
+                onClick = { firstEmptyMealType?.let { onSlotClick(selectedDate, it, null) } },
                 enabled = firstEmptyMealType != null,
                 shape = MaterialTheme.shapes.extraLarge,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
@@ -194,25 +194,36 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
 @Composable
 private fun MealSection(
     mealType: MealType,
-    entry: MealPlanEntry?,
+    entries: List<MealPlanEntry>,
     onAdd: () -> Unit,
-    onChange: () -> Unit,
-    onRemove: () -> Unit,
+    onChangeEntry: (MealPlanEntry) -> Unit,
+    onRemoveEntry: (MealPlanEntry) -> Unit,
     onOpenRecipe: (Uuid) -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
     Column {
         Text(mealType.displayName(), style = MaterialTheme.typography.titleMedium)
         Spacer(Modifier.height(spacing.xs))
-        if (entry != null) {
-            MealEntryCard(
-                entry = entry,
-                onClick = { onOpenRecipe(entry.recipe.id) },
-                onChange = onChange,
-                onRemove = onRemove
-            )
-        } else {
+        if (entries.isEmpty()) {
             EmptySlotRow(mealType = mealType, onClick = onAdd)
+        } else {
+            entries.forEachIndexed { index, entry ->
+                MealEntryCard(
+                    entry = entry,
+                    onClick = { onOpenRecipe(entry.recipe.id) },
+                    onChange = { onChangeEntry(entry) },
+                    onRemove = { onRemoveEntry(entry) }
+                )
+                if (index != entries.lastIndex) {
+                    Spacer(Modifier.height(spacing.xs))
+                }
+            }
+            Spacer(Modifier.height(spacing.xs))
+            EmptySlotRow(
+                mealType = mealType,
+                onClick = onAdd,
+                label = "Add another ${mealType.displayName().lowercase()}"
+            )
         }
     }
 }
@@ -270,7 +281,11 @@ private fun MealEntryCard(entry: MealPlanEntry, onClick: () -> Unit, onChange: (
 }
 
 @Composable
-private fun EmptySlotRow(mealType: MealType, onClick: () -> Unit) {
+private fun EmptySlotRow(
+    mealType: MealType,
+    onClick: () -> Unit,
+    label: String = "Add ${mealType.displayName().lowercase()}"
+) {
     val spacing = MealPlannerTokens.spacing
     Row(
         modifier = Modifier
@@ -285,7 +300,7 @@ private fun EmptySlotRow(mealType: MealType, onClick: () -> Unit) {
     ) {
         Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
         Text(
-            text = "Add ${mealType.displayName().lowercase()}",
+            text = label,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

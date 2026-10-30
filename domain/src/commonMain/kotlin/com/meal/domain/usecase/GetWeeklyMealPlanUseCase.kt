@@ -18,7 +18,7 @@ class GetWeeklyMealPlanUseCase(
         mealPlanRepository.getMealSlotsForWeek(weekStart, weekEnd).map { slots ->
             slots.mapNotNull { slot ->
                 recipeRepository.getRecipeById(slot.recipeId).first()?.let { recipe ->
-                    MealPlanEntry(slot.date, slot.mealType, recipe)
+                    MealPlanEntry(slot.id, slot.date, slot.mealType, recipe)
                 }
             }
         }

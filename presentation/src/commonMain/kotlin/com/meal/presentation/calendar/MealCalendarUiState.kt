@@ -12,6 +12,6 @@ data class MealCalendarUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 ) {
-    fun entryFor(date: LocalDate, mealType: MealType): MealPlanEntry? =
-        entries.find { it.date == date && it.mealType == mealType }
+    fun entriesFor(date: LocalDate, mealType: MealType): List<MealPlanEntry> =
+        entries.filter { it.date == date && it.mealType == mealType }
 }

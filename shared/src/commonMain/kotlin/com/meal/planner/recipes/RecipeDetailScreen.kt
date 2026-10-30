@@ -26,6 +26,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.meal.planner.common.displayName
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.RecipeDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -137,7 +138,7 @@ fun RecipeDetailScreen(
                             )
                         }
                         Text(
-                            text = "Category: ${recipe.category}",
+                            text = "Category: ${recipe.category.displayName()}",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(top = spacing.sm)
                         )

@@ -134,8 +134,10 @@ fun AppNavHost() {
             }
             composable(Routes.CALENDAR) {
                 MealCalendarScreen(
-                    onSlotClick = { date, mealType ->
-                        navController.navigate(Routes.calendarSlotPick(date.toString(), mealType.name))
+                    onSlotClick = { date, mealType, replaceSlotId ->
+                        navController.navigate(
+                            Routes.calendarSlotPick(date.toString(), mealType.name, replaceSlotId?.toString())
+                        )
                     },
                     onRecipeClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) }
                 )
@@ -144,14 +146,21 @@ fun AppNavHost() {
                 route = Routes.CALENDAR_SLOT_PICK_PATTERN,
                 arguments = listOf(
                     navArgument("date") { type = NavType.StringType },
-                    navArgument("mealType") { type = NavType.StringType }
+                    navArgument("mealType") { type = NavType.StringType },
+                    navArgument("replaceSlotId") {
+                        type = NavType.StringType
+                        nullable = true
+                        defaultValue = null
+                    }
                 )
             ) { entry ->
                 val date = LocalDate.parse(entry.arguments?.read { getStringOrNull("date") }.orEmpty())
                 val mealType = MealType.valueOf(entry.arguments?.read { getStringOrNull("mealType") }.orEmpty())
+                val replaceSlotId = entry.arguments?.read { getStringOrNull("replaceSlotId") }
                 RecipePickerScreen(
                     date = date,
                     mealType = mealType,
+                    replaceSlotId = replaceSlotId,
                     onBack = { navController.popBackStack() },
                     onAssigned = { navController.popBackStack() }
                 )

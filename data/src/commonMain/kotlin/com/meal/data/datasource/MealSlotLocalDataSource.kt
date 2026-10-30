@@ -36,12 +36,16 @@ class MealSlotLocalDataSource(
                 }
             }
 
-    suspend fun assignRecipeToSlot(date: LocalDate, mealType: MealType, recipeId: Uuid) = withContext(ioDispatcher) {
-        queries.upsertSlot(Uuid.random().toString(), date.toString(), mealType.name, recipeId.toString())
+    suspend fun addRecipeToSlot(date: LocalDate, mealType: MealType, recipeId: Uuid) = withContext(ioDispatcher) {
+        queries.insertSlot(Uuid.random().toString(), date.toString(), mealType.name, recipeId.toString())
     }
 
-    suspend fun removeSlot(date: LocalDate, mealType: MealType) = withContext(ioDispatcher) {
-        queries.deleteSlot(date.toString(), mealType.name)
+    suspend fun replaceRecipeInSlot(slotId: Uuid, recipeId: Uuid) = withContext(ioDispatcher) {
+        queries.updateSlotRecipe(recipeId.toString(), slotId.toString())
+    }
+
+    suspend fun removeSlot(slotId: Uuid) = withContext(ioDispatcher) {
+        queries.deleteSlotById(slotId.toString())
     }
 
     suspend fun getFutureSlotDatesForRecipe(recipeId: Uuid, fromDate: LocalDate): List<LocalDate> =

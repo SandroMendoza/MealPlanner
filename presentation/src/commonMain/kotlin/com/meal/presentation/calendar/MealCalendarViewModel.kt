@@ -2,7 +2,6 @@ package com.meal.presentation.calendar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
 import com.meal.presentation.common.currentWeekMonday
@@ -14,6 +13,8 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 private fun buildWeekState(weekStart: LocalDate): MealCalendarUiState {
     val weekEnd = weekEndFor(weekStart)
@@ -21,6 +22,7 @@ private fun buildWeekState(weekStart: LocalDate): MealCalendarUiState {
     return MealCalendarUiState(weekStart = weekStart, weekEnd = weekEnd, days = days)
 }
 
+@OptIn(ExperimentalUuidApi::class)
 class MealCalendarViewModel(
     private val getWeeklyMealPlanUseCase: GetWeeklyMealPlanUseCase,
     private val removeMealSlotUseCase: RemoveMealSlotUseCase
@@ -63,9 +65,9 @@ class MealCalendarViewModel(
         loadWeek()
     }
 
-    fun removeSlot(date: LocalDate, mealType: MealType) {
+    fun removeSlot(slotId: Uuid) {
         viewModelScope.launch {
-            removeMealSlotUseCase.execute(date, mealType)
+            removeMealSlotUseCase.execute(slotId)
         }
     }
 }

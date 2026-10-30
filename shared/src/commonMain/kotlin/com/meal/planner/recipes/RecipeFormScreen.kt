@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.planner.common.displayName
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.IngredientFormRow
 import com.meal.presentation.recipes.InstructionFormRow
@@ -104,7 +105,7 @@ fun RecipeFormScreen(
                     FilterChip(
                         selected = uiState.category == category,
                         onClick = { viewModel.updateCategory(category) },
-                        label = { Text(category.name) }
+                        label = { Text(category.displayName()) }
                     )
                 }
             }

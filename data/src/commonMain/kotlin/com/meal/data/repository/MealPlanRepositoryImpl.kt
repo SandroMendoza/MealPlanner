@@ -25,12 +25,16 @@ class MealPlanRepositoryImpl(
     override fun getMealSlotsForWeek(weekStart: LocalDate, weekEnd: LocalDate): Flow<List<MealSlot>> =
         localDataSource.slotsForWeek(weekStart, weekEnd).map { MealSlotMapper.toDomain(it) }
 
-    override suspend fun assignRecipeToSlot(date: LocalDate, mealType: MealType, recipeId: Uuid) {
-        localDataSource.assignRecipeToSlot(date, mealType, recipeId)
+    override suspend fun addRecipeToSlot(date: LocalDate, mealType: MealType, recipeId: Uuid) {
+        localDataSource.addRecipeToSlot(date, mealType, recipeId)
     }
 
-    override suspend fun removeMealSlot(date: LocalDate, mealType: MealType) {
-        localDataSource.removeSlot(date, mealType)
+    override suspend fun replaceRecipeInSlot(slotId: Uuid, recipeId: Uuid) {
+        localDataSource.replaceRecipeInSlot(slotId, recipeId)
+    }
+
+    override suspend fun removeMealSlot(slotId: Uuid) {
+        localDataSource.removeSlot(slotId)
     }
 
     override suspend fun getFutureSlotDatesForRecipe(recipeId: Uuid): List<LocalDate> =

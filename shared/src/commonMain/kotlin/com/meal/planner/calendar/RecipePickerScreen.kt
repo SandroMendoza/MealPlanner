@@ -21,7 +21,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.enums.MealType
-import com.meal.domain.usecase.AssignRecipeToSlotUseCase
+import com.meal.domain.usecase.AddRecipeToSlotUseCase
+import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.planner.recipes.RecipeItem
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.RecipeViewModel
@@ -30,16 +31,19 @@ import kotlinx.datetime.LocalDate
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalUuidApi::class)
 @Composable
 fun RecipePickerScreen(
     date: LocalDate,
     mealType: MealType,
+    replaceSlotId: String?,
     onBack: () -> Unit,
     onAssigned: () -> Unit,
     recipeViewModel: RecipeViewModel = koinViewModel(),
-    assignRecipeToSlotUseCase: AssignRecipeToSlotUseCase = koinInject()
+    addRecipeToSlotUseCase: AddRecipeToSlotUseCase = koinInject(),
+    replaceRecipeInSlotUseCase: ReplaceRecipeInSlotUseCase = koinInject()
 ) {
     val spacing = MealPlannerTokens.spacing
     val uiState by recipeViewModel.state.collectAsStateWithLifecycle()
@@ -74,7 +78,11 @@ fun RecipePickerScreen(
                             recipe = recipe,
                             onClick = {
                                 coroutineScope.launch {
-                                    assignRecipeToSlotUseCase.execute(date, mealType, recipe.id)
+                                    if (replaceSlotId != null) {
+                                        replaceRecipeInSlotUseCase.execute(Uuid.parse(replaceSlotId), recipe.id)
+                                    } else {
+                                        addRecipeToSlotUseCase.execute(date, mealType, recipe.id)
+                                    }
                                     onAssigned()
                                 }
                             }
