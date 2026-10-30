@@ -30,4 +30,8 @@ class RecipeRepositoryImpl(private val localDataSource: RecipeLocalDataSource) :
     override suspend fun softDeleteRecipe(id: Uuid) {
         localDataSource.softDeleteRecipe(id)
     }
+
+    override suspend fun setFavorite(id: Uuid, isFavorite: Boolean) {
+        localDataSource.setFavorite(id, isFavorite)
+    }
 }

@@ -12,6 +12,7 @@ import com.meal.domain.usecase.GetRecipeByIdUseCase
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
+import com.meal.domain.usecase.ToggleFavoriteUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateRecipeUseCase
 import org.koin.dsl.module
@@ -49,5 +50,8 @@ val domainModule = module {
     }
     factory {
         ToggleShoppingListItemUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        ToggleFavoriteUseCase(get<RecipeRepository>())
     }
 }

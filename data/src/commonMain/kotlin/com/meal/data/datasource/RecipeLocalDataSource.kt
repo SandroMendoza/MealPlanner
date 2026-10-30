@@ -74,6 +74,10 @@ class RecipeLocalDataSource(
         queries.softDeleteRecipe(id.toString())
     }
 
+    suspend fun setFavorite(id: Uuid, isFavorite: Boolean) = withContext(ioDispatcher) {
+        queries.updateFavorite(if (isFavorite) 1 else 0, id.toString())
+    }
+
     private fun insertRecipeBlocking(dto: RecipeDto) {
         database.transaction {
             queries.insertRecipe(
@@ -138,7 +142,8 @@ class RecipeLocalDataSource(
             calories = row.calories?.toInt(),
             imageUrl = row.imageUrl,
             ingredients = ingredients,
-            instructions = instructions
+            instructions = instructions,
+            isFavorite = row.isFavorite != 0L
         )
     }
 }

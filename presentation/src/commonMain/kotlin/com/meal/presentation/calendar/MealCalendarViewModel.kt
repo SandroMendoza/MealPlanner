@@ -70,4 +70,9 @@ class MealCalendarViewModel(
             removeMealSlotUseCase.execute(slotId)
         }
     }
+
+    fun goToToday() {
+        _uiState.value = buildWeekState(currentWeekMonday())
+        loadWeek()
+    }
 }

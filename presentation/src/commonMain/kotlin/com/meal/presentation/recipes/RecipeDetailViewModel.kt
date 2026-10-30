@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.meal.domain.usecase.DeleteRecipeResult
 import com.meal.domain.usecase.DeleteRecipeUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
+import com.meal.domain.usecase.ToggleFavoriteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -15,7 +16,8 @@ import kotlin.uuid.Uuid
 class RecipeDetailViewModel(
     private val recipeId: Uuid,
     private val getRecipeByIdUseCase: GetRecipeByIdUseCase,
-    private val deleteRecipeUseCase: DeleteRecipeUseCase
+    private val deleteRecipeUseCase: DeleteRecipeUseCase,
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecipeDetailUiState())
@@ -61,5 +63,12 @@ class RecipeDetailViewModel(
 
     fun dismissDeleteConfirmation() {
         _uiState.value = _uiState.value.copy(pendingDeleteConfirmationDates = null)
+    }
+
+    fun toggleFavorite() {
+        val recipe = _uiState.value.recipe ?: return
+        viewModelScope.launch {
+            toggleFavoriteUseCase.execute(recipeId, !recipe.isFavorite)
+        }
     }
 }

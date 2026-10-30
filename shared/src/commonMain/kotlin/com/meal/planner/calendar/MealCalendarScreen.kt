@@ -25,6 +25,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -55,6 +56,7 @@ import com.meal.planner.common.icon
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.calendar.MealCalendarViewModel
+import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.today
 import kotlinx.datetime.LocalDate
 import org.koin.compose.viewmodel.koinViewModel
@@ -75,6 +77,8 @@ fun MealCalendarScreen(
     LaunchedEffect(uiState.weekStart) {
         selectedDate = today().takeIf { it in uiState.days } ?: uiState.weekStart
     }
+
+    val isCurrentWeek = uiState.weekStart == currentWeekMonday()
 
     val entriesByMealType = remember(uiState.entries, selectedDate) {
         MealType.entries.associateWith { uiState.entriesFor(selectedDate, it) }
@@ -101,8 +105,18 @@ fun MealCalendarScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                IconButton(onClick = { viewModel.nextWeek() }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next week")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (!isCurrentWeek) {
+                        IconButton(onClick = {
+                            viewModel.goToToday()
+                            selectedDate = today()
+                        }) {
+                            Icon(Icons.Filled.Today, contentDescription = "Go to today")
+                        }
+                    }
+                    IconButton(onClick = { viewModel.nextWeek() }) {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next week")
+                    }
                 }
             }
 

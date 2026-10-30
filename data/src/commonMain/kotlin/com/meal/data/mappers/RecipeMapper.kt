@@ -19,7 +19,8 @@ object RecipeMapper {
             calories = dto.calories,
             imageUrl = dto.imageUrl,
             ingredients = dto.ingredients,
-            instructions = dto.instructions
+            instructions = dto.instructions,
+            isFavorite = dto.isFavorite
         )
     }
 
@@ -39,7 +40,8 @@ object RecipeMapper {
             calories = domain.calories,
             imageUrl = domain.imageUrl,
             ingredients = domain.ingredients,
-            instructions = domain.instructions
+            instructions = domain.instructions,
+            isFavorite = domain.isFavorite
         )
     }
 

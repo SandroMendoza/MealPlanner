@@ -119,7 +119,8 @@ fun AppNavHost() {
                 RecipeDetailScreen(
                     recipeId = recipeId,
                     onBack = { navController.popBackStack() },
-                    onEdit = { id -> navController.navigate(Routes.recipeEdit(id)) }
+                    onEdit = { id -> navController.navigate(Routes.recipeEdit(id)) },
+                    onAddToMealPlan = { navController.navigateToTab(Routes.CALENDAR) }
                 )
             }
             composable(
