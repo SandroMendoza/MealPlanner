@@ -66,7 +66,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 @Composable
 fun MealCalendarScreen(
-    onSlotClick: (LocalDate, MealType, Uuid?) -> Unit,
+    onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
     onRecipeClick: (Uuid) -> Unit = {},
     viewModel: MealCalendarViewModel = koinViewModel()
 ) {
@@ -82,9 +82,6 @@ fun MealCalendarScreen(
 
     val entriesByMealType = remember(uiState.entries, selectedDate) {
         MealType.entries.associateWith { uiState.entriesFor(selectedDate, it) }
-    }
-    val firstEmptyMealType = remember(entriesByMealType) {
-        MealType.entries.firstOrNull { entriesByMealType[it].isNullOrEmpty() }
     }
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
@@ -161,15 +158,14 @@ fun MealCalendarScreen(
             }
 
             Button(
-                onClick = { firstEmptyMealType?.let { onSlotClick(selectedDate, it, null) } },
-                enabled = firstEmptyMealType != null,
+                onClick = { onSlotClick(selectedDate, null, null) },
                 shape = MaterialTheme.shapes.extraLarge,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 modifier = Modifier.fillMaxWidth().padding(spacing.lg)
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(Modifier.width(spacing.xs))
-                Text(if (firstEmptyMealType != null) "Add Meal" else "Day fully planned")
+                Text("Add Meal")
             }
         }
     }

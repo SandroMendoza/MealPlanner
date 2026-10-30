@@ -11,10 +11,13 @@ object Routes {
     const val CALENDAR_SLOT_PICK_PATTERN = "calendar/{date}/{mealType}/pick?replaceSlotId={replaceSlotId}"
     const val SHOPPING_LIST = "shoppingList"
 
+    /** Sentinel path segment meaning "ask which meal type after a recipe is picked". */
+    const val ANY_MEAL_TYPE = "any"
+
     fun recipeDetail(recipeId: String) = "recipes/$recipeId"
     fun recipeEdit(recipeId: String) = "recipes/$recipeId/edit"
-    fun calendarSlotPick(date: String, mealType: String, replaceSlotId: String? = null): String {
-        val base = "calendar/$date/$mealType/pick"
+    fun calendarSlotPick(date: String, mealType: String?, replaceSlotId: String? = null): String {
+        val base = "calendar/$date/${mealType ?: ANY_MEAL_TYPE}/pick"
         return if (replaceSlotId != null) "$base?replaceSlotId=$replaceSlotId" else base
     }
 }
