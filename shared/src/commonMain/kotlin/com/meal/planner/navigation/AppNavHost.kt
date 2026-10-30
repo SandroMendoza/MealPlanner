@@ -136,7 +136,8 @@ fun AppNavHost() {
                 MealCalendarScreen(
                     onSlotClick = { date, mealType ->
                         navController.navigate(Routes.calendarSlotPick(date.toString(), mealType.name))
-                    }
+                    },
+                    onRecipeClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) }
                 )
             }
             composable(

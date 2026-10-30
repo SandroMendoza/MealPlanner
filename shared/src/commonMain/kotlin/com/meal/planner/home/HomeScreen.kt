@@ -19,10 +19,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.BreakfastDining
-import androidx.compose.material.icons.filled.Cookie
-import androidx.compose.material.icons.filled.DinnerDining
-import androidx.compose.material.icons.filled.LunchDining
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Card
@@ -43,7 +39,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
-import com.meal.domain.model.enums.MealType
+import com.meal.planner.common.displayName
+import com.meal.planner.common.icon
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -183,7 +180,7 @@ private fun TodayPlanRow(entry: MealPlanEntry, onClick: () -> Unit) {
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = mealTypeIcon(entry.mealType),
+                imageVector = entry.mealType.icon(),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
@@ -191,7 +188,7 @@ private fun TodayPlanRow(entry: MealPlanEntry, onClick: () -> Unit) {
         Spacer(Modifier.width(spacing.md))
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = entry.mealType.name.lowercase().replaceFirstChar { it.uppercase() },
+                text = entry.mealType.displayName(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -199,13 +196,6 @@ private fun TodayPlanRow(entry: MealPlanEntry, onClick: () -> Unit) {
         }
         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
     }
-}
-
-private fun mealTypeIcon(mealType: MealType): ImageVector = when (mealType) {
-    MealType.BREAKFAST -> Icons.Default.BreakfastDining
-    MealType.LUNCH -> Icons.Default.LunchDining
-    MealType.DINNER -> Icons.Default.DinnerDining
-    MealType.SNACK -> Icons.Default.Cookie
 }
 
 @Composable
