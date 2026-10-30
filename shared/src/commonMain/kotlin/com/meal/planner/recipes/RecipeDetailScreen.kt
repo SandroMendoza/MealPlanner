@@ -3,6 +3,8 @@ package com.meal.planner.recipes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,7 +21,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.RecipeDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -108,6 +114,20 @@ fun RecipeDetailScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
                 recipe != null -> LazyColumn(contentPadding = PaddingValues(spacing.lg)) {
+                    if (!recipe.imageUrl.isNullOrBlank()) {
+                        item {
+                            AsyncImage(
+                                model = recipe.imageUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(220.dp)
+                                    .clip(MaterialTheme.shapes.medium)
+                                    .padding(bottom = spacing.lg)
+                            )
+                        }
+                    }
                     item {
                         recipe.description?.let {
                             Text(

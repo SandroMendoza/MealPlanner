@@ -41,6 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
+import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -173,18 +174,12 @@ private fun TodayPlanRow(entry: MealPlanEntry, onClick: () -> Unit) {
             .padding(spacing.lg),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(MealPlannerTokens.iconSize.xl)
-                .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.small),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = entry.mealType.icon(),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
+        RecipeThumbnail(
+            imageUrl = entry.recipe.imageUrl,
+            fallbackIcon = entry.mealType.icon(),
+            size = MealPlannerTokens.iconSize.xl,
+            shape = MaterialTheme.shapes.small
+        )
         Spacer(Modifier.width(spacing.md))
         Column(modifier = Modifier.weight(1f)) {
             Text(

@@ -52,6 +52,7 @@ import com.meal.domain.model.MealPlanEntry
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
+import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.calendar.MealCalendarViewModel
 import com.meal.presentation.common.today
@@ -230,18 +231,12 @@ private fun MealEntryCard(entry: MealPlanEntry, onClick: () -> Unit, onChange: (
             modifier = Modifier.fillMaxWidth().padding(spacing.cardPadding),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(MealPlannerTokens.iconSize.xl)
-                    .background(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.shapes.small),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = entry.mealType.icon(),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
+            RecipeThumbnail(
+                imageUrl = entry.recipe.imageUrl,
+                fallbackIcon = entry.mealType.icon(),
+                size = MealPlannerTokens.iconSize.xl,
+                shape = MaterialTheme.shapes.small
+            )
             Spacer(Modifier.width(spacing.md))
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = entry.recipe.name, style = MaterialTheme.typography.titleMedium)

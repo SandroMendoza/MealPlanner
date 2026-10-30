@@ -23,6 +23,9 @@ sqldelight = "2.4.1"
 navigationCompose = "2.9.2"
 kotlinxDatetime = "0.8.0"
 composeMaterialIcons = "1.7.3"
+# pinned below latest: newer coil3/ktor pull in transitive deps requiring compileSdk 37, which AGP 9.0.1 doesn't support
+coil3 = "3.4.0"
+ktor = "3.4.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -60,6 +63,11 @@ sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", versi
 
 androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil3" }
+coil-network-ktor = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil3" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
