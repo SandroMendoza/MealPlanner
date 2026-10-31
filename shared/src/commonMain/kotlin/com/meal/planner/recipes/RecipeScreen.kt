@@ -1,25 +1,29 @@
 package com.meal.planner.recipes
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,16 +51,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.meal.domain.model.Recipe
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
-import com.meal.planner.components.RecipeThumbnail
-import com.meal.planner.theme.MealPlannerPalette
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.planner.theme.activeFilterChipColors
 import com.meal.presentation.recipes.RecipeUiState
 import com.meal.presentation.recipes.RecipeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -101,11 +106,13 @@ fun RecipeScreen(
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
                 )
-                else -> LazyColumn(
+                else -> LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(spacing.lg),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                     verticalArrangement = Arrangement.spacedBy(spacing.sm)
                 ) {
-                    item {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(spacing.sm)
@@ -135,30 +142,31 @@ fun RecipeScreen(
                                         contentColor = MaterialTheme.colorScheme.onPrimary
                                     )
                                 ) {
-                                    Icon(Icons.Default.Menu, contentDescription = "Filters (active)")
+                                    Icon(Icons.Default.FilterAlt, contentDescription = "Filters (active)")
                                 }
                             } else {
                                 IconButton(onClick = { showFilterSheet = true }) {
-                                    Icon(Icons.Default.Menu, contentDescription = "Filters")
+                                    Icon(Icons.Default.FilterAlt, contentDescription = "Filters")
                                 }
                             }
                         }
                     }
 
-                    item {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                             items(listOf<MealType?>(null) + MealType.entries) { mealType ->
                                 FilterChip(
                                     selected = uiState.selectedMealType == mealType,
                                     onClick = { viewModel.onMealTypeSelected(mealType) },
-                                    label = { Text(mealType.quickFilterLabel()) }
+                                    label = { Text(mealType.quickFilterLabel()) },
+                                    colors = activeFilterChipColors()
                                 )
                             }
                         }
                     }
 
                     if (uiState.showEmptyState) {
-                        item {
+                        item(span = { GridItemSpan(maxLineSpan) }) {
                             Text(
                                 text = uiState.emptyStateMessage,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -169,10 +177,9 @@ fun RecipeScreen(
                         }
                     } else {
                         items(uiState.filteredRecipes) { recipe ->
-                            RecipeItem(
+                            RecipeGridCard(
                                 recipe = recipe,
-                                onClick = { onRecipeClick(recipe.id) },
-                                onToggleFavorite = { viewModel.onToggleFavorite(recipe) }
+                                onClick = { onRecipeClick(recipe.id) }
                             )
                         }
                     }
@@ -250,7 +257,8 @@ private fun RecipeFilterSheet(
                     FilterChip(
                         selected = uiState.selectedCategory == category,
                         onClick = { onCategorySelected(category) },
-                        label = { Text(category?.displayName() ?: "All") }
+                        label = { Text(category?.displayName() ?: "All") },
+                        colors = activeFilterChipColors()
                     )
                 }
             }
@@ -304,56 +312,65 @@ private fun SectionLabel(text: String) {
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-fun RecipeItem(recipe: Recipe, onClick: () -> Unit = {}, onToggleFavorite: (() -> Unit)? = null) {
+fun RecipeGridCard(recipe: Recipe, onClick: () -> Unit) {
     val spacing = MealPlannerTokens.spacing
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+        onClick = onClick,
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Row(
-            modifier = Modifier.padding(spacing.cardPadding),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            RecipeThumbnail(
-                imageUrl = recipe.imageUrl,
-                fallbackIcon = Icons.AutoMirrored.Filled.MenuBook,
-                size = 56.dp,
-                shape = MaterialTheme.shapes.medium
-            )
-            Column(modifier = Modifier.padding(start = spacing.md).weight(1f)) {
-                Text(
-                    text = recipe.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                recipe.description?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = spacing.xxs)
+        Column {
+            Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
+                if (recipe.imageUrl.isNullOrBlank()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.primaryContainer),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                } else {
+                    AsyncImage(
+                        model = recipe.imageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
-                Text(
-                    text = "${recipe.category.displayName()} · ${recipe.preparationTimeMinutes} min",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = spacing.xxs)
-                )
             }
-            if (onToggleFavorite != null) {
-                IconButton(onClick = onToggleFavorite) {
+            Column(modifier = Modifier.padding(spacing.sm)) {
+                Text(
+                    text = recipe.name,
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Row(
+                    modifier = Modifier.padding(top = spacing.xxs),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.xxs)
+                ) {
                     Icon(
-                        imageVector = if (recipe.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = if (recipe.isFavorite) "Remove from favorites" else "Add to favorites",
-                        tint = if (recipe.isFavorite) MealPlannerPalette.FavoriteRed else MaterialTheme.colorScheme.onSurfaceVariant
+                        imageVector = Icons.Filled.AccessTime,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+                    )
+                    Text(
+                        text = "${recipe.preparationTimeMinutes} min",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         }
     }
 }
+

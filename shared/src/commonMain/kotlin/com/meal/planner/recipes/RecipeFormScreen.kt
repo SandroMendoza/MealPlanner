@@ -32,6 +32,7 @@ import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.common.displayName
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.planner.theme.activeFilterChipColors
 import com.meal.presentation.recipes.IngredientFormRow
 import com.meal.presentation.recipes.InstructionFormRow
 import com.meal.presentation.recipes.RecipeFormViewModel
@@ -108,7 +109,8 @@ fun RecipeFormScreen(
                     FilterChip(
                         selected = uiState.category == category,
                         onClick = { viewModel.updateCategory(category) },
-                        label = { Text(category.displayName()) }
+                        label = { Text(category.displayName()) },
+                        colors = activeFilterChipColors()
                     )
                 }
             }
@@ -119,7 +121,8 @@ fun RecipeFormScreen(
                     FilterChip(
                         selected = mealType in uiState.mealTypes,
                         onClick = { viewModel.toggleMealType(mealType) },
-                        label = { Text(mealType.name) }
+                        label = { Text(mealType.name) },
+                        colors = activeFilterChipColors()
                     )
                 }
             }

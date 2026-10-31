@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
@@ -41,7 +42,7 @@ import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
-import com.meal.planner.recipes.RecipeItem
+import com.meal.planner.recipes.RecipeGridCard
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.RecipeViewModel
 import kotlinx.coroutines.launch
@@ -130,12 +131,14 @@ fun RecipePickerScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.Center)
                     )
-                    else -> LazyColumn(
+                    else -> LazyVerticalGrid(
+                        columns = GridCells.Fixed(2),
                         contentPadding = PaddingValues(start = spacing.lg, end = spacing.lg, bottom = spacing.lg),
+                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                         verticalArrangement = Arrangement.spacedBy(spacing.sm)
                     ) {
                         items(uiState.filteredRecipes) { recipe ->
-                            RecipeItem(
+                            RecipeGridCard(
                                 recipe = recipe,
                                 onClick = {
                                     if (mealType != null) {

@@ -1,7 +1,9 @@
 package com.meal.planner.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableChipColors
 import androidx.compose.material3.Shapes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -54,3 +56,14 @@ object MealPlannerTokens {
         @ReadOnlyComposable
         get() = LocalIconSize.current
 }
+
+/**
+ * Selected-state colors for filter-style chips: a solid, dark primary-green
+ * fill with white label, used for every active filter/selection chip in the app.
+ */
+@Composable
+fun activeFilterChipColors(): SelectableChipColors = FilterChipDefaults.filterChipColors(
+    selectedContainerColor = MaterialTheme.colorScheme.primary,
+    selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+    selectedLeadingIconColor = MaterialTheme.colorScheme.onPrimary
+)
