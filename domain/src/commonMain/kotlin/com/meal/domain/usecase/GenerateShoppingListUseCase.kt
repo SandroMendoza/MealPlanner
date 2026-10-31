@@ -10,10 +10,10 @@ class GenerateShoppingListUseCase(
     private val getWeeklyMealPlanUseCase: GetWeeklyMealPlanUseCase,
     private val shoppingListRepository: ShoppingListRepository
 ) {
-    fun execute(weekStart: LocalDate, weekEnd: LocalDate): Flow<List<ShoppingListItem>> =
+    fun execute(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>> =
         combine(
-            getWeeklyMealPlanUseCase.execute(weekStart, weekEnd),
-            shoppingListRepository.getCheckedItemKeys(weekStart)
+            getWeeklyMealPlanUseCase.execute(rangeStart, rangeEnd),
+            shoppingListRepository.getCheckedItemKeys()
         ) { entries, checkedKeys ->
             val aggregated = linkedMapOf<String, ShoppingListItem>()
             entries.forEach { entry ->

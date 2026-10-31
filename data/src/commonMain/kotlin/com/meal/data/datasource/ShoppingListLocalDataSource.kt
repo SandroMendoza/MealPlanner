@@ -8,7 +8,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.LocalDate
 
 class ShoppingListLocalDataSource(
     private val database: MealPlannerDatabase,
@@ -16,18 +15,18 @@ class ShoppingListLocalDataSource(
 ) {
     private val queries = database.shoppingListCheckedItemQueries
 
-    fun checkedKeysForWeek(weekStart: LocalDate): Flow<Set<String>> =
-        queries.selectCheckedKeysForWeek(weekStart.toString())
+    fun checkedKeys(): Flow<Set<String>> =
+        queries.selectCheckedKeys()
             .asFlow()
             .mapToList(ioDispatcher)
             .map { it.toSet() }
 
-    suspend fun setItemChecked(weekStart: LocalDate, itemKey: String, checked: Boolean) =
+    suspend fun setItemChecked(itemKey: String, checked: Boolean) =
         withContext(ioDispatcher) {
             if (checked) {
-                queries.setChecked(weekStart.toString(), itemKey)
+                queries.setChecked(itemKey)
             } else {
-                queries.setUnchecked(weekStart.toString(), itemKey)
+                queries.setUnchecked(itemKey)
             }
         }
 }
