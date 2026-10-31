@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
@@ -13,9 +14,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,13 +30,21 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.common.displayName
+import com.meal.planner.common.rememberImagePicker
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
 import com.meal.presentation.recipes.IngredientFormRow
@@ -94,6 +108,12 @@ fun RecipeFormScreen(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
                 label = { Text("Name") },
+                isError = uiState.isDuplicateName,
+                supportingText = {
+                    if (uiState.isDuplicateName) {
+                        Text("A recipe with this name already exists.", color = MaterialTheme.colorScheme.error)
+                    }
+                },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -148,17 +168,35 @@ fun RecipeFormScreen(
                 )
             }
 
-            OutlinedTextField(
-                value = uiState.imageUrl,
-                onValueChange = viewModel::updateImageUrl,
-                label = { Text("Image URL") },
+            SectionLabel("Photo")
+            val launchImagePicker = rememberImagePicker(onImagePicked = { uri ->
+                uri?.let(viewModel::updateImageUrl)
+            })
+            Column(
+                verticalArrangement = Arrangement.spacedBy(spacing.sm),
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                if (uiState.imageUrl.isNotBlank()) {
+                    AsyncImage(
+                        model = uiState.imageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(160.dp)
+                            .clip(MaterialTheme.shapes.medium)
+                    )
+                }
+                OutlinedButton(onClick = launchImagePicker) {
+                    Text(if (uiState.imageUrl.isBlank()) "Choose Photo" else "Change Photo")
+                }
+            }
 
             SectionLabel("Ingredients")
             uiState.ingredients.forEachIndexed { index, row ->
                 IngredientRowEditor(
                     row = row,
+                    suggestions = uiState.availableIngredients.map { it.name },
                     onChange = { viewModel.updateIngredientRow(index, it) },
                     onRemove = { viewModel.removeIngredientRow(index) }
                 )
@@ -209,36 +247,112 @@ private fun SectionLabel(text: String) {
 @Composable
 private fun IngredientRowEditor(
     row: IngredientFormRow,
+    suggestions: List<String>,
     onChange: (IngredientFormRow) -> Unit,
     onRemove: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        OutlinedTextField(
-            value = row.name,
-            onValueChange = { onChange(row.copy(name = it)) },
-            label = { Text("Name") },
-            modifier = Modifier.weight(2f)
-        )
-        OutlinedTextField(
-            value = row.quantity,
-            onValueChange = { onChange(row.copy(quantity = it)) },
-            label = { Text("Qty") },
-            modifier = Modifier.weight(1f)
-        )
-        TextButton(onClick = {
-            val units = MeasurementUnit.entries
-            val next = units[(row.unit.ordinal + 1) % units.size]
-            onChange(row.copy(unit = next))
-        }) {
-            Text(row.unit.unit)
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            IngredientNameField(
+                value = row.name,
+                suggestions = suggestions,
+                onValueChange = { onChange(row.copy(name = it)) },
+                modifier = Modifier.weight(2f)
+            )
+            OutlinedTextField(
+                value = row.quantity,
+                onValueChange = { onChange(row.copy(quantity = it)) },
+                label = { Text("Qty") },
+                modifier = Modifier.weight(1f)
+            )
         }
-        TextButton(onClick = onRemove) {
-            Text("Remove")
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+            modifier = Modifier.fillMaxWidth().padding(top = spacing.xs)
+        ) {
+            UnitDropdownField(
+                value = row.unit,
+                onValueChange = { onChange(row.copy(unit = it)) },
+                modifier = Modifier.weight(1f)
+            )
+            TextButton(onClick = onRemove) {
+                Text("Remove")
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun IngredientNameField(
+    value: String,
+    suggestions: List<String>,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val filtered = suggestions.filter { it.contains(value.trim(), ignoreCase = true) }
+    val showMenu = expanded && filtered.isNotEmpty()
+
+    ExposedDropdownMenuBox(expanded = showMenu, onExpandedChange = { expanded = it }, modifier = modifier) {
+        OutlinedTextField(
+            value = value,
+            onValueChange = {
+                onValueChange(it)
+                expanded = true
+            },
+            singleLine = true,
+            label = { Text("Name") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showMenu) },
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true).fillMaxWidth()
+        )
+        ExposedDropdownMenu(expanded = showMenu, onDismissRequest = { expanded = false }) {
+            filtered.forEach { suggestion ->
+                DropdownMenuItem(
+                    text = { Text(suggestion) },
+                    onClick = {
+                        onValueChange(suggestion)
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun UnitDropdownField(
+    value: MeasurementUnit,
+    onValueChange: (MeasurementUnit) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var expanded by remember { mutableStateOf(false) }
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }, modifier = modifier) {
+        OutlinedTextField(
+            value = value.displayName(),
+            onValueChange = {},
+            readOnly = true,
+            label = { Text("Unit") },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
+        )
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            MeasurementUnit.entries.forEach { unit ->
+                DropdownMenuItem(
+                    text = { Text(unit.displayName()) },
+                    onClick = {
+                        onValueChange(unit)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }

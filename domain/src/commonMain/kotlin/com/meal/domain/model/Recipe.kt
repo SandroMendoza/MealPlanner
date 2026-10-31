@@ -16,7 +16,7 @@ data class Recipe(
     val servings: Int,
     val calories: Int?,
     val imageUrl: String?,
-    val ingredients: List<Ingredient>,
+    val ingredients: List<RecipeIngredient>,
     val instructions: List<Instruction>,
     val isFavorite: Boolean = false
 )

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.LunchDining
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
+import com.meal.domain.model.enums.MeasurementUnit
 
 fun MealType.icon(): ImageVector = when (this) {
     MealType.BREAKFAST -> Icons.Default.BreakfastDining
@@ -20,3 +21,6 @@ fun MealType.displayName(): String = name.lowercase().replaceFirstChar { it.uppe
 
 fun FoodCategory.displayName(): String =
     name.lowercase().split('_').joinToString(" ") { it.replaceFirstChar(Char::uppercase) }
+
+fun MeasurementUnit.displayName(): String =
+    "${name.lowercase().replaceFirstChar { it.uppercase() }} ($unit)"

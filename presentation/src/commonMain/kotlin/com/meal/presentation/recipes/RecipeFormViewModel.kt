@@ -5,9 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.Recipe
+import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.AddRecipeUseCase
+import com.meal.domain.usecase.GetAllIngredientsUseCase
+import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
 import com.meal.domain.usecase.UpdateRecipeUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +25,9 @@ class RecipeFormViewModel(
     private val recipeId: Uuid?,
     private val getRecipeByIdUseCase: GetRecipeByIdUseCase,
     private val addRecipeUseCase: AddRecipeUseCase,
-    private val updateRecipeUseCase: UpdateRecipeUseCase
+    private val updateRecipeUseCase: UpdateRecipeUseCase,
+    private val getAllIngredientsUseCase: GetAllIngredientsUseCase,
+    private val getAllRecipesUseCase: GetAllRecipesUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecipeFormUiState(isEditMode = recipeId != null))
@@ -30,6 +35,18 @@ class RecipeFormViewModel(
 
     init {
         recipeId?.let { loadRecipe(it) }
+        viewModelScope.launch {
+            getAllIngredientsUseCase.execute().collect { list ->
+                _uiState.value = _uiState.value.copy(availableIngredients = list)
+            }
+        }
+        viewModelScope.launch {
+            getAllRecipesUseCase.execute().collect { list ->
+                _uiState.value = _uiState.value.copy(
+                    existingRecipeNames = list.filter { it.id != recipeId }.map { it.name }
+                )
+            }
+        }
     }
 
     private fun loadRecipe(id: Uuid) {
@@ -48,7 +65,7 @@ class RecipeFormViewModel(
                     calories = recipe.calories?.toString().orEmpty(),
                     imageUrl = recipe.imageUrl.orEmpty(),
                     ingredients = recipe.ingredients.map {
-                        IngredientFormRow(it.name, it.quantity.toString(), it.unit)
+                        IngredientFormRow(it.ingredient.name, it.quantity.toString(), it.unit)
                     },
                     instructions = recipe.instructions
                         .sortedBy { it.stepNumber }
@@ -145,7 +162,14 @@ class RecipeFormViewModel(
                     imageUrl = current.imageUrl.ifBlank { null },
                     ingredients = current.ingredients
                         .filter { it.name.isNotBlank() }
-                        .map { Ingredient(Uuid.random(), it.name, it.quantity.toDoubleOrNull() ?: 0.0, it.unit) },
+                        .map {
+                            RecipeIngredient(
+                                id = Uuid.random(),
+                                ingredient = Ingredient(Uuid.random(), it.name),
+                                quantity = it.quantity.toDoubleOrNull() ?: 0.0,
+                                unit = it.unit
+                            )
+                        },
                     instructions = current.instructions
                         .filter { it.description.isNotBlank() }
                         .mapIndexed { index, row -> Instruction(index + 1, row.description) }

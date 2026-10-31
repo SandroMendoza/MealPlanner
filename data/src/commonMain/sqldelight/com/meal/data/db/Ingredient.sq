@@ -1,0 +1,16 @@
+CREATE TABLE IngredientEntity (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    normalizedName TEXT NOT NULL
+);
+
+CREATE UNIQUE INDEX IngredientEntity_normalizedName ON IngredientEntity(normalizedName);
+
+selectAllIngredients:
+SELECT * FROM IngredientEntity ORDER BY name;
+
+selectIngredientByNormalizedName:
+SELECT * FROM IngredientEntity WHERE normalizedName = ?;
+
+insertIngredientDefinition:
+INSERT INTO IngredientEntity(id, name, normalizedName) VALUES (?, ?, ?);

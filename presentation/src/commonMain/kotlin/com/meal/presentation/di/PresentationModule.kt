@@ -21,7 +21,9 @@ val presentationModule = module {
             recipeId = recipeIdString.takeIf { it.isNotBlank() }?.let { Uuid.parse(it) },
             getRecipeByIdUseCase = get(),
             addRecipeUseCase = get(),
-            updateRecipeUseCase = get()
+            updateRecipeUseCase = get(),
+            getAllIngredientsUseCase = get(),
+            getAllRecipesUseCase = get()
         )
     }
     viewModel { MealCalendarViewModel(get(), get()) }

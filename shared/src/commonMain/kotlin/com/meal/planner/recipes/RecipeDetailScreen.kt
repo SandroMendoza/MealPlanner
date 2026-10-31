@@ -243,9 +243,9 @@ fun RecipeDetailScreen(
                                     modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
                                 )
                             }
-                            items(recipe.ingredients) { ingredient ->
+                            items(recipe.ingredients) { ri ->
                                 Text(
-                                    text = "• ${ingredient.quantity} ${ingredient.unit.unit} ${ingredient.name}",
+                                    text = "• ${ri.quantity} ${ri.unit.unit} ${ri.ingredient.name}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(vertical = spacing.sm)

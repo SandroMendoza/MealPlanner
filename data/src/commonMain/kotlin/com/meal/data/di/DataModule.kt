@@ -1,13 +1,16 @@
 package com.meal.data.di
 
+import com.meal.data.datasource.IngredientLocalDataSource
 import com.meal.data.datasource.MealSlotLocalDataSource
 import com.meal.data.datasource.RecipeLocalDataSource
 import com.meal.data.datasource.ShoppingListLocalDataSource
 import com.meal.data.db.DatabaseDriverFactory
 import com.meal.data.db.MealPlannerDatabase
+import com.meal.data.repository.IngredientRepositoryImpl
 import com.meal.data.repository.MealPlanRepositoryImpl
 import com.meal.data.repository.RecipeRepositoryImpl
 import com.meal.data.repository.ShoppingListRepositoryImpl
+import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.RecipeRepository
 import com.meal.domain.repository.ShoppingListRepository
@@ -18,6 +21,7 @@ val dataModule = module {
     single { RecipeLocalDataSource(get()) }
     single { MealSlotLocalDataSource(get()) }
     single { ShoppingListLocalDataSource(get()) }
+    single { IngredientLocalDataSource(get()) }
 
     single <RecipeRepository> {
         RecipeRepositoryImpl(
@@ -26,4 +30,5 @@ val dataModule = module {
     }
     single <MealPlanRepository> { MealPlanRepositoryImpl(get()) }
     single <ShoppingListRepository> { ShoppingListRepositoryImpl(get()) }
+    single <IngredientRepository> { IngredientRepositoryImpl(get()) }
 }

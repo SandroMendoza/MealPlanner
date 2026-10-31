@@ -47,6 +47,6 @@ data class RecipeUiState(
         val needle = query.trim()
         return recipe.name.contains(needle, ignoreCase = true) ||
             recipe.description?.contains(needle, ignoreCase = true) == true ||
-            recipe.ingredients.any { it.name.contains(needle, ignoreCase = true) }
+            recipe.ingredients.any { it.ingredient.name.contains(needle, ignoreCase = true) }
     }
 }

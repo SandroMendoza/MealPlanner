@@ -1,7 +1,7 @@
 package com.meal.data.model
 
-import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
+import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import kotlin.uuid.ExperimentalUuidApi
@@ -18,7 +18,7 @@ data class RecipeDto(
     val servings: Int,
     val calories: Int?,
     val imageUrl: String?,
-    val ingredients: List<Ingredient>,
+    val ingredients: List<RecipeIngredient>,
     val instructions: List<Instruction>,
     val isFavorite: Boolean = false
 )

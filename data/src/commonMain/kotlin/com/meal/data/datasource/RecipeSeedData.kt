@@ -3,6 +3,7 @@ package com.meal.data.datasource
 import com.meal.data.model.RecipeDto
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
+import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -24,10 +25,10 @@ object RecipeSeedData {
             calories = 450,
             imageUrl = "https://media.istockphoto.com/id/2247075317/photo/tender-chicken-adobo-served-on-a-plate-with-savory-sauce.jpg?s=2048x2048&w=is&k=20&c=8YKANaLPMtYF2e7Q1tSpmsTgMPG1dADN382rZkovpLk=",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Chicken", 1.0, MeasurementUnit.KILOGRAMS),
-                Ingredient(Uuid.random(), "Soy Sauce", 0.5, MeasurementUnit.CUP),
-                Ingredient(Uuid.random(), "Vinegar", 0.33, MeasurementUnit.CUP),
-                Ingredient(Uuid.random(), "Garlic", 6.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken"), 1.0, MeasurementUnit.KILOGRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Soy Sauce"), 0.5, MeasurementUnit.CUP),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Vinegar"), 0.33, MeasurementUnit.CUP),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Garlic"), 6.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Marinate chicken in soy sauce and garlic."),
@@ -46,9 +47,9 @@ object RecipeSeedData {
             calories = 320,
             imageUrl = "https://media.istockphoto.com/id/172249723/photo/pancakes.jpg?s=2048x2048&w=is&k=20&c=nYyX6mYLwG-lWfpfdWT37H7MB8CIvrNF5MEhJNODE6s=",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Flour", 200.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Milk", 250.0, MeasurementUnit.MILLILITER),
-                Ingredient(Uuid.random(), "Egg", 1.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Flour"), 200.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Milk"), 250.0, MeasurementUnit.MILLILITER),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 1.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Mix all ingredients until smooth."),
@@ -67,9 +68,9 @@ object RecipeSeedData {
             calories = 180,
             imageUrl = "https://media.istockphoto.com/id/184938052/photo/a-bowl-of-caesar-salad-with-croutons-and-cheese-on-table.jpg?s=2048x2048&w=is&k=20&c=Z17A5nxY403O5X0b-nRHbI6AusWFdI6VpH9hISBLxEU=",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Romaine Lettuce", 300.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Parmesan Cheese", 50.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Caesar Dressing", 3.0, MeasurementUnit.TABLESPOON)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Romaine Lettuce"), 300.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Parmesan Cheese"), 50.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Caesar Dressing"), 3.0, MeasurementUnit.TABLESPOON)
             ),
             instructions = listOf(
                 Instruction(1, "Wash and chop the lettuce."),
@@ -88,10 +89,10 @@ object RecipeSeedData {
             calories = 280,
             imageUrl = "https://media.istockphoto.com/id/168731372/photo/fresh-homemade-chocolate-brownie.jpg?s=2048x2048&w=is&k=20&c=zXOgoCTKbPM22kI-P0xjRowgwRfvmwPg9Tjyi3mQkso=",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Dark Chocolate", 200.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Butter", 100.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Sugar", 150.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Egg", 2.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Dark Chocolate"), 200.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Butter"), 100.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Sugar"), 150.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 2.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Melt chocolate and butter together."),
@@ -110,9 +111,9 @@ object RecipeSeedData {
             calories = 220,
             imageUrl = "https://media.istockphoto.com/id/1274658583/photo/delicious-mango-smoothie-in-glass-jar.jpg?s=2048x2048&w=is&k=20&c=lYmTdrvcqKAaJeGFnGc5WjCa9Q4b4At4Q1QShPi8yic=",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Mango", 2.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Milk", 250.0, MeasurementUnit.MILLILITER),
-                Ingredient(Uuid.random(), "Ice", 1.0, MeasurementUnit.CUP)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Mango"), 2.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Milk"), 250.0, MeasurementUnit.MILLILITER),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Ice"), 1.0, MeasurementUnit.CUP)
             ),
             instructions = listOf(
                 Instruction(1, "Add all ingredients to a blender."),
@@ -131,11 +132,11 @@ object RecipeSeedData {
             calories = 380,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/7f70c4c586b289a181976892f3f10309.jpg.webp?itok=f1izZ_qc",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Pork Belly", 1.0, MeasurementUnit.KILOGRAMS),
-                Ingredient(Uuid.random(), "Tamarind Mix", 50.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Kangkong", 200.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Radish", 1.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Tomato", 2.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Pork Belly"), 1.0, MeasurementUnit.KILOGRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Tamarind Mix"), 50.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Kangkong"), 200.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Radish"), 1.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Tomato"), 2.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Boil pork belly with tomatoes and onions until tender."),
@@ -154,11 +155,11 @@ object RecipeSeedData {
             calories = 520,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/cf4de10507f579e093be611e20e5ff57.jpg.webp?itok=xe0Z_Dim",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Oxtail", 1.0, MeasurementUnit.KILOGRAMS),
-                Ingredient(Uuid.random(), "Peanut Butter", 1.0, MeasurementUnit.CUP),
-                Ingredient(Uuid.random(), "Banana Blossom", 200.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Eggplant", 2.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "String Beans", 150.0, MeasurementUnit.GRAMS)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Oxtail"), 1.0, MeasurementUnit.KILOGRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Peanut Butter"), 1.0, MeasurementUnit.CUP),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Banana Blossom"), 200.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Eggplant"), 2.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "String Beans"), 150.0, MeasurementUnit.GRAMS)
             ),
             instructions = listOf(
                 Instruction(1, "Simmer oxtail until fork-tender, reserving the broth."),
@@ -177,10 +178,10 @@ object RecipeSeedData {
             calories = 280,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/1891a7774a91ea29ba9421aa730d2cca.jpg.webp?itok=AoU4Gju5",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Chicken", 1.0, MeasurementUnit.KILOGRAMS),
-                Ingredient(Uuid.random(), "Ginger", 50.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Green Papaya", 300.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Chili Leaves", 100.0, MeasurementUnit.GRAMS)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken"), 1.0, MeasurementUnit.KILOGRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Ginger"), 50.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Green Papaya"), 300.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chili Leaves"), 100.0, MeasurementUnit.GRAMS)
             ),
             instructions = listOf(
                 Instruction(1, "Saute ginger, onion, and garlic, then add chicken."),
@@ -199,11 +200,11 @@ object RecipeSeedData {
             calories = 220,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/25cf95a942d7253ccb0e43f8b039143f.jpg.webp?itok=OFSCXxPo",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Ground Pork", 500.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Carrot", 100.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Onion", 1.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Spring Roll Wrapper", 20.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Egg", 1.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Ground Pork"), 500.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Carrot"), 100.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Onion"), 1.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Spring Roll Wrapper"), 20.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 1.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Mix ground pork with minced carrot, onion, and egg."),
@@ -222,10 +223,10 @@ object RecipeSeedData {
             calories = 210,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/d147f873470beff47543c385f4afe0f1.jpg.webp?itok=HODKzNKR",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Eggplant", 2.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Egg", 2.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Ground Pork", 100.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Onion", 1.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Eggplant"), 2.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 2.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Ground Pork"), 100.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Onion"), 1.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Grill eggplants until charred, then peel and flatten."),
@@ -244,10 +245,10 @@ object RecipeSeedData {
             calories = 150,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/7b60dfb3c2585241e25c1feddd55af28.jpg.webp?itok=O9xLPsqI",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Bitter Gourd", 2.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Egg", 2.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Tomato", 1.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Onion", 1.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Bitter Gourd"), 2.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 2.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Tomato"), 1.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Onion"), 1.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Slice bitter gourd thinly and set aside."),
@@ -266,10 +267,10 @@ object RecipeSeedData {
             calories = 260,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/5deb43ebea9aca2e544a393493992edf.jpg.webp?itok=8aIeEW0d",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Chicken Breast", 300.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Elbow Macaroni", 200.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Evaporated Milk", 1.0, MeasurementUnit.CUP),
-                Ingredient(Uuid.random(), "Carrot", 1.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken Breast"), 300.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Elbow Macaroni"), 200.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Evaporated Milk"), 1.0, MeasurementUnit.CUP),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Carrot"), 1.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Boil chicken breast until cooked, then shred."),
@@ -288,10 +289,10 @@ object RecipeSeedData {
             calories = 420,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/daf62ae8e9c2ffd5a32165d769f46628.jpg.webp?itok=g4jVYCfS",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Chicken", 1.0, MeasurementUnit.KILOGRAMS),
-                Ingredient(Uuid.random(), "Flour", 200.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Egg", 1.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Garlic Powder", 1.0, MeasurementUnit.TABLESPOON)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken"), 1.0, MeasurementUnit.KILOGRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Flour"), 200.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 1.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Garlic Powder"), 1.0, MeasurementUnit.TABLESPOON)
             ),
             instructions = listOf(
                 Instruction(1, "Marinate chicken with garlic powder and salt."),
@@ -310,9 +311,9 @@ object RecipeSeedData {
             calories = 190,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/bfdc4aabaa491807618e7303c20723c6.jpg.webp?itok=-LGgZBwx",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Cooked Rice", 4.0, MeasurementUnit.CUP),
-                Ingredient(Uuid.random(), "Garlic", 8.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Cooking Oil", 2.0, MeasurementUnit.TABLESPOON)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cooked Rice"), 4.0, MeasurementUnit.CUP),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Garlic"), 8.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cooking Oil"), 2.0, MeasurementUnit.TABLESPOON)
             ),
             instructions = listOf(
                 Instruction(1, "Fry minced garlic in oil until golden and crisp."),
@@ -331,10 +332,10 @@ object RecipeSeedData {
             calories = 310,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/5eb87455acc312770a7aecda8cc00da2.jpg.webp?itok=Aznxpgqg",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Corned Beef", 340.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Potato", 1.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Onion", 1.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Garlic", 4.0, MeasurementUnit.PIECE)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Corned Beef"), 340.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Potato"), 1.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Onion"), 1.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Garlic"), 4.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(
                 Instruction(1, "Saute garlic and onion, then add diced potato until tender."),
@@ -353,10 +354,10 @@ object RecipeSeedData {
             calories = 350,
             imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/0d9724d9adab0dc83916fd6432c458c5.jpg.webp?itok=w84XVq17",
             ingredients = listOf(
-                Ingredient(Uuid.random(), "Cream Cheese", 250.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Mango", 3.0, MeasurementUnit.PIECE),
-                Ingredient(Uuid.random(), "Graham Crackers", 200.0, MeasurementUnit.GRAMS),
-                Ingredient(Uuid.random(), "Condensed Milk", 1.0, MeasurementUnit.CUP)
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cream Cheese"), 250.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Mango"), 3.0, MeasurementUnit.PIECE),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Graham Crackers"), 200.0, MeasurementUnit.GRAMS),
+                RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Condensed Milk"), 1.0, MeasurementUnit.CUP)
             ),
             instructions = listOf(
                 Instruction(1, "Line a pan with sliced mangoes and crushed graham crackers."),

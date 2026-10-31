@@ -17,13 +17,14 @@ CREATE TABLE RecipeMealTypeEntity (
     FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id)
 );
 
-CREATE TABLE IngredientEntity (
+CREATE TABLE RecipeIngredientEntity (
     id TEXT NOT NULL PRIMARY KEY,
     recipeId TEXT NOT NULL,
-    name TEXT NOT NULL,
+    ingredientId TEXT NOT NULL,
     quantity REAL NOT NULL,
     unit TEXT NOT NULL,
-    FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id)
+    FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id),
+    FOREIGN KEY (ingredientId) REFERENCES IngredientEntity(id)
 );
 
 CREATE TABLE InstructionEntity (
@@ -43,8 +44,16 @@ SELECT * FROM RecipeEntity WHERE id = ?;
 selectMealTypesForRecipe:
 SELECT * FROM RecipeMealTypeEntity WHERE recipeId = ?;
 
-selectIngredientsForRecipe:
-SELECT * FROM IngredientEntity WHERE recipeId = ?;
+selectRecipeIngredientsForRecipe:
+SELECT
+    RecipeIngredientEntity.id,
+    RecipeIngredientEntity.quantity,
+    RecipeIngredientEntity.unit,
+    IngredientEntity.id AS ingredientId,
+    IngredientEntity.name AS ingredientName
+FROM RecipeIngredientEntity
+JOIN IngredientEntity ON IngredientEntity.id = RecipeIngredientEntity.ingredientId
+WHERE RecipeIngredientEntity.recipeId = ?;
 
 selectInstructionsForRecipe:
 SELECT * FROM InstructionEntity WHERE recipeId = ? ORDER BY stepNumber;
@@ -70,11 +79,11 @@ INSERT INTO RecipeMealTypeEntity(recipeId, mealType) VALUES (?, ?);
 deleteMealTypesForRecipe:
 DELETE FROM RecipeMealTypeEntity WHERE recipeId = ?;
 
-insertIngredient:
-INSERT INTO IngredientEntity(id, recipeId, name, quantity, unit) VALUES (?, ?, ?, ?, ?);
+insertRecipeIngredient:
+INSERT INTO RecipeIngredientEntity(id, recipeId, ingredientId, quantity, unit) VALUES (?, ?, ?, ?, ?);
 
-deleteIngredientsForRecipe:
-DELETE FROM IngredientEntity WHERE recipeId = ?;
+deleteRecipeIngredientsForRecipe:
+DELETE FROM RecipeIngredientEntity WHERE recipeId = ?;
 
 insertInstruction:
 INSERT INTO InstructionEntity(recipeId, stepNumber, description) VALUES (?, ?, ?);

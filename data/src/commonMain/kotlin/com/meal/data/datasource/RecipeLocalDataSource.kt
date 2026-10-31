@@ -8,6 +8,7 @@ import com.meal.data.db.RecipeEntity
 import com.meal.data.model.RecipeDto
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
+import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -26,6 +27,7 @@ class RecipeLocalDataSource(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private val queries = database.recipeQueries
+    private val ingredientQueries = database.ingredientQueries
 
     val recipes: Flow<List<RecipeDto>> =
         queries.selectActiveRecipes()
@@ -99,14 +101,14 @@ class RecipeLocalDataSource(
         queries.deleteMealTypesForRecipe(recipeId)
         dto.mealTypes.forEach { queries.insertMealType(recipeId, it.name) }
 
-        queries.deleteIngredientsForRecipe(recipeId)
-        dto.ingredients.forEach { ingredient ->
-            queries.insertIngredient(
-                id = ingredient.id.toString(),
+        queries.deleteRecipeIngredientsForRecipe(recipeId)
+        dto.ingredients.forEach { recipeIngredient ->
+            queries.insertRecipeIngredient(
+                id = recipeIngredient.id.toString(),
                 recipeId = recipeId,
-                name = ingredient.name,
-                quantity = ingredient.quantity,
-                unit = ingredient.unit.name
+                ingredientId = resolveIngredientId(recipeIngredient.ingredient.name),
+                quantity = recipeIngredient.quantity,
+                unit = recipeIngredient.unit.name
             )
         }
 
@@ -120,13 +122,28 @@ class RecipeLocalDataSource(
         }
     }
 
+    // Matches case-insensitively; first-write-wins on display casing (typing "chicken" when
+    // "Chicken" already exists reuses that row — the typed casing is not preserved). Intentional.
+    private fun resolveIngredientId(name: String): String {
+        val normalized = name.trim().lowercase()
+        return ingredientQueries.selectIngredientByNormalizedName(normalized).executeAsOneOrNull()?.id
+            ?: Uuid.random().toString().also { ingredientQueries.insertIngredientDefinition(it, name.trim(), normalized) }
+    }
+
     private fun toDto(row: RecipeEntity): RecipeDto {
         val mealTypes = queries.selectMealTypesForRecipe(row.id)
             .executeAsList()
             .map { MealType.valueOf(it.mealType) }
-        val ingredients = queries.selectIngredientsForRecipe(row.id)
+        val ingredients = queries.selectRecipeIngredientsForRecipe(row.id)
             .executeAsList()
-            .map { Ingredient(Uuid.parse(it.id), it.name, it.quantity, MeasurementUnit.valueOf(it.unit)) }
+            .map { ri ->
+                RecipeIngredient(
+                    id = Uuid.parse(ri.id),
+                    ingredient = Ingredient(Uuid.parse(ri.ingredientId), ri.ingredientName),
+                    quantity = ri.quantity,
+                    unit = MeasurementUnit.valueOf(ri.unit)
+                )
+            }
         val instructions = queries.selectInstructionsForRecipe(row.id)
             .executeAsList()
             .map { Instruction(it.stepNumber.toInt(), it.description) }

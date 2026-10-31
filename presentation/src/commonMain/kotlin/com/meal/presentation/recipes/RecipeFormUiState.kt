@@ -1,5 +1,6 @@
 package com.meal.presentation.recipes
 
+import com.meal.domain.model.Ingredient
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -29,10 +30,16 @@ data class RecipeFormUiState(
     val calories: String = "",
     val imageUrl: String = "",
     val ingredients: List<IngredientFormRow> = emptyList(),
-    val instructions: List<InstructionFormRow> = emptyList()
+    val instructions: List<InstructionFormRow> = emptyList(),
+    val availableIngredients: List<Ingredient> = emptyList(),
+    val existingRecipeNames: List<String> = emptyList()
 ) {
+    val isDuplicateName: Boolean
+        get() = name.isNotBlank() && existingRecipeNames.any { it.trim().equals(name.trim(), ignoreCase = true) }
+
     val canSave: Boolean
         get() = name.isNotBlank() &&
+            !isDuplicateName &&
             preparationTimeMinutes.toIntOrNull() != null &&
             servings.toIntOrNull() != null
 }

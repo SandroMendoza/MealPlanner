@@ -18,14 +18,14 @@ class GenerateShoppingListUseCase(
             val aggregated = linkedMapOf<String, ShoppingListItem>()
             entries.forEach { entry ->
                 entry.recipe.ingredients.forEach { ingredient ->
-                    val key = "${ingredient.name.lowercase().trim()}|${ingredient.unit.name}"
+                    val key = "${ingredient.ingredient.name.lowercase().trim()}|${ingredient.unit.name}"
                     val existing = aggregated[key]
                     aggregated[key] = if (existing != null) {
                         existing.copy(totalQuantity = existing.totalQuantity + ingredient.quantity)
                     } else {
                         ShoppingListItem(
                             itemKey = key,
-                            name = ingredient.name.trim(),
+                            name = ingredient.ingredient.name.trim(),
                             totalQuantity = ingredient.quantity,
                             unit = ingredient.unit,
                             checked = false
