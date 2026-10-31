@@ -1,5 +1,6 @@
 package com.meal.presentation.shopping
 
+import com.meal.domain.model.Ingredient
 import com.meal.domain.model.ShoppingListItem
 import kotlinx.datetime.LocalDate
 
@@ -11,7 +12,9 @@ data class ShoppingListUiState(
     val rangeEnd: LocalDate,
     val items: List<ShoppingListItem> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val availableIngredients: List<Ingredient> = emptyList(),
+    val showAddItemDialog: Boolean = false
 ) {
     val isEmpty: Boolean
         get() = !isLoading && items.isEmpty() && errorMessage == null

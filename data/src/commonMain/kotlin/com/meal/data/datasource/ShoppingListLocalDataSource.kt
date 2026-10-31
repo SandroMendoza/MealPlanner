@@ -3,30 +3,77 @@ package com.meal.data.datasource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.meal.data.db.MealPlannerDatabase
+import com.meal.data.db.ShoppingListItemEntity
+import com.meal.domain.model.ShoppingListItem
+import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
 
 class ShoppingListLocalDataSource(
     private val database: MealPlannerDatabase,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
-    private val queries = database.shoppingListCheckedItemQueries
+    private val queries = database.shoppingListItemQueries
 
-    fun checkedKeys(): Flow<Set<String>> =
-        queries.selectCheckedKeys()
+    fun items(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>> =
+        queries.selectActiveItems(rangeStart.toString(), rangeEnd.toString())
             .asFlow()
             .mapToList(ioDispatcher)
-            .map { it.toSet() }
+            .map { rows -> rows.map { toDomain(it) } }
 
-    suspend fun setItemChecked(itemKey: String, checked: Boolean) =
+    suspend fun syncGenerated(rangeStart: LocalDate, rangeEnd: LocalDate, required: List<ShoppingListItem>) =
         withContext(ioDispatcher) {
-            if (checked) {
-                queries.setChecked(itemKey)
-            } else {
-                queries.setUnchecked(itemKey)
+            val existingKeys = queries.selectKeysForRange(rangeStart.toString(), rangeEnd.toString()).executeAsList().toSet()
+            val missing = required.filter { it.itemKey !in existingKeys }
+            if (missing.isNotEmpty()) {
+                database.transaction {
+                    missing.forEach { item ->
+                        queries.insertItem(
+                            itemKey = item.itemKey,
+                            rangeStart = rangeStart.toString(),
+                            rangeEnd = rangeEnd.toString(),
+                            name = item.name,
+                            quantity = item.totalQuantity,
+                            unit = item.unit.name,
+                            checked = 0
+                        )
+                    }
+                }
             }
         }
+
+    suspend fun setChecked(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, checked: Boolean) =
+        withContext(ioDispatcher) {
+            queries.setChecked(if (checked) 1 else 0, itemKey, rangeStart.toString(), rangeEnd.toString())
+        }
+
+    suspend fun addManual(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) =
+        withContext(ioDispatcher) {
+            queries.insertItem(
+                itemKey = item.itemKey,
+                rangeStart = rangeStart.toString(),
+                rangeEnd = rangeEnd.toString(),
+                name = item.name,
+                quantity = item.totalQuantity,
+                unit = item.unit.name,
+                checked = 0
+            )
+        }
+
+    suspend fun remove(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) =
+        withContext(ioDispatcher) {
+            queries.setRemoved(itemKey, rangeStart.toString(), rangeEnd.toString())
+        }
+
+    private fun toDomain(row: ShoppingListItemEntity) = ShoppingListItem(
+        itemKey = row.itemKey,
+        name = row.name,
+        totalQuantity = row.quantity,
+        unit = MeasurementUnit.valueOf(row.unit),
+        checked = row.checked != 0L
+    )
 }

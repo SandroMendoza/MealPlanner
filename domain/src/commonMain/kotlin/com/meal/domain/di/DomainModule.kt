@@ -6,6 +6,7 @@ import com.meal.domain.repository.RecipeRepository
 import com.meal.domain.repository.ShoppingListRepository
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.domain.usecase.AddRecipeUseCase
+import com.meal.domain.usecase.AddShoppingListItemUseCase
 import com.meal.domain.usecase.DeleteRecipeUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
@@ -13,6 +14,7 @@ import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
+import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.domain.usecase.ToggleFavoriteUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
@@ -52,6 +54,12 @@ val domainModule = module {
     }
     factory {
         ToggleShoppingListItemUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        AddShoppingListItemUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        RemoveShoppingListItemUseCase(get<ShoppingListRepository>())
     }
     factory {
         ToggleFavoriteUseCase(get<RecipeRepository>())

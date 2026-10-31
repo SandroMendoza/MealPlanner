@@ -27,6 +27,6 @@ val presentationModule = module {
         )
     }
     viewModel { MealCalendarViewModel(get(), get()) }
-    viewModel { ShoppingListViewModel(get(), get()) }
+    viewModel { ShoppingListViewModel(get(), get(), get(), get(), get()) }
     viewModel { HomeViewModel(get()) }
 }

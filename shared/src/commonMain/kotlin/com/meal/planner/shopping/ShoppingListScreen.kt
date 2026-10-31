@@ -1,5 +1,6 @@
 package com.meal.planner.shopping
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,13 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Today
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,6 +46,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
+import com.meal.planner.components.SwipeToDeleteRow
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.today
@@ -148,61 +154,83 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
             }
 
             when {
-                uiState.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                uiState.isLoading -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
-                uiState.errorMessage != null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                uiState.errorMessage != null -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
                         uiState.errorMessage.orEmpty(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.error
                     )
                 }
-                uiState.isEmpty -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                uiState.isEmpty -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
                         "No meals planned for this period.",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                else -> LazyColumn {
+                else -> LazyColumn(modifier = Modifier.weight(1f)) {
                     items(uiState.items, key = { it.itemKey }) { item ->
-                        val contentColor = if (item.checked) {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        }
-                        val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+                        SwipeToDeleteRow(onDelete = { viewModel.removeItem(item.itemKey) }) {
+                            val contentColor = if (item.checked) {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
+                            val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { viewModel.toggleItem(item.itemKey, !item.checked) }
-                                .padding(horizontal = spacing.lg, vertical = spacing.sm),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = item.checked,
-                                onCheckedChange = { checked -> viewModel.toggleItem(item.itemKey, checked) },
-                                colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
-                            )
-                            Text(
-                                text = item.name,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = contentColor,
-                                textDecoration = textDecoration,
-                                modifier = Modifier.weight(1f).padding(end = spacing.sm)
-                            )
-                            Text(
-                                text = "${item.totalQuantity} ${item.unit.unit}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = contentColor,
-                                textDecoration = textDecoration
-                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.background)
+                                    .clickable { viewModel.toggleItem(item.itemKey, !item.checked) }
+                                    .padding(horizontal = spacing.lg, vertical = spacing.sm),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Checkbox(
+                                    checked = item.checked,
+                                    onCheckedChange = { checked -> viewModel.toggleItem(item.itemKey, checked) },
+                                    colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
+                                )
+                                Text(
+                                    text = item.name,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    color = contentColor,
+                                    textDecoration = textDecoration,
+                                    modifier = Modifier.weight(1f).padding(end = spacing.sm)
+                                )
+                                Text(
+                                    text = "${item.totalQuantity} ${item.unit.unit}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = contentColor,
+                                    textDecoration = textDecoration
+                                )
+                            }
                         }
                     }
                 }
             }
+
+            Button(
+                onClick = { viewModel.openAddItemDialog() },
+                shape = MaterialTheme.shapes.extraLarge,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                modifier = Modifier.fillMaxWidth().padding(spacing.lg)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null)
+                Spacer(Modifier.width(spacing.xs))
+                Text("Add Item")
+            }
+        }
+
+        if (uiState.showAddItemDialog) {
+            AddShoppingItemDialog(
+                suggestions = uiState.availableIngredients.map { it.name },
+                onConfirm = { name, quantity, unit -> viewModel.addItem(name, quantity, unit) },
+                onDismiss = { viewModel.dismissAddItemDialog() }
+            )
         }
 
         if (showDatePicker) {

@@ -1,0 +1,29 @@
+CREATE TABLE ShoppingListItemEntity (
+    itemKey TEXT NOT NULL,
+    rangeStart TEXT NOT NULL,
+    rangeEnd TEXT NOT NULL,
+    name TEXT NOT NULL,
+    quantity REAL NOT NULL,
+    unit TEXT NOT NULL,
+    checked INTEGER NOT NULL DEFAULT 0,
+    removed INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (itemKey, rangeStart, rangeEnd)
+);
+
+selectActiveItems:
+SELECT * FROM ShoppingListItemEntity
+WHERE rangeStart = :rangeStart AND rangeEnd = :rangeEnd AND removed = 0
+ORDER BY name;
+
+selectKeysForRange:
+SELECT itemKey FROM ShoppingListItemEntity WHERE rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
+
+insertItem:
+INSERT INTO ShoppingListItemEntity(itemKey, rangeStart, rangeEnd, name, quantity, unit, checked, removed)
+VALUES (?, ?, ?, ?, ?, ?, ?, 0);
+
+setChecked:
+UPDATE ShoppingListItemEntity SET checked = :checked WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
+
+setRemoved:
+UPDATE ShoppingListItemEntity SET removed = 1 WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;

@@ -14,11 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -42,9 +38,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
-import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.common.displayName
 import com.meal.planner.common.rememberImagePicker
+import com.meal.planner.components.IngredientNameField
+import com.meal.planner.components.UnitDropdownField
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
 import com.meal.presentation.recipes.IngredientFormRow
@@ -288,71 +285,3 @@ private fun IngredientRowEditor(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun IngredientNameField(
-    value: String,
-    suggestions: List<String>,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val filtered = suggestions.filter { it.contains(value.trim(), ignoreCase = true) }
-    val showMenu = expanded && filtered.isNotEmpty()
-
-    ExposedDropdownMenuBox(expanded = showMenu, onExpandedChange = { expanded = it }, modifier = modifier) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = {
-                onValueChange(it)
-                expanded = true
-            },
-            singleLine = true,
-            label = { Text("Name") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showMenu) },
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true).fillMaxWidth()
-        )
-        ExposedDropdownMenu(expanded = showMenu, onDismissRequest = { expanded = false }) {
-            filtered.forEach { suggestion ->
-                DropdownMenuItem(
-                    text = { Text(suggestion) },
-                    onClick = {
-                        onValueChange(suggestion)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun UnitDropdownField(
-    value: MeasurementUnit,
-    onValueChange: (MeasurementUnit) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }, modifier = modifier) {
-        OutlinedTextField(
-            value = value.displayName(),
-            onValueChange = {},
-            readOnly = true,
-            label = { Text("Unit") },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
-        )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            MeasurementUnit.entries.forEach { unit ->
-                DropdownMenuItem(
-                    text = { Text(unit.displayName()) },
-                    onClick = {
-                        onValueChange(unit)
-                        expanded = false
-                    }
-                )
-            }
-        }
-    }
-}

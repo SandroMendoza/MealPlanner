@@ -2,7 +2,11 @@ package com.meal.presentation.shopping
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.domain.usecase.AddShoppingListItemUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
+import com.meal.domain.usecase.GetAllIngredientsUseCase
+import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.mondayOf
@@ -18,7 +22,10 @@ import kotlinx.datetime.plus
 
 class ShoppingListViewModel(
     private val generateShoppingListUseCase: GenerateShoppingListUseCase,
-    private val toggleShoppingListItemUseCase: ToggleShoppingListItemUseCase
+    private val toggleShoppingListItemUseCase: ToggleShoppingListItemUseCase,
+    private val addShoppingListItemUseCase: AddShoppingListItemUseCase,
+    private val removeShoppingListItemUseCase: RemoveShoppingListItemUseCase,
+    private val getAllIngredientsUseCase: GetAllIngredientsUseCase
 ) : ViewModel() {
 
     private val initialWeekStart = currentWeekMonday()
@@ -35,6 +42,11 @@ class ShoppingListViewModel(
 
     init {
         loadList()
+        viewModelScope.launch {
+            getAllIngredientsUseCase.execute().collect { list ->
+                _uiState.value = _uiState.value.copy(availableIngredients = list)
+            }
+        }
     }
 
     private fun loadList() {
@@ -58,8 +70,29 @@ class ShoppingListViewModel(
 
     fun toggleItem(itemKey: String, checked: Boolean) {
         viewModelScope.launch {
-            toggleShoppingListItemUseCase.execute(itemKey, checked)
+            toggleShoppingListItemUseCase.execute(itemKey, _uiState.value.rangeStart, _uiState.value.rangeEnd, checked)
         }
+    }
+
+    fun removeItem(itemKey: String) {
+        viewModelScope.launch {
+            removeShoppingListItemUseCase.execute(itemKey, _uiState.value.rangeStart, _uiState.value.rangeEnd)
+        }
+    }
+
+    fun addItem(name: String, quantity: Double, unit: MeasurementUnit) {
+        viewModelScope.launch {
+            addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
+        }
+        dismissAddItemDialog()
+    }
+
+    fun openAddItemDialog() {
+        _uiState.value = _uiState.value.copy(showAddItemDialog = true)
+    }
+
+    fun dismissAddItemDialog() {
+        _uiState.value = _uiState.value.copy(showAddItemDialog = false)
     }
 
     fun previousWeek() = shiftWeek(-7)
