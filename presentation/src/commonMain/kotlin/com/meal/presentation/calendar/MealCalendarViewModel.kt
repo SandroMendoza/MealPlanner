@@ -6,6 +6,7 @@ import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
 import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.mondayOf
+import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,10 +18,10 @@ import kotlinx.datetime.plus
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-private fun buildWeekState(weekStart: LocalDate): MealCalendarUiState {
+private fun buildWeekState(weekStart: LocalDate, selectedDate: LocalDate): MealCalendarUiState {
     val weekEnd = weekEndFor(weekStart)
     val days = (0..6).map { weekStart.plus(it, DateTimeUnit.DAY) }
-    return MealCalendarUiState(weekStart = weekStart, weekEnd = weekEnd, days = days)
+    return MealCalendarUiState(weekStart = weekStart, weekEnd = weekEnd, selectedDate = selectedDate, days = days)
 }
 
 @OptIn(ExperimentalUuidApi::class)
@@ -29,7 +30,7 @@ class MealCalendarViewModel(
     private val removeMealSlotUseCase: RemoveMealSlotUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(buildWeekState(currentWeekMonday()))
+    private val _uiState = MutableStateFlow(buildWeekState(currentWeekMonday(), today()))
     val state = _uiState.asStateFlow()
 
     private var loadJob: Job? = null
@@ -62,7 +63,9 @@ class MealCalendarViewModel(
 
     private fun changeWeek(deltaDays: Int) {
         val newStart = _uiState.value.weekStart.plus(deltaDays, DateTimeUnit.DAY)
-        _uiState.value = buildWeekState(newStart)
+        val newDays = (0..6).map { newStart.plus(it, DateTimeUnit.DAY) }
+        val newSelectedDate = today().takeIf { it in newDays } ?: newStart
+        _uiState.value = buildWeekState(newStart, newSelectedDate)
         loadWeek()
     }
 
@@ -73,12 +76,16 @@ class MealCalendarViewModel(
     }
 
     fun goToToday() {
-        _uiState.value = buildWeekState(currentWeekMonday())
+        _uiState.value = buildWeekState(currentWeekMonday(), today())
         loadWeek()
     }
 
     fun goToDate(date: LocalDate) {
-        _uiState.value = buildWeekState(mondayOf(date))
+        _uiState.value = buildWeekState(mondayOf(date), date)
         loadWeek()
+    }
+
+    fun selectDate(date: LocalDate) {
+        _uiState.value = _uiState.value.copy(selectedDate = date)
     }
 }

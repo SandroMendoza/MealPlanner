@@ -41,7 +41,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +59,6 @@ import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.calendar.MealCalendarViewModel
 import com.meal.presentation.common.currentWeekMonday
-import com.meal.presentation.common.today
 import kotlinx.datetime.LocalDate
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
@@ -76,13 +74,8 @@ fun MealCalendarScreen(
     val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    var selectedDate by remember { mutableStateOf(today().takeIf { it in uiState.days } ?: uiState.weekStart) }
+    val selectedDate = uiState.selectedDate
     var showDatePicker by remember { mutableStateOf(false) }
-    LaunchedEffect(uiState.weekStart) {
-        if (selectedDate !in uiState.days) {
-            selectedDate = today().takeIf { it in uiState.days } ?: uiState.weekStart
-        }
-    }
 
     val isCurrentWeek = uiState.weekStart == currentWeekMonday()
 
@@ -113,10 +106,7 @@ fun MealCalendarScreen(
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (!isCurrentWeek) {
-                        IconButton(onClick = {
-                            viewModel.goToToday()
-                            selectedDate = today()
-                        }) {
+                        IconButton(onClick = { viewModel.goToToday() }) {
                             Icon(Icons.Filled.Today, contentDescription = "Go to today")
                         }
                     }
@@ -134,7 +124,7 @@ fun MealCalendarScreen(
                 horizontalArrangement = Arrangement.spacedBy(spacing.sm)
             ) {
                 items(uiState.days) { day ->
-                    DayChip(date = day, selected = day == selectedDate, onClick = { selectedDate = day })
+                    DayChip(date = day, selected = day == selectedDate, onClick = { viewModel.selectDate(day) })
                 }
             }
 
@@ -184,10 +174,7 @@ fun MealCalendarScreen(
         if (showDatePicker) {
             MealDatePickerDialog(
                 initialDate = selectedDate,
-                onDateSelected = { picked ->
-                    viewModel.goToDate(picked)
-                    selectedDate = picked
-                },
+                onDateSelected = { picked -> viewModel.goToDate(picked) },
                 onDismiss = { showDatePicker = false }
             )
         }

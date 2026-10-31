@@ -7,6 +7,7 @@ import kotlinx.datetime.LocalDate
 data class MealCalendarUiState(
     val weekStart: LocalDate,
     val weekEnd: LocalDate,
+    val selectedDate: LocalDate = weekStart,
     val days: List<LocalDate> = emptyList(),
     val entries: List<MealPlanEntry> = emptyList(),
     val isLoading: Boolean = false,
