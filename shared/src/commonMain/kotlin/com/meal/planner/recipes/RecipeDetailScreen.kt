@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.MenuBook
@@ -115,167 +116,172 @@ fun RecipeDetailScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center)
                 )
-                recipe != null -> LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    item {
-                        Box(modifier = Modifier.fillMaxWidth().height(320.dp)) {
-                            if (recipe.imageUrl.isNullOrBlank()) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(MaterialTheme.colorScheme.primaryContainer),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                        modifier = Modifier.size(64.dp)
-                                    )
-                                }
-                            } else {
-                                AsyncImage(
-                                    model = recipe.imageUrl,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
-                            }
-
-                            RecipeDetailOverlayButton(
-                                icon = Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = "Back",
-                                onClick = onBack,
+                recipe != null -> Column(modifier = Modifier.fillMaxSize()) {
+                    Box(modifier = Modifier.fillMaxWidth().height(320.dp)) {
+                        if (recipe.imageUrl.isNullOrBlank()) {
+                            Box(
                                 modifier = Modifier
-                                    .align(Alignment.TopStart)
-                                    .padding(spacing.lg)
-                            )
-
-                            Row(
-                                modifier = Modifier
-                                    .align(Alignment.TopEnd)
-                                    .padding(spacing.lg),
-                                horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.primaryContainer),
+                                contentAlignment = Alignment.Center
                             ) {
-                                RecipeDetailOverlayButton(
-                                    icon = Icons.Filled.Edit,
-                                    contentDescription = "Edit recipe",
-                                    onClick = { onEdit(recipeId) }
-                                )
-                                RecipeDetailOverlayButton(
-                                    icon = Icons.Filled.Delete,
-                                    contentDescription = "Delete recipe",
-                                    tint = MaterialTheme.colorScheme.error,
-                                    onClick = { viewModel.delete() }
-                                )
-                                RecipeDetailOverlayButton(
-                                    icon = if (recipe.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                                    contentDescription = if (recipe.isFavorite) "Remove from favorites" else "Add to favorites",
-                                    tint = if (recipe.isFavorite) MealPlannerPalette.FavoriteRed else MaterialTheme.colorScheme.onSurface,
-                                    onClick = { viewModel.toggleFavorite() }
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                    modifier = Modifier.size(64.dp)
                                 )
                             }
+                        } else {
+                            AsyncImage(
+                                model = recipe.imageUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+
+                        RecipeDetailOverlayButton(
+                            icon = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            onClick = onBack,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(spacing.lg)
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(spacing.lg),
+                            horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                        ) {
+                            RecipeDetailOverlayButton(
+                                icon = Icons.Filled.Edit,
+                                contentDescription = "Edit recipe",
+                                onClick = { onEdit(recipeId) }
+                            )
+                            RecipeDetailOverlayButton(
+                                icon = Icons.Filled.Delete,
+                                contentDescription = "Delete recipe",
+                                tint = MaterialTheme.colorScheme.error,
+                                onClick = { viewModel.delete() }
+                            )
+                            RecipeDetailOverlayButton(
+                                icon = if (recipe.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                                contentDescription = if (recipe.isFavorite) "Remove from favorites" else "Add to favorites",
+                                tint = if (recipe.isFavorite) MealPlannerPalette.FavoriteRed else MaterialTheme.colorScheme.onSurface,
+                                onClick = { viewModel.toggleFavorite() }
+                            )
                         }
                     }
 
-                    item {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .offset(y = -spacing.lg)
-                                .clip(
-                                    androidx.compose.foundation.shape.RoundedCornerShape(
-                                        topStart = MealPlannerTokens.radius.xl,
-                                        topEnd = MealPlannerTokens.radius.xl
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .offset(y = -spacing.lg)
+                            .clip(
+                                androidx.compose.foundation.shape.RoundedCornerShape(
+                                    topStart = MealPlannerTokens.radius.xl,
+                                    topEnd = MealPlannerTokens.radius.xl
+                                )
+                            )
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(horizontal = spacing.lg)
+                    ) {
+                        Text(
+                            text = recipe.name,
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            modifier = Modifier.padding(top = spacing.lg)
+                        )
+
+                        LazyColumn(modifier = Modifier.weight(1f)) {
+                            item {
+                                recipe.description?.let {
+                                    Text(
+                                        text = it,
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(top = spacing.xxs)
                                     )
-                                )
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(spacing.lg)
-                        ) {
-                            Text(
-                                text = recipe.name,
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            recipe.description?.let {
+                                }
+
+                                Row(
+                                    modifier = Modifier.padding(top = spacing.sm),
+                                    horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    RecipeDetailMetaItem(
+                                        icon = Icons.Filled.AccessTime,
+                                        text = "${recipe.preparationTimeMinutes} min"
+                                    )
+                                    RecipeDetailMetaItem(
+                                        icon = Icons.Filled.People,
+                                        text = "${recipe.servings} serving" + if (recipe.servings == 1) "" else "s"
+                                    )
+                                    RecipeDetailMetaItem(
+                                        icon = Icons.AutoMirrored.Filled.MenuBook,
+                                        text = recipe.category.displayName()
+                                    )
+                                }
+
+                                recipe.calories?.let {
+                                    Text(
+                                        text = "$it calories",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.padding(top = spacing.xs)
+                                    )
+                                }
+
                                 Text(
-                                    text = it,
+                                    text = "Ingredients",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
+                                )
+                            }
+                            items(recipe.ingredients) { ingredient ->
+                                Text(
+                                    text = "• ${ingredient.quantity} ${ingredient.unit.unit} ${ingredient.name}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = spacing.xxs)
+                                    modifier = Modifier.padding(vertical = spacing.sm)
                                 )
                             }
 
-                            Row(
-                                modifier = Modifier.padding(top = spacing.sm),
-                                horizontalArrangement = Arrangement.spacedBy(spacing.lg),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                RecipeDetailMetaItem(
-                                    icon = Icons.Filled.AccessTime,
-                                    text = "${recipe.preparationTimeMinutes} min"
-                                )
-                                RecipeDetailMetaItem(
-                                    icon = Icons.Filled.People,
-                                    text = "${recipe.servings} serving" + if (recipe.servings == 1) "" else "s"
-                                )
-                                RecipeDetailMetaItem(
-                                    icon = Icons.AutoMirrored.Filled.MenuBook,
-                                    text = recipe.category.displayName()
-                                )
-                            }
-
-                            recipe.calories?.let {
+                            item {
                                 Text(
-                                    text = "$it calories",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(top = spacing.xs)
+                                    text = "Instructions",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
                                 )
                             }
-
-                            Text(
-                                text = "Ingredients",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
-                            )
-                            recipe.ingredients.forEach { ingredient ->
-                                Text(
-                                    text = "•  ${ingredient.quantity} ${ingredient.unit.unit} ${ingredient.name}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(vertical = spacing.xxs)
-                                )
-                            }
-
-                            Text(
-                                text = "Instructions",
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
-                            )
-                            recipe.instructions.forEach { instruction ->
+                            items(recipe.instructions) { instruction ->
                                 Text(
                                     text = "${instruction.stepNumber}. ${instruction.description}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(vertical = spacing.xxs)
+                                    modifier = Modifier.padding(vertical = spacing.sm)
                                 )
                             }
+                        }
 
-                            Button(
-                                onClick = onAddToMealPlan,
-                                shape = MaterialTheme.shapes.extraLarge,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = spacing.xxl)
-                            ) {
-                                Text("Add to Meal Plan")
-                            }
+                        Button(
+                            onClick = onAddToMealPlan,
+                            shape = MaterialTheme.shapes.extraLarge,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            ),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = spacing.sm, bottom = spacing.lg)
+                        ) {
+                            Text("Add to Meal Plan")
                         }
                     }
                 }
