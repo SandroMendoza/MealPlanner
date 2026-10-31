@@ -1,7 +1,6 @@
 package com.meal.planner.calendar
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -222,10 +220,21 @@ private fun MealSection(
 ) {
     val spacing = MealPlannerTokens.spacing
     Column {
-        Text(mealType.displayName(), style = MaterialTheme.typography.titleMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(mealType.displayName(), style = MaterialTheme.typography.titleMedium)
+            AddMealButton(mealType = mealType, onClick = onAdd)
+        }
         Spacer(Modifier.height(spacing.xs))
         if (entries.isEmpty()) {
-            EmptySlotRow(mealType = mealType, onClick = onAdd)
+            Text(
+                text = "No ${mealType.displayName().lowercase()} planned",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         } else {
             entries.forEachIndexed { index, entry ->
                 MealEntryCard(
@@ -238,13 +247,26 @@ private fun MealSection(
                     Spacer(Modifier.height(spacing.xs))
                 }
             }
-            Spacer(Modifier.height(spacing.xs))
-            EmptySlotRow(
-                mealType = mealType,
-                onClick = onAdd,
-                label = "Add another ${mealType.displayName().lowercase()}"
-            )
         }
+    }
+}
+
+@Composable
+private fun AddMealButton(mealType: MealType, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .size(28.dp)
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            Icons.Default.Add,
+            contentDescription = "Add ${mealType.displayName().lowercase()}",
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+        )
     }
 }
 
@@ -297,32 +319,5 @@ private fun MealEntryCard(entry: MealPlanEntry, onClick: () -> Unit, onChange: (
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun EmptySlotRow(
-    mealType: MealType,
-    onClick: () -> Unit,
-    label: String = "Add ${mealType.displayName().lowercase()}"
-) {
-    val spacing = MealPlannerTokens.spacing
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.surface)
-            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(MealPlannerTokens.radius.lg))
-            .clickable(onClick = onClick)
-            .padding(spacing.cardPadding),
-        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(Icons.Default.Add, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
     }
 }
