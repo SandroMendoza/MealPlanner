@@ -14,11 +14,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,6 +44,7 @@ import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
+import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.recipes.RecipeGridCard
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.RecipeViewModel
@@ -68,13 +71,14 @@ fun RecipePickerScreen(
     val uiState by recipeViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     var pendingRecipe by remember { mutableStateOf<Recipe?>(null) }
+    var assignDate by remember { mutableStateOf(date) }
 
-    fun assign(recipeId: Uuid, chosenMealType: MealType) {
+    fun assign(recipeId: Uuid, chosenMealType: MealType, onDate: LocalDate = date) {
         coroutineScope.launch {
             if (replaceSlotId != null) {
                 replaceRecipeInSlotUseCase.execute(Uuid.parse(replaceSlotId), recipeId)
             } else {
-                addRecipeToSlotUseCase.execute(date, chosenMealType, recipeId)
+                addRecipeToSlotUseCase.execute(onDate, chosenMealType, recipeId)
             }
             onAssigned()
         }
@@ -83,9 +87,11 @@ fun RecipePickerScreen(
     pendingRecipe?.let { recipe ->
         MealTypeDialog(
             recipeName = recipe.name,
+            date = assignDate,
+            onDateChange = { assignDate = it },
             onSelect = { chosenMealType ->
                 pendingRecipe = null
-                assign(recipe.id, chosenMealType)
+                assign(recipe.id, chosenMealType, assignDate)
             },
             onDismiss = { pendingRecipe = null }
         )
@@ -144,6 +150,7 @@ fun RecipePickerScreen(
                                     if (mealType != null) {
                                         assign(recipe.id, mealType)
                                     } else {
+                                        assignDate = date
                                         pendingRecipe = recipe
                                     }
                                 }
@@ -159,16 +166,44 @@ fun RecipePickerScreen(
 @Composable
 private fun MealTypeDialog(
     recipeName: String,
+    date: LocalDate,
+    onDateChange: (LocalDate) -> Unit,
     onSelect: (MealType) -> Unit,
     onDismiss: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
+    var showDatePicker by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Add \"$recipeName\" to...", style = MaterialTheme.typography.titleLarge) },
         text = {
             Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { showDatePicker = true }
+                        .padding(vertical = spacing.sm),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(spacing.md)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.CalendarMonth,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = date.toString(),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "Change",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+                HorizontalDivider(modifier = Modifier.padding(vertical = spacing.xs))
                 MealType.entries.forEach { mealType ->
                     Row(
                         modifier = Modifier
@@ -192,4 +227,12 @@ private fun MealTypeDialog(
             TextButton(onClick = onDismiss) { Text("Cancel") }
         }
     )
+
+    if (showDatePicker) {
+        MealDatePickerDialog(
+            initialDate = date,
+            onDateSelected = onDateChange,
+            onDismiss = { showDatePicker = false }
+        )
+    }
 }

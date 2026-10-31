@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
 import com.meal.presentation.common.currentWeekMonday
+import com.meal.presentation.common.mondayOf
 import com.meal.presentation.common.weekEndFor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,6 +74,11 @@ class MealCalendarViewModel(
 
     fun goToToday() {
         _uiState.value = buildWeekState(currentWeekMonday())
+        loadWeek()
+    }
+
+    fun goToDate(date: LocalDate) {
+        _uiState.value = buildWeekState(mondayOf(date))
         loadWeek()
     }
 }

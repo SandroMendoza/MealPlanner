@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.Button
@@ -54,6 +55,7 @@ import com.meal.domain.model.MealPlanEntry
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
+import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.calendar.MealCalendarViewModel
@@ -75,8 +77,11 @@ fun MealCalendarScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     var selectedDate by remember { mutableStateOf(today().takeIf { it in uiState.days } ?: uiState.weekStart) }
+    var showDatePicker by remember { mutableStateOf(false) }
     LaunchedEffect(uiState.weekStart) {
-        selectedDate = today().takeIf { it in uiState.days } ?: uiState.weekStart
+        if (selectedDate !in uiState.days) {
+            selectedDate = today().takeIf { it in uiState.days } ?: uiState.weekStart
+        }
     }
 
     val isCurrentWeek = uiState.weekStart == currentWeekMonday()
@@ -114,6 +119,9 @@ fun MealCalendarScreen(
                         }) {
                             Icon(Icons.Filled.Today, contentDescription = "Go to today")
                         }
+                    }
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a date")
                     }
                     IconButton(onClick = { viewModel.nextWeek() }) {
                         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next week")
@@ -171,6 +179,17 @@ fun MealCalendarScreen(
                 Spacer(Modifier.width(spacing.xs))
                 Text("Add Meal")
             }
+        }
+
+        if (showDatePicker) {
+            MealDatePickerDialog(
+                initialDate = selectedDate,
+                onDateSelected = { picked ->
+                    viewModel.goToDate(picked)
+                    selectedDate = picked
+                },
+                onDismiss = { showDatePicker = false }
+            )
         }
     }
 }
