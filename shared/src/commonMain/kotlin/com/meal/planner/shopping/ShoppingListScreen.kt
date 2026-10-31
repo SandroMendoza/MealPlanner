@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,7 +31,10 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
     val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0)
+    ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
             Text(
                 text = "${uiState.weekStart} - ${uiState.weekEnd}",

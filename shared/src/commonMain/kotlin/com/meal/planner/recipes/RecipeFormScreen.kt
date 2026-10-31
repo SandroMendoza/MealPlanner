@@ -3,6 +3,7 @@ package com.meal.planner.recipes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -55,6 +56,7 @@ fun RecipeFormScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
                 title = {
@@ -70,7 +72,8 @@ fun RecipeFormScreen(
                     TextButton(onClick = { viewModel.save() }, enabled = uiState.canSave && !uiState.isSaving) {
                         Text("Save")
                     }
-                }
+                },
+                windowInsets = WindowInsets(0)
             )
         }
     ) { padding ->

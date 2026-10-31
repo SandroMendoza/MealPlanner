@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -91,12 +92,14 @@ fun RecipePickerScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
                 title = { Text("Pick a recipe", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     TextButton(onClick = onBack) { Text("Cancel") }
-                }
+                },
+                windowInsets = WindowInsets(0)
             )
         }
     ) { padding ->
