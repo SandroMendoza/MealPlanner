@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Today
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
@@ -35,6 +36,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -180,7 +182,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                 }
                 else -> LazyColumn(modifier = Modifier.weight(1f)) {
                     items(uiState.items, key = { it.itemKey }) { item ->
-                        SwipeToDeleteRow(onDelete = { viewModel.removeItem(item.itemKey) }) {
+                        SwipeToDeleteRow(onRequestDelete = { viewModel.requestDeleteItem(item) }) {
                             val contentColor = if (item.checked) {
                                 MaterialTheme.colorScheme.onSurfaceVariant
                             } else {
@@ -269,6 +271,22 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                 item = item,
                 onConfirm = { price -> viewModel.recordItemPrice(item.itemKey, price) },
                 onDismiss = { viewModel.dismissRecordPriceDialog() }
+            )
+        }
+
+        uiState.itemPendingDeletion?.let { item ->
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissDeleteConfirmation() },
+                title = { Text("Remove item?") },
+                text = { Text("Remove ${item.name} from the shopping list?") },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.confirmDeleteItem() }) {
+                        Text("Remove", color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) { Text("Cancel") }
+                }
             )
         }
 

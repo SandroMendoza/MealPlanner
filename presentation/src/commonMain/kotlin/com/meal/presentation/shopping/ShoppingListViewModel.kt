@@ -83,6 +83,19 @@ class ShoppingListViewModel(
         }
     }
 
+    fun requestDeleteItem(item: ShoppingListItem) {
+        _uiState.value = _uiState.value.copy(itemPendingDeletion = item)
+    }
+
+    fun confirmDeleteItem() {
+        _uiState.value.itemPendingDeletion?.let { item -> removeItem(item.itemKey) }
+        _uiState.value = _uiState.value.copy(itemPendingDeletion = null)
+    }
+
+    fun dismissDeleteConfirmation() {
+        _uiState.value = _uiState.value.copy(itemPendingDeletion = null)
+    }
+
     fun addItem(name: String, quantity: Double, unit: MeasurementUnit) {
         viewModelScope.launch {
             addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)

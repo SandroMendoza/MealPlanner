@@ -20,7 +20,7 @@ import com.meal.planner.theme.MealPlannerTokens
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeToDeleteRow(
-    onDelete: () -> Unit,
+    onRequestDelete: () -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
@@ -28,11 +28,9 @@ fun SwipeToDeleteRow(
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = { value ->
             if (value == SwipeToDismissBoxValue.StartToEnd || value == SwipeToDismissBoxValue.EndToStart) {
-                onDelete()
-                true
-            } else {
-                false
+                onRequestDelete()
             }
+            false
         }
     )
 
