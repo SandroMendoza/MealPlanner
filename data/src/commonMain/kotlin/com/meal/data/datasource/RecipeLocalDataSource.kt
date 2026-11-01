@@ -90,7 +90,8 @@ class RecipeLocalDataSource(
                 preparationTimeMinutes = dto.preparationTimeMinutes.toLong(),
                 servings = dto.servings.toLong(),
                 calories = dto.calories?.toLong(),
-                imageUrl = dto.imageUrl
+                imageUrl = dto.imageUrl,
+                isUserCreated = if (dto.isUserCreated) 1 else 0
             )
             replaceChildren(dto)
         }
@@ -160,7 +161,8 @@ class RecipeLocalDataSource(
             imageUrl = row.imageUrl,
             ingredients = ingredients,
             instructions = instructions,
-            isFavorite = row.isFavorite != 0L
+            isFavorite = row.isFavorite != 0L,
+            isUserCreated = row.isUserCreated != 0L
         )
     }
 }

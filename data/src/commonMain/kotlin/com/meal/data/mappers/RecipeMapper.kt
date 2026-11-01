@@ -20,7 +20,8 @@ object RecipeMapper {
             imageUrl = dto.imageUrl,
             ingredients = dto.ingredients,
             instructions = dto.instructions,
-            isFavorite = dto.isFavorite
+            isFavorite = dto.isFavorite,
+            isUserCreated = dto.isUserCreated
         )
     }
 
@@ -41,7 +42,8 @@ object RecipeMapper {
             imageUrl = domain.imageUrl,
             ingredients = domain.ingredients,
             instructions = domain.instructions,
-            isFavorite = domain.isFavorite
+            isFavorite = domain.isFavorite,
+            isUserCreated = domain.isUserCreated
         )
     }
 

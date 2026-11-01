@@ -8,7 +8,8 @@ CREATE TABLE RecipeEntity (
     calories INTEGER,
     imageUrl TEXT,
     isDeleted INTEGER NOT NULL DEFAULT 0,
-    isFavorite INTEGER NOT NULL DEFAULT 0
+    isFavorite INTEGER NOT NULL DEFAULT 0,
+    isUserCreated INTEGER NOT NULL DEFAULT 1
 );
 
 CREATE TABLE RecipeMealTypeEntity (
@@ -59,8 +60,8 @@ selectInstructionsForRecipe:
 SELECT * FROM InstructionEntity WHERE recipeId = ? ORDER BY stepNumber;
 
 insertRecipe:
-INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, calories, imageUrl, isDeleted)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0);
+INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, calories, imageUrl, isDeleted, isUserCreated)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?);
 
 updateRecipe:
 UPDATE RecipeEntity

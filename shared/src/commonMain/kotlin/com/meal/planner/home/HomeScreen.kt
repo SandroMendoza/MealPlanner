@@ -74,7 +74,11 @@ fun HomeScreen(
         ) {
             Column {
                 Text(
-                    text = "Good morning, ${uiState.greetingName}",
+                    text = if (uiState.greetingName.isBlank()) {
+                        "Good morning!"
+                    } else {
+                        "Good morning, ${uiState.greetingName}"
+                    },
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(

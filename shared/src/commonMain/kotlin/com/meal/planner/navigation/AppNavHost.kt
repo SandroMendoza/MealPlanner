@@ -1,7 +1,5 @@
 package com.meal.planner.navigation
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
@@ -16,7 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavType
@@ -30,6 +27,7 @@ import com.meal.domain.model.enums.MealType
 import com.meal.planner.calendar.MealCalendarScreen
 import com.meal.planner.calendar.RecipePickerScreen
 import com.meal.planner.home.HomeScreen
+import com.meal.planner.profile.ProfileScreen
 import com.meal.planner.recipes.RecipeDetailScreen
 import com.meal.planner.recipes.RecipeFormScreen
 import com.meal.planner.recipes.RecipeScreen
@@ -171,9 +169,11 @@ fun AppNavHost() {
                 ShoppingListScreen()
             }
             composable(Routes.PROFILE) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Profile coming soon")
-                }
+                ProfileScreen(
+                    onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES) },
+                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES) },
+                    onMealPlanClick = { navController.navigateToTab(Routes.CALENDAR) }
+                )
             }
         }
     }

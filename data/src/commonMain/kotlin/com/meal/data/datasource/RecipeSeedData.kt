@@ -13,7 +13,9 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 object RecipeSeedData {
 
-    fun recipes(): List<RecipeDto> = listOf(
+    fun recipes(): List<RecipeDto> = baseRecipes().map { it.copy(isUserCreated = false) }
+
+    private fun baseRecipes(): List<RecipeDto> = listOf(
         RecipeDto(
             id = Uuid.random(),
             name = "Chicken Adobo",
