@@ -14,8 +14,12 @@ data class ShoppingListUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val availableIngredients: List<Ingredient> = emptyList(),
-    val showAddItemDialog: Boolean = false
+    val showAddItemDialog: Boolean = false,
+    val itemBeingPriced: ShoppingListItem? = null
 ) {
     val isEmpty: Boolean
         get() = !isLoading && items.isEmpty() && errorMessage == null
+
+    val totalSpent: Double
+        get() = items.sumOf { it.price ?: 0.0 }
 }

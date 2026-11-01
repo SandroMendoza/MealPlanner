@@ -60,6 +60,13 @@ private fun ShoppingListRangeMode.label(): String = when (this) {
     ShoppingListRangeMode.DAY -> "Day"
 }
 
+private fun formatPrice(price: Double): String {
+    val cents = (price * 100).toLong()
+    val whole = cents / 100
+    val fraction = (cents % 100).let { if (it < 0) -it else it }
+    return "$whole.${fraction.toString().padStart(2, '0')}"
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
@@ -205,11 +212,35 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                     text = "${item.totalQuantity} ${item.unit.unit}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = contentColor,
-                                    textDecoration = textDecoration
+                                    textDecoration = textDecoration,
+                                    modifier = Modifier.padding(end = spacing.sm)
+                                )
+                                val priceLabel = item.price?.let { price -> "$${formatPrice(price)}" } ?: "Add price"
+                                Text(
+                                    text = priceLabel,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = if (item.price != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                    textDecoration = textDecoration,
+                                    modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
                                 )
                             }
                         }
                     }
+                }
+            }
+
+            if (!uiState.isEmpty) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg, vertical = spacing.sm),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Total spent", style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        "$${formatPrice(uiState.totalSpent)}",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
 
@@ -230,6 +261,14 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                 suggestions = uiState.availableIngredients.map { it.name },
                 onConfirm = { name, quantity, unit -> viewModel.addItem(name, quantity, unit) },
                 onDismiss = { viewModel.dismissAddItemDialog() }
+            )
+        }
+
+        uiState.itemBeingPriced?.let { item ->
+            RecordPriceDialog(
+                item = item,
+                onConfirm = { price -> viewModel.recordItemPrice(item.itemKey, price) },
+                onDismiss = { viewModel.dismissRecordPriceDialog() }
             )
         }
 

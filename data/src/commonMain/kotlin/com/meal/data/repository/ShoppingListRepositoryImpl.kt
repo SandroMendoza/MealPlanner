@@ -28,4 +28,8 @@ class ShoppingListRepositoryImpl(
     override suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) {
         localDataSource.remove(itemKey, rangeStart, rangeEnd)
     }
+
+    override suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double) {
+        localDataSource.setItemPrice(itemKey, rangeStart, rangeEnd, price)
+    }
 }

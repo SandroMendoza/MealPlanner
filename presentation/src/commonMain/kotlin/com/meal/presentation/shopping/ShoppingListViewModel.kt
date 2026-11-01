@@ -3,9 +3,11 @@ package com.meal.presentation.shopping
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.usecase.AddShoppingListItemUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
+import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.presentation.common.currentWeekMonday
@@ -25,6 +27,7 @@ class ShoppingListViewModel(
     private val toggleShoppingListItemUseCase: ToggleShoppingListItemUseCase,
     private val addShoppingListItemUseCase: AddShoppingListItemUseCase,
     private val removeShoppingListItemUseCase: RemoveShoppingListItemUseCase,
+    private val recordItemPriceUseCase: RecordItemPriceUseCase,
     private val getAllIngredientsUseCase: GetAllIngredientsUseCase
 ) : ViewModel() {
 
@@ -93,6 +96,21 @@ class ShoppingListViewModel(
 
     fun dismissAddItemDialog() {
         _uiState.value = _uiState.value.copy(showAddItemDialog = false)
+    }
+
+    fun recordItemPrice(itemKey: String, price: Double) {
+        viewModelScope.launch {
+            recordItemPriceUseCase.execute(itemKey, _uiState.value.rangeStart, _uiState.value.rangeEnd, price)
+        }
+        dismissRecordPriceDialog()
+    }
+
+    fun openRecordPriceDialog(item: ShoppingListItem) {
+        _uiState.value = _uiState.value.copy(itemBeingPriced = item)
+    }
+
+    fun dismissRecordPriceDialog() {
+        _uiState.value = _uiState.value.copy(itemBeingPriced = null)
     }
 
     fun previousWeek() = shiftWeek(-7)

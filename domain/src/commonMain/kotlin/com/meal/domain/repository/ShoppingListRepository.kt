@@ -10,4 +10,5 @@ interface ShoppingListRepository {
     suspend fun setItemChecked(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, checked: Boolean)
     suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate)
     suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate)
+    suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double)
 }

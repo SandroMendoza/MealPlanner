@@ -69,11 +69,17 @@ class ShoppingListLocalDataSource(
             queries.setRemoved(itemKey, rangeStart.toString(), rangeEnd.toString())
         }
 
+    suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double) =
+        withContext(ioDispatcher) {
+            queries.setItemPrice(price, itemKey, rangeStart.toString(), rangeEnd.toString())
+        }
+
     private fun toDomain(row: ShoppingListItemEntity) = ShoppingListItem(
         itemKey = row.itemKey,
         name = row.name,
         totalQuantity = row.quantity,
         unit = MeasurementUnit.valueOf(row.unit),
-        checked = row.checked != 0L
+        checked = row.checked != 0L,
+        price = row.price
     )
 }
