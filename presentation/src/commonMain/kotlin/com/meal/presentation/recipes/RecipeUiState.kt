@@ -13,7 +13,8 @@ data class RecipeUiState(
     val selectedMealType: MealType? = null,
     val prepTimeRange: ClosedFloatingPointRange<Float> = 0f..180f,
     val calorieRange: ClosedFloatingPointRange<Float> = 0f..1500f,
-    val showFavoritesOnly: Boolean = false
+    val showFavoritesOnly: Boolean = false,
+    val showCreatedOnly: Boolean = false
 ) {
     val hasRecipes: Boolean
         get() = recipes.isNotEmpty()
@@ -22,6 +23,7 @@ data class RecipeUiState(
         get() = recipes
             .asSequence()
             .filter { !showFavoritesOnly || it.isFavorite }
+            .filter { !showCreatedOnly || it.isUserCreated }
             .filter { selectedCategory == null || it.category == selectedCategory }
             .filter { selectedMealType == null || it.mealTypes.contains(selectedMealType) }
             .filter { it.preparationTimeMinutes.toFloat() in prepTimeRange }
@@ -39,6 +41,7 @@ data class RecipeUiState(
         get() = when {
             !hasRecipes -> "No recipes yet."
             showFavoritesOnly -> "No favorites yet. Tap the heart on a recipe to add one."
+            showCreatedOnly -> "No recipes created yet. Tap + to add your own."
             else -> "No recipes match your filters."
         }
 

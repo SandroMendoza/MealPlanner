@@ -35,7 +35,7 @@ import com.meal.planner.shopping.ShoppingListScreen
 import kotlinx.datetime.LocalDate
 import kotlin.uuid.ExperimentalUuidApi
 
-private val TAB_ROUTES = listOf(Routes.HOME, Routes.CALENDAR, Routes.RECIPES, Routes.SHOPPING_LIST, Routes.PROFILE)
+private val TAB_ROUTES = listOf(Routes.HOME, Routes.CALENDAR, Routes.RECIPES, Routes.RECIPES_FAVORITES, Routes.RECIPES_CREATED, Routes.SHOPPING_LIST, Routes.PROFILE)
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
@@ -61,7 +61,7 @@ fun AppNavHost() {
                         label = { Text("Meal plan") }
                     )
                     NavigationBarItem(
-                        selected = currentRoute == Routes.RECIPES,
+                        selected = currentRoute == Routes.RECIPES || currentRoute == Routes.RECIPES_FAVORITES || currentRoute == Routes.RECIPES_CREATED,
                         onClick = { navController.navigateToTab(Routes.RECIPES) },
                         icon = { Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null) },
                         label = { Text("Recipes") }
@@ -101,6 +101,24 @@ fun AppNavHost() {
                         navController.navigate(Routes.recipeDetail(recipeId.toString()))
                     },
                     onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) }
+                )
+            }
+            composable(Routes.RECIPES_FAVORITES) {
+                RecipeScreen(
+                    onRecipeClick = { recipeId ->
+                        navController.navigate(Routes.recipeDetail(recipeId.toString()))
+                    },
+                    onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) },
+                    initialFavoritesOnly = true
+                )
+            }
+            composable(Routes.RECIPES_CREATED) {
+                RecipeScreen(
+                    onRecipeClick = { recipeId ->
+                        navController.navigate(Routes.recipeDetail(recipeId.toString()))
+                    },
+                    onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) },
+                    initialCreatedOnly = true
                 )
             }
             composable(Routes.RECIPE_NEW) {
@@ -170,8 +188,8 @@ fun AppNavHost() {
             }
             composable(Routes.PROFILE) {
                 ProfileScreen(
-                    onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES) },
-                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES) },
+                    onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES_CREATED) },
+                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) },
                     onMealPlanClick = { navController.navigateToTab(Routes.CALENDAR) }
                 )
             }

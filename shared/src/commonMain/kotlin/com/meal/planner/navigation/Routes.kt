@@ -4,6 +4,8 @@ object Routes {
     const val HOME = "home"
     const val PROFILE = "profile"
     const val RECIPES = "recipes"
+    const val RECIPES_FAVORITES = "recipes/favorites"
+    const val RECIPES_CREATED = "recipes/created"
     const val RECIPE_NEW = "recipes/new"
     const val RECIPE_DETAIL_PATTERN = "recipes/{recipeId}"
     const val RECIPE_EDIT_PATTERN = "recipes/{recipeId}/edit"

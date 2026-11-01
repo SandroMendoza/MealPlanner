@@ -45,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,10 +74,17 @@ import kotlin.uuid.Uuid
 fun RecipeScreen(
     viewModel: RecipeViewModel = koinViewModel(),
     onRecipeClick: (Uuid) -> Unit = {},
-    onAddRecipeClick: () -> Unit = {}
+    onAddRecipeClick: () -> Unit = {},
+    initialFavoritesOnly: Boolean = false,
+    initialCreatedOnly: Boolean = false
 ) {
     val spacing = MealPlannerTokens.spacing
     var showFilterSheet by remember { mutableStateOf(false) }
+
+    LaunchedEffect(initialFavoritesOnly, initialCreatedOnly) {
+        if (initialFavoritesOnly) viewModel.onFavoritesTabSelected(true)
+        if (initialCreatedOnly) viewModel.onCreatedOnlyTabSelected(true)
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -94,6 +102,7 @@ fun RecipeScreen(
         val uiState by viewModel.state.collectAsStateWithLifecycle()
         val hasActiveFilters = uiState.selectedCategory != null ||
             uiState.showFavoritesOnly ||
+            uiState.showCreatedOnly ||
             uiState.prepTimeRange != 0f..180f ||
             uiState.calorieRange != 0f..1500f
 
@@ -193,11 +202,13 @@ fun RecipeScreen(
                 onDismiss = { showFilterSheet = false },
                 onCategorySelected = viewModel::onCategorySelected,
                 onFavoritesOnlyChange = viewModel::onFavoritesTabSelected,
+                onCreatedOnlyChange = viewModel::onCreatedOnlyTabSelected,
                 onPrepTimeRangeChange = viewModel::onPrepTimeRangeChange,
                 onCalorieRangeChange = viewModel::onCalorieRangeChange,
                 onClearFilters = {
                     viewModel.onCategorySelected(null)
                     viewModel.onFavoritesTabSelected(false)
+                    viewModel.onCreatedOnlyTabSelected(false)
                     viewModel.onPrepTimeRangeChange(0f..180f)
                     viewModel.onCalorieRangeChange(0f..1500f)
                 }
@@ -219,6 +230,7 @@ private fun RecipeFilterSheet(
     onDismiss: () -> Unit,
     onCategorySelected: (FoodCategory?) -> Unit,
     onFavoritesOnlyChange: (Boolean) -> Unit,
+    onCreatedOnlyChange: (Boolean) -> Unit,
     onPrepTimeRangeChange: (ClosedFloatingPointRange<Float>) -> Unit,
     onCalorieRangeChange: (ClosedFloatingPointRange<Float>) -> Unit,
     onClearFilters: () -> Unit
@@ -247,6 +259,15 @@ private fun RecipeFilterSheet(
             ) {
                 Text("Favorites only", style = MaterialTheme.typography.bodyLarge)
                 Switch(checked = uiState.showFavoritesOnly, onCheckedChange = onFavoritesOnlyChange)
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text("Created by me", style = MaterialTheme.typography.bodyLarge)
+                Switch(checked = uiState.showCreatedOnly, onCheckedChange = onCreatedOnlyChange)
             }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = spacing.lg))

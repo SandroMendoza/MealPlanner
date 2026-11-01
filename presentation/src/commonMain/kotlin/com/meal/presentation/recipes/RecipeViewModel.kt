@@ -71,6 +71,10 @@ class RecipeViewModel(
         _uiState.value = _uiState.value.copy(showFavoritesOnly = showFavoritesOnly)
     }
 
+    fun onCreatedOnlyTabSelected(showCreatedOnly: Boolean) {
+        _uiState.value = _uiState.value.copy(showCreatedOnly = showCreatedOnly)
+    }
+
     fun onToggleFavorite(recipe: Recipe) {
         viewModelScope.launch {
             toggleFavoriteUseCase.execute(recipe.id, !recipe.isFavorite)
