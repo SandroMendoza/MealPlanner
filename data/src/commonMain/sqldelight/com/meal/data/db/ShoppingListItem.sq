@@ -31,3 +31,11 @@ UPDATE ShoppingListItemEntity SET removed = 1 WHERE itemKey = :itemKey AND range
 
 setItemPrice:
 UPDATE ShoppingListItemEntity SET price = :price, checked = 1 WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
+
+selectPricedItemsInRange:
+SELECT * FROM ShoppingListItemEntity
+WHERE price IS NOT NULL
+  AND removed = 0
+  AND rangeStart <= :rangeEnd
+  AND rangeEnd >= :rangeStart
+ORDER BY rangeStart, name;

@@ -7,6 +7,7 @@ import com.meal.presentation.recipes.RecipeDetailViewModel
 import com.meal.presentation.recipes.RecipeFormViewModel
 import com.meal.presentation.recipes.RecipeViewModel
 import com.meal.presentation.shopping.ShoppingListViewModel
+import com.meal.presentation.spending.SpendingReportsViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import kotlin.uuid.ExperimentalUuidApi
@@ -31,4 +32,5 @@ val presentationModule = module {
     viewModel { ShoppingListViewModel(get(), get(), get(), get(), get(), get()) }
     viewModel { HomeViewModel(get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
+    viewModel { SpendingReportsViewModel(get()) }
 }

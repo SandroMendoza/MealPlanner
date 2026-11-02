@@ -1,6 +1,7 @@
 package com.meal.domain.repository
 
 import com.meal.domain.model.ShoppingListItem
+import com.meal.domain.model.SpendingLineItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
@@ -11,4 +12,5 @@ interface ShoppingListRepository {
     suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate)
     suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate)
     suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double)
+    fun getPricedItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<SpendingLineItem>>
 }

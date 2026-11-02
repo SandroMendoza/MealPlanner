@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
+import com.meal.planner.common.formatPrice
 import com.meal.planner.components.SwipeToDeleteRow
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekMonday
@@ -60,13 +61,6 @@ private fun ShoppingListRangeMode.label(): String = when (this) {
     ShoppingListRangeMode.WEEK -> "Week"
     ShoppingListRangeMode.RANGE -> "Range"
     ShoppingListRangeMode.DAY -> "Day"
-}
-
-private fun formatPrice(price: Double): String {
-    val cents = (price * 100).toLong()
-    val whole = cents / 100
-    val fraction = (cents % 100).let { if (it < 0) -it else it }
-    return "$whole.${fraction.toString().padStart(2, '0')}"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

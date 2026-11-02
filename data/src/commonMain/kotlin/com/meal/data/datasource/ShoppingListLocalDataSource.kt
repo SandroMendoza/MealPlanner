@@ -3,8 +3,10 @@ package com.meal.data.datasource
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.meal.data.db.MealPlannerDatabase
+import com.meal.data.db.SelectPricedItemsInRange
 import com.meal.data.db.ShoppingListItemEntity
 import com.meal.domain.model.ShoppingListItem
+import com.meal.domain.model.SpendingLineItem
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +76,12 @@ class ShoppingListLocalDataSource(
             queries.setItemPrice(price, itemKey, rangeStart.toString(), rangeEnd.toString())
         }
 
+    fun pricedItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<SpendingLineItem>> =
+        queries.selectPricedItemsInRange(rangeEnd = rangeEnd.toString(), rangeStart = rangeStart.toString())
+            .asFlow()
+            .mapToList(ioDispatcher)
+            .map { rows -> rows.map { toSpendingLineItem(it) } }
+
     private fun toDomain(row: ShoppingListItemEntity) = ShoppingListItem(
         itemKey = row.itemKey,
         name = row.name,
@@ -81,5 +89,15 @@ class ShoppingListLocalDataSource(
         unit = MeasurementUnit.valueOf(row.unit),
         checked = row.checked != 0L,
         price = row.price
+    )
+
+    private fun toSpendingLineItem(row: SelectPricedItemsInRange) = SpendingLineItem(
+        itemKey = row.itemKey,
+        name = row.name,
+        totalQuantity = row.quantity,
+        unit = MeasurementUnit.valueOf(row.unit),
+        price = row.price,
+        rangeStart = LocalDate.parse(row.rangeStart),
+        rangeEnd = LocalDate.parse(row.rangeEnd)
     )
 }

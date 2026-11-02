@@ -2,6 +2,7 @@ package com.meal.data.repository
 
 import com.meal.data.datasource.ShoppingListLocalDataSource
 import com.meal.domain.model.ShoppingListItem
+import com.meal.domain.model.SpendingLineItem
 import com.meal.domain.repository.ShoppingListRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
@@ -32,4 +33,7 @@ class ShoppingListRepositoryImpl(
     override suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double) {
         localDataSource.setItemPrice(itemKey, rangeStart, rangeEnd, price)
     }
+
+    override fun getPricedItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<SpendingLineItem>> =
+        localDataSource.pricedItems(rangeStart, rangeEnd)
 }

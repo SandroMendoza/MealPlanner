@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.HorizontalDivider
@@ -47,6 +48,7 @@ private val EDIT_BADGE_SIZE = 32.dp
 fun ProfileScreen(
     onMyRecipesClick: () -> Unit,
     onFavoritesClick: () -> Unit,
+    onSpendingReportsClick: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val spacing = MealPlannerTokens.spacing
@@ -128,6 +130,8 @@ fun ProfileScreen(
             ProfileNavRow(label = "My Recipes", icon = Icons.AutoMirrored.Filled.MenuBook, onClick = onMyRecipesClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             ProfileNavRow(label = "Favorites", icon = Icons.Default.Favorite, onClick = onFavoritesClick)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            ProfileNavRow(label = "Spending Reports", icon = Icons.AutoMirrored.Filled.ReceiptLong, onClick = onSpendingReportsClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         }
 

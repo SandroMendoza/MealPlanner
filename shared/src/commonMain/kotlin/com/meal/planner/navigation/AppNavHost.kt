@@ -32,6 +32,7 @@ import com.meal.planner.recipes.RecipeDetailScreen
 import com.meal.planner.recipes.RecipeFormScreen
 import com.meal.planner.recipes.RecipeScreen
 import com.meal.planner.shopping.ShoppingListScreen
+import com.meal.planner.spending.SpendingReportsScreen
 import kotlinx.datetime.LocalDate
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -189,8 +190,12 @@ fun AppNavHost() {
             composable(Routes.PROFILE) {
                 ProfileScreen(
                     onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES_CREATED) },
-                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) }
+                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) },
+                    onSpendingReportsClick = { navController.navigate(Routes.SPENDING_REPORTS) }
                 )
+            }
+            composable(Routes.SPENDING_REPORTS) {
+                SpendingReportsScreen(onBack = { navController.popBackStack() })
             }
         }
     }

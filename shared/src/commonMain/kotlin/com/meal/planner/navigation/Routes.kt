@@ -12,6 +12,7 @@ object Routes {
     const val CALENDAR = "calendar"
     const val CALENDAR_SLOT_PICK_PATTERN = "calendar/{date}/{mealType}/pick?replaceSlotId={replaceSlotId}"
     const val SHOPPING_LIST = "shoppingList"
+    const val SPENDING_REPORTS = "spendingReports"
 
     /** Sentinel path segment meaning "ask which meal type after a recipe is picked". */
     const val ANY_MEAL_TYPE = "any"
