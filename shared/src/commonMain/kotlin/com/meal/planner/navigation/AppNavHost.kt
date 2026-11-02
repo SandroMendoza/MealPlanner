@@ -189,8 +189,7 @@ fun AppNavHost() {
             composable(Routes.PROFILE) {
                 ProfileScreen(
                     onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES_CREATED) },
-                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) },
-                    onMealPlanClick = { navController.navigateToTab(Routes.CALENDAR) }
+                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) }
                 )
             }
         }
