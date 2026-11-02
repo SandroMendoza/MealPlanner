@@ -3,6 +3,7 @@ package com.meal.domain.di
 import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.RecipeRepository
+import com.meal.domain.repository.SettingsRepository
 import com.meal.domain.repository.ShoppingListRepository
 import com.meal.domain.repository.UserProfileRepository
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
@@ -22,7 +23,9 @@ import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.domain.usecase.ToggleFavoriteUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateRecipeUseCase
+import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.GetUserProfileUseCase
+import com.meal.domain.usecase.UpdateSettingsUseCase
 import com.meal.domain.usecase.UpdateUserProfileUseCase
 import org.koin.dsl.module
 
@@ -83,5 +86,11 @@ val domainModule = module {
     }
     factory {
         UpdateUserProfileUseCase(get<UserProfileRepository>())
+    }
+    factory {
+        GetSettingsUseCase(get<SettingsRepository>())
+    }
+    factory {
+        UpdateSettingsUseCase(get<SettingsRepository>())
     }
 }

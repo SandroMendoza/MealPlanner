@@ -21,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +50,7 @@ fun ProfileScreen(
     onMyRecipesClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onSpendingReportsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val spacing = MealPlannerTokens.spacing
@@ -132,6 +134,8 @@ fun ProfileScreen(
             ProfileNavRow(label = "Favorites", icon = Icons.Default.Favorite, onClick = onFavoritesClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             ProfileNavRow(label = "Spending Reports", icon = Icons.AutoMirrored.Filled.ReceiptLong, onClick = onSpendingReportsClick)
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            ProfileNavRow(label = "Settings", icon = Icons.Default.Settings, onClick = onSettingsClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         }
 

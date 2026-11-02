@@ -31,6 +31,9 @@ import com.meal.planner.profile.ProfileScreen
 import com.meal.planner.recipes.RecipeDetailScreen
 import com.meal.planner.recipes.RecipeFormScreen
 import com.meal.planner.recipes.RecipeScreen
+import com.meal.planner.settings.AboutScreen
+import com.meal.planner.settings.PrivacyPolicyScreen
+import com.meal.planner.settings.SettingsScreen
 import com.meal.planner.shopping.ShoppingListScreen
 import com.meal.planner.spending.SpendingReportsScreen
 import kotlinx.datetime.LocalDate
@@ -191,11 +194,25 @@ fun AppNavHost() {
                 ProfileScreen(
                     onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES_CREATED) },
                     onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) },
-                    onSpendingReportsClick = { navController.navigate(Routes.SPENDING_REPORTS) }
+                    onSpendingReportsClick = { navController.navigate(Routes.SPENDING_REPORTS) },
+                    onSettingsClick = { navController.navigate(Routes.SETTINGS) }
                 )
             }
             composable(Routes.SPENDING_REPORTS) {
                 SpendingReportsScreen(onBack = { navController.popBackStack() })
+            }
+            composable(Routes.SETTINGS) {
+                SettingsScreen(
+                    onBack = { navController.popBackStack() },
+                    onAboutClick = { navController.navigate(Routes.ABOUT) },
+                    onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) }
+                )
+            }
+            composable(Routes.ABOUT) {
+                AboutScreen(onBack = { navController.popBackStack() })
+            }
+            composable(Routes.PRIVACY_POLICY) {
+                PrivacyPolicyScreen(onBack = { navController.popBackStack() })
             }
         }
     }

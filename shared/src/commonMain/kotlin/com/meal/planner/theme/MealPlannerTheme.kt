@@ -24,14 +24,14 @@ private val MealPlannerShapes = Shapes(
  * and MealPlannerTheme.spacing / .radius / .iconSize.
  */
 @Composable
-fun MealPlannerTheme(content: @Composable () -> Unit) {
+fun MealPlannerTheme(darkTheme: Boolean = false, content: @Composable () -> Unit) {
     CompositionLocalProvider(
         LocalSpacing provides MealPlannerSpacing(),
         LocalRadius provides MealPlannerRadius(),
         LocalIconSize provides MealPlannerIconSize()
     ) {
         MaterialTheme(
-            colorScheme = MealPlannerColorScheme,
+            colorScheme = if (darkTheme) MealPlannerDarkColorScheme else MealPlannerColorScheme,
             typography = MealPlannerTypography,
             shapes = MealPlannerShapes,
             content = content

@@ -1,5 +1,6 @@
 package com.meal.planner.theme
 
+import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.ui.graphics.Color
 
@@ -33,6 +34,16 @@ object MealPlannerPalette {
     val Success = GreenPrimary
     val SuccessContainer = PaleGreenContainer
     val FavoriteRed = Color(0xFFE63946)
+
+    // Dark-mode neutrals (green-tinted near-black, keeps brand warmth instead of pure gray)
+    val DarkBackground = Color(0xFF14170F)
+    val DarkSurface = Color(0xFF1E2318)
+    val DarkSurfaceVariant = Color(0xFF2A3020)
+    val DarkOnSurface = Color(0xFFE8E6DD)
+    val DarkOnSurfaceVariant = Color(0xFFB8BBAE)
+    val DarkOutline = Color(0xFF4A5240)
+    val DarkOutlineVariant = Color(0xFF343B2A)
+    val DarkErrorContainer = Color(0xFF5C1611)
 }
 
 val MealPlannerColorScheme = lightColorScheme(
@@ -60,4 +71,31 @@ val MealPlannerColorScheme = lightColorScheme(
     onError = Color.White,
     errorContainer = MealPlannerPalette.ErrorContainer,
     onErrorContainer = MealPlannerPalette.Error
+)
+
+val MealPlannerDarkColorScheme = darkColorScheme(
+    primary = MealPlannerPalette.GreenPrimaryLight,
+    onPrimary = Color.Black,
+    primaryContainer = MealPlannerPalette.GreenPrimaryDark,
+    onPrimaryContainer = MealPlannerPalette.PaleGreenContainer,
+    secondary = MealPlannerPalette.GreenPrimaryLight,
+    onSecondary = Color.Black,
+    secondaryContainer = MealPlannerPalette.GreenPrimaryDark,
+    onSecondaryContainer = MealPlannerPalette.PaleGreenContainer,
+    tertiary = MealPlannerPalette.Warning,
+    onTertiary = Color.Black,
+    tertiaryContainer = MealPlannerPalette.GreenPrimaryDark,
+    onTertiaryContainer = MealPlannerPalette.WarningContainer,
+    background = MealPlannerPalette.DarkBackground,
+    onBackground = MealPlannerPalette.DarkOnSurface,
+    surface = MealPlannerPalette.DarkSurface,
+    onSurface = MealPlannerPalette.DarkOnSurface,
+    surfaceVariant = MealPlannerPalette.DarkSurfaceVariant,
+    onSurfaceVariant = MealPlannerPalette.DarkOnSurfaceVariant,
+    outline = MealPlannerPalette.DarkOutline,
+    outlineVariant = MealPlannerPalette.DarkOutlineVariant,
+    error = MealPlannerPalette.Error,
+    onError = Color.Black,
+    errorContainer = MealPlannerPalette.DarkErrorContainer,
+    onErrorContainer = MealPlannerPalette.ErrorContainer
 )
