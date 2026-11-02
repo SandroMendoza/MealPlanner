@@ -42,6 +42,7 @@ import com.meal.planner.common.displayName
 import com.meal.planner.common.rememberImagePicker
 import com.meal.planner.components.IngredientNameField
 import com.meal.planner.components.UnitDropdownField
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
 import com.meal.presentation.recipes.IngredientFormRow
@@ -73,16 +74,16 @@ fun RecipeFormScreen(
             TopAppBar(
                 title = {
                     Text(
-                        if (uiState.isEditMode) "Edit Recipe" else "New Recipe",
+                        if (uiState.isEditMode) LocalStrings.current.recipeFormEditTitle else LocalStrings.current.recipeFormNewTitle,
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
                 navigationIcon = {
-                    TextButton(onClick = onDone) { Text("Cancel") }
+                    TextButton(onClick = onDone) { Text(LocalStrings.current.cancel) }
                 },
                 actions = {
                     TextButton(onClick = { viewModel.save() }, enabled = uiState.canSave && !uiState.isSaving) {
-                        Text("Save")
+                        Text(LocalStrings.current.save)
                     }
                 },
                 windowInsets = WindowInsets(0)
@@ -104,11 +105,11 @@ fun RecipeFormScreen(
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
-                label = { Text("Name") },
+                label = { Text(LocalStrings.current.name) },
                 isError = uiState.isDuplicateName,
                 supportingText = {
                     if (uiState.isDuplicateName) {
-                        Text("A recipe with this name already exists.", color = MaterialTheme.colorScheme.error)
+                        Text(LocalStrings.current.recipeFormNameExists, color = MaterialTheme.colorScheme.error)
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
@@ -116,11 +117,11 @@ fun RecipeFormScreen(
             OutlinedTextField(
                 value = uiState.description,
                 onValueChange = viewModel::updateDescription,
-                label = { Text("Description") },
+                label = { Text(LocalStrings.current.recipeFormDescription) },
                 modifier = Modifier.fillMaxWidth()
             )
 
-            SectionLabel("Category")
+            SectionLabel(LocalStrings.current.category)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(FoodCategory.entries.toList()) { category ->
                     FilterChip(
@@ -132,13 +133,13 @@ fun RecipeFormScreen(
                 }
             }
 
-            SectionLabel("Meal types")
+            SectionLabel(LocalStrings.current.recipeFormMealTypes)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(MealType.entries.toList()) { mealType ->
                     FilterChip(
                         selected = mealType in uiState.mealTypes,
                         onClick = { viewModel.toggleMealType(mealType) },
-                        label = { Text(mealType.name) },
+                        label = { Text(mealType.displayName()) },
                         colors = activeFilterChipColors()
                     )
                 }
@@ -148,24 +149,24 @@ fun RecipeFormScreen(
                 OutlinedTextField(
                     value = uiState.preparationTimeMinutes,
                     onValueChange = viewModel::updatePreparationTime,
-                    label = { Text("Prep (min)") },
+                    label = { Text(LocalStrings.current.recipeFormPrepMin) },
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = uiState.servings,
                     onValueChange = viewModel::updateServings,
-                    label = { Text("Servings") },
+                    label = { Text(LocalStrings.current.recipeFormServings) },
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = uiState.calories,
                     onValueChange = viewModel::updateCalories,
-                    label = { Text("Calories") },
+                    label = { Text(LocalStrings.current.recipeFormCalories) },
                     modifier = Modifier.weight(1f)
                 )
             }
 
-            SectionLabel("Photo")
+            SectionLabel(LocalStrings.current.recipeFormPhoto)
             val launchImagePicker = rememberImagePicker(onImagePicked = { uri ->
                 uri?.let(viewModel::updateImageUrl)
             })
@@ -185,11 +186,11 @@ fun RecipeFormScreen(
                     )
                 }
                 OutlinedButton(onClick = launchImagePicker) {
-                    Text(if (uiState.imageUrl.isBlank()) "Choose Photo" else "Change Photo")
+                    Text(if (uiState.imageUrl.isBlank()) LocalStrings.current.choosePhoto else LocalStrings.current.changePhoto)
                 }
             }
 
-            SectionLabel("Ingredients")
+            SectionLabel(LocalStrings.current.ingredients)
             uiState.ingredients.forEachIndexed { index, row ->
                 IngredientRowEditor(
                     row = row,
@@ -199,10 +200,10 @@ fun RecipeFormScreen(
                 )
             }
             TextButton(onClick = { viewModel.addIngredientRow() }) {
-                Text("+ Add ingredient")
+                Text(LocalStrings.current.recipeFormAddIngredient)
             }
 
-            SectionLabel("Instructions")
+            SectionLabel(LocalStrings.current.instructions)
             uiState.instructions.forEachIndexed { index, row ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -216,12 +217,12 @@ fun RecipeFormScreen(
                         modifier = Modifier.weight(1f)
                     )
                     TextButton(onClick = { viewModel.removeInstructionRow(index) }) {
-                        Text("Remove")
+                        Text(LocalStrings.current.remove)
                     }
                 }
             }
             TextButton(onClick = { viewModel.addInstructionRow() }) {
-                Text("+ Add instruction")
+                Text(LocalStrings.current.recipeFormAddInstruction)
             }
 
             Button(
@@ -230,7 +231,7 @@ fun RecipeFormScreen(
                 shape = MaterialTheme.shapes.extraLarge,
                 modifier = Modifier.fillMaxWidth().wrapContentWidth()
             ) {
-                Text(if (uiState.isSaving) "Saving..." else "Save Recipe")
+                Text(if (uiState.isSaving) LocalStrings.current.recipeFormSaving else LocalStrings.current.recipeFormSaveRecipe)
             }
         }
     }
@@ -264,7 +265,7 @@ private fun IngredientRowEditor(
             OutlinedTextField(
                 value = row.quantity,
                 onValueChange = { onChange(row.copy(quantity = it)) },
-                label = { Text("Qty") },
+                label = { Text(LocalStrings.current.qty) },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -279,7 +280,7 @@ private fun IngredientRowEditor(
                 modifier = Modifier.weight(1f)
             )
             TextButton(onClick = onRemove) {
-                Text("Remove")
+                Text(LocalStrings.current.remove)
             }
         }
     }

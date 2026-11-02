@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.profile.ProfileViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -67,7 +68,7 @@ fun ProfileScreen(
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
         ) {
             Text(
-                text = "Profile",
+                text = LocalStrings.current.profileTitle,
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
@@ -88,7 +89,7 @@ fun ProfileScreen(
                         IconButton(onClick = { viewModel.openEditDialog() }) {
                             Icon(
                                 Icons.Default.Edit,
-                                contentDescription = "Edit profile",
+                                contentDescription = LocalStrings.current.profileEditProfile,
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp)
                             )
@@ -100,7 +101,7 @@ fun ProfileScreen(
             Spacer(Modifier.height(spacing.md))
 
             Text(
-                text = uiState.name.ifBlank { "Your name" },
+                text = uiState.name.ifBlank { LocalStrings.current.profileYourNamePlaceholder },
                 style = MaterialTheme.typography.titleLarge,
                 color = if (uiState.name.isBlank()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.fillMaxWidth(),
@@ -121,21 +122,21 @@ fun ProfileScreen(
             Spacer(Modifier.height(spacing.sectionGap))
 
             Row(modifier = Modifier.fillMaxWidth()) {
-                ProfileStat(label = "Recipes", value = uiState.recipeCount, modifier = Modifier.weight(1f))
-                ProfileStat(label = "Created", value = uiState.createdCount, modifier = Modifier.weight(1f))
-                ProfileStat(label = "This Week", value = uiState.thisWeekCount, modifier = Modifier.weight(1f))
+                ProfileStat(label = LocalStrings.current.profileRecipesStat, value = uiState.recipeCount, modifier = Modifier.weight(1f))
+                ProfileStat(label = LocalStrings.current.profileCreatedStat, value = uiState.createdCount, modifier = Modifier.weight(1f))
+                ProfileStat(label = LocalStrings.current.profileThisWeekStat, value = uiState.thisWeekCount, modifier = Modifier.weight(1f))
             }
 
             Spacer(Modifier.height(spacing.sectionGap))
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
-            ProfileNavRow(label = "My Recipes", icon = Icons.AutoMirrored.Filled.MenuBook, onClick = onMyRecipesClick)
+            ProfileNavRow(label = LocalStrings.current.myRecipes, icon = Icons.AutoMirrored.Filled.MenuBook, onClick = onMyRecipesClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            ProfileNavRow(label = "Favorites", icon = Icons.Default.Favorite, onClick = onFavoritesClick)
+            ProfileNavRow(label = LocalStrings.current.favorites, icon = Icons.Default.Favorite, onClick = onFavoritesClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            ProfileNavRow(label = "Spending Reports", icon = Icons.AutoMirrored.Filled.ReceiptLong, onClick = onSpendingReportsClick)
+            ProfileNavRow(label = LocalStrings.current.spendingReports, icon = Icons.AutoMirrored.Filled.ReceiptLong, onClick = onSpendingReportsClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            ProfileNavRow(label = "Settings", icon = Icons.Default.Settings, onClick = onSettingsClick)
+            ProfileNavRow(label = LocalStrings.current.settings, icon = Icons.Default.Settings, onClick = onSettingsClick)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         }
 

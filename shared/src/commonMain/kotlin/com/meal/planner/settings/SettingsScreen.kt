@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.planner.components.CurrencyDropdownField
 import com.meal.planner.components.LanguageDropdownField
 import com.meal.planner.components.SettingsRow
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.settings.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -50,10 +51,10 @@ fun SettingsScreen(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
-                title = { Text("Settings", style = MaterialTheme.typography.titleLarge) },
+                title = { Text(LocalStrings.current.settings, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LocalStrings.current.back)
                     }
                 },
                 windowInsets = WindowInsets(0)
@@ -66,18 +67,18 @@ fun SettingsScreen(
                 .fillMaxSize()
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
         ) {
-            SectionLabel("Preferences")
-            SettingsRow(label = "Notifications", icon = Icons.Default.Notifications) {
+            SectionLabel(LocalStrings.current.settingsPreferences)
+            SettingsRow(label = LocalStrings.current.settingsNotifications, icon = Icons.Default.Notifications) {
                 Switch(checked = uiState.notificationsEnabled, onCheckedChange = viewModel::setNotificationsEnabled)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            SettingsRow(label = "Dark mode", icon = Icons.Default.DarkMode) {
+            SettingsRow(label = LocalStrings.current.settingsDarkMode, icon = Icons.Default.DarkMode) {
                 Switch(checked = uiState.darkModeEnabled, onCheckedChange = viewModel::setDarkModeEnabled)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 
             Spacer(Modifier.height(spacing.sectionGap))
-            SectionLabel("Localization")
+            SectionLabel(LocalStrings.current.settingsLocalization)
             LanguageDropdownField(
                 value = uiState.language,
                 onValueChange = viewModel::setLanguage,
@@ -90,12 +91,12 @@ fun SettingsScreen(
             )
 
             Spacer(Modifier.height(spacing.sectionGap))
-            SectionLabel("About")
-            SettingsRow(label = "About Meal Planner", icon = Icons.Default.Info, onClick = onAboutClick) {
+            SectionLabel(LocalStrings.current.settingsAbout)
+            SettingsRow(label = LocalStrings.current.settingsAboutMealPlanner, icon = Icons.Default.Info, onClick = onAboutClick) {
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            SettingsRow(label = "Privacy Policy", icon = Icons.Default.PrivacyTip, onClick = onPrivacyPolicyClick) {
+            SettingsRow(label = LocalStrings.current.settingsPrivacyPolicy, icon = Icons.Default.PrivacyTip, onClick = onPrivacyPolicyClick) {
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

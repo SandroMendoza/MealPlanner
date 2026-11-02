@@ -46,6 +46,8 @@ import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.recipes.RecipeGridCard
+import com.meal.planner.recipes.message
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.RecipeViewModel
 import kotlinx.coroutines.launch
@@ -102,9 +104,9 @@ fun RecipePickerScreen(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
-                title = { Text("Pick a recipe", style = MaterialTheme.typography.titleLarge) },
+                title = { Text(LocalStrings.current.recipePickerTitle, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
-                    TextButton(onClick = onBack) { Text("Cancel") }
+                    TextButton(onClick = onBack) { Text(LocalStrings.current.cancel) }
                 },
                 windowInsets = WindowInsets(0)
             )
@@ -114,12 +116,12 @@ fun RecipePickerScreen(
             OutlinedTextField(
                 value = uiState.searchQuery,
                 onValueChange = recipeViewModel::onSearchQueryChange,
-                placeholder = { Text("Search recipes...") },
+                placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder) },
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                 trailingIcon = {
                     if (uiState.searchQuery.isNotEmpty()) {
                         IconButton(onClick = { recipeViewModel.onSearchQueryChange("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = "Clear search")
+                            Icon(Icons.Default.Clear, contentDescription = LocalStrings.current.clearSearch)
                         }
                     }
                 },
@@ -132,7 +134,7 @@ fun RecipePickerScreen(
                 when {
                     uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     uiState.showEmptyState -> Text(
-                        text = uiState.emptyStateMessage,
+                        text = uiState.emptyState.message(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.align(Alignment.Center)
@@ -176,7 +178,7 @@ private fun MealTypeDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add \"$recipeName\" to...", style = MaterialTheme.typography.titleLarge) },
+        title = { Text(LocalStrings.current.recipePickerAddRecipeNameTo(recipeName), style = MaterialTheme.typography.titleLarge) },
         text = {
             Column {
                 Row(
@@ -198,7 +200,7 @@ private fun MealTypeDialog(
                         modifier = Modifier.weight(1f)
                     )
                     Text(
-                        text = "Change",
+                        text = LocalStrings.current.recipePickerChange,
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -224,7 +226,7 @@ private fun MealTypeDialog(
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(LocalStrings.current.cancel) }
         }
     )
 

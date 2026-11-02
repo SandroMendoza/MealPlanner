@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.planner.common.displayName
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerPalette
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.recipes.RecipeDetailViewModel
@@ -76,22 +77,20 @@ fun RecipeDetailScreen(
     uiState.pendingDeleteConfirmationDates?.let { dates ->
         AlertDialog(
             onDismissRequest = { viewModel.dismissDeleteConfirmation() },
-            title = { Text("Delete recipe?", style = MaterialTheme.typography.titleLarge) },
+            title = { Text(LocalStrings.current.recipeDetailDeleteTitle, style = MaterialTheme.typography.titleLarge) },
             text = {
                 Text(
-                    "This recipe is scheduled on ${dates.size} future date(s): " +
-                        dates.joinToString { it.toString() } +
-                        ". Deleting it will remove it from those days.",
+                    LocalStrings.current.recipeDetailDeleteBody(dates.size, dates.joinToString { it.toString() }),
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
             confirmButton = {
                 TextButton(onClick = { viewModel.delete(force = true) }) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(LocalStrings.current.recipeDetailDelete, color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) { Text(LocalStrings.current.cancel) }
             }
         )
     }
@@ -111,7 +110,7 @@ fun RecipeDetailScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
                 uiState.notFound -> Text(
-                    text = "Recipe not found.",
+                    text = LocalStrings.current.recipeDetailNotFound,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center)
@@ -143,7 +142,7 @@ fun RecipeDetailScreen(
 
                         RecipeDetailOverlayButton(
                             icon = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = LocalStrings.current.back,
                             onClick = onBack,
                             modifier = Modifier
                                 .align(Alignment.TopStart)
@@ -158,18 +157,22 @@ fun RecipeDetailScreen(
                         ) {
                             RecipeDetailOverlayButton(
                                 icon = Icons.Filled.Edit,
-                                contentDescription = "Edit recipe",
+                                contentDescription = LocalStrings.current.recipeDetailEditCd,
                                 onClick = { onEdit(recipeId) }
                             )
                             RecipeDetailOverlayButton(
                                 icon = Icons.Filled.Delete,
-                                contentDescription = "Delete recipe",
+                                contentDescription = LocalStrings.current.recipeDetailDeleteCd,
                                 tint = MaterialTheme.colorScheme.error,
                                 onClick = { viewModel.delete() }
                             )
                             RecipeDetailOverlayButton(
                                 icon = if (recipe.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                                contentDescription = if (recipe.isFavorite) "Remove from favorites" else "Add to favorites",
+                                contentDescription = if (recipe.isFavorite) {
+                                    LocalStrings.current.recipeDetailRemoveFavoriteCd
+                                } else {
+                                    LocalStrings.current.recipeDetailAddFavoriteCd
+                                },
                                 tint = if (recipe.isFavorite) MealPlannerPalette.FavoriteRed else MaterialTheme.colorScheme.onSurface,
                                 onClick = { viewModel.toggleFavorite() }
                             )
@@ -215,11 +218,11 @@ fun RecipeDetailScreen(
                                 ) {
                                     RecipeDetailMetaItem(
                                         icon = Icons.Filled.AccessTime,
-                                        text = "${recipe.preparationTimeMinutes} min"
+                                        text = LocalStrings.current.minutesLabel(recipe.preparationTimeMinutes)
                                     )
                                     RecipeDetailMetaItem(
                                         icon = Icons.Filled.People,
-                                        text = "${recipe.servings} serving" + if (recipe.servings == 1) "" else "s"
+                                        text = LocalStrings.current.servingsLabel(recipe.servings)
                                     )
                                     RecipeDetailMetaItem(
                                         icon = Icons.AutoMirrored.Filled.MenuBook,
@@ -229,7 +232,7 @@ fun RecipeDetailScreen(
 
                                 recipe.calories?.let {
                                     Text(
-                                        text = "$it calories",
+                                        text = LocalStrings.current.caloriesLabel(it),
                                         style = MaterialTheme.typography.bodySmall,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.padding(top = spacing.xs)
@@ -237,7 +240,7 @@ fun RecipeDetailScreen(
                                 }
 
                                 Text(
-                                    text = "Ingredients",
+                                    text = LocalStrings.current.ingredients,
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
@@ -254,7 +257,7 @@ fun RecipeDetailScreen(
 
                             item {
                                 Text(
-                                    text = "Instructions",
+                                    text = LocalStrings.current.instructions,
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onSurface,
                                     modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
@@ -281,7 +284,7 @@ fun RecipeDetailScreen(
                                 .fillMaxWidth()
                                 .padding(top = spacing.sm, bottom = spacing.lg)
                         ) {
-                            Text("Add to Meal Plan")
+                            Text(LocalStrings.current.recipeDetailAddToMealPlan)
                         }
                     }
                 }

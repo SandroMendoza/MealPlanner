@@ -61,8 +61,10 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
+import com.meal.presentation.recipes.RecipeEmptyState
 import com.meal.presentation.recipes.RecipeUiState
 import com.meal.presentation.recipes.RecipeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -95,7 +97,7 @@ fun RecipeScreen(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = MaterialTheme.colorScheme.onPrimary
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Add recipe")
+                Icon(Icons.Default.Add, contentDescription = LocalStrings.current.recipesAddCd)
             }
         }
     ) {
@@ -129,12 +131,12 @@ fun RecipeScreen(
                             OutlinedTextField(
                                 value = uiState.searchQuery,
                                 onValueChange = viewModel::onSearchQueryChange,
-                                placeholder = { Text("Search recipes...") },
+                                placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder) },
                                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (uiState.searchQuery.isNotEmpty()) {
                                         IconButton(onClick = { viewModel.onSearchQueryChange("") }) {
-                                            Icon(Icons.Default.Clear, contentDescription = "Clear search")
+                                            Icon(Icons.Default.Clear, contentDescription = LocalStrings.current.clearSearch)
                                         }
                                     }
                                 },
@@ -151,11 +153,11 @@ fun RecipeScreen(
                                         contentColor = MaterialTheme.colorScheme.onPrimary
                                     )
                                 ) {
-                                    Icon(Icons.Default.FilterAlt, contentDescription = "Filters (active)")
+                                    Icon(Icons.Default.FilterAlt, contentDescription = LocalStrings.current.recipesFiltersActiveCd)
                                 }
                             } else {
                                 IconButton(onClick = { showFilterSheet = true }) {
-                                    Icon(Icons.Default.FilterAlt, contentDescription = "Filters")
+                                    Icon(Icons.Default.FilterAlt, contentDescription = LocalStrings.current.recipesFilters)
                                 }
                             }
                         }
@@ -177,7 +179,7 @@ fun RecipeScreen(
                     if (uiState.showEmptyState) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Text(
-                                text = uiState.emptyStateMessage,
+                                text = uiState.emptyState.message(),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.fillMaxWidth().padding(top = spacing.lg),
@@ -217,10 +219,19 @@ fun RecipeScreen(
     }
 }
 
+@Composable
 private fun MealType?.quickFilterLabel(): String = when (this) {
-    null -> "All"
-    MealType.SNACK -> "Snacks"
+    null -> LocalStrings.current.all
+    MealType.SNACK -> LocalStrings.current.recipesSnacks
     else -> displayName()
+}
+
+@Composable
+fun RecipeEmptyState.message(): String = when (this) {
+    RecipeEmptyState.NO_RECIPES -> LocalStrings.current.recipesNoRecipesYet
+    RecipeEmptyState.NO_FAVORITES -> LocalStrings.current.recipesNoFavoritesYet
+    RecipeEmptyState.NO_CREATED -> LocalStrings.current.recipesNoCreatedYet
+    RecipeEmptyState.NO_MATCHES -> LocalStrings.current.recipesNoMatchesFilters
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -245,7 +256,7 @@ private fun RecipeFilterSheet(
                 .padding(horizontal = spacing.lg, vertical = spacing.sm)
         ) {
             Text(
-                text = "Filters",
+                text = LocalStrings.current.recipesFilters,
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface
             )
@@ -257,7 +268,7 @@ private fun RecipeFilterSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Favorites only", style = MaterialTheme.typography.bodyLarge)
+                Text(LocalStrings.current.recipesFavoritesOnly, style = MaterialTheme.typography.bodyLarge)
                 Switch(checked = uiState.showFavoritesOnly, onCheckedChange = onFavoritesOnlyChange)
             }
 
@@ -266,19 +277,19 @@ private fun RecipeFilterSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Created by me", style = MaterialTheme.typography.bodyLarge)
+                Text(LocalStrings.current.recipesCreatedByMe, style = MaterialTheme.typography.bodyLarge)
                 Switch(checked = uiState.showCreatedOnly, onCheckedChange = onCreatedOnlyChange)
             }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = spacing.lg))
 
-            SectionLabel("Category")
+            SectionLabel(LocalStrings.current.category)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(listOf<FoodCategory?>(null) + FoodCategory.entries) { category ->
                     FilterChip(
                         selected = uiState.selectedCategory == category,
                         onClick = { onCategorySelected(category) },
-                        label = { Text(category?.displayName() ?: "All") },
+                        label = { Text(category?.displayName() ?: LocalStrings.current.all) },
                         colors = activeFilterChipColors()
                     )
                 }
@@ -286,8 +297,10 @@ private fun RecipeFilterSheet(
 
             Column(modifier = Modifier.padding(top = spacing.lg)) {
                 SectionLabel(
-                    "Prep time: ${uiState.prepTimeRange.start.toInt()}" +
-                        "–${uiState.prepTimeRange.endInclusive.toInt()} min"
+                    LocalStrings.current.recipesPrepTimeRange(
+                        uiState.prepTimeRange.start.toInt(),
+                        uiState.prepTimeRange.endInclusive.toInt()
+                    )
                 )
                 RangeSlider(
                     value = uiState.prepTimeRange,
@@ -299,8 +312,10 @@ private fun RecipeFilterSheet(
 
             Column(modifier = Modifier.padding(top = spacing.sm, bottom = spacing.lg)) {
                 SectionLabel(
-                    "Calories: ${uiState.calorieRange.start.toInt()}" +
-                        "–${uiState.calorieRange.endInclusive.toInt()}"
+                    LocalStrings.current.recipesCalorieRange(
+                        uiState.calorieRange.start.toInt(),
+                        uiState.calorieRange.endInclusive.toInt()
+                    )
                 )
                 RangeSlider(
                     value = uiState.calorieRange,
@@ -314,7 +329,7 @@ private fun RecipeFilterSheet(
                 onClick = onClearFilters,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Clear filters")
+                Text(LocalStrings.current.recipesClearFilters)
             }
         }
     }
@@ -385,7 +400,7 @@ fun RecipeGridCard(recipe: Recipe, onClick: () -> Unit) {
                         modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
                     )
                     Text(
-                        text = "${recipe.preparationTimeMinutes} min",
+                        text = LocalStrings.current.minutesLabel(recipe.preparationTimeMinutes),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

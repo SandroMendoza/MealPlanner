@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import com.meal.planner.common.displayName
+import com.meal.planner.strings.LocalStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +32,7 @@ fun LanguageDropdownField(
             value = value.displayName(),
             onValueChange = {},
             readOnly = true,
-            label = { Text("Language") },
+            label = { Text(LocalStrings.current.languageLabel) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
         )
@@ -62,7 +63,7 @@ fun CurrencyDropdownField(
             value = value.displayName(),
             onValueChange = {},
             readOnly = true,
-            label = { Text("Currency") },
+            label = { Text(LocalStrings.current.currencyLabel) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
         )

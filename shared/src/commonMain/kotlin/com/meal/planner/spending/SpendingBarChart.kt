@@ -24,30 +24,16 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.meal.domain.model.SpendingBucket
+import com.meal.domain.strings.Strings
 import com.meal.planner.common.formatPrice
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
-import kotlinx.datetime.DayOfWeek
 
-private val MONTH_ABBREVIATIONS = listOf(
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-)
-
-private fun dayLabel(dayOfWeek: DayOfWeek): String = when (dayOfWeek) {
-    DayOfWeek.MONDAY -> "M"
-    DayOfWeek.TUESDAY -> "T"
-    DayOfWeek.WEDNESDAY -> "W"
-    DayOfWeek.THURSDAY -> "T"
-    DayOfWeek.FRIDAY -> "F"
-    DayOfWeek.SATURDAY -> "S"
-    DayOfWeek.SUNDAY -> "S"
-    else -> "?"
-}
-
-private fun bucketAxisLabel(bucket: SpendingBucket): String =
+private fun bucketAxisLabel(bucket: SpendingBucket, strings: Strings): String =
     if (bucket.bucketStart == bucket.bucketEnd) {
-        dayLabel(bucket.bucketStart.dayOfWeek)
+        strings.weekdayInitial(bucket.bucketStart.dayOfWeek)
     } else {
-        "${MONTH_ABBREVIATIONS[bucket.bucketStart.monthNumber - 1]} ${bucket.bucketStart.dayOfMonth}"
+        "${strings.monthAbbreviation(bucket.bucketStart.monthNumber)} ${bucket.bucketStart.dayOfMonth}"
     }
 
 /**
@@ -61,6 +47,7 @@ fun SpendingBarChart(buckets: List<SpendingBucket>, currencySymbol: String = "$"
     if (buckets.isEmpty()) return
 
     val spacing = MealPlannerTokens.spacing
+    val strings = LocalStrings.current
     val barColor = MaterialTheme.colorScheme.primary
     val dimBarColor = barColor.copy(alpha = 0.45f)
     val baselineColor = MaterialTheme.colorScheme.outlineVariant
@@ -76,7 +63,7 @@ fun SpendingBarChart(buckets: List<SpendingBucket>, currencySymbol: String = "$"
 
     Column(modifier = modifier) {
         Text(
-            text = selectedBucket?.let { "${bucketAxisLabel(it)}  •  $currencySymbol${formatPrice(it.amount)}" }.orEmpty(),
+            text = selectedBucket?.let { "${bucketAxisLabel(it, strings)}  •  $currencySymbol${formatPrice(it.amount)}" }.orEmpty(),
             style = MaterialTheme.typography.labelLarge,
             color = valueLabelColor
         )
@@ -139,7 +126,7 @@ fun SpendingBarChart(buckets: List<SpendingBucket>, currencySymbol: String = "$"
                     )
                 }
 
-                val label = textMeasurer.measure(bucketAxisLabel(bucket), axisLabelStyle)
+                val label = textMeasurer.measure(bucketAxisLabel(bucket, strings), axisLabelStyle)
                 drawText(
                     textLayoutResult = label,
                     topLeft = Offset(centerX - label.size.width / 2f, baselineY + 2.dp.toPx())

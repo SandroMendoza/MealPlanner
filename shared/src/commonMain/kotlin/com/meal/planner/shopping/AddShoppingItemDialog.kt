@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.IngredientNameField
 import com.meal.planner.components.UnitDropdownField
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 
 @Composable
@@ -35,7 +36,7 @@ fun AddShoppingItemDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Add Item") },
+        title = { Text(LocalStrings.current.shoppingAddItemButton) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 IngredientNameField(
@@ -51,7 +52,7 @@ fun AddShoppingItemDialog(
                     OutlinedTextField(
                         value = quantityText,
                         onValueChange = { quantityText = it },
-                        label = { Text("Qty") },
+                        label = { Text(LocalStrings.current.qty) },
                         modifier = Modifier.weight(1f)
                     )
                     UnitDropdownField(
@@ -67,11 +68,11 @@ fun AddShoppingItemDialog(
                 onClick = { quantity?.let { onConfirm(name, it, unit) } },
                 enabled = canConfirm
             ) {
-                Text("Add")
+                Text(LocalStrings.current.add)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(LocalStrings.current.cancel) }
         }
     )
 }

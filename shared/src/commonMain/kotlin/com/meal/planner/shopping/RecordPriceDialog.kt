@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.meal.domain.model.ShoppingListItem
+import com.meal.planner.strings.LocalStrings
 
 @Composable
 fun RecordPriceDialog(
@@ -27,12 +28,12 @@ fun RecordPriceDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("How much did ${item.name} cost?") },
+        title = { Text(LocalStrings.current.recordPriceTitle(item.name)) },
         text = {
             OutlinedTextField(
                 value = priceText,
                 onValueChange = { priceText = it },
-                label = { Text("Price ($currencySymbol)") }
+                label = { Text(LocalStrings.current.recordPricePriceLabel(currencySymbol)) }
             )
         },
         confirmButton = {
@@ -40,11 +41,11 @@ fun RecordPriceDialog(
                 onClick = { price?.let { onConfirm(it) } },
                 enabled = canConfirm
             ) {
-                Text("Save")
+                Text(LocalStrings.current.save)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(LocalStrings.current.cancel) }
         }
     )
 }

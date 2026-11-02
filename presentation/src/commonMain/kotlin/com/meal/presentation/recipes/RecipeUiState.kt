@@ -4,6 +4,8 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 
+enum class RecipeEmptyState { NO_RECIPES, NO_FAVORITES, NO_CREATED, NO_MATCHES }
+
 data class RecipeUiState(
     val recipes: List<Recipe> = emptyList(),
     val isLoading: Boolean = false,
@@ -37,12 +39,12 @@ data class RecipeUiState(
     val showEmptyState: Boolean
         get() = !isLoading && !hasFilteredRecipes && errorMessage == null
 
-    val emptyStateMessage: String
+    val emptyState: RecipeEmptyState
         get() = when {
-            !hasRecipes -> "No recipes yet."
-            showFavoritesOnly -> "No favorites yet. Tap the heart on a recipe to add one."
-            showCreatedOnly -> "No recipes created yet. Tap + to add your own."
-            else -> "No recipes match your filters."
+            !hasRecipes -> RecipeEmptyState.NO_RECIPES
+            showFavoritesOnly -> RecipeEmptyState.NO_FAVORITES
+            showCreatedOnly -> RecipeEmptyState.NO_CREATED
+            else -> RecipeEmptyState.NO_MATCHES
         }
 
     private fun matchesSearch(recipe: Recipe, query: String): Boolean {

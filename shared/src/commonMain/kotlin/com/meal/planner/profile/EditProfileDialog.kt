@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.meal.planner.common.rememberImagePicker
 import com.meal.planner.components.RecipeThumbnail
+import com.meal.planner.strings.LocalStrings
 
 @Composable
 fun EditProfileDialog(
@@ -40,7 +41,7 @@ fun EditProfileDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Edit profile") },
+        title = { Text(LocalStrings.current.profileEditProfile) },
         text = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -54,30 +55,30 @@ fun EditProfileDialog(
                     shape = CircleShape
                 )
                 OutlinedButton(onClick = launchImagePicker) {
-                    Text(if (avatarUrlText.isBlank()) "Choose Photo" else "Change Photo")
+                    Text(if (avatarUrlText.isBlank()) LocalStrings.current.choosePhoto else LocalStrings.current.changePhoto)
                 }
                 OutlinedTextField(
                     value = nameText,
                     onValueChange = { nameText = it },
-                    label = { Text("Name") },
+                    label = { Text(LocalStrings.current.name) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
                     value = bioText,
                     onValueChange = { bioText = it },
-                    label = { Text("Bio (optional)") },
+                    label = { Text(LocalStrings.current.editProfileBio) },
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         },
         confirmButton = {
             TextButton(onClick = { onConfirm(nameText.trim(), bioText.trim(), avatarUrlText) }) {
-                Text("Save")
+                Text(LocalStrings.current.save)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(LocalStrings.current.cancel) }
         }
     )
 }

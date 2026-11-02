@@ -44,6 +44,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.planner.common.formatPrice
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.today
@@ -51,10 +52,11 @@ import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.spending.SpendingReportsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
+@Composable
 private fun ShoppingListRangeMode.label(): String = when (this) {
-    ShoppingListRangeMode.WEEK -> "Week"
-    ShoppingListRangeMode.RANGE -> "Range"
-    ShoppingListRangeMode.DAY -> "Day"
+    ShoppingListRangeMode.WEEK -> LocalStrings.current.week
+    ShoppingListRangeMode.RANGE -> LocalStrings.current.range
+    ShoppingListRangeMode.DAY -> LocalStrings.current.day
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,10 +76,10 @@ fun SpendingReportsScreen(
         contentWindowInsets = WindowInsets(0),
         topBar = {
             TopAppBar(
-                title = { Text("Spending Reports", style = MaterialTheme.typography.titleLarge) },
+                title = { Text(LocalStrings.current.spendingReports, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = LocalStrings.current.back)
                     }
                 },
                 actions = {
@@ -86,7 +88,7 @@ fun SpendingReportsScreen(
                             onClick = { uiState.report?.let { exportReport(it, uiState.currencySymbol) } },
                             enabled = uiState.report?.lineItems?.isNotEmpty() == true
                         ) {
-                            Icon(Icons.Default.Share, contentDescription = "Export report as PDF")
+                            Icon(Icons.Default.Share, contentDescription = LocalStrings.current.spendingExportCd)
                         }
                     }
                 },
@@ -121,7 +123,7 @@ fun SpendingReportsScreen(
                     when (uiState.mode) {
                         ShoppingListRangeMode.WEEK -> {
                             IconButton(onClick = { viewModel.previousWeek() }) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous week")
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
                             }
                             Text(
                                 text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
@@ -130,20 +132,20 @@ fun SpendingReportsScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 if (uiState.rangeStart != currentWeekMonday()) {
                                     IconButton(onClick = { viewModel.goToToday() }) {
-                                        Icon(Icons.Filled.Today, contentDescription = "Go to current week")
+                                        Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToCurrentWeek)
                                     }
                                 }
                                 IconButton(onClick = { showDatePicker = true }) {
-                                    Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a week")
+                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickAWeek)
                                 }
                                 IconButton(onClick = { viewModel.nextWeek() }) {
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next week")
+                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
                                 }
                             }
                         }
                         ShoppingListRangeMode.DAY -> {
                             IconButton(onClick = { viewModel.previousDay() }) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous day")
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousDay)
                             }
                             Text(
                                 text = "${uiState.rangeStart}",
@@ -152,14 +154,14 @@ fun SpendingReportsScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 if (uiState.rangeStart != today()) {
                                     IconButton(onClick = { viewModel.goToToday() }) {
-                                        Icon(Icons.Filled.Today, contentDescription = "Go to today")
+                                        Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
                                     }
                                 }
                                 IconButton(onClick = { showDatePicker = true }) {
-                                    Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a date")
+                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
                                 }
                                 IconButton(onClick = { viewModel.nextDay() }) {
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next day")
+                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextDay)
                                 }
                             }
                         }
@@ -169,7 +171,7 @@ fun SpendingReportsScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a date range")
+                                Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADateRange)
                             }
                         }
                     }
@@ -189,7 +191,7 @@ fun SpendingReportsScreen(
                 }
                 uiState.isEmpty -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
-                        "No priced items in this period.",
+                        LocalStrings.current.spendingNoPricedItems,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -223,7 +225,7 @@ fun SpendingReportsScreen(
                                 Spacer(Modifier.height(spacing.sectionGap))
                             }
                             item {
-                                Text("Breakdown", style = MaterialTheme.typography.titleMedium)
+                                Text(LocalStrings.current.spendingBreakdown, style = MaterialTheme.typography.titleMedium)
                                 Spacer(Modifier.height(spacing.sm))
                             }
                             items(report.lineItems, key = { "${it.itemKey}_${it.rangeStart}_${it.rangeEnd}" }) { item ->
@@ -271,12 +273,12 @@ private fun SpendingSummaryCard(totalSpent: Double, bucketCount: Int, currencySy
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             SpendingStat(
-                label = "Total spent",
+                label = LocalStrings.current.totalSpent,
                 value = "$currencySymbol${formatPrice(totalSpent)}",
                 modifier = Modifier.weight(1f)
             )
             SpendingStat(
-                label = "Avg / period",
+                label = LocalStrings.current.spendingAvgPerPeriod,
                 value = "$currencySymbol${formatPrice(if (bucketCount > 0) totalSpent / bucketCount else 0.0)}",
                 modifier = Modifier.weight(1f)
             )

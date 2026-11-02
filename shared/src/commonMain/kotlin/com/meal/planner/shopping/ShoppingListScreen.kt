@@ -50,6 +50,7 @@ import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.common.formatPrice
 import com.meal.planner.components.SwipeToDeleteRow
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.today
@@ -57,10 +58,11 @@ import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.shopping.ShoppingListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
+@Composable
 private fun ShoppingListRangeMode.label(): String = when (this) {
-    ShoppingListRangeMode.WEEK -> "Week"
-    ShoppingListRangeMode.RANGE -> "Range"
-    ShoppingListRangeMode.DAY -> "Day"
+    ShoppingListRangeMode.WEEK -> LocalStrings.current.week
+    ShoppingListRangeMode.RANGE -> LocalStrings.current.range
+    ShoppingListRangeMode.DAY -> LocalStrings.current.day
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,7 +103,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                     when (uiState.mode) {
                         ShoppingListRangeMode.WEEK -> {
                             IconButton(onClick = { viewModel.previousWeek() }) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous week")
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
                             }
                             Text(
                                 text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
@@ -110,20 +112,20 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 if (uiState.rangeStart != currentWeekMonday()) {
                                     IconButton(onClick = { viewModel.goToToday() }) {
-                                        Icon(Icons.Filled.Today, contentDescription = "Go to current week")
+                                        Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToCurrentWeek)
                                     }
                                 }
                                 IconButton(onClick = { showDatePicker = true }) {
-                                    Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a week")
+                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickAWeek)
                                 }
                                 IconButton(onClick = { viewModel.nextWeek() }) {
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next week")
+                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
                                 }
                             }
                         }
                         ShoppingListRangeMode.DAY -> {
                             IconButton(onClick = { viewModel.previousDay() }) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous day")
+                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousDay)
                             }
                             Text(
                                 text = "${uiState.rangeStart}",
@@ -132,14 +134,14 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 if (uiState.rangeStart != today()) {
                                     IconButton(onClick = { viewModel.goToToday() }) {
-                                        Icon(Icons.Filled.Today, contentDescription = "Go to today")
+                                        Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
                                     }
                                 }
                                 IconButton(onClick = { showDatePicker = true }) {
-                                    Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a date")
+                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
                                 }
                                 IconButton(onClick = { viewModel.nextDay() }) {
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next day")
+                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextDay)
                                 }
                             }
                         }
@@ -149,7 +151,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 style = MaterialTheme.typography.titleMedium
                             )
                             IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a date range")
+                                Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADateRange)
                             }
                         }
                     }
@@ -169,7 +171,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                 }
                 uiState.isEmpty -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
                     Text(
-                        "No meals planned for this period.",
+                        LocalStrings.current.shoppingNoMealsPlannedPeriod,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -213,7 +215,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 )
                                 val priceLabel = item.price?.let { price ->
                                     "${uiState.currencySymbol}${formatPrice(price)}"
-                                } ?: "Add price"
+                                } ?: LocalStrings.current.shoppingAddPrice
                                 Text(
                                     text = priceLabel,
                                     style = MaterialTheme.typography.bodyMedium,
@@ -233,7 +235,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text("Total spent", style = MaterialTheme.typography.titleMedium)
+                    Text(LocalStrings.current.totalSpent, style = MaterialTheme.typography.titleMedium)
                     Text(
                         "${uiState.currencySymbol}${formatPrice(uiState.totalSpent)}",
                         style = MaterialTheme.typography.titleMedium,
@@ -250,7 +252,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(Modifier.width(spacing.xs))
-                Text("Add Item")
+                Text(LocalStrings.current.shoppingAddItemButton)
             }
         }
 
@@ -274,15 +276,15 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
         uiState.itemPendingDeletion?.let { item ->
             AlertDialog(
                 onDismissRequest = { viewModel.dismissDeleteConfirmation() },
-                title = { Text("Remove item?") },
-                text = { Text("Remove ${item.name} from the shopping list?") },
+                title = { Text(LocalStrings.current.shoppingRemoveItemTitle) },
+                text = { Text(LocalStrings.current.shoppingRemoveItemBody(item.name)) },
                 confirmButton = {
                     TextButton(onClick = { viewModel.confirmDeleteItem() }) {
-                        Text("Remove", color = MaterialTheme.colorScheme.error)
+                        Text(LocalStrings.current.remove, color = MaterialTheme.colorScheme.error)
                     }
                 },
                 dismissButton = {
-                    TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) { Text("Cancel") }
+                    TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) { Text(LocalStrings.current.cancel) }
                 }
             )
         }

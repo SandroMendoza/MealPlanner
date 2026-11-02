@@ -2,6 +2,7 @@ package com.meal.presentation.di
 
 import com.meal.presentation.calendar.MealCalendarViewModel
 import com.meal.presentation.home.HomeViewModel
+import com.meal.presentation.preferences.AppPreferencesViewModel
 import com.meal.presentation.profile.ProfileViewModel
 import com.meal.presentation.recipes.RecipeDetailViewModel
 import com.meal.presentation.recipes.RecipeFormViewModel
@@ -9,7 +10,6 @@ import com.meal.presentation.recipes.RecipeViewModel
 import com.meal.presentation.settings.SettingsViewModel
 import com.meal.presentation.shopping.ShoppingListViewModel
 import com.meal.presentation.spending.SpendingReportsViewModel
-import com.meal.presentation.theme.ThemeViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import kotlin.uuid.ExperimentalUuidApi
@@ -36,5 +36,5 @@ val presentationModule = module {
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { SpendingReportsViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get()) }
-    viewModel { ThemeViewModel(get()) }
+    viewModel { AppPreferencesViewModel(get()) }
 }

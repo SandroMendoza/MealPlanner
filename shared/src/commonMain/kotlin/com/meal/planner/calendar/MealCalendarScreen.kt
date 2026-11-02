@@ -54,6 +54,7 @@ import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.components.RecipeThumbnail
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.calendar.MealCalendarViewModel
 import com.meal.presentation.common.currentWeekMonday
@@ -92,10 +93,10 @@ fun MealCalendarScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { viewModel.previousWeek() }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "Previous week")
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("Meal Plan", style = MaterialTheme.typography.titleLarge)
+                    Text(LocalStrings.current.calendarTitle, style = MaterialTheme.typography.titleLarge)
                     Text(
                         text = "${uiState.weekStart} - ${uiState.weekEnd}",
                         style = MaterialTheme.typography.bodySmall,
@@ -105,14 +106,14 @@ fun MealCalendarScreen(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     if (!isCurrentWeek) {
                         IconButton(onClick = { viewModel.goToToday() }) {
-                            Icon(Icons.Filled.Today, contentDescription = "Go to today")
+                            Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
                         }
                     }
                     IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Filled.CalendarMonth, contentDescription = "Pick a date")
+                        Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
                     }
                     IconButton(onClick = { viewModel.nextWeek() }) {
-                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = "Next week")
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
                     }
                 }
             }
@@ -165,7 +166,7 @@ fun MealCalendarScreen(
             ) {
                 Icon(Icons.Default.Add, contentDescription = null)
                 Spacer(Modifier.width(spacing.xs))
-                Text("Add Meal")
+                Text(LocalStrings.current.calendarAddMeal)
             }
         }
 
@@ -196,7 +197,7 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(spacing.xxs)
     ) {
         Text(
-            text = date.dayOfWeek.name.take(3).lowercase().replaceFirstChar { it.uppercase() },
+            text = LocalStrings.current.weekdayShort(date.dayOfWeek),
             style = MaterialTheme.typography.labelMedium,
             color = if (selected) contentColor else MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -231,7 +232,7 @@ private fun MealSection(
         Spacer(Modifier.height(spacing.xs))
         if (entries.isEmpty()) {
             Text(
-                text = "No ${mealType.displayName().lowercase()} planned",
+                text = LocalStrings.current.calendarNoMealTypePlanned(mealType.displayName().lowercase()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -263,7 +264,7 @@ private fun AddMealButton(mealType: MealType, onClick: () -> Unit) {
     ) {
         Icon(
             Icons.Default.Add,
-            contentDescription = "Add ${mealType.displayName().lowercase()}",
+            contentDescription = LocalStrings.current.calendarAddMealTypeCd(mealType.displayName().lowercase()),
             tint = MaterialTheme.colorScheme.onPrimaryContainer,
             modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
         )
@@ -294,26 +295,26 @@ private fun MealEntryCard(entry: MealPlanEntry, onClick: () -> Unit, onChange: (
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = entry.recipe.name, style = MaterialTheme.typography.titleMedium)
                 Text(
-                    text = "${entry.recipe.preparationTimeMinutes} min",
+                    text = LocalStrings.current.minutesLabel(entry.recipe.preparationTimeMinutes),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Box {
                 IconButton(onClick = { menuExpanded = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "Meal options")
+                    Icon(Icons.Default.MoreVert, contentDescription = LocalStrings.current.calendarMealOptionsCd)
                 }
                 DropdownMenu(expanded = menuExpanded, onDismissRequest = { menuExpanded = false }) {
                     DropdownMenuItem(
-                        text = { Text("View recipe") },
+                        text = { Text(LocalStrings.current.calendarViewRecipe) },
                         onClick = { menuExpanded = false; onClick() }
                     )
                     DropdownMenuItem(
-                        text = { Text("Change recipe") },
+                        text = { Text(LocalStrings.current.calendarChangeRecipe) },
                         onClick = { menuExpanded = false; onChange() }
                     )
                     DropdownMenuItem(
-                        text = { Text("Remove", color = MaterialTheme.colorScheme.error) },
+                        text = { Text(LocalStrings.current.remove, color = MaterialTheme.colorScheme.error) },
                         onClick = { menuExpanded = false; onRemove() }
                     )
                 }

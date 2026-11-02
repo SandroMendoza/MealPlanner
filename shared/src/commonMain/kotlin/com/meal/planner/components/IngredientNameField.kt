@@ -14,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.meal.planner.strings.LocalStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +36,7 @@ fun IngredientNameField(
                 expanded = true
             },
             singleLine = true,
-            label = { Text("Name") },
+            label = { Text(LocalStrings.current.name) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showMenu) },
             modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, true).fillMaxWidth()
         )

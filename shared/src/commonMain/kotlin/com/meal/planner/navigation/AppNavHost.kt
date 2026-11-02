@@ -36,6 +36,7 @@ import com.meal.planner.settings.PrivacyPolicyScreen
 import com.meal.planner.settings.SettingsScreen
 import com.meal.planner.shopping.ShoppingListScreen
 import com.meal.planner.spending.SpendingReportsScreen
+import com.meal.planner.strings.LocalStrings
 import kotlinx.datetime.LocalDate
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -56,31 +57,31 @@ fun AppNavHost() {
                         selected = currentRoute == Routes.HOME,
                         onClick = { navController.navigateToTab(Routes.HOME) },
                         icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                        label = { Text("Home") }
+                        label = { Text(LocalStrings.current.navHome) }
                     )
                     NavigationBarItem(
                         selected = currentRoute == Routes.CALENDAR,
                         onClick = { navController.navigateToTab(Routes.CALENDAR) },
                         icon = { Icon(Icons.Default.CalendarMonth, contentDescription = null) },
-                        label = { Text("Meal plan") }
+                        label = { Text(LocalStrings.current.navMealPlan) }
                     )
                     NavigationBarItem(
                         selected = currentRoute == Routes.RECIPES || currentRoute == Routes.RECIPES_FAVORITES || currentRoute == Routes.RECIPES_CREATED,
                         onClick = { navController.navigateToTab(Routes.RECIPES) },
                         icon = { Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null) },
-                        label = { Text("Recipes") }
+                        label = { Text(LocalStrings.current.navRecipes) }
                     )
                     NavigationBarItem(
                         selected = currentRoute == Routes.SHOPPING_LIST,
                         onClick = { navController.navigateToTab(Routes.SHOPPING_LIST) },
                         icon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) },
-                        label = { Text("Shopping") }
+                        label = { Text(LocalStrings.current.navShopping) }
                     )
                     NavigationBarItem(
                         selected = currentRoute == Routes.PROFILE,
                         onClick = { navController.navigateToTab(Routes.PROFILE) },
                         icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                        label = { Text("Profile") }
+                        label = { Text(LocalStrings.current.navProfile) }
                     )
                 }
             }

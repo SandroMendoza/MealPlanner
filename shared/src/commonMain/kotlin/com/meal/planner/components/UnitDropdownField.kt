@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.common.displayName
+import com.meal.planner.strings.LocalStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +31,7 @@ fun UnitDropdownField(
             value = value.displayName(),
             onValueChange = {},
             readOnly = true,
-            label = { Text("Unit") },
+            label = { Text(LocalStrings.current.unit) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
         )

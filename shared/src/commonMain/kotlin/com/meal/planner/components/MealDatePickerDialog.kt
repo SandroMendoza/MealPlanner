@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import com.meal.planner.strings.LocalStrings
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -39,11 +40,11 @@ fun MealDatePickerDialog(
                 }
                 onDismiss()
             }) {
-                Text("OK")
+                Text(LocalStrings.current.ok)
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(LocalStrings.current.cancel) }
         }
     ) {
         DatePicker(state = state)

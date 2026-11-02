@@ -42,6 +42,7 @@ import com.meal.domain.model.MealPlanEntry
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.RecipeThumbnail
+import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
@@ -75,14 +76,14 @@ fun HomeScreen(
             Column {
                 Text(
                     text = if (uiState.greetingName.isBlank()) {
-                        "Good morning!"
+                        LocalStrings.current.homeGreetingDefault
                     } else {
-                        "Good morning, ${uiState.greetingName}"
+                        LocalStrings.current.homeGreetingWithName(uiState.greetingName)
                     },
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Text(
-                    text = "Let's plan your meals.",
+                    text = LocalStrings.current.homeSubtitle,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -93,7 +94,7 @@ fun HomeScreen(
                     .size(MealPlannerTokens.iconSize.xl.minus(4.dp))
                     .background(MaterialTheme.colorScheme.surface, CircleShape)
             ) {
-                Icon(Icons.Default.Notifications, contentDescription = "Notifications")
+                Icon(Icons.Default.Notifications, contentDescription = LocalStrings.current.homeNotificationsCd)
             }
         }
 
@@ -104,9 +105,9 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text("Today's plan", style = MaterialTheme.typography.titleLarge)
+            Text(LocalStrings.current.homeTodaysPlan, style = MaterialTheme.typography.titleLarge)
             TextButton(onClick = onViewAllClick) {
-                Text("View all", style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+                Text(LocalStrings.current.homeViewAll, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             }
         }
 
@@ -125,7 +126,7 @@ fun HomeScreen(
                     CircularProgressIndicator()
                 }
                 uiState.todaysEntries.isEmpty() -> Text(
-                    text = "No meals planned for today.",
+                    text = LocalStrings.current.homeNoMealsPlannedToday,
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(spacing.xxl)
@@ -143,14 +144,14 @@ fun HomeScreen(
 
         Spacer(Modifier.height(spacing.sectionGap))
 
-        Text("Quick actions", style = MaterialTheme.typography.titleLarge)
+        Text(LocalStrings.current.homeQuickActions, style = MaterialTheme.typography.titleLarge)
 
         Spacer(Modifier.height(spacing.sm))
 
         Row(horizontalArrangement = Arrangement.spacedBy(spacing.md), modifier = Modifier.fillMaxWidth()) {
             QuickActionCard(
                 modifier = Modifier.weight(1f),
-                label = "Add a meal",
+                label = LocalStrings.current.homeAddAMeal,
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White,
                 icon = Icons.Default.Add,
@@ -158,7 +159,7 @@ fun HomeScreen(
             )
             QuickActionCard(
                 modifier = Modifier.weight(1f),
-                label = "Shopping list",
+                label = LocalStrings.current.homeShoppingList,
                 containerColor = MaterialTheme.colorScheme.surface,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 icon = Icons.Default.ShoppingCart,
