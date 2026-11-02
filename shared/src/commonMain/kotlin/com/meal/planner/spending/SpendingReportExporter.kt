@@ -6,4 +6,4 @@ import com.meal.domain.model.SpendingReport
 expect fun isPdfExportSupported(): Boolean
 
 @Composable
-expect fun rememberSpendingReportExporter(): (SpendingReport) -> Unit
+expect fun rememberSpendingReportExporter(): (SpendingReport, String) -> Unit

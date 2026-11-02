@@ -10,7 +10,8 @@ data class SpendingReportsUiState(
     val rangeEnd: LocalDate,
     val report: SpendingReport? = null,
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val currencySymbol: String = "$"
 ) {
     val isEmpty: Boolean
         get() = !isLoading && errorMessage == null && report?.lineItems.isNullOrEmpty()

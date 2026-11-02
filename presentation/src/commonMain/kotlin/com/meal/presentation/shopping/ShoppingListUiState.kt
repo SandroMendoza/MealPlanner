@@ -16,7 +16,8 @@ data class ShoppingListUiState(
     val availableIngredients: List<Ingredient> = emptyList(),
     val showAddItemDialog: Boolean = false,
     val itemBeingPriced: ShoppingListItem? = null,
-    val itemPendingDeletion: ShoppingListItem? = null
+    val itemPendingDeletion: ShoppingListItem? = null,
+    val currencySymbol: String = "$"
 ) {
     val isEmpty: Boolean
         get() = !isLoading && items.isEmpty() && errorMessage == null

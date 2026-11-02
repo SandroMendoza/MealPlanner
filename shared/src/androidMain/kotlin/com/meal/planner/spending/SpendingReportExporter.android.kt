@@ -21,10 +21,10 @@ private const val LINE_HEIGHT = 20f
 actual fun isPdfExportSupported(): Boolean = true
 
 @Composable
-actual fun rememberSpendingReportExporter(): (SpendingReport) -> Unit {
+actual fun rememberSpendingReportExporter(): (SpendingReport, String) -> Unit {
     val context = LocalContext.current
-    return { report ->
-        val file = generateReportPdf(context, report)
+    return { report, currencySymbol ->
+        val file = generateReportPdf(context, report, currencySymbol)
         val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", file)
         val sendIntent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
@@ -37,7 +37,7 @@ actual fun rememberSpendingReportExporter(): (SpendingReport) -> Unit {
     }
 }
 
-private fun generateReportPdf(context: Context, report: SpendingReport): File {
+private fun generateReportPdf(context: Context, report: SpendingReport, currencySymbol: String): File {
     val document = PdfDocument()
     val titlePaint = Paint().apply { textSize = 20f; isFakeBoldText = true }
     val subtitlePaint = Paint().apply { textSize = 12f; color = Color.DKGRAY }
@@ -63,12 +63,12 @@ private fun generateReportPdf(context: Context, report: SpendingReport): File {
     y += LINE_HEIGHT * 1.5f
     canvas.drawText("${report.rangeStart} to ${report.rangeEnd}", MARGIN, y, subtitlePaint)
     y += LINE_HEIGHT * 1.5f
-    canvas.drawText("Total spent: $${formatPrice(report.totalSpent)}", MARGIN, y, totalPaint)
+    canvas.drawText("Total spent: $currencySymbol${formatPrice(report.totalSpent)}", MARGIN, y, totalPaint)
     y += LINE_HEIGHT * 2
 
     report.lineItems.forEach { item ->
         startNewPageIfNeeded()
-        val line = "${item.name}  (${item.rangeStart} - ${item.rangeEnd})   $${formatPrice(item.price)}"
+        val line = "${item.name}  (${item.rangeStart} - ${item.rangeEnd})   $currencySymbol${formatPrice(item.price)}"
         canvas.drawText(line, MARGIN, y, bodyPaint)
         y += LINE_HEIGHT
     }

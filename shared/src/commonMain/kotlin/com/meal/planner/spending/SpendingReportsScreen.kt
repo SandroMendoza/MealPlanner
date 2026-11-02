@@ -83,7 +83,7 @@ fun SpendingReportsScreen(
                 actions = {
                     if (canExport) {
                         IconButton(
-                            onClick = { uiState.report?.let { exportReport(it) } },
+                            onClick = { uiState.report?.let { exportReport(it, uiState.currencySymbol) } },
                             enabled = uiState.report?.lineItems?.isNotEmpty() == true
                         ) {
                             Icon(Icons.Default.Share, contentDescription = "Export report as PDF")
@@ -204,7 +204,8 @@ fun SpendingReportsScreen(
                             item {
                                 SpendingSummaryCard(
                                     totalSpent = report.totalSpent,
-                                    bucketCount = report.buckets.size
+                                    bucketCount = report.buckets.size,
+                                    currencySymbol = uiState.currencySymbol
                                 )
                                 Spacer(Modifier.height(spacing.md))
                             }
@@ -215,6 +216,7 @@ fun SpendingReportsScreen(
                                 ) {
                                     SpendingBarChart(
                                         buckets = report.buckets,
+                                        currencySymbol = uiState.currencySymbol,
                                         modifier = Modifier.fillMaxWidth().padding(spacing.cardPadding)
                                     )
                                 }
@@ -229,7 +231,8 @@ fun SpendingReportsScreen(
                                     name = item.name,
                                     quantityLabel = "${item.totalQuantity} ${item.unit.unit}",
                                     rangeLabel = "${item.rangeStart} - ${item.rangeEnd}",
-                                    price = item.price
+                                    price = item.price,
+                                    currencySymbol = uiState.currencySymbol
                                 )
                             }
                         }
@@ -257,7 +260,7 @@ fun SpendingReportsScreen(
 }
 
 @Composable
-private fun SpendingSummaryCard(totalSpent: Double, bucketCount: Int) {
+private fun SpendingSummaryCard(totalSpent: Double, bucketCount: Int, currencySymbol: String) {
     val spacing = MealPlannerTokens.spacing
     Card(
         shape = MaterialTheme.shapes.large,
@@ -267,10 +270,14 @@ private fun SpendingSummaryCard(totalSpent: Double, bucketCount: Int) {
             modifier = Modifier.fillMaxWidth().padding(spacing.cardPadding),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            SpendingStat(label = "Total spent", value = "$${formatPrice(totalSpent)}", modifier = Modifier.weight(1f))
+            SpendingStat(
+                label = "Total spent",
+                value = "$currencySymbol${formatPrice(totalSpent)}",
+                modifier = Modifier.weight(1f)
+            )
             SpendingStat(
                 label = "Avg / period",
-                value = "$${formatPrice(if (bucketCount > 0) totalSpent / bucketCount else 0.0)}",
+                value = "$currencySymbol${formatPrice(if (bucketCount > 0) totalSpent / bucketCount else 0.0)}",
                 modifier = Modifier.weight(1f)
             )
         }
@@ -286,7 +293,13 @@ private fun SpendingStat(label: String, value: String, modifier: Modifier = Modi
 }
 
 @Composable
-private fun SpendingLineItemRow(name: String, quantityLabel: String, rangeLabel: String, price: Double) {
+private fun SpendingLineItemRow(
+    name: String,
+    quantityLabel: String,
+    rangeLabel: String,
+    price: Double,
+    currencySymbol: String
+) {
     val spacing = MealPlannerTokens.spacing
     Row(
         modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm),
@@ -302,7 +315,7 @@ private fun SpendingLineItemRow(name: String, quantityLabel: String, rangeLabel:
             )
         }
         Text(
-            text = "$${formatPrice(price)}",
+            text = "$currencySymbol${formatPrice(price)}",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary
         )

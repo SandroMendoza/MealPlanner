@@ -9,6 +9,6 @@ import com.meal.domain.model.SpendingReport
 actual fun isPdfExportSupported(): Boolean = false
 
 @Composable
-actual fun rememberSpendingReportExporter(): (SpendingReport) -> Unit {
-    return { }
+actual fun rememberSpendingReportExporter(): (SpendingReport, String) -> Unit {
+    return { _, _ -> }
 }

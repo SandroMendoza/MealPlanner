@@ -1,3 +1,8 @@
 package com.meal.domain.model
 
-enum class Currency { USD, EUR, GBP }
+enum class Currency(val symbol: String) {
+    USD("$"),
+    EUR("€"),
+    GBP("£"),
+    PHP("₱")
+}

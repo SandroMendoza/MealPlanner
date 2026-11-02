@@ -2,6 +2,7 @@ package com.meal.presentation.spending
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.GetSpendingReportUseCase
 import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.mondayOf
@@ -17,7 +18,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 
 class SpendingReportsViewModel(
-    private val getSpendingReportUseCase: GetSpendingReportUseCase
+    private val getSpendingReportUseCase: GetSpendingReportUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase
 ) : ViewModel() {
 
     private val initialWeekStart = currentWeekMonday()
@@ -34,6 +36,11 @@ class SpendingReportsViewModel(
 
     init {
         loadReport()
+        viewModelScope.launch {
+            getSettingsUseCase.execute().collect { settings ->
+                _uiState.value = _uiState.value.copy(currencySymbol = settings.currency.symbol)
+            }
+        }
     }
 
     private fun loadReport() {

@@ -14,6 +14,7 @@ import com.meal.domain.model.ShoppingListItem
 @Composable
 fun RecordPriceDialog(
     item: ShoppingListItem,
+    currencySymbol: String,
     onConfirm: (price: Double) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -31,7 +32,7 @@ fun RecordPriceDialog(
             OutlinedTextField(
                 value = priceText,
                 onValueChange = { priceText = it },
-                label = { Text("Price ($)") }
+                label = { Text("Price ($currencySymbol)") }
             )
         },
         confirmButton = {

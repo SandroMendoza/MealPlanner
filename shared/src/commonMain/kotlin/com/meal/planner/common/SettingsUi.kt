@@ -13,4 +13,5 @@ fun Currency.displayName(): String = when (this) {
     Currency.USD -> "USD ($)"
     Currency.EUR -> "EUR (€)"
     Currency.GBP -> "GBP (£)"
+    Currency.PHP -> "PHP (₱)"
 }

@@ -57,7 +57,7 @@ private fun bucketAxisLabel(bucket: SpendingBucket): String =
  * tallest bar by default - surfaces its exact amount above the chart.
  */
 @Composable
-fun SpendingBarChart(buckets: List<SpendingBucket>, modifier: Modifier = Modifier) {
+fun SpendingBarChart(buckets: List<SpendingBucket>, currencySymbol: String = "$", modifier: Modifier = Modifier) {
     if (buckets.isEmpty()) return
 
     val spacing = MealPlannerTokens.spacing
@@ -76,7 +76,7 @@ fun SpendingBarChart(buckets: List<SpendingBucket>, modifier: Modifier = Modifie
 
     Column(modifier = modifier) {
         Text(
-            text = selectedBucket?.let { "${bucketAxisLabel(it)}  •  $${formatPrice(it.amount)}" }.orEmpty(),
+            text = selectedBucket?.let { "${bucketAxisLabel(it)}  •  $currencySymbol${formatPrice(it.amount)}" }.orEmpty(),
             style = MaterialTheme.typography.labelLarge,
             color = valueLabelColor
         )

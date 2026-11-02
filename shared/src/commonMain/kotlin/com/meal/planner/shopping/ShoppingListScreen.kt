@@ -211,7 +211,9 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                     textDecoration = textDecoration,
                                     modifier = Modifier.padding(end = spacing.sm)
                                 )
-                                val priceLabel = item.price?.let { price -> "$${formatPrice(price)}" } ?: "Add price"
+                                val priceLabel = item.price?.let { price ->
+                                    "${uiState.currencySymbol}${formatPrice(price)}"
+                                } ?: "Add price"
                                 Text(
                                     text = priceLabel,
                                     style = MaterialTheme.typography.bodyMedium,
@@ -233,7 +235,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                 ) {
                     Text("Total spent", style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "$${formatPrice(uiState.totalSpent)}",
+                        "${uiState.currencySymbol}${formatPrice(uiState.totalSpent)}",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -263,6 +265,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
         uiState.itemBeingPriced?.let { item ->
             RecordPriceDialog(
                 item = item,
+                currencySymbol = uiState.currencySymbol,
                 onConfirm = { price -> viewModel.recordItemPrice(item.itemKey, price) },
                 onDismiss = { viewModel.dismissRecordPriceDialog() }
             )

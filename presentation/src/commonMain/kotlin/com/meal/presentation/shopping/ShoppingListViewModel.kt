@@ -7,6 +7,7 @@ import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.usecase.AddShoppingListItemUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
+import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
@@ -28,7 +29,8 @@ class ShoppingListViewModel(
     private val addShoppingListItemUseCase: AddShoppingListItemUseCase,
     private val removeShoppingListItemUseCase: RemoveShoppingListItemUseCase,
     private val recordItemPriceUseCase: RecordItemPriceUseCase,
-    private val getAllIngredientsUseCase: GetAllIngredientsUseCase
+    private val getAllIngredientsUseCase: GetAllIngredientsUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase
 ) : ViewModel() {
 
     private val initialWeekStart = currentWeekMonday()
@@ -48,6 +50,11 @@ class ShoppingListViewModel(
         viewModelScope.launch {
             getAllIngredientsUseCase.execute().collect { list ->
                 _uiState.value = _uiState.value.copy(availableIngredients = list)
+            }
+        }
+        viewModelScope.launch {
+            getSettingsUseCase.execute().collect { settings ->
+                _uiState.value = _uiState.value.copy(currencySymbol = settings.currency.symbol)
             }
         }
     }
