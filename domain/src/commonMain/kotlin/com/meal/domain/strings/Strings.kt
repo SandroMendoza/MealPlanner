@@ -153,6 +153,7 @@ data class Strings(
     val settingsPreferences: String,
     val settingsNotifications: String,
     val settingsDarkMode: String,
+    val settingsLockPastDates: String,
     val settingsLocalization: String,
     val settingsAbout: String,
     val settingsAboutMealPlanner: String,

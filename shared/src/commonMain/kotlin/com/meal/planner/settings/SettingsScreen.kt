@@ -12,6 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -75,6 +76,10 @@ fun SettingsScreen(
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsDarkMode, icon = Icons.Default.DarkMode) {
                 Switch(checked = uiState.darkModeEnabled, onCheckedChange = viewModel::setDarkModeEnabled)
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            SettingsRow(label = LocalStrings.current.settingsLockPastDates, icon = Icons.Default.Lock) {
+                Switch(checked = uiState.lockPastDates, onCheckedChange = viewModel::setLockPastDates)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 

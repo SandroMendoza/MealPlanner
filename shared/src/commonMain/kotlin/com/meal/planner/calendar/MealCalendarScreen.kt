@@ -149,9 +149,10 @@ fun MealCalendarScreen(
                         MealSection(
                             mealType = mealType,
                             entries = entriesByMealType[mealType].orEmpty(),
+                            locked = uiState.isLocked(selectedDate),
                             onAdd = { onSlotClick(selectedDate, mealType, null) },
                             onChangeEntry = { entry -> onSlotClick(selectedDate, mealType, entry.id) },
-                            onRemoveEntry = { entry -> viewModel.removeSlot(entry.id) },
+                            onRemoveEntry = { entry -> viewModel.removeSlot(entry) },
                             onOpenRecipe = onRecipeClick
                         )
                     }
@@ -214,6 +215,7 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
 private fun MealSection(
     mealType: MealType,
     entries: List<MealPlanEntry>,
+    locked: Boolean,
     onAdd: () -> Unit,
     onChangeEntry: (MealPlanEntry) -> Unit,
     onRemoveEntry: (MealPlanEntry) -> Unit,
@@ -240,6 +242,7 @@ private fun MealSection(
             entries.forEachIndexed { index, entry ->
                 MealEntryCard(
                     entry = entry,
+                    locked = locked,
                     onClick = { onOpenRecipe(entry.recipe.id) },
                     onChange = { onChangeEntry(entry) },
                     onRemove = { onRemoveEntry(entry) }
@@ -272,7 +275,7 @@ private fun AddMealButton(mealType: MealType, onClick: () -> Unit) {
 }
 
 @Composable
-private fun MealEntryCard(entry: MealPlanEntry, onClick: () -> Unit, onChange: () -> Unit, onRemove: () -> Unit) {
+private fun MealEntryCard(entry: MealPlanEntry, locked: Boolean, onClick: () -> Unit, onChange: () -> Unit, onRemove: () -> Unit) {
     val spacing = MealPlannerTokens.spacing
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -313,10 +316,12 @@ private fun MealEntryCard(entry: MealPlanEntry, onClick: () -> Unit, onChange: (
                         text = { Text(LocalStrings.current.calendarChangeRecipe) },
                         onClick = { menuExpanded = false; onChange() }
                     )
-                    DropdownMenuItem(
-                        text = { Text(LocalStrings.current.remove, color = MaterialTheme.colorScheme.error) },
-                        onClick = { menuExpanded = false; onRemove() }
-                    )
+                    if (!locked) {
+                        DropdownMenuItem(
+                            text = { Text(LocalStrings.current.remove, color = MaterialTheme.colorScheme.error) },
+                            onClick = { menuExpanded = false; onRemove() }
+                        )
+                    }
                 }
             }
         }

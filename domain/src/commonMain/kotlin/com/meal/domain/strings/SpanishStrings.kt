@@ -184,6 +184,7 @@ val spanishStrings = Strings(
     settingsPreferences = "Preferencias",
     settingsNotifications = "Notificaciones",
     settingsDarkMode = "Modo oscuro",
+    settingsLockPastDates = "Bloquear fechas pasadas",
     settingsLocalization = "Localización",
     settingsAbout = "Acerca de",
     settingsAboutMealPlanner = "Acerca de Meal Planner",

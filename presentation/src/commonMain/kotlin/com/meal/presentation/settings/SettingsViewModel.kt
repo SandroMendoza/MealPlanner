@@ -26,6 +26,7 @@ class SettingsViewModel(
                     darkModeEnabled = settings.darkModeEnabled,
                     language = settings.language,
                     currency = settings.currency,
+                    lockPastDates = settings.lockPastDates,
                     isLoading = false
                 )
             }
@@ -35,6 +36,7 @@ class SettingsViewModel(
     fun setDarkModeEnabled(enabled: Boolean) = persist { it.copy(darkModeEnabled = enabled) }
     fun setLanguage(language: Language) = persist { it.copy(language = language) }
     fun setCurrency(currency: Currency) = persist { it.copy(currency = currency) }
+    fun setLockPastDates(enabled: Boolean) = persist { it.copy(lockPastDates = enabled) }
 
     private fun persist(transform: (AppSettings) -> AppSettings) {
         val current = _uiState.value
@@ -42,13 +44,15 @@ class SettingsViewModel(
             AppSettings(
                 darkModeEnabled = current.darkModeEnabled,
                 language = current.language,
-                currency = current.currency
+                currency = current.currency,
+                lockPastDates = current.lockPastDates
             )
         )
         _uiState.value = current.copy(
             darkModeEnabled = updated.darkModeEnabled,
             language = updated.language,
-            currency = updated.currency
+            currency = updated.currency,
+            lockPastDates = updated.lockPastDates
         )
         viewModelScope.launch { updateSettingsUseCase.execute(updated) }
     }

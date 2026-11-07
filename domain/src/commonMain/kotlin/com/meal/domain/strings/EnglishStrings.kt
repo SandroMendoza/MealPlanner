@@ -184,6 +184,7 @@ val englishStrings = Strings(
     settingsPreferences = "Preferences",
     settingsNotifications = "Notifications",
     settingsDarkMode = "Dark mode",
+    settingsLockPastDates = "Lock past dates",
     settingsLocalization = "Localization",
     settingsAbout = "About",
     settingsAboutMealPlanner = "About Meal Planner",
