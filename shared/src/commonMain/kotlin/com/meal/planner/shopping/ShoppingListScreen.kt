@@ -220,7 +220,6 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                     text = priceLabel,
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = if (item.price != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    textDecoration = textDecoration,
                                     modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
                                 )
                             }
