@@ -23,7 +23,6 @@ class SettingsViewModel(
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
                 _uiState.value = _uiState.value.copy(
-                    notificationsEnabled = settings.notificationsEnabled,
                     darkModeEnabled = settings.darkModeEnabled,
                     language = settings.language,
                     currency = settings.currency,
@@ -33,7 +32,6 @@ class SettingsViewModel(
         }
     }
 
-    fun setNotificationsEnabled(enabled: Boolean) = persist { it.copy(notificationsEnabled = enabled) }
     fun setDarkModeEnabled(enabled: Boolean) = persist { it.copy(darkModeEnabled = enabled) }
     fun setLanguage(language: Language) = persist { it.copy(language = language) }
     fun setCurrency(currency: Currency) = persist { it.copy(currency = currency) }
@@ -42,14 +40,12 @@ class SettingsViewModel(
         val current = _uiState.value
         val updated = transform(
             AppSettings(
-                notificationsEnabled = current.notificationsEnabled,
                 darkModeEnabled = current.darkModeEnabled,
                 language = current.language,
                 currency = current.currency
             )
         )
         _uiState.value = current.copy(
-            notificationsEnabled = updated.notificationsEnabled,
             darkModeEnabled = updated.darkModeEnabled,
             language = updated.language,
             currency = updated.currency

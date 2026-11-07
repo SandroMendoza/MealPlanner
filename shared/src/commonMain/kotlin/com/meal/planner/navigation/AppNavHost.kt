@@ -32,6 +32,7 @@ import com.meal.planner.recipes.RecipeDetailScreen
 import com.meal.planner.recipes.RecipeFormScreen
 import com.meal.planner.recipes.RecipeScreen
 import com.meal.planner.settings.AboutScreen
+import com.meal.planner.settings.NotificationSettingsScreen
 import com.meal.planner.settings.PrivacyPolicyScreen
 import com.meal.planner.settings.SettingsScreen
 import com.meal.planner.shopping.ShoppingListScreen
@@ -205,9 +206,13 @@ fun AppNavHost() {
             composable(Routes.SETTINGS) {
                 SettingsScreen(
                     onBack = { navController.popBackStack() },
+                    onNotificationSettingsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) },
                     onAboutClick = { navController.navigate(Routes.ABOUT) },
                     onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) }
                 )
+            }
+            composable(Routes.NOTIFICATION_SETTINGS) {
+                NotificationSettingsScreen(onBack = { navController.popBackStack() })
             }
             composable(Routes.ABOUT) {
                 AboutScreen(onBack = { navController.popBackStack() })

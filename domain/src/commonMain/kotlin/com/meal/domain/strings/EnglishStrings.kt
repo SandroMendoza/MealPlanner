@@ -189,6 +189,15 @@ val englishStrings = Strings(
     settingsAboutMealPlanner = "About Meal Planner",
     settingsPrivacyPolicy = "Privacy Policy",
 
+    notificationSettingsTitle = "Notification Settings",
+    notificationSettingsDescription = "Choose which meals you want to be reminded about.",
+    settingsNotificationsPermissionDenied = "Enable notifications in system settings to receive meal reminders.",
+    settingsNotificationsOpenSettings = "Open settings",
+    settingsNotificationsExactAlarmHint = "For reminders to arrive exactly on time, allow precise alarms.",
+    settingsNotificationsEnableExactAlarms = "Allow precise alarms",
+    mealReminderNotificationTitle = { mealType -> "${englishMealTypeName(mealType)} reminder" },
+    mealReminderNotificationBody = "Tap to see what's planned.",
+
     aboutAppName = "Meal Planner",
     aboutVersion = "Version 1.0",
     aboutBody = "Meal Planner helps you plan weekly meals, organize recipes, build shopping " +

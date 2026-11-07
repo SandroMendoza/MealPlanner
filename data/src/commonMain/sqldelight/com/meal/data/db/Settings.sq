@@ -1,6 +1,5 @@
 CREATE TABLE SettingsEntity (
     id INTEGER NOT NULL PRIMARY KEY,
-    notificationsEnabled INTEGER NOT NULL,
     darkModeEnabled INTEGER NOT NULL,
     language TEXT NOT NULL,
     currency TEXT NOT NULL
@@ -10,5 +9,5 @@ selectSettings:
 SELECT * FROM SettingsEntity WHERE id = 1;
 
 upsertSettings:
-INSERT OR REPLACE INTO SettingsEntity(id, notificationsEnabled, darkModeEnabled, language, currency)
-VALUES (1, ?, ?, ?, ?);
+INSERT OR REPLACE INTO SettingsEntity(id, darkModeEnabled, language, currency)
+VALUES (1, ?, ?, ?);

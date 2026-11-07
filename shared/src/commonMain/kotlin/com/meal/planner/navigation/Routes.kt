@@ -14,6 +14,7 @@ object Routes {
     const val SHOPPING_LIST = "shoppingList"
     const val SPENDING_REPORTS = "spendingReports"
     const val SETTINGS = "settings"
+    const val NOTIFICATION_SETTINGS = "settings/notifications"
     const val ABOUT = "settings/about"
     const val PRIVACY_POLICY = "settings/privacy"
 

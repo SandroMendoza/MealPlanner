@@ -158,6 +158,16 @@ data class Strings(
     val settingsAboutMealPlanner: String,
     val settingsPrivacyPolicy: String,
 
+    // Notification settings
+    val notificationSettingsTitle: String,
+    val notificationSettingsDescription: String,
+    val settingsNotificationsPermissionDenied: String,
+    val settingsNotificationsOpenSettings: String,
+    val settingsNotificationsExactAlarmHint: String,
+    val settingsNotificationsEnableExactAlarms: String,
+    val mealReminderNotificationTitle: (MealType) -> String,
+    val mealReminderNotificationBody: String,
+
     // About screen
     val aboutAppName: String,
     val aboutVersion: String,

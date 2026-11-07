@@ -189,6 +189,15 @@ val frenchStrings = Strings(
     settingsAboutMealPlanner = "À propos de Meal Planner",
     settingsPrivacyPolicy = "Politique de Confidentialité",
 
+    notificationSettingsTitle = "Paramètres de notification",
+    notificationSettingsDescription = "Choisissez les repas pour lesquels vous souhaitez un rappel.",
+    settingsNotificationsPermissionDenied = "Activez les notifications dans les paramètres système pour recevoir des rappels de repas.",
+    settingsNotificationsOpenSettings = "Ouvrir les paramètres",
+    settingsNotificationsExactAlarmHint = "Pour que les rappels arrivent à l'heure exacte, autorisez les alarmes précises.",
+    settingsNotificationsEnableExactAlarms = "Autoriser les alarmes précises",
+    mealReminderNotificationTitle = { mealType -> "Rappel : ${frenchMealTypeName(mealType).lowercase()}" },
+    mealReminderNotificationBody = "Appuyez pour voir ce qui est prévu.",
+
     aboutAppName = "Meal Planner",
     aboutVersion = "Version 1.0",
     aboutBody = "Meal Planner vous aide à planifier vos repas de la semaine, organiser vos recettes, générer " +

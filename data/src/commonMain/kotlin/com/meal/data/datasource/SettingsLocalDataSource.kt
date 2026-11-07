@@ -28,7 +28,6 @@ class SettingsLocalDataSource(
     suspend fun update(settings: AppSettings) =
         withContext(ioDispatcher) {
             queries.upsertSettings(
-                if (settings.notificationsEnabled) 1L else 0L,
                 if (settings.darkModeEnabled) 1L else 0L,
                 settings.language.name,
                 settings.currency.name
@@ -36,7 +35,6 @@ class SettingsLocalDataSource(
         }
 
     private fun toDomain(row: SettingsEntity) = AppSettings(
-        notificationsEnabled = row.notificationsEnabled != 0L,
         darkModeEnabled = row.darkModeEnabled != 0L,
         language = Language.valueOf(row.language),
         currency = Currency.valueOf(row.currency)

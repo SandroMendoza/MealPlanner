@@ -1,0 +1,13 @@
+CREATE TABLE MealReminderEntity (
+    mealType TEXT NOT NULL PRIMARY KEY,
+    enabled INTEGER NOT NULL,
+    hour INTEGER NOT NULL,
+    minute INTEGER NOT NULL
+);
+
+selectReminders:
+SELECT * FROM MealReminderEntity;
+
+upsertReminder:
+INSERT OR REPLACE INTO MealReminderEntity(mealType, enabled, hour, minute)
+VALUES (?, ?, ?, ?);

@@ -189,6 +189,15 @@ val spanishStrings = Strings(
     settingsAboutMealPlanner = "Acerca de Meal Planner",
     settingsPrivacyPolicy = "Política de Privacidad",
 
+    notificationSettingsTitle = "Configuración de notificaciones",
+    notificationSettingsDescription = "Elige para qué comidas quieres recibir recordatorios.",
+    settingsNotificationsPermissionDenied = "Activa las notificaciones en la configuración del sistema para recibir recordatorios de comidas.",
+    settingsNotificationsOpenSettings = "Abrir configuración",
+    settingsNotificationsExactAlarmHint = "Para que los recordatorios lleguen puntuales, permite alarmas precisas.",
+    settingsNotificationsEnableExactAlarms = "Permitir alarmas precisas",
+    mealReminderNotificationTitle = { mealType -> "Recordatorio de ${spanishMealTypeName(mealType).lowercase()}" },
+    mealReminderNotificationBody = "Toca para ver lo que tienes planeado.",
+
     aboutAppName = "Meal Planner",
     aboutVersion = "Versión 1.0",
     aboutBody = "Meal Planner te ayuda a planificar comidas semanales, organizar recetas, generar listas de " +

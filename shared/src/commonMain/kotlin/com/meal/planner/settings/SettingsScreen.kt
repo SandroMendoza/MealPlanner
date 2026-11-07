@@ -39,6 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
+    onNotificationSettingsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
@@ -68,8 +69,8 @@ fun SettingsScreen(
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
         ) {
             SectionLabel(LocalStrings.current.settingsPreferences)
-            SettingsRow(label = LocalStrings.current.settingsNotifications, icon = Icons.Default.Notifications) {
-                Switch(checked = uiState.notificationsEnabled, onCheckedChange = viewModel::setNotificationsEnabled)
+            SettingsRow(label = LocalStrings.current.settingsNotifications, icon = Icons.Default.Notifications, onClick = onNotificationSettingsClick) {
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsDarkMode, icon = Icons.Default.DarkMode) {
