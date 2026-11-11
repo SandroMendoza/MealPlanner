@@ -20,7 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.planner.common.filterDecimalInput
 import com.meal.planner.components.IngredientNameField
 import com.meal.planner.components.KeyboardDismissButton
 import com.meal.planner.components.UnitDropdownField
@@ -64,10 +66,10 @@ fun AddShoppingItemDialog(
                 ) {
                     OutlinedTextField(
                         value = quantityText,
-                        onValueChange = { quantityText = it },
+                        onValueChange = { quantityText = filterDecimalInput(it) },
                         label = { Text(LocalStrings.current.qty) },
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
                         keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                         modifier = Modifier.weight(1f)
                     )

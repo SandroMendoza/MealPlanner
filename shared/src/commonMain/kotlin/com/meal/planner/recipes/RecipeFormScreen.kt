@@ -36,13 +36,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
+import com.meal.planner.common.filterDecimalInput
+import com.meal.planner.common.filterIntegerInput
 import com.meal.planner.common.rememberImagePicker
 import com.meal.planner.components.ImageSourceDialog
 import com.meal.planner.components.IngredientNameField
@@ -111,7 +119,7 @@ fun RecipeFormScreen(
             OutlinedTextField(
                 value = uiState.name,
                 onValueChange = viewModel::updateName,
-                label = { Text(LocalStrings.current.name) },
+                label = { RequiredFieldLabel(LocalStrings.current.name) },
                 isError = uiState.isDuplicateName,
                 supportingText = {
                     if (uiState.isDuplicateName) {
@@ -130,7 +138,7 @@ fun RecipeFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            SectionLabel(LocalStrings.current.category)
+            SectionLabel(LocalStrings.current.category, required = true)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(FoodCategory.entries.toList()) { category ->
                     FilterChip(
@@ -142,7 +150,7 @@ fun RecipeFormScreen(
                 }
             }
 
-            SectionLabel(LocalStrings.current.recipeFormMealTypes)
+            SectionLabel(LocalStrings.current.recipeFormMealTypes, required = true)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(MealType.entries.toList(), key = { it.name }) { mealType ->
                     FilterChip(
@@ -157,28 +165,28 @@ fun RecipeFormScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 OutlinedTextField(
                     value = uiState.preparationTimeMinutes,
-                    onValueChange = viewModel::updatePreparationTime,
-                    label = { Text(LocalStrings.current.recipeFormPrepMin) },
+                    onValueChange = { viewModel.updatePreparationTime(filterIntegerInput(it)) },
+                    label = { NumericFieldLabel(LocalStrings.current.recipeFormPrepMin) },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = uiState.servings,
-                    onValueChange = viewModel::updateServings,
-                    label = { Text(LocalStrings.current.recipeFormServings) },
+                    onValueChange = { viewModel.updateServings(filterIntegerInput(it)) },
+                    label = { NumericFieldLabel(LocalStrings.current.recipeFormServings) },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = uiState.calories,
-                    onValueChange = viewModel::updateCalories,
-                    label = { Text(LocalStrings.current.recipeFormCalories) },
+                    onValueChange = { viewModel.updateCalories(filterIntegerInput(it)) },
+                    label = { NumericFieldLabel(LocalStrings.current.recipeFormCalories) },
                     singleLine = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
@@ -222,7 +230,7 @@ fun RecipeFormScreen(
                 )
             }
 
-            SectionLabel(LocalStrings.current.ingredients)
+            SectionLabel(LocalStrings.current.ingredients, required = true)
             uiState.ingredients.forEachIndexed { index, row ->
                 IngredientRowEditor(
                     row = row,
@@ -235,7 +243,7 @@ fun RecipeFormScreen(
                 Text(LocalStrings.current.recipeFormAddIngredient)
             }
 
-            SectionLabel(LocalStrings.current.instructions)
+            SectionLabel(LocalStrings.current.instructions, required = true)
             uiState.instructions.forEachIndexed { index, row ->
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -270,8 +278,27 @@ fun RecipeFormScreen(
 }
 
 @Composable
-private fun SectionLabel(text: String) {
-    Text(text = text, style = MaterialTheme.typography.titleMedium)
+private fun SectionLabel(text: String, required: Boolean = false) {
+    Text(
+        text = if (required) requiredLabel(text) else AnnotatedString(text),
+        style = MaterialTheme.typography.titleMedium
+    )
+}
+
+@Composable
+private fun RequiredFieldLabel(text: String) {
+    Text(requiredLabel(text))
+}
+
+@Composable
+private fun requiredLabel(text: String): AnnotatedString = buildAnnotatedString {
+    append(text)
+    withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append(" *") }
+}
+
+@Composable
+private fun NumericFieldLabel(text: String) {
+    Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
 }
 
 @Composable
@@ -297,10 +324,10 @@ private fun IngredientRowEditor(
             )
             OutlinedTextField(
                 value = row.quantity,
-                onValueChange = { onChange(row.copy(quantity = it)) },
+                onValueChange = { onChange(row.copy(quantity = filterDecimalInput(it))) },
                 label = { Text(LocalStrings.current.qty) },
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 modifier = Modifier.weight(1f)
             )
