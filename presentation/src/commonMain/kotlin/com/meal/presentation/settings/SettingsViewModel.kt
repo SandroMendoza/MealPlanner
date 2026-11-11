@@ -3,6 +3,7 @@ package com.meal.presentation.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.AppSettings
+import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import com.meal.domain.usecase.GetSettingsUseCase
@@ -27,6 +28,7 @@ class SettingsViewModel(
                     language = settings.language,
                     currency = settings.currency,
                     lockPastDates = settings.lockPastDates,
+                    defaultCalendarView = settings.defaultCalendarView,
                     isLoading = false
                 )
             }
@@ -37,6 +39,7 @@ class SettingsViewModel(
     fun setLanguage(language: Language) = persist { it.copy(language = language) }
     fun setCurrency(currency: Currency) = persist { it.copy(currency = currency) }
     fun setLockPastDates(enabled: Boolean) = persist { it.copy(lockPastDates = enabled) }
+    fun setDefaultCalendarView(view: CalendarViewMode) = persist { it.copy(defaultCalendarView = view) }
 
     private fun persist(transform: (AppSettings) -> AppSettings) {
         val current = _uiState.value
@@ -45,14 +48,16 @@ class SettingsViewModel(
                 darkModeEnabled = current.darkModeEnabled,
                 language = current.language,
                 currency = current.currency,
-                lockPastDates = current.lockPastDates
+                lockPastDates = current.lockPastDates,
+                defaultCalendarView = current.defaultCalendarView
             )
         )
         _uiState.value = current.copy(
             darkModeEnabled = updated.darkModeEnabled,
             language = updated.language,
             currency = updated.currency,
-            lockPastDates = updated.lockPastDates
+            lockPastDates = updated.lockPastDates,
+            defaultCalendarView = updated.defaultCalendarView
         )
         viewModelScope.launch { updateSettingsUseCase.execute(updated) }
     }

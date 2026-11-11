@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.MealPlanEntry
 import com.meal.domain.usecase.GetSettingsUseCase
+import com.meal.domain.model.CalendarViewMode as DomainCalendarViewMode
 import com.meal.domain.usecase.GetWeekNoteUseCase
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
@@ -21,7 +22,17 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 import kotlin.uuid.ExperimentalUuidApi
 
-private fun buildWeekState(weekStart: LocalDate, selectedDate: LocalDate, lockPastDates: Boolean): MealCalendarUiState {
+private fun DomainCalendarViewMode.toPresentation(): CalendarViewMode = when (this) {
+    DomainCalendarViewMode.DAY -> CalendarViewMode.DAY
+    DomainCalendarViewMode.WEEK -> CalendarViewMode.WEEK
+}
+
+private fun buildWeekState(
+    weekStart: LocalDate,
+    selectedDate: LocalDate,
+    lockPastDates: Boolean,
+    viewMode: CalendarViewMode
+): MealCalendarUiState {
     val weekEnd = weekEndFor(weekStart)
     val days = (0..6).map { weekStart.plus(it, DateTimeUnit.DAY) }
     return MealCalendarUiState(
@@ -29,7 +40,8 @@ private fun buildWeekState(weekStart: LocalDate, selectedDate: LocalDate, lockPa
         weekEnd = weekEnd,
         selectedDate = selectedDate,
         days = days,
-        lockPastDates = lockPastDates
+        lockPastDates = lockPastDates,
+        viewMode = viewMode
     )
 }
 
@@ -42,18 +54,29 @@ class MealCalendarViewModel(
     private val updateWeekNoteUseCase: UpdateWeekNoteUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(buildWeekState(currentWeekSunday(), today(), lockPastDates = false))
+    private val _uiState = MutableStateFlow(
+        buildWeekState(currentWeekSunday(), today(), lockPastDates = false, viewMode = CalendarViewMode.DAY)
+    )
     val state = _uiState.asStateFlow()
 
     private var loadJob: Job? = null
     private var noteJob: Job? = null
+    private var defaultViewModeApplied = false
 
     init {
         loadWeek()
         loadNote()
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
-                _uiState.value = _uiState.value.copy(lockPastDates = settings.lockPastDates)
+                _uiState.value = _uiState.value.copy(
+                    lockPastDates = settings.lockPastDates,
+                    viewMode = if (!defaultViewModeApplied) {
+                        settings.defaultCalendarView.toPresentation()
+                    } else {
+                        _uiState.value.viewMode
+                    }
+                )
+                defaultViewModeApplied = true
             }
         }
     }
@@ -94,7 +117,7 @@ class MealCalendarViewModel(
         val newStart = _uiState.value.weekStart.plus(deltaDays, DateTimeUnit.DAY)
         val newDays = (0..6).map { newStart.plus(it, DateTimeUnit.DAY) }
         val newSelectedDate = today().takeIf { it in newDays } ?: newStart
-        _uiState.value = buildWeekState(newStart, newSelectedDate, _uiState.value.lockPastDates)
+        _uiState.value = buildWeekState(newStart, newSelectedDate, _uiState.value.lockPastDates, _uiState.value.viewMode)
         loadWeek()
         loadNote()
     }
@@ -107,13 +130,13 @@ class MealCalendarViewModel(
     }
 
     fun goToToday() {
-        _uiState.value = buildWeekState(currentWeekSunday(), today(), _uiState.value.lockPastDates)
+        _uiState.value = buildWeekState(currentWeekSunday(), today(), _uiState.value.lockPastDates, _uiState.value.viewMode)
         loadWeek()
         loadNote()
     }
 
     fun goToDate(date: LocalDate) {
-        _uiState.value = buildWeekState(sundayOf(date), date, _uiState.value.lockPastDates)
+        _uiState.value = buildWeekState(sundayOf(date), date, _uiState.value.lockPastDates, _uiState.value.viewMode)
         loadWeek()
         loadNote()
     }

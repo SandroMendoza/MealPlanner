@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
@@ -21,13 +25,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.meal.domain.model.CalendarViewMode
 import com.meal.planner.components.CurrencyDropdownField
 import com.meal.planner.components.LanguageDropdownField
 import com.meal.planner.components.SettingsRow
@@ -35,6 +44,12 @@ import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.settings.SettingsViewModel
 import org.koin.compose.viewmodel.koinViewModel
+
+@Composable
+private fun CalendarViewMode.label(): String = when (this) {
+    CalendarViewMode.DAY -> LocalStrings.current.day
+    CalendarViewMode.WEEK -> LocalStrings.current.week
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -67,6 +82,7 @@ fun SettingsScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
         ) {
             SectionLabel(LocalStrings.current.settingsPreferences)
@@ -80,6 +96,21 @@ fun SettingsScreen(
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsLockPastDates, icon = Icons.Default.Lock) {
                 Switch(checked = uiState.lockPastDates, onCheckedChange = viewModel::setLockPastDates)
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            SettingsRow(label = LocalStrings.current.settingsDefaultCalendarView, icon = Icons.Default.CalendarMonth) {
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.width(160.dp)) {
+                    CalendarViewMode.entries.forEachIndexed { index, mode ->
+                        SegmentedButton(
+                            selected = uiState.defaultCalendarView == mode,
+                            onClick = { viewModel.setDefaultCalendarView(mode) },
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = CalendarViewMode.entries.size),
+                            icon = {}
+                        ) {
+                            Text(mode.label())
+                        }
+                    }
+                }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
 

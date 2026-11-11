@@ -85,6 +85,7 @@ data class Strings(
     val calendarChangeRecipe: String,
     val calendarWeekNotes: String,
     val calendarWeekNotesPlaceholder: String,
+    val calendarWeekNumber: (Int) -> String,
 
     // Recipe picker (from calendar)
     val recipePickerTitle: String,
@@ -166,6 +167,7 @@ data class Strings(
     val settingsNotifications: String,
     val settingsDarkMode: String,
     val settingsLockPastDates: String,
+    val settingsDefaultCalendarView: String,
     val settingsLocalization: String,
     val settingsAbout: String,
     val settingsAboutMealPlanner: String,

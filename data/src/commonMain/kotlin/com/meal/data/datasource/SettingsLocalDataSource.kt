@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.meal.data.db.MealPlannerDatabase
 import com.meal.data.db.SettingsEntity
 import com.meal.domain.model.AppSettings
+import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import kotlinx.coroutines.CoroutineDispatcher
@@ -31,7 +32,8 @@ class SettingsLocalDataSource(
                 if (settings.darkModeEnabled) 1L else 0L,
                 settings.language.name,
                 settings.currency.name,
-                if (settings.lockPastDates) 1L else 0L
+                if (settings.lockPastDates) 1L else 0L,
+                settings.defaultCalendarView.name
             )
         }
 
@@ -39,6 +41,7 @@ class SettingsLocalDataSource(
         darkModeEnabled = row.darkModeEnabled != 0L,
         language = Language.valueOf(row.language),
         currency = Currency.valueOf(row.currency),
-        lockPastDates = row.lockPastDates != 0L
+        lockPastDates = row.lockPastDates != 0L,
+        defaultCalendarView = CalendarViewMode.valueOf(row.defaultCalendarView)
     )
 }

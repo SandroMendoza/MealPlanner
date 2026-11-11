@@ -121,6 +121,7 @@ val spanishStrings = Strings(
     calendarChangeRecipe = "Cambiar receta",
     calendarWeekNotes = "Notas",
     calendarWeekNotesPlaceholder = "Escribe una nota para esta semana...",
+    calendarWeekNumber = { weekNumber -> "Semana $weekNumber" },
 
     recipePickerTitle = "Elegir una receta",
     recipePickerAddRecipeNameTo = { recipeName -> "Añadir \"$recipeName\" a..." },
@@ -197,6 +198,7 @@ val spanishStrings = Strings(
     settingsNotifications = "Notificaciones",
     settingsDarkMode = "Modo oscuro",
     settingsLockPastDates = "Bloquear fechas pasadas",
+    settingsDefaultCalendarView = "Vista predeterminada del plan de comidas",
     settingsLocalization = "Localización",
     settingsAbout = "Acerca de",
     settingsAboutMealPlanner = "Acerca de Meal Planner",

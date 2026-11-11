@@ -73,6 +73,7 @@ import com.meal.presentation.calendar.CalendarViewMode
 import com.meal.presentation.calendar.MealCalendarViewModel
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
+import com.meal.presentation.common.weekNumberFor
 import kotlinx.datetime.LocalDate
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
@@ -121,6 +122,11 @@ fun MealCalendarScreen(
                     Text(
                         text = "${uiState.weekStart} - ${uiState.weekEnd}",
                         style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = LocalStrings.current.calendarWeekNumber(weekNumberFor(uiState.weekStart)),
+                        style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
