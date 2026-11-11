@@ -34,6 +34,15 @@ class ShoppingListLocalDataSource(
             val existingKeys = queries.selectKeysForRange(rangeStart.toString(), rangeEnd.toString()).executeAsList().toSet()
             val missing = required.filter { it.itemKey !in existingKeys }
             if (missing.isNotEmpty()) {
+                // A day view and a week view that cover the same calendar days generate separate rows
+                // (one per distinct range). Carry over checked/price from an overlapping range so
+                // switching views doesn't make an already-bought item look unchecked again.
+                val overlapping = queries.selectOverlappingItems(
+                    rangeEnd = rangeEnd.toString(),
+                    rangeStart = rangeStart.toString()
+                ).executeAsList()
+                val checkedKeys = overlapping.filter { it.checked != 0L }.map { it.itemKey }.toSet()
+                val priceByKey = overlapping.mapNotNull { row -> row.price?.let { row.itemKey to it } }.toMap()
                 database.transaction {
                     missing.forEach { item ->
                         queries.insertItem(
@@ -43,8 +52,16 @@ class ShoppingListLocalDataSource(
                             name = item.name,
                             quantity = item.totalQuantity,
                             unit = item.unit.name,
-                            checked = 0
+                            checked = if (item.itemKey in checkedKeys) 1 else 0
                         )
+                        priceByKey[item.itemKey]?.let { price ->
+                            queries.setItemPrice(
+                                price = price,
+                                itemKey = item.itemKey,
+                                rangeEnd = rangeEnd.toString(),
+                                rangeStart = rangeStart.toString()
+                            )
+                        }
                     }
                 }
             }
@@ -52,7 +69,12 @@ class ShoppingListLocalDataSource(
 
     suspend fun setChecked(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, checked: Boolean) =
         withContext(ioDispatcher) {
-            queries.setChecked(if (checked) 1 else 0, itemKey, rangeStart.toString(), rangeEnd.toString())
+            queries.setChecked(
+                checked = if (checked) 1 else 0,
+                itemKey = itemKey,
+                rangeEnd = rangeEnd.toString(),
+                rangeStart = rangeStart.toString()
+            )
         }
 
     suspend fun addManual(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) =
@@ -75,7 +97,12 @@ class ShoppingListLocalDataSource(
 
     suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double) =
         withContext(ioDispatcher) {
-            queries.setItemPrice(price, itemKey, rangeStart.toString(), rangeEnd.toString())
+            queries.setItemPrice(
+                price = price,
+                itemKey = itemKey,
+                rangeEnd = rangeEnd.toString(),
+                rangeStart = rangeStart.toString()
+            )
         }
 
     fun pricedItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<SpendingLineItem>> =

@@ -19,18 +19,26 @@ ORDER BY name;
 selectKeysForRange:
 SELECT itemKey FROM ShoppingListItemEntity WHERE rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
 
+selectOverlappingItems:
+SELECT * FROM ShoppingListItemEntity
+WHERE removed = 0
+  AND rangeStart <= :rangeEnd
+  AND rangeEnd >= :rangeStart;
+
 insertItem:
 INSERT INTO ShoppingListItemEntity(itemKey, rangeStart, rangeEnd, name, quantity, unit, checked, removed)
 VALUES (?, ?, ?, ?, ?, ?, ?, 0);
 
 setChecked:
-UPDATE ShoppingListItemEntity SET checked = :checked WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
+UPDATE ShoppingListItemEntity SET checked = :checked
+WHERE itemKey = :itemKey AND removed = 0 AND rangeStart <= :rangeEnd AND rangeEnd >= :rangeStart;
 
 setRemoved:
 UPDATE ShoppingListItemEntity SET removed = 1 WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
 
 setItemPrice:
-UPDATE ShoppingListItemEntity SET price = :price, checked = 1 WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
+UPDATE ShoppingListItemEntity SET price = :price, checked = 1
+WHERE itemKey = :itemKey AND removed = 0 AND rangeStart <= :rangeEnd AND rangeEnd >= :rangeStart;
 
 selectPricedItemsInRange:
 SELECT * FROM ShoppingListItemEntity
