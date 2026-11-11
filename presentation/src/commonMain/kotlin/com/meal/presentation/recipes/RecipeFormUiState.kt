@@ -40,6 +40,6 @@ data class RecipeFormUiState(
     val canSave: Boolean
         get() = name.isNotBlank() &&
             !isDuplicateName &&
-            preparationTimeMinutes.toIntOrNull() != null &&
-            servings.toIntOrNull() != null
+            (preparationTimeMinutes.isBlank() || preparationTimeMinutes.toIntOrNull() != null) &&
+            (servings.isBlank() || servings.toIntOrNull() != null)
 }
