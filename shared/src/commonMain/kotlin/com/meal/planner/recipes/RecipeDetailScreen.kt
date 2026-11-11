@@ -38,6 +38,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,11 +50,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.planner.common.displayName
+import com.meal.planner.components.MealTypeDialog
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerPalette
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.common.today
 import com.meal.presentation.recipes.RecipeDetailViewModel
+import kotlinx.coroutines.launch
+import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.ExperimentalUuidApi
@@ -65,10 +74,14 @@ fun RecipeDetailScreen(
     onAddToMealPlan: () -> Unit = {},
     viewModel: RecipeDetailViewModel = koinViewModel(
         parameters = { parametersOf(Uuid.parse(recipeId)) }
-    )
+    ),
+    addRecipeToSlotUseCase: AddRecipeToSlotUseCase = koinInject()
 ) {
     val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
+    var showMealTypeDialog by remember { mutableStateOf(false) }
+    var assignDate by remember { mutableStateOf(today()) }
 
     LaunchedEffect(uiState.isDeleted) {
         if (uiState.isDeleted) onBack()
@@ -93,6 +106,24 @@ fun RecipeDetailScreen(
                 TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) { Text(LocalStrings.current.cancel) }
             }
         )
+    }
+
+    if (showMealTypeDialog) {
+        uiState.recipe?.let { recipe ->
+            MealTypeDialog(
+                recipeName = recipe.name,
+                date = assignDate,
+                onDateChange = { assignDate = it },
+                onSelect = { mealType ->
+                    coroutineScope.launch {
+                        addRecipeToSlotUseCase.execute(assignDate, mealType, recipe.id)
+                        showMealTypeDialog = false
+                        onAddToMealPlan()
+                    }
+                },
+                onDismiss = { showMealTypeDialog = false }
+            )
+        }
     }
 
     Scaffold(
@@ -274,7 +305,10 @@ fun RecipeDetailScreen(
                         }
 
                         Button(
-                            onClick = onAddToMealPlan,
+                            onClick = {
+                                assignDate = today()
+                                showMealTypeDialog = true
+                            },
                             shape = MaterialTheme.shapes.extraLarge,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
