@@ -52,9 +52,9 @@ class GetSpendingReportUseCase(
     }
 
     private fun bucketByWeek(rangeStart: LocalDate, rangeEnd: LocalDate, items: List<SpendingLineItem>): List<SpendingBucket> {
-        val totalsByWeek = items.groupBy { mondayOf(bucketDateOf(it, rangeStart, rangeEnd)) }
+        val totalsByWeek = items.groupBy { sundayOf(bucketDateOf(it, rangeStart, rangeEnd)) }
             .mapValues { (_, bucketItems) -> bucketItems.sumOf { it.price } }
-        return generateSequence(mondayOf(rangeStart)) { it.plus(7, DateTimeUnit.DAY) }
+        return generateSequence(sundayOf(rangeStart)) { it.plus(7, DateTimeUnit.DAY) }
             .takeWhile { it <= rangeEnd }
             .map { weekStart ->
                 SpendingBucket(bucketStart = weekStart, bucketEnd = weekStart.plus(6, DateTimeUnit.DAY), amount = totalsByWeek[weekStart] ?: 0.0)
@@ -62,6 +62,7 @@ class GetSpendingReportUseCase(
             .toList()
     }
 
-    // kotlinx.datetime.DayOfWeek is declared in ISO order starting at MONDAY, so ordinal is days-since-Monday.
-    private fun mondayOf(date: LocalDate): LocalDate = date.minus(date.dayOfWeek.ordinal, DateTimeUnit.DAY)
+    // kotlinx.datetime.DayOfWeek is declared in ISO order starting at MONDAY (ordinal 0) through
+    // SUNDAY (ordinal 6), so (ordinal + 1) % 7 is days-since-Sunday.
+    private fun sundayOf(date: LocalDate): LocalDate = date.minus((date.dayOfWeek.ordinal + 1) % 7, DateTimeUnit.DAY)
 }

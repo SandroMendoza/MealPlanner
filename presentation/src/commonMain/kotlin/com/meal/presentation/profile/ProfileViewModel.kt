@@ -7,7 +7,7 @@ import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetUserProfileUseCase
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.UpdateUserProfileUseCase
-import com.meal.presentation.common.currentWeekMonday
+import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.weekEndFor
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,7 +44,7 @@ class ProfileViewModel(
             }
         }
         viewModelScope.launch {
-            val weekStart = currentWeekMonday()
+            val weekStart = currentWeekSunday()
             getWeeklyMealPlanUseCase.execute(weekStart, weekEndFor(weekStart)).collect { entries ->
                 _uiState.value = _uiState.value.copy(thisWeekCount = entries.size)
             }

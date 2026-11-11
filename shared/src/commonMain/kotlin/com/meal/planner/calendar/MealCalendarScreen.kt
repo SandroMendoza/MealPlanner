@@ -2,6 +2,8 @@ package com.meal.planner.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +15,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,11 +36,18 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +56,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
@@ -56,14 +69,22 @@ import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.calendar.CalendarViewMode
 import com.meal.presentation.calendar.MealCalendarViewModel
-import com.meal.presentation.common.currentWeekMonday
+import com.meal.presentation.common.currentWeekSunday
+import com.meal.presentation.common.today
 import kotlinx.datetime.LocalDate
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun CalendarViewMode.label(): String = when (this) {
+    CalendarViewMode.DAY -> LocalStrings.current.day
+    CalendarViewMode.WEEK -> LocalStrings.current.week
+}
+
+@OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun MealCalendarScreen(
     onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
@@ -76,7 +97,7 @@ fun MealCalendarScreen(
     val selectedDate = uiState.selectedDate
     var showDatePicker by remember { mutableStateOf(false) }
 
-    val isCurrentWeek = uiState.weekStart == currentWeekMonday()
+    val isCurrentWeek = uiState.weekStart == currentWeekSunday()
 
     val entriesByMealType = remember(uiState.entries, selectedDate) {
         MealType.entries.associateWith { uiState.entriesFor(selectedDate, it) }
@@ -118,12 +139,30 @@ fun MealCalendarScreen(
                 }
             }
 
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = spacing.lg),
-                horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+            SingleChoiceSegmentedButtonRow(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg)
             ) {
-                items(uiState.days, key = { it }) { day ->
-                    DayChip(date = day, selected = day == selectedDate, onClick = { viewModel.selectDate(day) })
+                CalendarViewMode.entries.forEachIndexed { index, mode ->
+                    SegmentedButton(
+                        selected = uiState.viewMode == mode,
+                        onClick = { viewModel.setViewMode(mode) },
+                        shape = SegmentedButtonDefaults.itemShape(index = index, count = CalendarViewMode.entries.size)
+                    ) {
+                        Text(mode.label())
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(spacing.sm))
+
+            if (uiState.viewMode == CalendarViewMode.DAY) {
+                LazyRow(
+                    contentPadding = PaddingValues(horizontal = spacing.lg),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                ) {
+                    items(uiState.days, key = { it }) { day ->
+                        DayChip(date = day, selected = day == selectedDate, onClick = { viewModel.selectDate(day) })
+                    }
                 }
             }
 
@@ -140,6 +179,15 @@ fun MealCalendarScreen(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
+                uiState.viewMode == CalendarViewMode.WEEK -> MealWeekGrid(
+                    modifier = Modifier.weight(1f),
+                    days = uiState.days,
+                    entries = uiState.entries,
+                    weekNote = uiState.weekNote,
+                    onNoteChange = viewModel::updateWeekNote,
+                    onSlotClick = onSlotClick,
+                    onOpenRecipe = onRecipeClick
+                )
                 else -> LazyColumn(
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm),
@@ -207,6 +255,205 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
             style = MaterialTheme.typography.titleMedium,
             color = contentColor
         )
+    }
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun MealWeekGrid(
+    modifier: Modifier = Modifier,
+    days: List<LocalDate>,
+    entries: List<MealPlanEntry>,
+    weekNote: String,
+    onNoteChange: (String) -> Unit,
+    onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
+    onOpenRecipe: (Uuid) -> Unit
+) {
+    val spacing = MealPlannerTokens.spacing
+    val todayDate = today()
+
+    // uiState.days already starts on Sunday (the app's week model is Sunday-first).
+    val onEntryClick: (MealPlanEntry) -> Unit = { entry -> onOpenRecipe(entry.recipe.id) }
+    val onAddMeal: (LocalDate) -> Unit = { day -> onSlotClick(day, null, null) }
+
+    Column(
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = spacing.sm, vertical = spacing.sm)
+    ) {
+        WeekTable(
+            days = days.take(3),
+            entries = entries,
+            todayDate = todayDate,
+            noteText = null,
+            onNoteChange = onNoteChange,
+            onEntryClick = onEntryClick,
+            onAddMeal = onAddMeal
+        )
+        Spacer(Modifier.height(spacing.lg))
+        WeekTable(
+            days = days.drop(3).take(3),
+            entries = entries,
+            todayDate = todayDate,
+            noteText = null,
+            onNoteChange = onNoteChange,
+            onEntryClick = onEntryClick,
+            onAddMeal = onAddMeal
+        )
+        Spacer(Modifier.height(spacing.lg))
+        WeekTable(
+            days = days.drop(6),
+            entries = entries,
+            todayDate = todayDate,
+            noteText = weekNote,
+            onNoteChange = onNoteChange,
+            onEntryClick = onEntryClick,
+            onAddMeal = onAddMeal
+        )
+    }
+}
+
+@Composable
+private fun WeekTable(
+    days: List<LocalDate>,
+    entries: List<MealPlanEntry>,
+    todayDate: LocalDate,
+    noteText: String?,
+    onNoteChange: (String) -> Unit,
+    onEntryClick: (MealPlanEntry) -> Unit,
+    onAddMeal: (LocalDate) -> Unit
+) {
+    val spacing = MealPlannerTokens.spacing
+    Card(
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
+            days.forEachIndexed { index, day ->
+                if (index != 0) {
+                    VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                }
+                val dayEntries = entries.filter { it.date == day }.sortedBy { it.mealType.ordinal }
+                WeekDayColumn(
+                    day = day,
+                    entries = dayEntries,
+                    isToday = day == todayDate,
+                    onEntryClick = onEntryClick,
+                    onAddMeal = { onAddMeal(day) },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            if (noteText != null) {
+                VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Column(modifier = Modifier.weight(2f).padding(spacing.xxs)) {
+                    Text(
+                        text = LocalStrings.current.calendarWeekNotes,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = spacing.xxs)
+                    )
+                    OutlinedTextField(
+                        value = noteText,
+                        onValueChange = onNoteChange,
+                        placeholder = {
+                            Text(LocalStrings.current.calendarWeekNotesPlaceholder, style = MaterialTheme.typography.labelSmall)
+                        },
+                        textStyle = MaterialTheme.typography.labelSmall,
+                        colors = OutlinedTextFieldDefaults.colors(
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            unfocusedBorderColor = Color.Transparent,
+                            focusedBorderColor = Color.Transparent
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun WeekGridHeaderCell(day: LocalDate, isToday: Boolean, modifier: Modifier = Modifier) {
+    val spacing = MealPlannerTokens.spacing
+    val backgroundColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer
+    val contentColor = if (isToday) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
+    Row(
+        modifier = modifier
+            .background(backgroundColor)
+            .padding(vertical = spacing.xxs),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = LocalStrings.current.weekdayShort(day.dayOfWeek),
+            style = MaterialTheme.typography.labelMedium,
+            color = contentColor
+        )
+        Text(
+            text = " - ${day.dayOfMonth}",
+            style = MaterialTheme.typography.labelMedium,
+            color = contentColor
+        )
+    }
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun WeekDayColumn(
+    day: LocalDate,
+    entries: List<MealPlanEntry>,
+    isToday: Boolean,
+    onEntryClick: (MealPlanEntry) -> Unit,
+    onAddMeal: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val spacing = MealPlannerTokens.spacing
+    Column(
+        modifier = (if (isToday) modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)) else modifier)
+            .padding(horizontal = spacing.sm),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        WeekGridHeaderCell(day = day, isToday = isToday, modifier = Modifier.fillMaxWidth())
+        entries.forEach { entry ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onEntryClick(entry) }
+                    .padding(vertical = spacing.xxs)
+            ) {
+                Text(
+                    text = "•",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.padding(end = spacing.xxs)
+                )
+                Text(
+                    text = entry.recipe.name,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Left,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .padding(top = spacing.xxs, bottom = spacing.xxs)
+                .size(MealPlannerTokens.iconSize.md)
+                .clip(MaterialTheme.shapes.large)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .clickable(onClick = onAddMeal),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = LocalStrings.current.calendarAddMeal,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+            )
+        }
     }
 }
 

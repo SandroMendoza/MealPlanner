@@ -83,6 +83,8 @@ data class Strings(
     val calendarMealOptionsCd: String,
     val calendarViewRecipe: String,
     val calendarChangeRecipe: String,
+    val calendarWeekNotes: String,
+    val calendarWeekNotesPlaceholder: String,
 
     // Recipe picker (from calendar)
     val recipePickerTitle: String,

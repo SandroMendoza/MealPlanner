@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.GetSpendingReportUseCase
-import com.meal.presentation.common.currentWeekMonday
-import com.meal.presentation.common.mondayOf
+import com.meal.presentation.common.currentWeekSunday
+import com.meal.presentation.common.sundayOf
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
 import com.meal.presentation.shopping.ShoppingListRangeMode
@@ -22,7 +22,7 @@ class SpendingReportsViewModel(
     private val getSettingsUseCase: GetSettingsUseCase
 ) : ViewModel() {
 
-    private val initialWeekStart = currentWeekMonday()
+    private val initialWeekStart = currentWeekSunday()
     private val _uiState = MutableStateFlow(
         SpendingReportsUiState(
             mode = ShoppingListRangeMode.WEEK,
@@ -84,7 +84,7 @@ class SpendingReportsViewModel(
         if (mode == _uiState.value.mode) return
         when (mode) {
             ShoppingListRangeMode.WEEK -> {
-                val start = currentWeekMonday()
+                val start = currentWeekSunday()
                 setRange(ShoppingListRangeMode.WEEK, start, weekEndFor(start))
             }
             ShoppingListRangeMode.DAY -> {
@@ -92,7 +92,7 @@ class SpendingReportsViewModel(
                 setRange(ShoppingListRangeMode.DAY, date, date)
             }
             ShoppingListRangeMode.RANGE -> {
-                val start = currentWeekMonday()
+                val start = currentWeekSunday()
                 setRange(ShoppingListRangeMode.RANGE, start, weekEndFor(start))
             }
         }
@@ -101,7 +101,7 @@ class SpendingReportsViewModel(
     fun goToToday() {
         when (_uiState.value.mode) {
             ShoppingListRangeMode.WEEK -> {
-                val start = currentWeekMonday()
+                val start = currentWeekSunday()
                 setRange(ShoppingListRangeMode.WEEK, start, weekEndFor(start))
             }
             ShoppingListRangeMode.DAY -> {
@@ -115,7 +115,7 @@ class SpendingReportsViewModel(
     fun goToDate(date: LocalDate) {
         when (_uiState.value.mode) {
             ShoppingListRangeMode.WEEK -> {
-                val start = mondayOf(date)
+                val start = sundayOf(date)
                 setRange(ShoppingListRangeMode.WEEK, start, weekEndFor(start))
             }
             ShoppingListRangeMode.DAY -> setRange(ShoppingListRangeMode.DAY, date, date)

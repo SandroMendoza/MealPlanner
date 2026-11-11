@@ -46,7 +46,7 @@ import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
-import com.meal.presentation.common.currentWeekMonday
+import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
 import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.spending.SpendingReportsViewModel
@@ -130,7 +130,7 @@ fun SpendingReportsScreen(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (uiState.rangeStart != currentWeekMonday()) {
+                                if (uiState.rangeStart != currentWeekSunday()) {
                                     IconButton(onClick = { viewModel.goToToday() }) {
                                         Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToCurrentWeek)
                                     }

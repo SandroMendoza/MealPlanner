@@ -5,6 +5,8 @@ import com.meal.domain.model.enums.MealType
 import com.meal.presentation.common.today
 import kotlinx.datetime.LocalDate
 
+enum class CalendarViewMode { DAY, WEEK }
+
 data class MealCalendarUiState(
     val weekStart: LocalDate,
     val weekEnd: LocalDate,
@@ -12,6 +14,8 @@ data class MealCalendarUiState(
     val days: List<LocalDate> = emptyList(),
     val entries: List<MealPlanEntry> = emptyList(),
     val lockPastDates: Boolean = false,
+    val viewMode: CalendarViewMode = CalendarViewMode.DAY,
+    val weekNote: String = "",
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 ) {

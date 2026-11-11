@@ -119,6 +119,8 @@ val frenchStrings = Strings(
     calendarMealOptionsCd = "Options du repas",
     calendarViewRecipe = "Voir la recette",
     calendarChangeRecipe = "Changer de recette",
+    calendarWeekNotes = "Notes",
+    calendarWeekNotesPlaceholder = "Écrire une note pour cette semaine...",
 
     recipePickerTitle = "Choisir une recette",
     recipePickerAddRecipeNameTo = { recipeName -> "Ajouter « $recipeName » à..." },

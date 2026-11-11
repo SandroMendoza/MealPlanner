@@ -8,6 +8,7 @@ import com.meal.domain.repository.SettingsRepository
 import com.meal.domain.repository.ShoppingGroupRepository
 import com.meal.domain.repository.ShoppingListRepository
 import com.meal.domain.repository.UserProfileRepository
+import com.meal.domain.repository.WeekNoteRepository
 import com.meal.domain.service.ReminderScheduler
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.domain.usecase.AddRecipeUseCase
@@ -37,6 +38,8 @@ import com.meal.domain.usecase.GetUserProfileUseCase
 import com.meal.domain.usecase.UpdateMealReminderUseCase
 import com.meal.domain.usecase.UpdateSettingsUseCase
 import com.meal.domain.usecase.UpdateUserProfileUseCase
+import com.meal.domain.usecase.GetWeekNoteUseCase
+import com.meal.domain.usecase.UpdateWeekNoteUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -123,5 +126,11 @@ val domainModule = module {
     }
     factory {
         UpdateMealReminderUseCase(get<MealReminderRepository>(), get<ReminderScheduler>())
+    }
+    factory {
+        GetWeekNoteUseCase(get<WeekNoteRepository>())
+    }
+    factory {
+        UpdateWeekNoteUseCase(get<WeekNoteRepository>())
     }
 }

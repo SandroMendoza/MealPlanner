@@ -8,6 +8,7 @@ import com.meal.data.datasource.SettingsLocalDataSource
 import com.meal.data.datasource.ShoppingGroupLocalDataSource
 import com.meal.data.datasource.ShoppingListLocalDataSource
 import com.meal.data.datasource.UserProfileLocalDataSource
+import com.meal.data.datasource.WeekNoteLocalDataSource
 import com.meal.data.db.DatabaseDriverFactory
 import com.meal.data.db.MealPlannerDatabase
 import com.meal.data.repository.IngredientRepositoryImpl
@@ -18,6 +19,7 @@ import com.meal.data.repository.SettingsRepositoryImpl
 import com.meal.data.repository.ShoppingGroupRepositoryImpl
 import com.meal.data.repository.ShoppingListRepositoryImpl
 import com.meal.data.repository.UserProfileRepositoryImpl
+import com.meal.data.repository.WeekNoteRepositoryImpl
 import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.MealReminderRepository
@@ -26,6 +28,7 @@ import com.meal.domain.repository.SettingsRepository
 import com.meal.domain.repository.ShoppingGroupRepository
 import com.meal.domain.repository.ShoppingListRepository
 import com.meal.domain.repository.UserProfileRepository
+import com.meal.domain.repository.WeekNoteRepository
 import org.koin.dsl.module
 
 val dataModule = module {
@@ -38,6 +41,7 @@ val dataModule = module {
     single { UserProfileLocalDataSource(get()) }
     single { SettingsLocalDataSource(get()) }
     single { MealReminderLocalDataSource(get()) }
+    single { WeekNoteLocalDataSource(get()) }
 
     single <RecipeRepository> {
         RecipeRepositoryImpl(
@@ -51,4 +55,5 @@ val dataModule = module {
     single <UserProfileRepository> { UserProfileRepositoryImpl(get()) }
     single <SettingsRepository> { SettingsRepositoryImpl(get()) }
     single <MealReminderRepository> { MealReminderRepositoryImpl(get()) }
+    single <WeekNoteRepository> { WeekNoteRepositoryImpl(get()) }
 }

@@ -119,6 +119,8 @@ val englishStrings = Strings(
     calendarMealOptionsCd = "Meal options",
     calendarViewRecipe = "View recipe",
     calendarChangeRecipe = "Change recipe",
+    calendarWeekNotes = "Notes",
+    calendarWeekNotesPlaceholder = "Write a note for this week...",
 
     recipePickerTitle = "Pick a recipe",
     recipePickerAddRecipeNameTo = { recipeName -> "Add \"$recipeName\" to..." },
