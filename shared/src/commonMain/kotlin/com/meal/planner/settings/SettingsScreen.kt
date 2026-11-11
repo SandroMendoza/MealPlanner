@@ -99,7 +99,7 @@ fun SettingsScreen(
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsDefaultCalendarView, icon = Icons.Default.CalendarMonth) {
-                SingleChoiceSegmentedButtonRow(modifier = Modifier.width(160.dp)) {
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.width(120.dp)) {
                     CalendarViewMode.entries.forEachIndexed { index, mode ->
                         SegmentedButton(
                             selected = uiState.defaultCalendarView == mode,
@@ -107,7 +107,7 @@ fun SettingsScreen(
                             shape = SegmentedButtonDefaults.itemShape(index = index, count = CalendarViewMode.entries.size),
                             icon = {}
                         ) {
-                            Text(mode.label())
+                            Text(mode.label(), style = MaterialTheme.typography.labelMedium)
                         }
                     }
                 }
