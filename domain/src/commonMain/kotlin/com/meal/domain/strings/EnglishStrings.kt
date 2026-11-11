@@ -123,6 +123,7 @@ val englishStrings = Strings(
     recipePickerTitle = "Pick a recipe",
     recipePickerAddRecipeNameTo = { recipeName -> "Add \"$recipeName\" to..." },
     recipePickerChange = "Change",
+    recipePickerCreateRecipeCd = "Create new recipe",
 
     recipesAddCd = "Add recipe",
     recipesFilters = "Filters",

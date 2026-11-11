@@ -123,6 +123,7 @@ val frenchStrings = Strings(
     recipePickerTitle = "Choisir une recette",
     recipePickerAddRecipeNameTo = { recipeName -> "Ajouter « $recipeName » à..." },
     recipePickerChange = "Changer",
+    recipePickerCreateRecipeCd = "Créer une nouvelle recette",
 
     recipesAddCd = "Ajouter une recette",
     recipesFilters = "Filtres",

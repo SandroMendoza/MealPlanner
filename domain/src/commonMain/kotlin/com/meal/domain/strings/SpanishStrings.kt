@@ -123,6 +123,7 @@ val spanishStrings = Strings(
     recipePickerTitle = "Elegir una receta",
     recipePickerAddRecipeNameTo = { recipeName -> "Añadir \"$recipeName\" a..." },
     recipePickerChange = "Cambiar",
+    recipePickerCreateRecipeCd = "Crear nueva receta",
 
     recipesAddCd = "Añadir receta",
     recipesFilters = "Filtros",

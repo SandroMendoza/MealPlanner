@@ -16,12 +16,14 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,6 +71,7 @@ fun RecipePickerScreen(
     replaceSlotId: String?,
     onBack: () -> Unit,
     onAssigned: () -> Unit,
+    onCreateRecipeClick: () -> Unit,
     recipeViewModel: RecipeViewModel = koinViewModel(),
     addRecipeToSlotUseCase: AddRecipeToSlotUseCase = koinInject(),
     replaceRecipeInSlotUseCase: ReplaceRecipeInSlotUseCase = koinInject()
@@ -115,6 +118,15 @@ fun RecipePickerScreen(
                 },
                 windowInsets = WindowInsets(0)
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onCreateRecipeClick,
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            ) {
+                Icon(Icons.Default.Add, contentDescription = LocalStrings.current.recipePickerCreateRecipeCd)
+            }
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {

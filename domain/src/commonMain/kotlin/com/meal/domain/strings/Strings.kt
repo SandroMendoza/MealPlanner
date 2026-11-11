@@ -88,6 +88,7 @@ data class Strings(
     val recipePickerTitle: String,
     val recipePickerAddRecipeNameTo: (String) -> String,
     val recipePickerChange: String,
+    val recipePickerCreateRecipeCd: String,
 
     // Recipes list
     val recipesAddCd: String,

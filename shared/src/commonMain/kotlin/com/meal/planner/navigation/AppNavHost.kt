@@ -186,7 +186,8 @@ fun AppNavHost() {
                     mealType = mealType,
                     replaceSlotId = replaceSlotId,
                     onBack = { navController.popBackStack() },
-                    onAssigned = { navController.popBackStack() }
+                    onAssigned = { navController.popBackStack() },
+                    onCreateRecipeClick = { navController.navigate(Routes.RECIPE_NEW) }
                 )
             }
             composable(Routes.SHOPPING_LIST) {
