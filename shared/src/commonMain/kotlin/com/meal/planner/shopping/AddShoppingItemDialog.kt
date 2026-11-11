@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -14,8 +16,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.window.DialogProperties
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.IngredientNameField
+import com.meal.planner.components.KeyboardDismissButton
 import com.meal.planner.components.UnitDropdownField
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
@@ -27,15 +33,18 @@ fun AddShoppingItemDialog(
     onDismiss: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
+    val focusManager = LocalFocusManager.current
     var name by remember { mutableStateOf("") }
     var quantityText by remember { mutableStateOf("1") }
     var unit by remember { mutableStateOf(MeasurementUnit.PIECE) }
+    var suggestionsVisible by remember { mutableStateOf(false) }
 
     val quantity = quantityText.toDoubleOrNull()
     val canConfirm = name.isNotBlank() && quantity != null && quantity > 0
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(decorFitsSystemWindows = false),
         title = { Text(LocalStrings.current.shoppingAddItemButton) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
@@ -43,7 +52,8 @@ fun AddShoppingItemDialog(
                     value = name,
                     suggestions = suggestions,
                     onValueChange = { name = it },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    onSuggestionsVisibleChange = { suggestionsVisible = it }
                 )
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(spacing.sm),
@@ -53,6 +63,9 @@ fun AddShoppingItemDialog(
                         value = quantityText,
                         onValueChange = { quantityText = it },
                         label = { Text(LocalStrings.current.qty) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                        keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                         modifier = Modifier.weight(1f)
                     )
                     UnitDropdownField(
@@ -60,6 +73,11 @@ fun AddShoppingItemDialog(
                         onValueChange = { unit = it },
                         modifier = Modifier.weight(1f)
                     )
+                }
+                if (!suggestionsVisible) {
+                    Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                        KeyboardDismissButton()
+                    }
                 }
             }
         },

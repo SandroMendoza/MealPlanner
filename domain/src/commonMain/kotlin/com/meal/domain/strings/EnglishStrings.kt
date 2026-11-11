@@ -75,6 +75,7 @@ val englishStrings = Strings(
     pickADateRange = "Pick a date range",
     searchRecipesPlaceholder = "Search recipes...",
     clearSearch = "Clear search",
+    hideKeyboard = "Hide keyboard",
     choosePhoto = "Choose Photo",
     changePhoto = "Change Photo",
     category = "Category",

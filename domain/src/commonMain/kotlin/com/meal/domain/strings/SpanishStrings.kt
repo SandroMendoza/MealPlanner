@@ -75,6 +75,7 @@ val spanishStrings = Strings(
     pickADateRange = "Elegir un rango de fechas",
     searchRecipesPlaceholder = "Buscar recetas...",
     clearSearch = "Borrar búsqueda",
+    hideKeyboard = "Ocultar teclado",
     choosePhoto = "Elegir foto",
     changePhoto = "Cambiar foto",
     category = "Categoría",

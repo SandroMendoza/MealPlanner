@@ -36,6 +36,7 @@ data class Strings(
     val pickADateRange: String,
     val searchRecipesPlaceholder: String,
     val clearSearch: String,
+    val hideKeyboard: String,
     val choosePhoto: String,
     val changePhoto: String,
     val category: String,

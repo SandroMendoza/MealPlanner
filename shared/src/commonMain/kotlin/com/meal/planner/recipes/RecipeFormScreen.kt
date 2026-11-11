@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +35,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
@@ -61,6 +65,7 @@ fun RecipeFormScreen(
     )
 ) {
     val spacing = MealPlannerTokens.spacing
+    val focusManager = LocalFocusManager.current
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.saved) {
@@ -112,6 +117,9 @@ fun RecipeFormScreen(
                         Text(LocalStrings.current.recipeFormNameExists, color = MaterialTheme.colorScheme.error)
                     }
                 },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
@@ -150,18 +158,27 @@ fun RecipeFormScreen(
                     value = uiState.preparationTimeMinutes,
                     onValueChange = viewModel::updatePreparationTime,
                     label = { Text(LocalStrings.current.recipeFormPrepMin) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = uiState.servings,
                     onValueChange = viewModel::updateServings,
                     label = { Text(LocalStrings.current.recipeFormServings) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
                 OutlinedTextField(
                     value = uiState.calories,
                     onValueChange = viewModel::updateCalories,
                     label = { Text(LocalStrings.current.recipeFormCalories) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
             }
@@ -250,6 +267,7 @@ private fun IngredientRowEditor(
     onRemove: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
+    val focusManager = LocalFocusManager.current
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -266,6 +284,9 @@ private fun IngredientRowEditor(
                 value = row.quantity,
                 onValueChange = { onChange(row.copy(quantity = it)) },
                 label = { Text(LocalStrings.current.qty) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                 modifier = Modifier.weight(1f)
             )
         }

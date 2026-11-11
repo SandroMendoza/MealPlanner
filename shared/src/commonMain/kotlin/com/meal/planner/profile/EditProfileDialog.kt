@@ -2,11 +2,22 @@ package com.meal.planner.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -18,11 +29,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.meal.planner.common.rememberImagePicker
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.strings.LocalStrings
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditProfileDialog(
     name: String,
@@ -31,6 +47,8 @@ fun EditProfileDialog(
     onConfirm: (name: String, bio: String, avatarUrl: String) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     var nameText by remember { mutableStateOf(name) }
     var bioText by remember { mutableStateOf(bio) }
     var avatarUrlText by remember { mutableStateOf(avatarUrl) }
@@ -41,12 +59,13 @@ fun EditProfileDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
+        properties = DialogProperties(decorFitsSystemWindows = false),
         title = { Text(LocalStrings.current.profileEditProfile) },
         text = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())
             ) {
                 RecipeThumbnail(
                     imageUrl = avatarUrlText,
@@ -62,6 +81,8 @@ fun EditProfileDialog(
                     onValueChange = { nameText = it },
                     label = { Text(LocalStrings.current.name) },
                     singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
@@ -70,6 +91,16 @@ fun EditProfileDialog(
                     label = { Text(LocalStrings.current.editProfileBio) },
                     modifier = Modifier.fillMaxWidth()
                 )
+                if (WindowInsets.isImeVisible) {
+                    Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
+                        IconButton(onClick = {
+                            focusManager.clearFocus(force = true)
+                            keyboardController?.hide()
+                        }) {
+                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = LocalStrings.current.hideKeyboard)
+                        }
+                    }
+                }
             }
         },
         confirmButton = {

@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Add
@@ -53,6 +55,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,6 +85,7 @@ fun RecipeScreen(
     initialCreatedOnly: Boolean = false
 ) {
     val spacing = MealPlannerTokens.spacing
+    val focusManager = LocalFocusManager.current
     var showFilterSheet by remember { mutableStateOf(false) }
 
     LaunchedEffect(initialFavoritesOnly, initialCreatedOnly) {
@@ -141,6 +146,8 @@ fun RecipeScreen(
                                     }
                                 },
                                 singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                                 shape = MaterialTheme.shapes.extraLarge,
                                 modifier = Modifier.weight(1f)
                             )

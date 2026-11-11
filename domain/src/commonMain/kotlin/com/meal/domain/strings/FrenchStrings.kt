@@ -75,6 +75,7 @@ val frenchStrings = Strings(
     pickADateRange = "Choisir une plage de dates",
     searchRecipesPlaceholder = "Rechercher des recettes...",
     clearSearch = "Effacer la recherche",
+    hideKeyboard = "Masquer le clavier",
     choosePhoto = "Choisir une photo",
     changePhoto = "Changer la photo",
     category = "Catégorie",
