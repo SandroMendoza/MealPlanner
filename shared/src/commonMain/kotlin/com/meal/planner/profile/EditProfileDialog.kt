@@ -35,6 +35,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import com.meal.planner.common.rememberImagePicker
+import com.meal.planner.components.ImageSourceDialog
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.strings.LocalStrings
 
@@ -53,7 +54,8 @@ fun EditProfileDialog(
     var bioText by remember { mutableStateOf(bio) }
     var avatarUrlText by remember { mutableStateOf(avatarUrl) }
 
-    val launchImagePicker = rememberImagePicker(onImagePicked = { uri ->
+    var showImageSourceDialog by remember { mutableStateOf(false) }
+    val imagePicker = rememberImagePicker(onImagePicked = { uri ->
         uri?.let { avatarUrlText = it }
     })
 
@@ -73,7 +75,7 @@ fun EditProfileDialog(
                     size = 72.dp,
                     shape = CircleShape
                 )
-                OutlinedButton(onClick = launchImagePicker) {
+                OutlinedButton(onClick = { showImageSourceDialog = true }) {
                     Text(if (avatarUrlText.isBlank()) LocalStrings.current.choosePhoto else LocalStrings.current.changePhoto)
                 }
                 OutlinedTextField(
@@ -112,4 +114,18 @@ fun EditProfileDialog(
             TextButton(onClick = onDismiss) { Text(LocalStrings.current.cancel) }
         }
     )
+
+    if (showImageSourceDialog) {
+        ImageSourceDialog(
+            onTakePhoto = {
+                showImageSourceDialog = false
+                imagePicker.launchCamera()
+            },
+            onChooseFromGallery = {
+                showImageSourceDialog = false
+                imagePicker.launchGallery()
+            },
+            onDismiss = { showImageSourceDialog = false }
+        )
+    }
 }

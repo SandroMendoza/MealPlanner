@@ -39,6 +39,8 @@ data class Strings(
     val hideKeyboard: String,
     val choosePhoto: String,
     val changePhoto: String,
+    val takePhoto: String,
+    val chooseFromGallery: String,
     val category: String,
     val ingredients: String,
     val instructions: String,

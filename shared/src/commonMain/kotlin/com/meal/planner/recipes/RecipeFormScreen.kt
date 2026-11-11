@@ -44,6 +44,7 @@ import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.common.rememberImagePicker
+import com.meal.planner.components.ImageSourceDialog
 import com.meal.planner.components.IngredientNameField
 import com.meal.planner.components.UnitDropdownField
 import com.meal.planner.strings.LocalStrings
@@ -184,7 +185,8 @@ fun RecipeFormScreen(
             }
 
             SectionLabel(LocalStrings.current.recipeFormPhoto)
-            val launchImagePicker = rememberImagePicker(onImagePicked = { uri ->
+            var showImageSourceDialog by remember { mutableStateOf(false) }
+            val imagePicker = rememberImagePicker(onImagePicked = { uri ->
                 uri?.let(viewModel::updateImageUrl)
             })
             Column(
@@ -202,9 +204,22 @@ fun RecipeFormScreen(
                             .clip(MaterialTheme.shapes.medium)
                     )
                 }
-                OutlinedButton(onClick = launchImagePicker) {
+                OutlinedButton(onClick = { showImageSourceDialog = true }) {
                     Text(if (uiState.imageUrl.isBlank()) LocalStrings.current.choosePhoto else LocalStrings.current.changePhoto)
                 }
+            }
+            if (showImageSourceDialog) {
+                ImageSourceDialog(
+                    onTakePhoto = {
+                        showImageSourceDialog = false
+                        imagePicker.launchCamera()
+                    },
+                    onChooseFromGallery = {
+                        showImageSourceDialog = false
+                        imagePicker.launchGallery()
+                    },
+                    onDismiss = { showImageSourceDialog = false }
+                )
             }
 
             SectionLabel(LocalStrings.current.ingredients)
