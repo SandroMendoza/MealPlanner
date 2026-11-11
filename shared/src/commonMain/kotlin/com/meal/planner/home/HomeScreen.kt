@@ -44,6 +44,7 @@ import com.meal.planner.common.icon
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.common.today
 import com.meal.presentation.home.HomeViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
@@ -110,6 +111,14 @@ fun HomeScreen(
                 Text(LocalStrings.current.homeViewAll, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
             }
         }
+
+        val todayDate = today()
+        Text(
+            text = "${LocalStrings.current.weekdayShort(todayDate.dayOfWeek)}, " +
+                "${LocalStrings.current.monthAbbreviation(todayDate.monthNumber)} ${todayDate.dayOfMonth}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
 
         Spacer(Modifier.height(spacing.sm))
 
