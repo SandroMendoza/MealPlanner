@@ -82,6 +82,8 @@ fun RecipePickerScreen(
     val coroutineScope = rememberCoroutineScope()
     var pendingRecipe by remember { mutableStateOf<Recipe?>(null) }
     var assignDate by remember { mutableStateOf(date) }
+    val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
+    val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
 
     fun assign(recipeId: Uuid, chosenMealType: MealType, onDate: LocalDate = date) {
         coroutineScope.launch {
@@ -152,7 +154,7 @@ fun RecipePickerScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 when {
                     uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                    uiState.showEmptyState -> Text(
+                    showEmptyState -> Text(
                         text = uiState.emptyState.message(),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -164,7 +166,7 @@ fun RecipePickerScreen(
                         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                         verticalArrangement = Arrangement.spacedBy(spacing.sm)
                     ) {
-                        items(uiState.filteredRecipes) { recipe ->
+                        items(filteredRecipes, key = { it.id }) { recipe ->
                             RecipeGridCard(
                                 recipe = recipe,
                                 onClick = {

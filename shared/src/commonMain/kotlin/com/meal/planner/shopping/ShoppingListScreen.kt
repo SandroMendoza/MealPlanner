@@ -74,6 +74,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
     val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
+    val sections = remember(uiState) { uiState.sections }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -191,7 +192,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                     )
                 }
                 else -> LazyColumn(modifier = Modifier.weight(1f)) {
-                    uiState.sections.forEach { section ->
+                    sections.forEach { section ->
                         item(key = "header-${section.group?.id ?: "ungrouped"}") {
                             Text(
                                 text = section.group?.name ?: LocalStrings.current.shoppingUngrouped,

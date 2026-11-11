@@ -19,7 +19,7 @@ import kotlinx.datetime.LocalDate
 class ShoppingListLocalDataSource(
     private val database: MealPlannerDatabase,
     private val groupLocalDataSource: ShoppingGroupLocalDataSource,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val queries = database.shoppingListItemQueries
 

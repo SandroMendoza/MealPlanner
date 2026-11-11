@@ -143,7 +143,7 @@ fun RecipeFormScreen(
 
             SectionLabel(LocalStrings.current.recipeFormMealTypes)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-                items(MealType.entries.toList()) { mealType ->
+                items(MealType.entries.toList(), key = { it.name }) { mealType ->
                     FilterChip(
                         selected = mealType in uiState.mealTypes,
                         onClick = { viewModel.toggleMealType(mealType) },

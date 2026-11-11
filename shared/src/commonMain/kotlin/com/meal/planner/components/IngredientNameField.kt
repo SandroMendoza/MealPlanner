@@ -33,10 +33,12 @@ fun IngredientNameField(
     val focusManager = LocalFocusManager.current
     var expanded by remember { mutableStateOf(false) }
     val trimmedValue = value.trim()
-    val filtered = if (trimmedValue.length >= 3) {
-        suggestions.filter { it.contains(trimmedValue, ignoreCase = true) }
-    } else {
-        emptyList()
+    val filtered = remember(suggestions, trimmedValue) {
+        if (trimmedValue.length >= 3) {
+            suggestions.filter { it.contains(trimmedValue, ignoreCase = true) }
+        } else {
+            emptyList()
+        }
     }
     val showMenu = expanded && filtered.isNotEmpty()
 

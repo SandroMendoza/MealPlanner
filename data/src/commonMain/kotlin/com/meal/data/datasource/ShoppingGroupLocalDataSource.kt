@@ -15,7 +15,7 @@ import kotlin.uuid.Uuid
 
 class ShoppingGroupLocalDataSource(
     private val database: MealPlannerDatabase,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val groupQueries = database.shoppingGroupQueries
     private val assignmentQueries = database.shoppingItemGroupQueries

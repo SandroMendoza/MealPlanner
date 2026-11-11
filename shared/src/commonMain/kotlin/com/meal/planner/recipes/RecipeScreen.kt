@@ -112,6 +112,8 @@ fun RecipeScreen(
             uiState.showCreatedOnly ||
             uiState.prepTimeRange != 0f..180f ||
             uiState.calorieRange != 0f..1500f
+        val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
+        val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
 
         Box(modifier = Modifier.padding(it).fillMaxSize()) {
             when {
@@ -183,7 +185,7 @@ fun RecipeScreen(
                         }
                     }
 
-                    if (uiState.showEmptyState) {
+                    if (showEmptyState) {
                         item(span = { GridItemSpan(maxLineSpan) }) {
                             Text(
                                 text = uiState.emptyState.message(),
@@ -194,7 +196,7 @@ fun RecipeScreen(
                             )
                         }
                     } else {
-                        items(uiState.filteredRecipes) { recipe ->
+                        items(filteredRecipes, key = { it.id }) { recipe ->
                             RecipeGridCard(
                                 recipe = recipe,
                                 onClick = { onRecipeClick(recipe.id) }

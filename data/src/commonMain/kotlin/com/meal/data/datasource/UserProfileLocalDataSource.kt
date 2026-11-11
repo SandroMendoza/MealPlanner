@@ -13,7 +13,7 @@ import kotlinx.coroutines.withContext
 
 class UserProfileLocalDataSource(
     private val database: MealPlannerDatabase,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val queries = database.userProfileQueries
 

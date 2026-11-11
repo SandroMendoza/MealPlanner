@@ -122,7 +122,7 @@ fun MealCalendarScreen(
                 contentPadding = PaddingValues(horizontal = spacing.lg),
                 horizontalArrangement = Arrangement.spacedBy(spacing.sm)
             ) {
-                items(uiState.days) { day ->
+                items(uiState.days, key = { it }) { day ->
                     DayChip(date = day, selected = day == selectedDate, onClick = { viewModel.selectDate(day) })
                 }
             }
@@ -145,7 +145,7 @@ fun MealCalendarScreen(
                     contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm),
                     verticalArrangement = Arrangement.spacedBy(spacing.lg)
                 ) {
-                    items(MealType.entries) { mealType ->
+                    items(MealType.entries, key = { it.name }) { mealType ->
                         MealSection(
                             mealType = mealType,
                             entries = entriesByMealType[mealType].orEmpty(),

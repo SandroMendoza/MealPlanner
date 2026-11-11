@@ -246,7 +246,7 @@ fun RecipeDetailScreen(
                                     modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
                                 )
                             }
-                            items(recipe.ingredients) { ri ->
+                            items(recipe.ingredients, key = { it.id }) { ri ->
                                 Text(
                                     text = "• ${ri.quantity} ${ri.unit.unit} ${ri.ingredient.name}",
                                     style = MaterialTheme.typography.bodyMedium,
@@ -263,7 +263,7 @@ fun RecipeDetailScreen(
                                     modifier = Modifier.padding(top = spacing.lg, bottom = spacing.xs)
                                 )
                             }
-                            items(recipe.instructions) { instruction ->
+                            items(recipe.instructions, key = { it.stepNumber }) { instruction ->
                                 Text(
                                     text = "${instruction.stepNumber}. ${instruction.description}",
                                     style = MaterialTheme.typography.bodyMedium,

@@ -24,7 +24,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class RecipeLocalDataSource(
     private val database: MealPlannerDatabase,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val queries = database.recipeQueries
     private val ingredientQueries = database.ingredientQueries

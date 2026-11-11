@@ -16,7 +16,7 @@ import kotlinx.datetime.LocalTime
 
 class MealReminderLocalDataSource(
     private val database: MealPlannerDatabase,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val queries = database.mealReminderQueries
 
