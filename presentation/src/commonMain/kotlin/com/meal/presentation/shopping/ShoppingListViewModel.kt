@@ -2,14 +2,20 @@ package com.meal.presentation.shopping
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.meal.domain.model.ShoppingGroup
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.usecase.AddShoppingListItemUseCase
+import com.meal.domain.usecase.AssignItemToGroupUseCase
+import com.meal.domain.usecase.CreateShoppingGroupUseCase
+import com.meal.domain.usecase.DeleteShoppingGroupUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
+import com.meal.domain.usecase.GetShoppingGroupsUseCase
 import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
+import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.presentation.common.currentWeekMonday
 import com.meal.presentation.common.mondayOf
@@ -30,7 +36,12 @@ class ShoppingListViewModel(
     private val removeShoppingListItemUseCase: RemoveShoppingListItemUseCase,
     private val recordItemPriceUseCase: RecordItemPriceUseCase,
     private val getAllIngredientsUseCase: GetAllIngredientsUseCase,
-    private val getSettingsUseCase: GetSettingsUseCase
+    private val getSettingsUseCase: GetSettingsUseCase,
+    private val getShoppingGroupsUseCase: GetShoppingGroupsUseCase,
+    private val createShoppingGroupUseCase: CreateShoppingGroupUseCase,
+    private val renameShoppingGroupUseCase: RenameShoppingGroupUseCase,
+    private val deleteShoppingGroupUseCase: DeleteShoppingGroupUseCase,
+    private val assignItemToGroupUseCase: AssignItemToGroupUseCase
 ) : ViewModel() {
 
     private val initialWeekStart = currentWeekMonday()
@@ -55,6 +66,11 @@ class ShoppingListViewModel(
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
                 _uiState.value = _uiState.value.copy(currencySymbol = settings.currency.symbol)
+            }
+        }
+        viewModelScope.launch {
+            getShoppingGroupsUseCase.execute().collect { groups ->
+                _uiState.value = _uiState.value.copy(groups = groups)
             }
         }
     }
@@ -131,6 +147,62 @@ class ShoppingListViewModel(
 
     fun dismissRecordPriceDialog() {
         _uiState.value = _uiState.value.copy(itemBeingPriced = null)
+    }
+
+    fun openGroupPicker(item: ShoppingListItem) {
+        _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = item)
+    }
+
+    fun dismissGroupPicker() {
+        _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = null)
+    }
+
+    fun assignGroup(groupId: String?) {
+        val item = _uiState.value.itemPendingGroupAssignment ?: return
+        viewModelScope.launch {
+            assignItemToGroupUseCase.execute(item.itemKey, groupId)
+        }
+        dismissGroupPicker()
+    }
+
+    fun createGroupAndAssign(name: String) {
+        val item = _uiState.value.itemPendingGroupAssignment ?: return
+        viewModelScope.launch {
+            val group = createShoppingGroupUseCase.execute(name)
+            assignItemToGroupUseCase.execute(item.itemKey, group.id)
+        }
+        dismissGroupPicker()
+    }
+
+    fun openGroupManagement() {
+        _uiState.value = _uiState.value.copy(groupManagementOpen = true)
+    }
+
+    fun dismissGroupManagement() {
+        _uiState.value = _uiState.value.copy(groupManagementOpen = false)
+    }
+
+    fun renameGroup(id: String, name: String) {
+        viewModelScope.launch {
+            renameShoppingGroupUseCase.execute(id, name)
+        }
+    }
+
+    fun requestDeleteGroup(group: ShoppingGroup) {
+        _uiState.value = _uiState.value.copy(groupPendingDeletion = group)
+    }
+
+    fun confirmDeleteGroup() {
+        _uiState.value.groupPendingDeletion?.let { group ->
+            viewModelScope.launch {
+                deleteShoppingGroupUseCase.execute(group.id)
+            }
+        }
+        _uiState.value = _uiState.value.copy(groupPendingDeletion = null)
+    }
+
+    fun dismissDeleteGroupConfirmation() {
+        _uiState.value = _uiState.value.copy(groupPendingDeletion = null)
     }
 
     fun previousWeek() = shiftWeek(-7)

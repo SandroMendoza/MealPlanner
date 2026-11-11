@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -20,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -49,7 +52,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.common.formatPrice
-import com.meal.planner.components.SwipeToDeleteRow
+import com.meal.planner.components.SwipeActionsRow
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekMonday
@@ -118,6 +121,9 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 IconButton(onClick = { showDatePicker = true }) {
                                     Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickAWeek)
                                 }
+                                IconButton(onClick = { viewModel.openGroupManagement() }) {
+                                    Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
+                                }
                                 IconButton(onClick = { viewModel.nextWeek() }) {
                                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
                                 }
@@ -140,6 +146,9 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 IconButton(onClick = { showDatePicker = true }) {
                                     Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
                                 }
+                                IconButton(onClick = { viewModel.openGroupManagement() }) {
+                                    Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
+                                }
                                 IconButton(onClick = { viewModel.nextDay() }) {
                                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextDay)
                                 }
@@ -150,8 +159,13 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
                                 style = MaterialTheme.typography.titleMedium
                             )
-                            IconButton(onClick = { showDatePicker = true }) {
-                                Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADateRange)
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                IconButton(onClick = { showDatePicker = true }) {
+                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADateRange)
+                                }
+                                IconButton(onClick = { viewModel.openGroupManagement() }) {
+                                    Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
+                                }
                             }
                         }
                     }
@@ -177,81 +191,105 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                     )
                 }
                 else -> LazyColumn(modifier = Modifier.weight(1f)) {
-                    items(uiState.items, key = { it.itemKey }) { item ->
-                        SwipeToDeleteRow(onRequestDelete = { viewModel.requestDeleteItem(item) }) {
-                            val contentColor = if (item.checked) {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            }
-                            val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
-
-                            Row(
+                    uiState.sections.forEach { section ->
+                        item(key = "header-${section.group?.id ?: "ungrouped"}") {
+                            Text(
+                                text = section.group?.name ?: LocalStrings.current.shoppingUngrouped,
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(MaterialTheme.colorScheme.background)
-                                    .clickable { viewModel.toggleItem(item.itemKey, !item.checked) }
-                                    .padding(horizontal = spacing.lg, vertical = spacing.sm),
-                                verticalAlignment = Alignment.CenterVertically
+                                    .padding(horizontal = spacing.lg)
+                            )
+                        }
+                        items(section.items, key = { it.itemKey }) { item ->
+                            SwipeActionsRow(
+                                onSwipeRightToAssignGroup = { viewModel.openGroupPicker(item) },
+                                onSwipeLeftToDelete = { viewModel.requestDeleteItem(item) }
                             ) {
-                                Checkbox(
-                                    checked = item.checked,
-                                    onCheckedChange = { checked -> viewModel.toggleItem(item.itemKey, checked) },
-                                    colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
-                                )
-                                Text(
-                                    text = item.name,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    color = contentColor,
-                                    textDecoration = textDecoration,
-                                    modifier = Modifier.weight(1f).padding(end = spacing.sm)
-                                )
-                                Text(
-                                    text = "${item.totalQuantity} ${item.unit.unit}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = contentColor,
-                                    textDecoration = textDecoration,
-                                    modifier = Modifier.padding(end = spacing.sm)
-                                )
-                                val priceLabel = item.price?.let { price ->
-                                    "${uiState.currencySymbol}${formatPrice(price)}"
-                                } ?: LocalStrings.current.shoppingAddPrice
-                                Text(
-                                    text = priceLabel,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = if (item.price != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
-                                )
+                                val contentColor = if (item.checked) {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                } else {
+                                    MaterialTheme.colorScheme.onSurface
+                                }
+                                val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .clickable { viewModel.toggleItem(item.itemKey, !item.checked) }
+                                        .padding(horizontal = spacing.lg),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Checkbox(
+                                        checked = item.checked,
+                                        onCheckedChange = { checked -> viewModel.toggleItem(item.itemKey, checked) },
+                                        colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
+                                    )
+                                    Text(
+                                        text = item.name,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = contentColor,
+                                        textDecoration = textDecoration,
+                                        modifier = Modifier.weight(1f).padding(end = spacing.sm)
+                                    )
+                                    Text(
+                                        text = "${item.totalQuantity} ${item.unit.unit}",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = contentColor,
+                                        textDecoration = textDecoration,
+                                        modifier = Modifier.padding(end = spacing.sm)
+                                    )
+                                    val price = item.price
+                                    if (price != null) {
+                                        Text(
+                                            text = "${uiState.currencySymbol}${formatPrice(price)}",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
+                                        )
+                                    } else {
+                                        Text(
+                                            text = uiState.currencySymbol,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
 
-            if (!uiState.isEmpty) {
-                Row(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg, vertical = spacing.sm),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(LocalStrings.current.totalSpent, style = MaterialTheme.typography.titleMedium)
-                    Text(
-                        "${uiState.currencySymbol}${formatPrice(uiState.totalSpent)}",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-
-            Button(
-                onClick = { viewModel.openAddItemDialog() },
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                modifier = Modifier.fillMaxWidth().padding(spacing.lg)
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg, vertical = spacing.sm),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Spacer(Modifier.width(spacing.xs))
-                Text(LocalStrings.current.shoppingAddItemButton)
+                Column {
+                    if (!uiState.isEmpty) {
+                        Text(LocalStrings.current.totalSpent, style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            "${uiState.currencySymbol}${formatPrice(uiState.totalSpent)}",
+                            style = MaterialTheme.typography.titleMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                Button(
+                    onClick = { viewModel.openAddItemDialog() },
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    contentPadding = PaddingValues(horizontal = spacing.md, vertical = spacing.xs)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(MealPlannerTokens.iconSize.sm))
+                    Spacer(Modifier.width(spacing.xxs))
+                    Text(LocalStrings.current.shoppingAddItemButton, style = MaterialTheme.typography.labelMedium)
+                }
             }
         }
 
@@ -284,6 +322,40 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                 },
                 dismissButton = {
                     TextButton(onClick = { viewModel.dismissDeleteConfirmation() }) { Text(LocalStrings.current.cancel) }
+                }
+            )
+        }
+
+        if (uiState.itemPendingGroupAssignment != null) {
+            AssignGroupDialog(
+                groups = uiState.groups,
+                onAssign = { groupId -> viewModel.assignGroup(groupId) },
+                onCreateGroup = { name -> viewModel.createGroupAndAssign(name) },
+                onDismiss = { viewModel.dismissGroupPicker() }
+            )
+        }
+
+        if (uiState.groupManagementOpen) {
+            ManageGroupsDialog(
+                groups = uiState.groups,
+                onRename = { id, name -> viewModel.renameGroup(id, name) },
+                onRequestDelete = { group -> viewModel.requestDeleteGroup(group) },
+                onDismiss = { viewModel.dismissGroupManagement() }
+            )
+        }
+
+        uiState.groupPendingDeletion?.let { group ->
+            AlertDialog(
+                onDismissRequest = { viewModel.dismissDeleteGroupConfirmation() },
+                title = { Text(LocalStrings.current.shoppingDeleteGroupTitle) },
+                text = { Text(LocalStrings.current.shoppingDeleteGroupBody(group.name)) },
+                confirmButton = {
+                    TextButton(onClick = { viewModel.confirmDeleteGroup() }) {
+                        Text(LocalStrings.current.remove, color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { viewModel.dismissDeleteGroupConfirmation() }) { Text(LocalStrings.current.cancel) }
                 }
             )
         }

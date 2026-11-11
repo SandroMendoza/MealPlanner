@@ -8,5 +8,6 @@ data class ShoppingListItem(
     val totalQuantity: Double,
     val unit: MeasurementUnit,
     val checked: Boolean,
-    val price: Double? = null
+    val price: Double? = null,
+    val groupId: String? = null
 )

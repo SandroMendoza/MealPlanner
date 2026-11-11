@@ -11,21 +11,23 @@ import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
 class ShoppingListLocalDataSource(
     private val database: MealPlannerDatabase,
+    private val groupLocalDataSource: ShoppingGroupLocalDataSource,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private val queries = database.shoppingListItemQueries
 
     fun items(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>> =
-        queries.selectActiveItems(rangeStart.toString(), rangeEnd.toString())
-            .asFlow()
-            .mapToList(ioDispatcher)
-            .map { rows -> rows.map { toDomain(it) } }
+        combine(
+            queries.selectActiveItems(rangeStart.toString(), rangeEnd.toString()).asFlow().mapToList(ioDispatcher),
+            groupLocalDataSource.assignments()
+        ) { rows, assignments -> rows.map { toDomain(it, assignments[it.itemKey]) } }
 
     suspend fun syncGenerated(rangeStart: LocalDate, rangeEnd: LocalDate, required: List<ShoppingListItem>) =
         withContext(ioDispatcher) {
@@ -82,13 +84,14 @@ class ShoppingListLocalDataSource(
             .mapToList(ioDispatcher)
             .map { rows -> rows.map { toSpendingLineItem(it) } }
 
-    private fun toDomain(row: ShoppingListItemEntity) = ShoppingListItem(
+    private fun toDomain(row: ShoppingListItemEntity, groupId: String?) = ShoppingListItem(
         itemKey = row.itemKey,
         name = row.name,
         totalQuantity = row.quantity,
         unit = MeasurementUnit.valueOf(row.unit),
         checked = row.checked != 0L,
-        price = row.price
+        price = row.price,
+        groupId = groupId
     )
 
     private fun toSpendingLineItem(row: SelectPricedItemsInRange) = SpendingLineItem(

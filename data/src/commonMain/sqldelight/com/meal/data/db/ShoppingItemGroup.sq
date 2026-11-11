@@ -1,0 +1,16 @@
+CREATE TABLE ShoppingItemGroupEntity (
+    itemKey TEXT NOT NULL PRIMARY KEY,
+    groupId TEXT NOT NULL
+);
+
+selectAllAssignments:
+SELECT * FROM ShoppingItemGroupEntity;
+
+setItemGroup:
+INSERT OR REPLACE INTO ShoppingItemGroupEntity(itemKey, groupId) VALUES (:itemKey, :groupId);
+
+clearItemGroup:
+DELETE FROM ShoppingItemGroupEntity WHERE itemKey = :itemKey;
+
+clearAssignmentsForGroup:
+DELETE FROM ShoppingItemGroupEntity WHERE groupId = :groupId;

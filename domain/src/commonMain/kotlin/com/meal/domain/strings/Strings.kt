@@ -135,12 +135,20 @@ data class Strings(
 
     // Shopping list
     val shoppingNoMealsPlannedPeriod: String,
-    val shoppingAddPrice: String,
     val shoppingAddItemButton: String,
     val shoppingRemoveItemTitle: String,
     val shoppingRemoveItemBody: (itemName: String) -> String,
     val recordPriceTitle: (itemName: String) -> String,
     val recordPricePriceLabel: (currencySymbol: String) -> String,
+    val shoppingUngrouped: String,
+    val shoppingAssignGroupTitle: String,
+    val shoppingAssignGroupCd: String,
+    val shoppingNewGroupPlaceholder: String,
+    val shoppingCreateGroup: String,
+    val shoppingManageGroupsCd: String,
+    val shoppingManageGroupsTitle: String,
+    val shoppingDeleteGroupTitle: String,
+    val shoppingDeleteGroupBody: (groupName: String) -> String,
 
     // Profile
     val profileTitle: String,

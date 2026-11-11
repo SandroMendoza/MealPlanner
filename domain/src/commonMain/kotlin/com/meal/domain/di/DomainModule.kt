@@ -5,23 +5,29 @@ import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.MealReminderRepository
 import com.meal.domain.repository.RecipeRepository
 import com.meal.domain.repository.SettingsRepository
+import com.meal.domain.repository.ShoppingGroupRepository
 import com.meal.domain.repository.ShoppingListRepository
 import com.meal.domain.repository.UserProfileRepository
 import com.meal.domain.service.ReminderScheduler
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.domain.usecase.AddRecipeUseCase
 import com.meal.domain.usecase.AddShoppingListItemUseCase
+import com.meal.domain.usecase.AssignItemToGroupUseCase
+import com.meal.domain.usecase.CreateShoppingGroupUseCase
 import com.meal.domain.usecase.DeleteRecipeUseCase
+import com.meal.domain.usecase.DeleteShoppingGroupUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetMealRemindersUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
+import com.meal.domain.usecase.GetShoppingGroupsUseCase
 import com.meal.domain.usecase.GetSpendingReportUseCase
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
+import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.domain.usecase.ToggleFavoriteUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
@@ -78,6 +84,21 @@ val domainModule = module {
     }
     factory {
         GetSpendingReportUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        GetShoppingGroupsUseCase(get<ShoppingGroupRepository>())
+    }
+    factory {
+        CreateShoppingGroupUseCase(get<ShoppingGroupRepository>())
+    }
+    factory {
+        RenameShoppingGroupUseCase(get<ShoppingGroupRepository>())
+    }
+    factory {
+        DeleteShoppingGroupUseCase(get<ShoppingGroupRepository>())
+    }
+    factory {
+        AssignItemToGroupUseCase(get<ShoppingGroupRepository>())
     }
     factory {
         ToggleFavoriteUseCase(get<RecipeRepository>())
