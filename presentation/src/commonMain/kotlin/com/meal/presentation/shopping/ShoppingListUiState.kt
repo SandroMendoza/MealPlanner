@@ -27,7 +27,9 @@ data class ShoppingListUiState(
     val itemPendingGroupAssignment: ShoppingListItem? = null,
     val groupManagementOpen: Boolean = false,
     val groupPendingDeletion: ShoppingGroup? = null,
-    val currencySymbol: String = "$"
+    val currencySymbol: String = "$",
+    val readAloudAvailable: Boolean = false,
+    val isSpeaking: Boolean = false
 ) {
     val isEmpty: Boolean
         get() = !isLoading && items.isEmpty() && errorMessage == null

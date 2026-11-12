@@ -3,6 +3,8 @@ package com.meal.presentation.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.enums.MealType
+import com.meal.domain.service.TtsSpeaker
+import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.GetUserProfileUseCase
 import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.presentation.common.today
@@ -14,7 +16,9 @@ private val MEAL_TYPE_ORDER = MealType.entries
 
 class HomeViewModel(
     private val getWeeklyMealPlanUseCase: GetWeeklyMealPlanUseCase,
-    private val getUserProfileUseCase: GetUserProfileUseCase
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase,
+    private val ttsSpeaker: TtsSpeaker
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -24,6 +28,11 @@ class HomeViewModel(
         viewModelScope.launch {
             getUserProfileUseCase.execute().collect { profile ->
                 _uiState.value = _uiState.value.copy(greetingName = profile.name)
+            }
+        }
+        viewModelScope.launch {
+            getSettingsUseCase.execute().collect { settings ->
+                _uiState.value = _uiState.value.copy(readAloudAvailable = settings.readAloudEnabled)
             }
         }
         viewModelScope.launch {
@@ -43,5 +52,22 @@ class HomeViewModel(
                 )
             }
         }
+    }
+
+    fun toggleReadAloud(spokenText: String) {
+        if (_uiState.value.isSpeaking) {
+            ttsSpeaker.stop()
+            _uiState.value = _uiState.value.copy(isSpeaking = false)
+            return
+        }
+        if (spokenText.isBlank()) return
+        _uiState.value = _uiState.value.copy(isSpeaking = true)
+        ttsSpeaker.speak(spokenText) {
+            _uiState.value = _uiState.value.copy(isSpeaking = false)
+        }
+    }
+
+    override fun onCleared() {
+        ttsSpeaker.stop()
     }
 }

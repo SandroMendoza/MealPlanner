@@ -17,6 +17,7 @@ import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
+import com.meal.domain.service.TtsSpeaker
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.sundayOf
 import com.meal.presentation.common.today
@@ -41,7 +42,8 @@ class ShoppingListViewModel(
     private val createShoppingGroupUseCase: CreateShoppingGroupUseCase,
     private val renameShoppingGroupUseCase: RenameShoppingGroupUseCase,
     private val deleteShoppingGroupUseCase: DeleteShoppingGroupUseCase,
-    private val assignItemToGroupUseCase: AssignItemToGroupUseCase
+    private val assignItemToGroupUseCase: AssignItemToGroupUseCase,
+    private val ttsSpeaker: TtsSpeaker
 ) : ViewModel() {
 
     private val initialWeekStart = currentWeekSunday()
@@ -65,7 +67,10 @@ class ShoppingListViewModel(
         }
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
-                _uiState.value = _uiState.value.copy(currencySymbol = settings.currency.symbol)
+                _uiState.value = _uiState.value.copy(
+                    currencySymbol = settings.currency.symbol,
+                    readAloudAvailable = settings.readAloudEnabled
+                )
             }
         }
         viewModelScope.launch {
@@ -275,5 +280,24 @@ class ShoppingListViewModel(
     private fun setRange(mode: ShoppingListRangeMode, start: LocalDate, end: LocalDate) {
         _uiState.value = _uiState.value.copy(mode = mode, rangeStart = start, rangeEnd = end)
         loadList()
+    }
+
+    fun toggleReadAloud() {
+        if (_uiState.value.isSpeaking) {
+            ttsSpeaker.stop()
+            _uiState.value = _uiState.value.copy(isSpeaking = false)
+            return
+        }
+        val items = _uiState.value.items.filterNot { it.checked }
+        if (items.isEmpty()) return
+        val text = items.joinToString(". ") { "${it.totalQuantity} ${it.unit.unit} ${it.name}" }
+        _uiState.value = _uiState.value.copy(isSpeaking = true)
+        ttsSpeaker.speak(text) {
+            _uiState.value = _uiState.value.copy(isSpeaking = false)
+        }
+    }
+
+    override fun onCleared() {
+        ttsSpeaker.stop()
     }
 }

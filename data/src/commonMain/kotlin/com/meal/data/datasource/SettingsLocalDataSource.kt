@@ -33,7 +33,8 @@ class SettingsLocalDataSource(
                 settings.language.name,
                 settings.currency.name,
                 if (settings.lockPastDates) 1L else 0L,
-                settings.defaultCalendarView.name
+                settings.defaultCalendarView.name,
+                if (settings.readAloudEnabled) 1L else 0L
             )
         }
 
@@ -42,6 +43,7 @@ class SettingsLocalDataSource(
         language = Language.valueOf(row.language),
         currency = Currency.valueOf(row.currency),
         lockPastDates = row.lockPastDates != 0L,
-        defaultCalendarView = CalendarViewMode.valueOf(row.defaultCalendarView)
+        defaultCalendarView = CalendarViewMode.valueOf(row.defaultCalendarView),
+        readAloudEnabled = row.readAloudEnabled != 0L
     )
 }

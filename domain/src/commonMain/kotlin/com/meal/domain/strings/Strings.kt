@@ -76,6 +76,8 @@ data class Strings(
     val homeQuickActions: String,
     val homeAddAMeal: String,
     val homeShoppingList: String,
+    val homeReadAloudCd: String,
+    val homeStopReadAloudCd: String,
 
     // Meal calendar
     val calendarTitle: String,
@@ -122,6 +124,14 @@ data class Strings(
     val caloriesLabel: (Int) -> String,
     val servingsLabel: (Int) -> String,
     val recipeDetailAddToMealPlan: String,
+    val recipeDetailReadIngredientsCd: String,
+    val recipeDetailStopIngredientsCd: String,
+    val recipeDetailCookMode: String,
+    val recipeDetailCookModePlayCd: String,
+    val recipeDetailCookModePauseCd: String,
+    val recipeDetailCookModeNextCd: String,
+    val recipeDetailCookModePreviousCd: String,
+    val recipeDetailCookModeStopCd: String,
 
     // Recipe form
     val recipeFormEditTitle: String,
@@ -154,6 +164,8 @@ data class Strings(
     val shoppingManageGroupsTitle: String,
     val shoppingDeleteGroupTitle: String,
     val shoppingDeleteGroupBody: (groupName: String) -> String,
+    val shoppingReadAloudCd: String,
+    val shoppingStopReadAloudCd: String,
 
     // Profile
     val profileTitle: String,
@@ -174,6 +186,7 @@ data class Strings(
     val settingsAbout: String,
     val settingsAboutMealPlanner: String,
     val settingsPrivacyPolicy: String,
+    val settingsReadAloud: String,
 
     // Notification settings
     val notificationSettingsTitle: String,

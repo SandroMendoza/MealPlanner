@@ -8,7 +8,12 @@ data class RecipeDetailUiState(
     val isLoading: Boolean = false,
     val errorMessage: String? = null,
     val pendingDeleteConfirmationDates: List<LocalDate>? = null,
-    val isDeleted: Boolean = false
+    val isDeleted: Boolean = false,
+    val readAloudAvailable: Boolean = false,
+    val ingredientsSpeaking: Boolean = false,
+    val cookModeActive: Boolean = false,
+    val cookModeStepIndex: Int = 0,
+    val cookModeSpeaking: Boolean = false
 ) {
     val notFound: Boolean
         get() = !isLoading && recipe == null && errorMessage == null

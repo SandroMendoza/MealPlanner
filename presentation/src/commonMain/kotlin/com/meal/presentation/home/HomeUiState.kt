@@ -6,5 +6,7 @@ data class HomeUiState(
     val greetingName: String = "",
     val todaysEntries: List<MealPlanEntry> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val readAloudAvailable: Boolean = false,
+    val isSpeaking: Boolean = false
 )

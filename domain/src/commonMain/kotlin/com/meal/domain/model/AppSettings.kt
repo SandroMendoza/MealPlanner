@@ -5,5 +5,6 @@ data class AppSettings(
     val language: Language = Language.ENGLISH,
     val currency: Currency = Currency.USD,
     val lockPastDates: Boolean = false,
-    val defaultCalendarView: CalendarViewMode = CalendarViewMode.DAY
+    val defaultCalendarView: CalendarViewMode = CalendarViewMode.DAY,
+    val readAloudEnabled: Boolean = false
 )

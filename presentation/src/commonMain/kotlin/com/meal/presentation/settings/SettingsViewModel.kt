@@ -29,6 +29,7 @@ class SettingsViewModel(
                     currency = settings.currency,
                     lockPastDates = settings.lockPastDates,
                     defaultCalendarView = settings.defaultCalendarView,
+                    readAloudEnabled = settings.readAloudEnabled,
                     isLoading = false
                 )
             }
@@ -40,6 +41,7 @@ class SettingsViewModel(
     fun setCurrency(currency: Currency) = persist { it.copy(currency = currency) }
     fun setLockPastDates(enabled: Boolean) = persist { it.copy(lockPastDates = enabled) }
     fun setDefaultCalendarView(view: CalendarViewMode) = persist { it.copy(defaultCalendarView = view) }
+    fun setReadAloudEnabled(enabled: Boolean) = persist { it.copy(readAloudEnabled = enabled) }
 
     private fun persist(transform: (AppSettings) -> AppSettings) {
         val current = _uiState.value
@@ -49,7 +51,8 @@ class SettingsViewModel(
                 language = current.language,
                 currency = current.currency,
                 lockPastDates = current.lockPastDates,
-                defaultCalendarView = current.defaultCalendarView
+                defaultCalendarView = current.defaultCalendarView,
+                readAloudEnabled = current.readAloudEnabled
             )
         )
         _uiState.value = current.copy(
@@ -57,7 +60,8 @@ class SettingsViewModel(
             language = updated.language,
             currency = updated.currency,
             lockPastDates = updated.lockPastDates,
-            defaultCalendarView = updated.defaultCalendarView
+            defaultCalendarView = updated.defaultCalendarView,
+            readAloudEnabled = updated.readAloudEnabled
         )
         viewModelScope.launch { updateSettingsUseCase.execute(updated) }
     }

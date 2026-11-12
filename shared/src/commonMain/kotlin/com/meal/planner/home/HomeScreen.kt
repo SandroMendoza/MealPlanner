@@ -18,9 +18,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -62,6 +64,11 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val spacing = MealPlannerTokens.spacing
+    val todaysPlanParts = mutableListOf<String>()
+    for (entry in uiState.todaysEntries) {
+        todaysPlanParts += "${entry.mealType.displayName()}: ${entry.recipe.name}"
+    }
+    val todaysPlanSpokenText = todaysPlanParts.joinToString(". ")
 
     Column(
         modifier = Modifier
@@ -90,13 +97,32 @@ fun HomeScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            IconButton(
-                onClick = onNotificationsClick,
-                modifier = Modifier
-                    .size(MealPlannerTokens.iconSize.xl.minus(4.dp))
-                    .background(MaterialTheme.colorScheme.surface, CircleShape)
-            ) {
-                Icon(Icons.Default.Notifications, contentDescription = LocalStrings.current.homeNotificationsCd)
+            Row {
+                if (uiState.readAloudAvailable) {
+                    IconButton(
+                        onClick = { viewModel.toggleReadAloud(todaysPlanSpokenText) },
+                        modifier = Modifier
+                            .size(MealPlannerTokens.iconSize.xl.minus(4.dp))
+                            .background(MaterialTheme.colorScheme.surface, CircleShape)
+                    ) {
+                        Icon(
+                            imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
+                            contentDescription = if (uiState.isSpeaking) {
+                                LocalStrings.current.homeStopReadAloudCd
+                            } else {
+                                LocalStrings.current.homeReadAloudCd
+                            }
+                        )
+                    }
+                }
+                IconButton(
+                    onClick = onNotificationsClick,
+                    modifier = Modifier
+                        .size(MealPlannerTokens.iconSize.xl.minus(4.dp))
+                        .background(MaterialTheme.colorScheme.surface, CircleShape)
+                ) {
+                    Icon(Icons.Default.Notifications, contentDescription = LocalStrings.current.homeNotificationsCd)
+                }
             }
         }
 

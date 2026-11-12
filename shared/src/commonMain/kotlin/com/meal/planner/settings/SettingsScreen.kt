@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -96,6 +97,10 @@ fun SettingsScreen(
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsLockPastDates, icon = Icons.Default.Lock) {
                 Switch(checked = uiState.lockPastDates, onCheckedChange = viewModel::setLockPastDates)
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            SettingsRow(label = LocalStrings.current.settingsReadAloud, icon = Icons.AutoMirrored.Filled.VolumeUp) {
+                Switch(checked = uiState.readAloudEnabled, onCheckedChange = viewModel::setReadAloudEnabled)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsDefaultCalendarView, icon = Icons.Default.CalendarMonth) {

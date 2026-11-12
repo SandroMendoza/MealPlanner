@@ -20,9 +20,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -48,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
@@ -111,7 +114,10 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                             }
                             Text(
                                 text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 if (uiState.rangeStart != currentWeekSunday()) {
@@ -124,6 +130,18 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 }
                                 IconButton(onClick = { viewModel.openGroupManagement() }) {
                                     Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
+                                }
+                                if (uiState.readAloudAvailable) {
+                                    IconButton(onClick = { viewModel.toggleReadAloud() }) {
+                                        Icon(
+                                            imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
+                                            contentDescription = if (uiState.isSpeaking) {
+                                                LocalStrings.current.shoppingStopReadAloudCd
+                                            } else {
+                                                LocalStrings.current.shoppingReadAloudCd
+                                            }
+                                        )
+                                    }
                                 }
                                 IconButton(onClick = { viewModel.nextWeek() }) {
                                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
@@ -150,6 +168,18 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 IconButton(onClick = { viewModel.openGroupManagement() }) {
                                     Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
                                 }
+                                if (uiState.readAloudAvailable) {
+                                    IconButton(onClick = { viewModel.toggleReadAloud() }) {
+                                        Icon(
+                                            imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
+                                            contentDescription = if (uiState.isSpeaking) {
+                                                LocalStrings.current.shoppingStopReadAloudCd
+                                            } else {
+                                                LocalStrings.current.shoppingReadAloudCd
+                                            }
+                                        )
+                                    }
+                                }
                                 IconButton(onClick = { viewModel.nextDay() }) {
                                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextDay)
                                 }
@@ -158,7 +188,10 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                         ShoppingListRangeMode.RANGE -> {
                             Text(
                                 text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 IconButton(onClick = { showDatePicker = true }) {
@@ -166,6 +199,18 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
                                 }
                                 IconButton(onClick = { viewModel.openGroupManagement() }) {
                                     Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
+                                }
+                                if (uiState.readAloudAvailable) {
+                                    IconButton(onClick = { viewModel.toggleReadAloud() }) {
+                                        Icon(
+                                            imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
+                                            contentDescription = if (uiState.isSpeaking) {
+                                                LocalStrings.current.shoppingStopReadAloudCd
+                                            } else {
+                                                LocalStrings.current.shoppingReadAloudCd
+                                            }
+                                        )
+                                    }
                                 }
                             }
                         }

@@ -19,7 +19,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 val presentationModule = module {
     viewModel { RecipeViewModel(get(), get()) }
-    viewModel { params -> RecipeDetailViewModel(params.get(), get(), get(), get()) }
+    viewModel { params -> RecipeDetailViewModel(params.get(), get(), get(), get(), get(), get()) }
     viewModel { params ->
         val recipeIdString = params.get<String>()
         RecipeFormViewModel(
@@ -32,8 +32,8 @@ val presentationModule = module {
         )
     }
     viewModel { MealCalendarViewModel(get(), get(), get(), get(), get()) }
-    viewModel { ShoppingListViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { ShoppingListViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { SpendingReportsViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get()) }
