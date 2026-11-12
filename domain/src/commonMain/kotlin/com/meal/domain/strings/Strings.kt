@@ -180,8 +180,6 @@ data class Strings(
     val notificationSettingsDescription: String,
     val settingsNotificationsPermissionDenied: String,
     val settingsNotificationsOpenSettings: String,
-    val settingsNotificationsExactAlarmHint: String,
-    val settingsNotificationsEnableExactAlarms: String,
     val mealReminderNotificationTitle: (MealType) -> String,
     val mealReminderNotificationBody: String,
 

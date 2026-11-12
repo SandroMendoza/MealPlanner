@@ -14,10 +14,4 @@ actual fun rememberNotificationPermissionRequester(onResult: (granted: Boolean) 
 actual fun canPostNotifications(): Boolean = false
 
 @Composable
-actual fun canScheduleExactAlarms(): Boolean = true
-
-@Composable
 actual fun rememberOpenNotificationSettings(): () -> Unit = {}
-
-@Composable
-actual fun rememberOpenExactAlarmSettings(): () -> Unit = {}

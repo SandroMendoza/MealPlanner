@@ -210,8 +210,6 @@ val frenchStrings = Strings(
     notificationSettingsDescription = "Choisissez les repas pour lesquels vous souhaitez un rappel.",
     settingsNotificationsPermissionDenied = "Activez les notifications dans les paramètres système pour recevoir des rappels de repas.",
     settingsNotificationsOpenSettings = "Ouvrir les paramètres",
-    settingsNotificationsExactAlarmHint = "Pour que les rappels arrivent à l'heure exacte, autorisez les alarmes précises.",
-    settingsNotificationsEnableExactAlarms = "Autoriser les alarmes précises",
     mealReminderNotificationTitle = { mealType -> "Rappel : ${frenchMealTypeName(mealType).lowercase()}" },
     mealReminderNotificationBody = "Appuyez pour voir ce qui est prévu.",
 

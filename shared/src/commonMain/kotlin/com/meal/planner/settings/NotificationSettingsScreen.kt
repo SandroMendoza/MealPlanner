@@ -31,12 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.canPostNotifications
-import com.meal.planner.common.canScheduleExactAlarms
 import com.meal.planner.common.displayName
 import com.meal.planner.common.formatTime
 import com.meal.planner.common.icon
 import com.meal.planner.common.rememberNotificationPermissionRequester
-import com.meal.planner.common.rememberOpenExactAlarmSettings
 import com.meal.planner.common.rememberOpenNotificationSettings
 import com.meal.planner.components.SettingsRow
 import com.meal.planner.components.TimePickerDialog
@@ -60,7 +58,6 @@ fun NotificationSettingsScreen(
     var permissionDenied by remember { mutableStateOf(false) }
 
     val hasPermission = canPostNotifications()
-    val hasExactAlarms = canScheduleExactAlarms()
     val requestPermission = rememberNotificationPermissionRequester { granted ->
         val mealType = pendingMealType
         pendingMealType = null
@@ -74,7 +71,6 @@ fun NotificationSettingsScreen(
         }
     }
     val openNotificationSettings = rememberOpenNotificationSettings()
-    val openExactAlarmSettings = rememberOpenExactAlarmSettings()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -145,18 +141,6 @@ fun NotificationSettingsScreen(
                 )
                 TextButton(onClick = openNotificationSettings) {
                     Text(strings.settingsNotificationsOpenSettings)
-                }
-            }
-
-            if (!hasExactAlarms) {
-                Spacer(Modifier.height(spacing.sectionGap))
-                Text(
-                    text = strings.settingsNotificationsExactAlarmHint,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                TextButton(onClick = openExactAlarmSettings) {
-                    Text(strings.settingsNotificationsEnableExactAlarms)
                 }
             }
         }

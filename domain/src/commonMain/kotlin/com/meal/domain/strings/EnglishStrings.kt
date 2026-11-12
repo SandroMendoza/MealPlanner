@@ -210,8 +210,6 @@ val englishStrings = Strings(
     notificationSettingsDescription = "Choose which meals you want to be reminded about.",
     settingsNotificationsPermissionDenied = "Enable notifications in system settings to receive meal reminders.",
     settingsNotificationsOpenSettings = "Open settings",
-    settingsNotificationsExactAlarmHint = "For reminders to arrive exactly on time, allow precise alarms.",
-    settingsNotificationsEnableExactAlarms = "Allow precise alarms",
     mealReminderNotificationTitle = { mealType -> "${englishMealTypeName(mealType)} reminder" },
     mealReminderNotificationBody = "Tap to see what's planned.",
 

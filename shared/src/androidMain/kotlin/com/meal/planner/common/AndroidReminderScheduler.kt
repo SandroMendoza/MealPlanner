@@ -4,7 +4,6 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.meal.domain.model.MealReminder
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.service.ReminderScheduler
@@ -20,11 +19,7 @@ class AndroidReminderScheduler(private val context: Context) : ReminderScheduler
         }
         val pendingIntent = pendingIntentFor(reminder.mealType)
         val triggerAt = nextTriggerMillis(reminder.time.hour, reminder.time.minute)
-        if (canScheduleExactAlarms()) {
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
-        } else {
-            alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
-        }
+        alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, triggerAt, pendingIntent)
     }
 
     override fun cancel(mealType: MealType) {
@@ -46,9 +41,6 @@ class AndroidReminderScheduler(private val context: Context) : ReminderScheduler
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
-
-    private fun canScheduleExactAlarms(): Boolean =
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.S || alarmManager.canScheduleExactAlarms()
 
     private fun nextTriggerMillis(hour: Int, minute: Int): Long {
         val now = Calendar.getInstance()
