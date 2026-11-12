@@ -104,7 +104,8 @@ fun AppNavHost() {
                     onViewAllClick = { navController.navigateToTab(Routes.CALENDAR) },
                     onAddMealClick = { navController.navigateToTab(Routes.CALENDAR) },
                     onShoppingListClick = { navController.navigateToTab(Routes.SHOPPING_LIST) },
-                    onMealClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) }
+                    onMealClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) },
+                    onNotificationsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) }
                 )
             }
             composable(Routes.RECIPES) {

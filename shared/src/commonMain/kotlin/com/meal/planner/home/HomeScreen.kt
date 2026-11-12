@@ -57,6 +57,7 @@ fun HomeScreen(
     onAddMealClick: () -> Unit,
     onShoppingListClick: () -> Unit,
     onMealClick: (Uuid) -> Unit,
+    onNotificationsClick: () -> Unit,
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -90,7 +91,7 @@ fun HomeScreen(
                 )
             }
             IconButton(
-                onClick = {},
+                onClick = onNotificationsClick,
                 modifier = Modifier
                     .size(MealPlannerTokens.iconSize.xl.minus(4.dp))
                     .background(MaterialTheme.colorScheme.surface, CircleShape)
