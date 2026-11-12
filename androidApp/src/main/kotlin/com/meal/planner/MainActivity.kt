@@ -8,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.meal.planner.di.appModule
+import com.meal.planner.navigation.Routes
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -27,8 +28,12 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        val startRoute = intent?.data
+            ?.takeIf { it.scheme == "mealplanner" && it.host == "open" }
+            ?.let { Routes.routeForDeepLinkPath(it.pathSegments.firstOrNull()) }
+
         setContent {
-            App()
+            App(startRoute = startRoute)
         }
     }
 }

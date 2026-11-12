@@ -27,4 +27,9 @@ object Routes {
         val base = "calendar/$date/${mealType ?: ANY_MEAL_TYPE}/pick"
         return if (replaceSlotId != null) "$base?replaceSlotId=$replaceSlotId" else base
     }
+
+    private val DEEP_LINK_ROUTES = setOf(HOME, CALENDAR, RECIPES, SHOPPING_LIST, SPENDING_REPORTS)
+
+    /** Maps a `mealplanner://open/<path>` shortcut path segment to its nav route, or null if unknown. */
+    fun routeForDeepLinkPath(path: String?): String? = path?.takeIf { it in DEEP_LINK_ROUTES }
 }

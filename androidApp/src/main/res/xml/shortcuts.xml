@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="home"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_home"
+        android:shortcutShortLabel="@string/shortcut_home_short"
+        android:shortcutLongLabel="@string/shortcut_home_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.meal.planner"
+            android:targetClass="com.meal.planner.MainActivity"
+            android:data="mealplanner://open/home" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="calendar"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_calendar"
+        android:shortcutShortLabel="@string/shortcut_calendar_short"
+        android:shortcutLongLabel="@string/shortcut_calendar_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.meal.planner"
+            android:targetClass="com.meal.planner.MainActivity"
+            android:data="mealplanner://open/calendar" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="recipes"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_recipes"
+        android:shortcutShortLabel="@string/shortcut_recipes_short"
+        android:shortcutLongLabel="@string/shortcut_recipes_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.meal.planner"
+            android:targetClass="com.meal.planner.MainActivity"
+            android:data="mealplanner://open/recipes" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="shoppingList"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_shopping"
+        android:shortcutShortLabel="@string/shortcut_shopping_list_short"
+        android:shortcutLongLabel="@string/shortcut_shopping_list_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.meal.planner"
+            android:targetClass="com.meal.planner.MainActivity"
+            android:data="mealplanner://open/shoppingList" />
+    </shortcut>
+    <shortcut
+        android:shortcutId="spendingReports"
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_spending"
+        android:shortcutShortLabel="@string/shortcut_spending_reports_short"
+        android:shortcutLongLabel="@string/shortcut_spending_reports_long">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.meal.planner"
+            android:targetClass="com.meal.planner.MainActivity"
+            android:data="mealplanner://open/spendingReports" />
+    </shortcut>
+</shortcuts>

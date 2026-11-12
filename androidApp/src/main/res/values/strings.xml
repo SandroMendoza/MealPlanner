@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">MealPlanner</string>
+
+    <string name="shortcut_home_short">Home</string>
+    <string name="shortcut_home_long">Open Home</string>
+    <string name="shortcut_calendar_short">Meal Plan</string>
+    <string name="shortcut_calendar_long">Open Meal Plan</string>
+    <string name="shortcut_recipes_short">Recipes</string>
+    <string name="shortcut_recipes_long">Open Recipes</string>
+    <string name="shortcut_shopping_list_short">Shopping List</string>
+    <string name="shortcut_shopping_list_long">Open Shopping List</string>
+    <string name="shortcut_spending_reports_short">Spending</string>
+    <string name="shortcut_spending_reports_long">Open Spending Reports</string>
 </resources>
