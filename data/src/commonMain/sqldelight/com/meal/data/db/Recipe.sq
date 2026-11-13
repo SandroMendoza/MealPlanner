@@ -39,6 +39,9 @@ CREATE TABLE InstructionEntity (
 selectActiveRecipes:
 SELECT * FROM RecipeEntity WHERE isDeleted = 0;
 
+countAllRecipes:
+SELECT COUNT(*) FROM RecipeEntity;
+
 selectRecipeById:
 SELECT * FROM RecipeEntity WHERE id = ?;
 

@@ -34,10 +34,12 @@ class RecipeLocalDataSource(
             .asFlow()
             .mapToList(ioDispatcher)
             .map { rows -> rows.map { toDto(it) } }
-            .onStart { seedIfEmpty() }
+            .onStart { seedOnFirstInstall() }
 
-    private suspend fun seedIfEmpty() = withContext(ioDispatcher) {
-        if (queries.selectActiveRecipes().executeAsList().isEmpty()) {
+    // Recipes are only ever soft-deleted, so a table with no rows at all means a fresh
+    // database: the seed runs once per install and deleted seed recipes stay deleted.
+    private suspend fun seedOnFirstInstall() = withContext(ioDispatcher) {
+        if (queries.countAllRecipes().executeAsOne() == 0L) {
             RecipeSeedData.recipes().forEach { insertRecipeBlocking(it) }
         }
     }
