@@ -236,31 +236,18 @@ val frenchStrings = Strings(
         "dans le temps, et consultez les rapports de dépenses pour voir où va votre budget courses.\n\n" +
         "Créé avec Kotlin Multiplatform et Jetpack Compose.",
 
-    privacyDisclaimer = "Ceci est un texte de politique provisoire qui n'a pas été examiné par un conseiller " +
-        "juridique. Remplacez-le avant la mise en production.",
     privacyPolicyParagraphs = listOf(
-        "Dernière mise à jour : [DATE — À COMPLÉTER]",
-        "Cette Politique de Confidentialité provisoire décrit, en termes généraux, les informations que Meal " +
-            "Planner peut collecter et la façon dont elles peuvent être utilisées. Elle est fournie uniquement " +
-            "comme point de départ et doit être revue et remplacée par une politique précise et validée " +
-            "juridiquement avant que cette application ne soit distribuée à de vrais utilisateurs.",
-        "Informations que nous stockons\nMeal Planner stocke vos recettes, plans de repas, listes de " +
-            "courses, informations de profil (nom, bio, avatar) et préférences de l'application (notifications, " +
-            "thème, langue, devise) localement sur votre appareil. À ce stade, aucun système de compte ni " +
-            "serveur distant n'existe, et aucune des données mentionnées ci-dessus n'est transmise hors de " +
-            "votre appareil par l'application elle-même.",
-        "Images\nSi vous choisissez une photo de profil ou une image de recette depuis votre appareil, cette " +
-            "image est référencée localement et n'est téléchargée nulle part par l'application.",
-        "Services tiers\nCette politique provisoire ne tient pas encore compte d'éventuels services tiers, " +
-            "outils d'analyse, rapports de plantage ou SDK publicitaires. Si de tels services sont ajoutés à " +
-            "l'application à l'avenir, cette politique devra être mise à jour en conséquence avant toute " +
-            "publication.",
-        "Confidentialité des enfants\nMeal Planner ne s'adresse pas aux enfants, et cette politique " +
-            "provisoire ne comprend pas de mentions spécifiques à la confidentialité des enfants.",
-        "Modifications de cette politique\nComme il s'agit d'un texte provisoire, il est appelé à changer. " +
-            "Remplacez l'intégralité de ce document par un texte final et validé, adapté aux pratiques réelles " +
-            "de cette application en matière de données, avant sa publication.",
-        "Contact\n[À COMPLÉTER — ajoutez une adresse e-mail ou postale de contact réelle avant la publication]"
+        "Dernière mise à jour : 13 novembre 2026",
+        "Meal Planner est une application de planification de repas qui garde vos données sur votre appareil. Elle n'a pas de compte utilisateur, pas de publicité, ni d'outil d'analyse ou de rapport de plantage. Le développeur ne collecte, ne reçoit et ne vend aucune donnée personnelle.",
+        "Informations stockées sur votre appareil\nL'application stocke vos recettes, plans de repas, listes de courses, dépenses, profil (nom, bio et photo) et réglages dans son espace privé sur votre appareil. Ces données ne sont pas incluses dans les sauvegardes cloud d'Android ni dans les transferts d'un appareil à l'autre. Désinstaller l'application ou effacer ses données les supprime définitivement.",
+        "Photos\nQuand vous ajoutez une photo de recette ou de profil, l'application utilise le sélecteur de photos d'Android et ne voit donc que les photos que vous choisissez. Ces photos restent sur votre appareil et ne sont jamais envoyées.",
+        "Rappels de repas\nSi vous activez les rappels de repas, c'est votre appareil qui les planifie et les affiche. Rien les concernant n'est envoyé ailleurs.",
+        "Partage\nQuand vous exportez un rapport de dépenses, l'application transmet le fichier à l'application que vous choisissez dans le menu de partage d'Android. La politique de confidentialité de cette application s'applique ensuite.",
+        "Lecture à voix haute\nLa lecture à voix haute utilise le service de synthèse vocale installé sur votre appareil. Le texte lu est traité par ce service selon la politique de confidentialité de son fournisseur.",
+        "Assistants vocaux\nSur les versions d'Android compatibles, les assistants installés sur votre appareil peuvent lire et modifier votre liste de courses, vos recettes, votre plan de repas et votre rapport de dépenses quand vous le leur demandez. L'assistant traite ces données selon sa propre politique de confidentialité.",
+        "Enfants\nMeal Planner ne s'adresse pas aux enfants de moins de 13 ans et ne collecte sciemment de données auprès de personne.",
+        "Modifications de cette politique\nSi les pratiques de l'application en matière de données changent, cette politique est mise à jour et la date ci-dessus aussi.",
+        "Contact\nQuestions sur cette politique : [contact email]"
     ),
 
     spendingExportCd = "Exporter le rapport en PDF",

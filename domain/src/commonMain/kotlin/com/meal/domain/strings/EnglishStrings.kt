@@ -235,28 +235,18 @@ val englishStrings = Strings(
         "over time, and review spending reports to see where your grocery budget goes.\n\n" +
         "Built with Kotlin Multiplatform and Jetpack Compose.",
 
-    privacyDisclaimer = "This is placeholder policy text and has not been reviewed by legal counsel. " +
-        "Replace before shipping to production.",
     privacyPolicyParagraphs = listOf(
-        "Last updated: [DATE — PLACEHOLDER]",
-        "This placeholder Privacy Policy describes, in general terms, what information Meal Planner may " +
-            "collect and how it may be used. It is provided as a starting point only and must be reviewed and " +
-            "replaced with an accurate, legally-reviewed policy before this app is distributed to real users.",
-        "Information We Store\nMeal Planner stores your recipes, meal plans, shopping lists, profile " +
-            "information (name, bio, avatar), and app preferences (notifications, theme, language, currency) " +
-            "locally on your device. As of this version, no account system or remote server exists, and no data " +
-            "described above is transmitted off your device by the app itself.",
-        "Images\nIf you choose a profile photo or recipe image from your device, that image is referenced " +
-            "locally and is not uploaded anywhere by the app.",
-        "Third-Party Services\nThis placeholder policy does not yet account for any third-party services, " +
-            "analytics, crash reporting, or advertising SDKs. If any such services are added to the app in the " +
-            "future, this policy must be updated accordingly before release.",
-        "Children's Privacy\nMeal Planner is not directed at children, and this placeholder policy does not " +
-            "include any children's-privacy-specific language.",
-        "Changes to This Policy\nBecause this is placeholder text, it is expected to change. Replace this " +
-            "entire document with reviewed, final copy appropriate to this app's actual data practices before " +
-            "publishing.",
-        "Contact\n[PLACEHOLDER — insert a real contact email/address before release]"
+        "Last updated: 13 November 2026",
+        "Meal Planner is a meal planning app that keeps your data on your device. It has no user accounts, no ads, and no analytics or crash reporting. The developer does not collect, receive or sell any personal data.",
+        "Information stored on your device\nThe app stores your recipes, meal plans, shopping lists, spending entries, profile (name, bio and photo) and settings in its private storage on your device. This data is not included in Android cloud backups or device-to-device transfers. Uninstalling the app or clearing its data deletes it permanently.",
+        "Photos\nWhen you add a recipe or profile photo, the app uses the Android photo picker, so it only sees the photos you select. Those photos stay on your device and are never uploaded.",
+        "Meal reminders\nIf you turn on meal reminders, your device schedules and shows them. Nothing about them is sent anywhere.",
+        "Sharing\nWhen you export a spending report, the app passes the file to the app you choose in the Android share menu. That app's own privacy policy covers what happens next.",
+        "Read aloud\nThe read-aloud feature uses the text-to-speech service installed on your device. The text being read is handled by that service under its provider's privacy policy.",
+        "Voice assistants\nOn supported Android versions, assistant apps on your device can read and update your shopping list, recipes, meal plan and spending report when you ask them to. The assistant handles that data under its own privacy policy.",
+        "Children\nMeal Planner is not directed at children under 13 and does not knowingly collect data from anyone.",
+        "Changes to this policy\nIf the app's data practices change, this policy is updated and the date above changes with it.",
+        "Contact\nQuestions about this policy: [contact email]"
     ),
 
     spendingExportCd = "Export report as PDF",

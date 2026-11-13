@@ -7,8 +7,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,19 +46,6 @@ fun PrivacyPolicyScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
         ) {
-            item {
-                Card(
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                    modifier = Modifier.padding(bottom = spacing.lg)
-                ) {
-                    Text(
-                        text = strings.privacyDisclaimer,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.padding(spacing.cardPadding)
-                    )
-                }
-            }
             items(strings.privacyPolicyParagraphs) { paragraph ->
                 Text(
                     text = paragraph,

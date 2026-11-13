@@ -236,30 +236,18 @@ val spanishStrings = Strings(
         "informes de gastos para ver en qué se va tu presupuesto de comida.\n\nCreado con Kotlin Multiplatform " +
         "y Jetpack Compose.",
 
-    privacyDisclaimer = "Este es un texto de política provisional y no ha sido revisado por un asesor legal. " +
-        "Reemplázalo antes de pasar a producción.",
     privacyPolicyParagraphs = listOf(
-        "Última actualización: [FECHA — MARCADOR DE POSICIÓN]",
-        "Esta Política de Privacidad provisional describe, en términos generales, qué información puede " +
-            "recopilar Meal Planner y cómo puede utilizarse. Se proporciona solo como punto de partida y debe " +
-            "revisarse y reemplazarse por una política precisa y revisada legalmente antes de distribuir esta " +
-            "app a usuarios reales.",
-        "Información que almacenamos\nMeal Planner almacena tus recetas, planes de comidas, listas de " +
-            "compras, información de perfil (nombre, biografía, avatar) y preferencias de la app " +
-            "(notificaciones, tema, idioma, moneda) localmente en tu dispositivo. En esta versión, no existe " +
-            "un sistema de cuentas ni un servidor remoto, y ninguno de los datos mencionados es transmitido " +
-            "fuera de tu dispositivo por la propia app.",
-        "Imágenes\nSi eliges una foto de perfil o una imagen de receta desde tu dispositivo, esa imagen se " +
-            "referencia localmente y la app no la sube a ningún lugar.",
-        "Servicios de terceros\nEsta política provisional aún no contempla ningún servicio de terceros, " +
-            "análisis, informes de fallos o SDK publicitarios. Si en el futuro se añaden dichos servicios a " +
-            "la app, esta política deberá actualizarse en consecuencia antes del lanzamiento.",
-        "Privacidad de menores\nMeal Planner no está dirigida a menores, y esta política provisional no " +
-            "incluye lenguaje específico sobre privacidad infantil.",
-        "Cambios a esta política\nComo este es un texto provisional, se espera que cambie. Reemplaza este " +
-            "documento completo con un texto final y revisado, adecuado a las prácticas reales de datos de " +
-            "esta app, antes de publicarla.",
-        "Contacto\n[MARCADOR DE POSICIÓN — inserta un correo o dirección de contacto real antes del lanzamiento]"
+        "Última actualización: 13 de noviembre de 2026",
+        "Meal Planner es una app de planificación de comidas que guarda tus datos en tu dispositivo. No tiene cuentas de usuario, ni anuncios, ni herramientas de análisis o informes de fallos. El desarrollador no recopila, recibe ni vende ningún dato personal.",
+        "Información guardada en tu dispositivo\nLa app guarda tus recetas, planes de comidas, listas de compras, gastos, perfil (nombre, biografía y foto) y ajustes en su almacenamiento privado de tu dispositivo. Estos datos no se incluyen en las copias de seguridad en la nube de Android ni en las transferencias entre dispositivos. Desinstalar la app o borrar sus datos los elimina de forma permanente.",
+        "Fotos\nCuando añades una foto de receta o de perfil, la app usa el selector de fotos de Android, así que solo ve las fotos que eliges. Esas fotos se quedan en tu dispositivo y nunca se suben.",
+        "Recordatorios de comidas\nSi activas los recordatorios de comidas, tu dispositivo los programa y los muestra. No se envía nada sobre ellos a ningún sitio.",
+        "Compartir\nCuando exportas un informe de gastos, la app pasa el archivo a la app que elijas en el menú de compartir de Android. A partir de ahí se aplica la política de privacidad de esa app.",
+        "Lectura en voz alta\nLa lectura en voz alta usa el servicio de texto a voz instalado en tu dispositivo. Ese servicio procesa el texto según la política de privacidad de su proveedor.",
+        "Asistentes de voz\nEn las versiones de Android compatibles, las apps de asistente de tu dispositivo pueden leer y modificar tu lista de compras, recetas, plan de comidas e informe de gastos cuando se lo pides. El asistente trata esos datos según su propia política de privacidad.",
+        "Menores\nMeal Planner no está dirigida a menores de 13 años y no recopila datos de nadie a sabiendas.",
+        "Cambios en esta política\nSi cambian las prácticas de datos de la app, esta política se actualiza y la fecha de arriba también.",
+        "Contacto\nPreguntas sobre esta política: [contact email]"
     ),
 
     spendingExportCd = "Exportar informe como PDF",

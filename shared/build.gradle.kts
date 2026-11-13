@@ -38,7 +38,6 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
-            implementation(libs.ktor.client.okhttp)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
             implementation(libs.koin.android)
@@ -60,14 +59,10 @@ kotlin {
             implementation(libs.androidx.navigation.compose)
             implementation(libs.kotlinx.datetime)
             implementation(libs.coil.compose)
-            implementation(libs.coil.network.ktor)
 
             implementation(project(":domain"))
             implementation(project(":data"))
             implementation(project(":presentation"))
-        }
-        iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

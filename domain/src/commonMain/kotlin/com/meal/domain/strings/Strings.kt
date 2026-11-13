@@ -202,7 +202,6 @@ data class Strings(
     val aboutBody: String,
 
     // Privacy policy screen
-    val privacyDisclaimer: String,
     val privacyPolicyParagraphs: List<String>,
 
     // Spending reports

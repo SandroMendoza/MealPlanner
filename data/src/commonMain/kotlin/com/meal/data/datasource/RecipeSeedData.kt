@@ -25,7 +25,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 60,
             servings = 4,
             calories = 450,
-            imageUrl = "https://media.istockphoto.com/id/2247075317/photo/tender-chicken-adobo-served-on-a-plate-with-savory-sauce.jpg?s=2048x2048&w=is&k=20&c=8YKANaLPMtYF2e7Q1tSpmsTgMPG1dADN382rZkovpLk=",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken"), 1.0, MeasurementUnit.KILOGRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Soy Sauce"), 0.5, MeasurementUnit.CUP),
@@ -47,7 +47,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 20,
             servings = 2,
             calories = 320,
-            imageUrl = "https://media.istockphoto.com/id/172249723/photo/pancakes.jpg?s=2048x2048&w=is&k=20&c=nYyX6mYLwG-lWfpfdWT37H7MB8CIvrNF5MEhJNODE6s=",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Flour"), 200.0, MeasurementUnit.GRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Milk"), 250.0, MeasurementUnit.MILLILITER),
@@ -68,7 +68,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 15,
             servings = 2,
             calories = 180,
-            imageUrl = "https://media.istockphoto.com/id/184938052/photo/a-bowl-of-caesar-salad-with-croutons-and-cheese-on-table.jpg?s=2048x2048&w=is&k=20&c=Z17A5nxY403O5X0b-nRHbI6AusWFdI6VpH9hISBLxEU=",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Romaine Lettuce"), 300.0, MeasurementUnit.GRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Parmesan Cheese"), 50.0, MeasurementUnit.GRAMS),
@@ -89,7 +89,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 45,
             servings = 8,
             calories = 280,
-            imageUrl = "https://media.istockphoto.com/id/168731372/photo/fresh-homemade-chocolate-brownie.jpg?s=2048x2048&w=is&k=20&c=zXOgoCTKbPM22kI-P0xjRowgwRfvmwPg9Tjyi3mQkso=",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Dark Chocolate"), 200.0, MeasurementUnit.GRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Butter"), 100.0, MeasurementUnit.GRAMS),
@@ -111,7 +111,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 10,
             servings = 1,
             calories = 220,
-            imageUrl = "https://media.istockphoto.com/id/1274658583/photo/delicious-mango-smoothie-in-glass-jar.jpg?s=2048x2048&w=is&k=20&c=lYmTdrvcqKAaJeGFnGc5WjCa9Q4b4At4Q1QShPi8yic=",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Mango"), 2.0, MeasurementUnit.PIECE),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Milk"), 250.0, MeasurementUnit.MILLILITER),
@@ -132,7 +132,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 80,
             servings = 6,
             calories = 380,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/7f70c4c586b289a181976892f3f10309.jpg.webp?itok=f1izZ_qc",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Pork Belly"), 1.0, MeasurementUnit.KILOGRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Tamarind Mix"), 50.0, MeasurementUnit.GRAMS),
@@ -155,7 +155,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 150,
             servings = 6,
             calories = 520,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/cf4de10507f579e093be611e20e5ff57.jpg.webp?itok=xe0Z_Dim",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Oxtail"), 1.0, MeasurementUnit.KILOGRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Peanut Butter"), 1.0, MeasurementUnit.CUP),
@@ -178,7 +178,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 50,
             servings = 4,
             calories = 280,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/1891a7774a91ea29ba9421aa730d2cca.jpg.webp?itok=AoU4Gju5",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken"), 1.0, MeasurementUnit.KILOGRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Ginger"), 50.0, MeasurementUnit.GRAMS),
@@ -200,7 +200,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 55,
             servings = 6,
             calories = 220,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/25cf95a942d7253ccb0e43f8b039143f.jpg.webp?itok=OFSCXxPo",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Ground Pork"), 500.0, MeasurementUnit.GRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Carrot"), 100.0, MeasurementUnit.GRAMS),
@@ -223,7 +223,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 40,
             servings = 2,
             calories = 210,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/d147f873470beff47543c385f4afe0f1.jpg.webp?itok=HODKzNKR",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Eggplant"), 2.0, MeasurementUnit.PIECE),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 2.0, MeasurementUnit.PIECE),
@@ -245,7 +245,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 25,
             servings = 4,
             calories = 150,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/7b60dfb3c2585241e25c1feddd55af28.jpg.webp?itok=O9xLPsqI",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Bitter Gourd"), 2.0, MeasurementUnit.PIECE),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Egg"), 2.0, MeasurementUnit.PIECE),
@@ -267,7 +267,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 45,
             servings = 4,
             calories = 260,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/5deb43ebea9aca2e544a393493992edf.jpg.webp?itok=8aIeEW0d",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken Breast"), 300.0, MeasurementUnit.GRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Elbow Macaroni"), 200.0, MeasurementUnit.GRAMS),
@@ -289,7 +289,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 25,
             servings = 4,
             calories = 420,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/daf62ae8e9c2ffd5a32165d769f46628.jpg.webp?itok=g4jVYCfS",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken"), 1.0, MeasurementUnit.KILOGRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Flour"), 200.0, MeasurementUnit.GRAMS),
@@ -311,7 +311,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 20,
             servings = 4,
             calories = 190,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/bfdc4aabaa491807618e7303c20723c6.jpg.webp?itok=-LGgZBwx",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cooked Rice"), 4.0, MeasurementUnit.CUP),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Garlic"), 8.0, MeasurementUnit.PIECE),
@@ -332,7 +332,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 20,
             servings = 3,
             calories = 310,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/5eb87455acc312770a7aecda8cc00da2.jpg.webp?itok=Aznxpgqg",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Corned Beef"), 340.0, MeasurementUnit.GRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Potato"), 1.0, MeasurementUnit.PIECE),
@@ -354,7 +354,7 @@ object RecipeSeedData {
             preparationTimeMinutes = 410,
             servings = 8,
             calories = 350,
-            imageUrl = "https://www.nestlegoodnes.com/ph/sites/default/files/styles/4_3_auto_720px_width/public/srh_recipes/0d9724d9adab0dc83916fd6432c458c5.jpg.webp?itok=w84XVq17",
+            imageUrl = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cream Cheese"), 250.0, MeasurementUnit.GRAMS),
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Mango"), 3.0, MeasurementUnit.PIECE),
