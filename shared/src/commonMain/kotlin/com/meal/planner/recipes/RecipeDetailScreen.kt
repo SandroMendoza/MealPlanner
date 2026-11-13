@@ -234,15 +234,15 @@ fun RecipeDetailScreen(
                             .background(MaterialTheme.colorScheme.background)
                             .padding(horizontal = spacing.lg)
                     ) {
-                        Text(
-                            text = recipe.name,
-                            style = MaterialTheme.typography.headlineSmall,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.padding(top = spacing.lg)
-                        )
-
                         LazyColumn(modifier = Modifier.weight(1f)) {
                             item {
+                                Text(
+                                    text = recipe.name,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier.padding(top = spacing.lg)
+                                )
+
                                 recipe.description?.let {
                                     Text(
                                         text = it,
