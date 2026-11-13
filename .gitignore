@@ -20,3 +20,5 @@ node_modules/
 temp
 .claude/
 play-store-readiness.md
+*.jks
+*.keystore
