@@ -5,6 +5,7 @@ import com.meal.domain.model.BUNDLED_IMAGE_PREFIX
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.FoodCategory.DESSERT
 import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
@@ -35,7 +36,7 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 object RecipeSeedData {
 
-    fun recipes(): List<RecipeDto> = baseRecipes().map { it.copy(isUserCreated = false) }
+    fun recipes(): List<RecipeDto> = baseRecipes().map { it.copy(isUserCreated = false, cuisine = Cuisine.FILIPINO) }
 
     private fun baseRecipes(): List<RecipeDto> = listOf(
         // ---------- Main dishes ----------

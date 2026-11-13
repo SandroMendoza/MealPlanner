@@ -8,6 +8,7 @@ import com.meal.domain.model.AppSettings
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
+import com.meal.domain.model.RecipeViewMode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -34,7 +35,8 @@ class SettingsLocalDataSource(
                 settings.currency.name,
                 if (settings.lockPastDates) 1L else 0L,
                 settings.defaultCalendarView.name,
-                if (settings.readAloudEnabled) 1L else 0L
+                if (settings.readAloudEnabled) 1L else 0L,
+                settings.defaultRecipeView.name
             )
         }
 
@@ -44,6 +46,7 @@ class SettingsLocalDataSource(
         currency = Currency.valueOf(row.currency),
         lockPastDates = row.lockPastDates != 0L,
         defaultCalendarView = CalendarViewMode.valueOf(row.defaultCalendarView),
-        readAloudEnabled = row.readAloudEnabled != 0L
+        readAloudEnabled = row.readAloudEnabled != 0L,
+        defaultRecipeView = RecipeViewMode.valueOf(row.defaultRecipeView)
     )
 }

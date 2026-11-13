@@ -10,6 +10,7 @@ import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeIngredient
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -156,6 +157,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             preparationTimeMinutes = recipe.preparationTimeMinutes,
             servings = recipe.servings,
             calories = recipe.calories,
+            cuisine = recipe.cuisine?.name,
             ingredients = recipe.ingredients.map {
                 RecipeIngredientResult(name = it.ingredient.name, quantity = it.quantity, unit = it.unit.unit)
             },
@@ -191,7 +193,8 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             },
             instructions = params.instructions.mapIndexed { index, description -> Instruction(index + 1, description) },
             isFavorite = false,
-            isUserCreated = true
+            isUserCreated = true,
+            cuisine = parseCuisine(params.cuisine)
         )
         koin.get<AddRecipeUseCase>().execute(recipe)
         return ActionResult(success = true, message = "Added recipe \"${params.name}\".")
@@ -277,6 +280,12 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
     private fun parseMealType(value: String): MealType =
         MealType.entries.firstOrNull { it.name.equals(value, ignoreCase = true) }
             ?: throw AppFunctionInvalidArgumentException("Unknown meal type \"$value\"")
+
+    private fun parseCuisine(value: String?): Cuisine? {
+        if (value.isNullOrBlank()) return null
+        return Cuisine.entries.firstOrNull { it.name.equals(value.trim(), ignoreCase = true) }
+            ?: throw AppFunctionInvalidArgumentException("Unknown recipe cuisine \"$value\"")
+    }
 
     private fun parseFoodCategory(value: String): FoodCategory =
         FoodCategory.entries.firstOrNull { it.name.equals(value, ignoreCase = true) }

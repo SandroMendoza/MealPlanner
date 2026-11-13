@@ -1,6 +1,7 @@
 package com.meal.presentation.recipes
 
 import com.meal.domain.model.Ingredient
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -24,6 +25,7 @@ data class RecipeFormUiState(
     val name: String = "",
     val description: String = "",
     val category: FoodCategory = FoodCategory.MAIN_DISH,
+    val cuisine: Cuisine? = null,
     val mealTypes: Set<MealType> = emptySet(),
     val preparationTimeMinutes: String = "",
     val servings: String = "",

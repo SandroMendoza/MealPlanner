@@ -1,5 +1,6 @@
 package com.meal.domain.strings
 
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -33,6 +34,20 @@ private fun englishFoodCategoryName(category: FoodCategory): String = when (cate
     FoodCategory.SALAD -> "Salad"
     FoodCategory.DESSERT -> "Dessert"
     FoodCategory.BEVERAGE -> "Beverage"
+}
+
+private fun englishCuisineName(cuisine: Cuisine): String = when (cuisine) {
+    Cuisine.FILIPINO -> "Filipino"
+    Cuisine.CHINESE -> "Chinese"
+    Cuisine.JAPANESE -> "Japanese"
+    Cuisine.KOREAN -> "Korean"
+    Cuisine.THAI -> "Thai"
+    Cuisine.VIETNAMESE -> "Vietnamese"
+    Cuisine.INDIAN -> "Indian"
+    Cuisine.ITALIAN -> "Italian"
+    Cuisine.MEXICAN -> "Mexican"
+    Cuisine.AMERICAN -> "American"
+    Cuisine.OTHER -> "Other"
 }
 
 private fun englishMeasurementUnitName(unit: MeasurementUnit): String {
@@ -81,6 +96,7 @@ val englishStrings = Strings(
     takePhoto = "Take Photo",
     chooseFromGallery = "Choose from Gallery",
     category = "Category",
+    cuisine = "Cuisine",
     ingredients = "Ingredients",
     instructions = "Instructions",
     totalSpent = "Total spent",
@@ -95,6 +111,7 @@ val englishStrings = Strings(
     monthAbbreviation = { month -> ENGLISH_MONTH_ABBREVIATIONS[month - 1] },
     mealTypeName = ::englishMealTypeName,
     foodCategoryName = ::englishFoodCategoryName,
+    cuisineName = ::englishCuisineName,
     measurementUnitName = ::englishMeasurementUnitName,
 
     navHome = "Home",
@@ -135,6 +152,8 @@ val englishStrings = Strings(
     recipesAddCd = "Add recipe",
     recipesFilters = "Filters",
     recipesFiltersActiveCd = "Filters (active)",
+    recipesShowAsListCd = "Show as list",
+    recipesShowAsGridCd = "Show as grid",
     recipesSnacks = "Snacks",
     recipesFavoritesOnly = "Favorites only",
     recipesCreatedByMe = "Created by me",
@@ -213,6 +232,7 @@ val englishStrings = Strings(
     settingsDarkMode = "Dark mode",
     settingsLockPastDates = "Lock past dates",
     settingsDefaultCalendarView = "Default meal plan view",
+    settingsDefaultRecipeView = "Default recipe view",
     settingsLocalization = "Localization",
     settingsAbout = "About",
     settingsAboutMealPlanner = "About Meal Planner",

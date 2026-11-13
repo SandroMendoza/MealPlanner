@@ -1,6 +1,8 @@
 package com.meal.presentation.recipes
 
 import com.meal.domain.model.Recipe
+import com.meal.domain.model.RecipeViewMode
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 
@@ -12,11 +14,13 @@ data class RecipeUiState(
     val errorMessage: String? = null,
     val searchQuery: String = "",
     val selectedCategory: FoodCategory? = null,
+    val selectedCuisine: Cuisine? = null,
     val selectedMealType: MealType? = null,
     val prepTimeRange: ClosedFloatingPointRange<Float> = 0f..180f,
     val calorieRange: ClosedFloatingPointRange<Float> = 0f..1500f,
     val showFavoritesOnly: Boolean = false,
-    val showCreatedOnly: Boolean = false
+    val showCreatedOnly: Boolean = false,
+    val viewMode: RecipeViewMode = RecipeViewMode.GRID
 ) {
     val hasRecipes: Boolean
         get() = recipes.isNotEmpty()
@@ -27,6 +31,7 @@ data class RecipeUiState(
             .filter { !showFavoritesOnly || it.isFavorite }
             .filter { !showCreatedOnly || it.isUserCreated }
             .filter { selectedCategory == null || it.category == selectedCategory }
+            .filter { selectedCuisine == null || it.cuisine == selectedCuisine }
             .filter { selectedMealType == null || it.mealTypes.contains(selectedMealType) }
             .filter { it.preparationTimeMinutes.toFloat() in prepTimeRange }
             .filter { recipe -> recipe.calories?.let { it.toFloat() in calorieRange } ?: true }

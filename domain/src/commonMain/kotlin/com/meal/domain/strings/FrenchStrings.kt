@@ -1,5 +1,6 @@
 package com.meal.domain.strings
 
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -33,6 +34,20 @@ private fun frenchFoodCategoryName(category: FoodCategory): String = when (categ
     FoodCategory.SALAD -> "Salade"
     FoodCategory.DESSERT -> "Dessert"
     FoodCategory.BEVERAGE -> "Boisson"
+}
+
+private fun frenchCuisineName(cuisine: Cuisine): String = when (cuisine) {
+    Cuisine.FILIPINO -> "Philippine"
+    Cuisine.CHINESE -> "Chinoise"
+    Cuisine.JAPANESE -> "Japonaise"
+    Cuisine.KOREAN -> "Coréenne"
+    Cuisine.THAI -> "Thaïlandaise"
+    Cuisine.VIETNAMESE -> "Vietnamienne"
+    Cuisine.INDIAN -> "Indienne"
+    Cuisine.ITALIAN -> "Italienne"
+    Cuisine.MEXICAN -> "Mexicaine"
+    Cuisine.AMERICAN -> "Américaine"
+    Cuisine.OTHER -> "Autre"
 }
 
 private fun frenchMeasurementUnitName(unit: MeasurementUnit): String {
@@ -81,6 +96,7 @@ val frenchStrings = Strings(
     takePhoto = "Prendre une photo",
     chooseFromGallery = "Choisir dans la galerie",
     category = "Catégorie",
+    cuisine = "Cuisine",
     ingredients = "Ingrédients",
     instructions = "Instructions",
     totalSpent = "Total dépensé",
@@ -95,6 +111,7 @@ val frenchStrings = Strings(
     monthAbbreviation = { month -> FRENCH_MONTH_ABBREVIATIONS[month - 1] },
     mealTypeName = ::frenchMealTypeName,
     foodCategoryName = ::frenchFoodCategoryName,
+    cuisineName = ::frenchCuisineName,
     measurementUnitName = ::frenchMeasurementUnitName,
 
     navHome = "Accueil",
@@ -135,6 +152,8 @@ val frenchStrings = Strings(
     recipesAddCd = "Ajouter une recette",
     recipesFilters = "Filtres",
     recipesFiltersActiveCd = "Filtres (actifs)",
+    recipesShowAsListCd = "Afficher en liste",
+    recipesShowAsGridCd = "Afficher en grille",
     recipesSnacks = "Collations",
     recipesFavoritesOnly = "Favoris uniquement",
     recipesCreatedByMe = "Créées par moi",
@@ -213,6 +232,7 @@ val frenchStrings = Strings(
     settingsDarkMode = "Mode sombre",
     settingsLockPastDates = "Verrouiller les dates passées",
     settingsDefaultCalendarView = "Vue par défaut du plan de repas",
+    settingsDefaultRecipeView = "Vue par défaut des recettes",
     settingsLocalization = "Localisation",
     settingsAbout = "À propos",
     settingsAboutMealPlanner = "À propos de Meal Planner",

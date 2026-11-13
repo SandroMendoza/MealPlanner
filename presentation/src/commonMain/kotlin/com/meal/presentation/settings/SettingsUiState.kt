@@ -3,6 +3,7 @@ package com.meal.presentation.settings
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
+import com.meal.domain.model.RecipeViewMode
 
 data class SettingsUiState(
     val darkModeEnabled: Boolean = false,
@@ -11,5 +12,6 @@ data class SettingsUiState(
     val lockPastDates: Boolean = false,
     val defaultCalendarView: CalendarViewMode = CalendarViewMode.DAY,
     val readAloudEnabled: Boolean = false,
+    val defaultRecipeView: RecipeViewMode = RecipeViewMode.GRID,
     val isLoading: Boolean = true
 )

@@ -6,6 +6,7 @@ import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeIngredient
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.AddRecipeUseCase
@@ -60,6 +61,7 @@ class RecipeFormViewModel(
                     name = recipe.name,
                     description = recipe.description.orEmpty(),
                     category = recipe.category,
+                    cuisine = recipe.cuisine,
                     mealTypes = recipe.mealTypes.toSet(),
                     preparationTimeMinutes = recipe.preparationTimeMinutes.toString(),
                     servings = recipe.servings.toString(),
@@ -88,6 +90,11 @@ class RecipeFormViewModel(
 
     fun updateCategory(value: FoodCategory) {
         _uiState.value = _uiState.value.copy(category = value)
+    }
+
+    fun updateCuisine(value: Cuisine) {
+        val current = _uiState.value.cuisine
+        _uiState.value = _uiState.value.copy(cuisine = if (current == value) null else value)
     }
 
     fun toggleMealType(value: MealType) {
@@ -157,6 +164,7 @@ class RecipeFormViewModel(
                     description = current.description.ifBlank { null },
                     mealTypes = current.mealTypes.toList(),
                     category = current.category,
+                    cuisine = current.cuisine,
                     preparationTimeMinutes = current.preparationTimeMinutes.toIntOrNull() ?: 0,
                     servings = current.servings.toIntOrNull() ?: 1,
                     calories = current.calories.toIntOrNull(),

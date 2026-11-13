@@ -21,7 +21,8 @@ object RecipeMapper {
             ingredients = dto.ingredients,
             instructions = dto.instructions,
             isFavorite = dto.isFavorite,
-            isUserCreated = dto.isUserCreated
+            isUserCreated = dto.isUserCreated,
+            cuisine = dto.cuisine
         )
     }
 
@@ -43,7 +44,8 @@ object RecipeMapper {
             ingredients = domain.ingredients,
             instructions = domain.instructions,
             isFavorite = domain.isFavorite,
-            isUserCreated = domain.isUserCreated
+            isUserCreated = domain.isUserCreated,
+            cuisine = domain.cuisine
         )
     }
 

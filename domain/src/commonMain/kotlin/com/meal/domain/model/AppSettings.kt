@@ -6,5 +6,6 @@ data class AppSettings(
     val currency: Currency = Currency.USD,
     val lockPastDates: Boolean = false,
     val defaultCalendarView: CalendarViewMode = CalendarViewMode.DAY,
-    val readAloudEnabled: Boolean = false
+    val readAloudEnabled: Boolean = false,
+    val defaultRecipeView: RecipeViewMode = RecipeViewMode.GRID
 )

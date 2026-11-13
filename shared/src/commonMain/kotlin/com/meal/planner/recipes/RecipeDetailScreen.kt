@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Close
@@ -269,6 +270,15 @@ fun RecipeDetailScreen(
                                         icon = Icons.AutoMirrored.Filled.MenuBook,
                                         text = recipe.category.displayName()
                                     )
+                                }
+
+                                recipe.cuisine?.let { cuisine ->
+                                    Row(modifier = Modifier.padding(top = spacing.xs)) {
+                                        RecipeDetailMetaItem(
+                                            icon = Icons.Filled.Public,
+                                            text = cuisine.displayName()
+                                        )
+                                    }
                                 }
 
                                 recipe.calories?.let {

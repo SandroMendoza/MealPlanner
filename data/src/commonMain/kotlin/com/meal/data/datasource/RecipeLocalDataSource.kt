@@ -9,6 +9,7 @@ import com.meal.data.model.RecipeDto
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -33,7 +34,7 @@ class RecipeLocalDataSource(
         queries.selectActiveRecipes()
             .asFlow()
             .mapToList(ioDispatcher)
-            .map { rows -> rows.map { toDto(it) } }
+            .map { rows -> withContext(ioDispatcher) { toDtos(rows) } }
             .onStart { seedOnFirstInstall() }
 
     // Recipes are only ever soft-deleted, so a table with no rows at all means a fresh
@@ -68,6 +69,7 @@ class RecipeLocalDataSource(
                 servings = dto.servings.toLong(),
                 calories = dto.calories?.toLong(),
                 imageUrl = dto.imageUrl,
+                cuisine = dto.cuisine?.name,
                 id = dto.id.toString()
             )
             replaceChildren(dto)
@@ -93,7 +95,8 @@ class RecipeLocalDataSource(
                 servings = dto.servings.toLong(),
                 calories = dto.calories?.toLong(),
                 imageUrl = dto.imageUrl,
-                isUserCreated = if (dto.isUserCreated) 1 else 0
+                isUserCreated = if (dto.isUserCreated) 1 else 0,
+                cuisine = dto.cuisine?.name
             )
             replaceChildren(dto)
         }
@@ -133,24 +136,62 @@ class RecipeLocalDataSource(
             ?: Uuid.random().toString().also { ingredientQueries.insertIngredientDefinition(it, name.trim(), normalized) }
     }
 
-    private fun toDto(row: RecipeEntity): RecipeDto {
-        val mealTypes = queries.selectMealTypesForRecipe(row.id)
+    // Loads the child rows of every active recipe in one query per table, so building the
+    // list costs the same four queries however many recipes there are.
+    private fun toDtos(rows: List<RecipeEntity>): List<RecipeDto> {
+        val mealTypes = queries.selectMealTypesForActiveRecipes { recipeId, mealType ->
+            recipeId to MealType.valueOf(mealType)
+        }.executeAsList().groupBy({ it.first }, { it.second })
+        val ingredients = queries.selectRecipeIngredientsForActiveRecipes {
+                recipeId, id, quantity, unit, ingredientId, ingredientName ->
+            recipeId to recipeIngredient(id, quantity, unit, ingredientId, ingredientName)
+        }.executeAsList().groupBy({ it.first }, { it.second })
+        val instructions = queries.selectInstructionsForActiveRecipes { recipeId, stepNumber, description ->
+            recipeId to Instruction(stepNumber.toInt(), description)
+        }.executeAsList().groupBy({ it.first }, { it.second })
+
+        return rows.map { row ->
+            toDto(
+                row = row,
+                mealTypes = mealTypes[row.id].orEmpty(),
+                ingredients = ingredients[row.id].orEmpty(),
+                instructions = instructions[row.id].orEmpty()
+            )
+        }
+    }
+
+    private fun toDto(row: RecipeEntity): RecipeDto = toDto(
+        row = row,
+        mealTypes = queries.selectMealTypesForRecipe(row.id)
             .executeAsList()
-            .map { MealType.valueOf(it.mealType) }
-        val ingredients = queries.selectRecipeIngredientsForRecipe(row.id)
+            .map { MealType.valueOf(it.mealType) },
+        ingredients = queries.selectRecipeIngredientsForRecipe(row.id)
             .executeAsList()
-            .map { ri ->
-                RecipeIngredient(
-                    id = Uuid.parse(ri.id),
-                    ingredient = Ingredient(Uuid.parse(ri.ingredientId), ri.ingredientName),
-                    quantity = ri.quantity,
-                    unit = MeasurementUnit.valueOf(ri.unit)
-                )
-            }
-        val instructions = queries.selectInstructionsForRecipe(row.id)
+            .map { recipeIngredient(it.id, it.quantity, it.unit, it.ingredientId, it.ingredientName) },
+        instructions = queries.selectInstructionsForRecipe(row.id)
             .executeAsList()
             .map { Instruction(it.stepNumber.toInt(), it.description) }
+    )
 
+    private fun recipeIngredient(
+        id: String,
+        quantity: Double,
+        unit: String,
+        ingredientId: String,
+        ingredientName: String
+    ) = RecipeIngredient(
+        id = Uuid.parse(id),
+        ingredient = Ingredient(Uuid.parse(ingredientId), ingredientName),
+        quantity = quantity,
+        unit = MeasurementUnit.valueOf(unit)
+    )
+
+    private fun toDto(
+        row: RecipeEntity,
+        mealTypes: List<MealType>,
+        ingredients: List<RecipeIngredient>,
+        instructions: List<Instruction>
+    ): RecipeDto {
         return RecipeDto(
             id = Uuid.parse(row.id),
             name = row.name,
@@ -164,7 +205,8 @@ class RecipeLocalDataSource(
             ingredients = ingredients,
             instructions = instructions,
             isFavorite = row.isFavorite != 0L,
-            isUserCreated = row.isUserCreated != 0L
+            isUserCreated = row.isUserCreated != 0L,
+            cuisine = row.cuisine?.let { Cuisine.valueOf(it) }
         )
     }
 }

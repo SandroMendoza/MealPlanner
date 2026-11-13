@@ -1,5 +1,6 @@
 package com.meal.domain.strings
 
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -33,6 +34,20 @@ private fun spanishFoodCategoryName(category: FoodCategory): String = when (cate
     FoodCategory.SALAD -> "Ensalada"
     FoodCategory.DESSERT -> "Postre"
     FoodCategory.BEVERAGE -> "Bebida"
+}
+
+private fun spanishCuisineName(cuisine: Cuisine): String = when (cuisine) {
+    Cuisine.FILIPINO -> "Filipina"
+    Cuisine.CHINESE -> "China"
+    Cuisine.JAPANESE -> "Japonesa"
+    Cuisine.KOREAN -> "Coreana"
+    Cuisine.THAI -> "Tailandesa"
+    Cuisine.VIETNAMESE -> "Vietnamita"
+    Cuisine.INDIAN -> "India"
+    Cuisine.ITALIAN -> "Italiana"
+    Cuisine.MEXICAN -> "Mexicana"
+    Cuisine.AMERICAN -> "Estadounidense"
+    Cuisine.OTHER -> "Otra"
 }
 
 private fun spanishMeasurementUnitName(unit: MeasurementUnit): String {
@@ -81,6 +96,7 @@ val spanishStrings = Strings(
     takePhoto = "Tomar foto",
     chooseFromGallery = "Elegir de la galería",
     category = "Categoría",
+    cuisine = "Cocina",
     ingredients = "Ingredientes",
     instructions = "Instrucciones",
     totalSpent = "Total gastado",
@@ -95,6 +111,7 @@ val spanishStrings = Strings(
     monthAbbreviation = { month -> SPANISH_MONTH_ABBREVIATIONS[month - 1] },
     mealTypeName = ::spanishMealTypeName,
     foodCategoryName = ::spanishFoodCategoryName,
+    cuisineName = ::spanishCuisineName,
     measurementUnitName = ::spanishMeasurementUnitName,
 
     navHome = "Inicio",
@@ -135,6 +152,8 @@ val spanishStrings = Strings(
     recipesAddCd = "Añadir receta",
     recipesFilters = "Filtros",
     recipesFiltersActiveCd = "Filtros (activos)",
+    recipesShowAsListCd = "Ver como lista",
+    recipesShowAsGridCd = "Ver como cuadrícula",
     recipesSnacks = "Meriendas",
     recipesFavoritesOnly = "Solo favoritos",
     recipesCreatedByMe = "Creadas por mí",
@@ -213,6 +232,7 @@ val spanishStrings = Strings(
     settingsDarkMode = "Modo oscuro",
     settingsLockPastDates = "Bloquear fechas pasadas",
     settingsDefaultCalendarView = "Vista predeterminada del plan de comidas",
+    settingsDefaultRecipeView = "Vista predeterminada de recetas",
     settingsLocalization = "Localización",
     settingsAbout = "Acerca de",
     settingsAboutMealPlanner = "Acerca de Meal Planner",

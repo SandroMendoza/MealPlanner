@@ -13,8 +13,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
@@ -38,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.CalendarViewMode
+import com.meal.domain.model.RecipeViewMode
 import com.meal.planner.components.CurrencyDropdownField
 import com.meal.planner.components.LanguageDropdownField
 import com.meal.planner.components.SettingsRow
@@ -113,6 +117,30 @@ fun SettingsScreen(
                             icon = {}
                         ) {
                             Text(mode.label(), style = MaterialTheme.typography.labelMedium)
+                        }
+                    }
+                }
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            SettingsRow(label = LocalStrings.current.settingsDefaultRecipeView, icon = Icons.AutoMirrored.Filled.MenuBook) {
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.width(120.dp)) {
+                    RecipeViewMode.entries.forEachIndexed { index, mode ->
+                        SegmentedButton(
+                            selected = uiState.defaultRecipeView == mode,
+                            onClick = { viewModel.setDefaultRecipeView(mode) },
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = RecipeViewMode.entries.size),
+                            icon = {}
+                        ) {
+                            when (mode) {
+                                RecipeViewMode.GRID -> Icon(
+                                    Icons.Default.GridView,
+                                    contentDescription = LocalStrings.current.recipesShowAsGridCd
+                                )
+                                RecipeViewMode.LIST -> Icon(
+                                    Icons.AutoMirrored.Filled.ViewList,
+                                    contentDescription = LocalStrings.current.recipesShowAsListCd
+                                )
+                            }
                         }
                     }
                 }

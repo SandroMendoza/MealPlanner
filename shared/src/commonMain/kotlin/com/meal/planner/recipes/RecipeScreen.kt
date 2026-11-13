@@ -21,10 +21,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -62,6 +64,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.Recipe
+import com.meal.domain.model.RecipeViewMode
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
@@ -109,12 +113,14 @@ fun RecipeScreen(
     ) {
         val uiState by viewModel.state.collectAsStateWithLifecycle()
         val hasActiveFilters = uiState.selectedCategory != null ||
+            uiState.selectedCuisine != null ||
             uiState.showFavoritesOnly ||
             uiState.showCreatedOnly ||
             uiState.prepTimeRange != 0f..180f ||
             uiState.calorieRange != 0f..1500f
         val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
         val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
+        val isListView = uiState.viewMode == RecipeViewMode.LIST
 
         Box(modifier = Modifier.padding(it).fillMaxSize()) {
             when {
@@ -125,13 +131,11 @@ fun RecipeScreen(
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier.align(Alignment.Center)
                 )
-                else -> LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(spacing.lg),
-                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                    verticalArrangement = Arrangement.spacedBy(spacing.sm)
-                ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                else -> Column(modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        modifier = Modifier.padding(start = spacing.lg, end = spacing.lg, top = spacing.lg),
+                        verticalArrangement = Arrangement.spacedBy(spacing.sm)
+                    ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(spacing.sm)
@@ -171,37 +175,66 @@ fun RecipeScreen(
                                 }
                             }
                         }
-                    }
-
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-                            items(listOf<MealType?>(null) + MealType.entries) { mealType ->
-                                FilterChip(
-                                    selected = uiState.selectedMealType == mealType,
-                                    onClick = { viewModel.onMealTypeSelected(mealType) },
-                                    label = { Text(mealType.quickFilterLabel()) },
-                                    colors = activeFilterChipColors()
-                                )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                items(listOf<MealType?>(null) + MealType.entries) { mealType ->
+                                    FilterChip(
+                                        selected = uiState.selectedMealType == mealType,
+                                        onClick = { viewModel.onMealTypeSelected(mealType) },
+                                        label = { Text(mealType.quickFilterLabel()) },
+                                        colors = activeFilterChipColors()
+                                    )
+                                }
+                            }
+                            IconButton(onClick = viewModel::onViewModeToggle) {
+                                if (isListView) {
+                                    Icon(Icons.Default.GridView, contentDescription = LocalStrings.current.recipesShowAsGridCd)
+                                } else {
+                                    Icon(Icons.AutoMirrored.Filled.ViewList, contentDescription = LocalStrings.current.recipesShowAsListCd)
+                                }
                             }
                         }
                     }
 
-                    if (showEmptyState) {
-                        item(span = { GridItemSpan(maxLineSpan) }) {
-                            Text(
-                                text = uiState.emptyState.message(),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.fillMaxWidth().padding(top = spacing.lg),
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    } else {
-                        items(filteredRecipes, key = { it.id }) { recipe ->
-                            RecipeGridCard(
-                                recipe = recipe,
-                                onClick = { onRecipeClick(recipe.id) }
-                            )
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(if (isListView) 1 else 2),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                            start = spacing.lg,
+                            end = spacing.lg,
+                            top = spacing.sm,
+                            bottom = spacing.lg
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                        verticalArrangement = Arrangement.spacedBy(if (isListView) spacing.xs else spacing.sm),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        if (showEmptyState) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
+                                Text(
+                                    text = uiState.emptyState.message(),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.fillMaxWidth().padding(top = spacing.lg),
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        } else {
+                            items(filteredRecipes, key = { it.id }) { recipe ->
+                                if (isListView) {
+                                    RecipeListRow(
+                                        recipe = recipe,
+                                        onClick = { onRecipeClick(recipe.id) }
+                                    )
+                                } else {
+                                    RecipeGridCard(
+                                        recipe = recipe,
+                                        onClick = { onRecipeClick(recipe.id) }
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -213,12 +246,14 @@ fun RecipeScreen(
                 uiState = uiState,
                 onDismiss = { showFilterSheet = false },
                 onCategorySelected = viewModel::onCategorySelected,
+                onCuisineSelected = viewModel::onCuisineSelected,
                 onFavoritesOnlyChange = viewModel::onFavoritesTabSelected,
                 onCreatedOnlyChange = viewModel::onCreatedOnlyTabSelected,
                 onPrepTimeRangeChange = viewModel::onPrepTimeRangeChange,
                 onCalorieRangeChange = viewModel::onCalorieRangeChange,
                 onClearFilters = {
                     viewModel.onCategorySelected(null)
+                    viewModel.onCuisineSelected(null)
                     viewModel.onFavoritesTabSelected(false)
                     viewModel.onCreatedOnlyTabSelected(false)
                     viewModel.onPrepTimeRangeChange(0f..180f)
@@ -250,6 +285,7 @@ private fun RecipeFilterSheet(
     uiState: RecipeUiState,
     onDismiss: () -> Unit,
     onCategorySelected: (FoodCategory?) -> Unit,
+    onCuisineSelected: (Cuisine?) -> Unit,
     onFavoritesOnlyChange: (Boolean) -> Unit,
     onCreatedOnlyChange: (Boolean) -> Unit,
     onPrepTimeRangeChange: (ClosedFloatingPointRange<Float>) -> Unit,
@@ -306,6 +342,20 @@ private fun RecipeFilterSheet(
             }
 
             Column(modifier = Modifier.padding(top = spacing.lg)) {
+                SectionLabel(LocalStrings.current.cuisine)
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
+                    items(listOf<Cuisine?>(null) + Cuisine.entries) { cuisine ->
+                        FilterChip(
+                            selected = uiState.selectedCuisine == cuisine,
+                            onClick = { onCuisineSelected(cuisine) },
+                            label = { Text(cuisine?.displayName() ?: LocalStrings.current.all) },
+                            colors = activeFilterChipColors()
+                        )
+                    }
+                }
+            }
+
+            Column(modifier = Modifier.padding(top = spacing.lg)) {
                 SectionLabel(
                     LocalStrings.current.recipesPrepTimeRange(
                         uiState.prepTimeRange.start.toInt(),
@@ -354,6 +404,46 @@ private fun SectionLabel(text: String) {
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         modifier = Modifier.padding(bottom = spacing.xs)
     )
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun RecipeListRow(recipe: Recipe, onClick: () -> Unit) {
+    val spacing = MealPlannerTokens.spacing
+
+    Card(
+        onClick = onClick,
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = spacing.lg, vertical = spacing.md),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+        ) {
+            Text(
+                text = recipe.name,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                imageVector = Icons.Filled.AccessTime,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+            )
+            Text(
+                text = LocalStrings.current.minutesLabel(recipe.preparationTimeMinutes),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalUuidApi::class)

@@ -3,26 +3,41 @@ package com.meal.presentation.recipes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.Recipe
+import com.meal.domain.model.RecipeViewMode
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.GetAllRecipesUseCase
+import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.ToggleFavoriteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
 class RecipeViewModel(
     val getAllRecipesUseCase: GetAllRecipesUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase
+    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val getSettingsUseCase: GetSettingsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RecipeUiState())
     val state = _uiState.asStateFlow()
 
+    // Each recipe keeps the random position it was given for as long as this screen lives, so
+    // the order only reshuffles when the screen is opened again, not on every database change.
+    private val shuffleKeys = mutableMapOf<Uuid, Double>()
+
     init {
         loadRecipes()
+        viewModelScope.launch {
+            val defaultView = getSettingsUseCase.execute().first().defaultRecipeView
+            _uiState.value = _uiState.value.copy(viewMode = defaultView)
+        }
     }
 
     fun loadRecipes() {
@@ -31,7 +46,7 @@ class RecipeViewModel(
             try {
                 getAllRecipesUseCase.execute().collect { recipes ->
                     _uiState.value = _uiState.value.copy(
-                        recipes = recipes,
+                        recipes = recipes.sortedBy { shuffleKeys.getOrPut(it.id) { Random.nextDouble() } },
                         isLoading = false,
                         errorMessage = null
                     )
@@ -52,6 +67,16 @@ class RecipeViewModel(
     fun onCategorySelected(category: FoodCategory?) {
         val current = _uiState.value.selectedCategory
         _uiState.value = _uiState.value.copy(selectedCategory = if (current == category) null else category)
+    }
+
+    fun onCuisineSelected(cuisine: Cuisine?) {
+        val current = _uiState.value.selectedCuisine
+        _uiState.value = _uiState.value.copy(selectedCuisine = if (current == cuisine) null else cuisine)
+    }
+
+    fun onViewModeToggle() {
+        val next = if (_uiState.value.viewMode == RecipeViewMode.GRID) RecipeViewMode.LIST else RecipeViewMode.GRID
+        _uiState.value = _uiState.value.copy(viewMode = next)
     }
 
     fun onMealTypeSelected(mealType: MealType?) {

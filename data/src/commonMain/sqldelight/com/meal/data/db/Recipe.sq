@@ -9,7 +9,8 @@ CREATE TABLE RecipeEntity (
     imageUrl TEXT,
     isDeleted INTEGER NOT NULL DEFAULT 0,
     isFavorite INTEGER NOT NULL DEFAULT 0,
-    isUserCreated INTEGER NOT NULL DEFAULT 1
+    isUserCreated INTEGER NOT NULL DEFAULT 1,
+    cuisine TEXT
 );
 
 CREATE TABLE RecipeMealTypeEntity (
@@ -62,13 +63,39 @@ WHERE RecipeIngredientEntity.recipeId = ?;
 selectInstructionsForRecipe:
 SELECT * FROM InstructionEntity WHERE recipeId = ? ORDER BY stepNumber;
 
+selectMealTypesForActiveRecipes:
+SELECT RecipeMealTypeEntity.recipeId, RecipeMealTypeEntity.mealType
+FROM RecipeMealTypeEntity
+JOIN RecipeEntity ON RecipeEntity.id = RecipeMealTypeEntity.recipeId
+WHERE RecipeEntity.isDeleted = 0;
+
+selectRecipeIngredientsForActiveRecipes:
+SELECT
+    RecipeIngredientEntity.recipeId,
+    RecipeIngredientEntity.id,
+    RecipeIngredientEntity.quantity,
+    RecipeIngredientEntity.unit,
+    IngredientEntity.id AS ingredientId,
+    IngredientEntity.name AS ingredientName
+FROM RecipeIngredientEntity
+JOIN IngredientEntity ON IngredientEntity.id = RecipeIngredientEntity.ingredientId
+JOIN RecipeEntity ON RecipeEntity.id = RecipeIngredientEntity.recipeId
+WHERE RecipeEntity.isDeleted = 0;
+
+selectInstructionsForActiveRecipes:
+SELECT InstructionEntity.recipeId, InstructionEntity.stepNumber, InstructionEntity.description
+FROM InstructionEntity
+JOIN RecipeEntity ON RecipeEntity.id = InstructionEntity.recipeId
+WHERE RecipeEntity.isDeleted = 0
+ORDER BY InstructionEntity.recipeId, InstructionEntity.stepNumber;
+
 insertRecipe:
-INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, calories, imageUrl, isDeleted, isUserCreated)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?);
+INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, calories, imageUrl, isDeleted, isUserCreated, cuisine)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?);
 
 updateRecipe:
 UPDATE RecipeEntity
-SET name = ?, description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, calories = ?, imageUrl = ?
+SET name = ?, description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, calories = ?, imageUrl = ?, cuisine = ?
 WHERE id = ?;
 
 softDeleteRecipe:

@@ -1,5 +1,6 @@
 package com.meal.domain.strings
 
+import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -42,6 +43,7 @@ data class Strings(
     val takePhoto: String,
     val chooseFromGallery: String,
     val category: String,
+    val cuisine: String,
     val ingredients: String,
     val instructions: String,
     val totalSpent: String,
@@ -56,6 +58,7 @@ data class Strings(
     val monthAbbreviation: (month: Int) -> String,
     val mealTypeName: (MealType) -> String,
     val foodCategoryName: (FoodCategory) -> String,
+    val cuisineName: (Cuisine) -> String,
     val measurementUnitName: (MeasurementUnit) -> String,
 
     // Bottom navigation
@@ -101,6 +104,8 @@ data class Strings(
     val recipesAddCd: String,
     val recipesFilters: String,
     val recipesFiltersActiveCd: String,
+    val recipesShowAsListCd: String,
+    val recipesShowAsGridCd: String,
     val recipesSnacks: String,
     val recipesFavoritesOnly: String,
     val recipesCreatedByMe: String,
@@ -182,6 +187,7 @@ data class Strings(
     val settingsDarkMode: String,
     val settingsLockPastDates: String,
     val settingsDefaultCalendarView: String,
+    val settingsDefaultRecipeView: String,
     val settingsLocalization: String,
     val settingsAbout: String,
     val settingsAboutMealPlanner: String,

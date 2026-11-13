@@ -6,6 +6,7 @@ import com.meal.domain.model.AppSettings
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
+import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.UpdateSettingsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,7 @@ class SettingsViewModel(
                     lockPastDates = settings.lockPastDates,
                     defaultCalendarView = settings.defaultCalendarView,
                     readAloudEnabled = settings.readAloudEnabled,
+                    defaultRecipeView = settings.defaultRecipeView,
                     isLoading = false
                 )
             }
@@ -41,6 +43,7 @@ class SettingsViewModel(
     fun setCurrency(currency: Currency) = persist { it.copy(currency = currency) }
     fun setLockPastDates(enabled: Boolean) = persist { it.copy(lockPastDates = enabled) }
     fun setDefaultCalendarView(view: CalendarViewMode) = persist { it.copy(defaultCalendarView = view) }
+    fun setDefaultRecipeView(view: RecipeViewMode) = persist { it.copy(defaultRecipeView = view) }
     fun setReadAloudEnabled(enabled: Boolean) = persist { it.copy(readAloudEnabled = enabled) }
 
     private fun persist(transform: (AppSettings) -> AppSettings) {
@@ -52,7 +55,8 @@ class SettingsViewModel(
                 currency = current.currency,
                 lockPastDates = current.lockPastDates,
                 defaultCalendarView = current.defaultCalendarView,
-                readAloudEnabled = current.readAloudEnabled
+                readAloudEnabled = current.readAloudEnabled,
+                defaultRecipeView = current.defaultRecipeView
             )
         )
         _uiState.value = current.copy(
@@ -61,7 +65,8 @@ class SettingsViewModel(
             currency = updated.currency,
             lockPastDates = updated.lockPastDates,
             defaultCalendarView = updated.defaultCalendarView,
-            readAloudEnabled = updated.readAloudEnabled
+            readAloudEnabled = updated.readAloudEnabled,
+            defaultRecipeView = updated.defaultRecipeView
         )
         viewModelScope.launch { updateSettingsUseCase.execute(updated) }
     }
