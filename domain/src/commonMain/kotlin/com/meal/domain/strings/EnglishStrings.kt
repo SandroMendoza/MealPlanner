@@ -246,7 +246,7 @@ val englishStrings = Strings(
         "Voice assistants\nOn supported Android versions, assistant apps on your device can read and update your shopping list, recipes, meal plan and spending report when you ask them to. The assistant handles that data under its own privacy policy.",
         "Children\nMeal Planner is not directed at children under 13 and does not knowingly collect data from anyone.",
         "Changes to this policy\nIf the app's data practices change, this policy is updated and the date above changes with it.",
-        "Contact\nQuestions about this policy: [contact email]"
+        "Contact\nQuestions about this policy: sandragon.inc@gmail.com"
     ),
 
     spendingExportCd = "Export report as PDF",

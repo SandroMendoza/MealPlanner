@@ -247,7 +247,7 @@ val spanishStrings = Strings(
         "Asistentes de voz\nEn las versiones de Android compatibles, las apps de asistente de tu dispositivo pueden leer y modificar tu lista de compras, recetas, plan de comidas e informe de gastos cuando se lo pides. El asistente trata esos datos según su propia política de privacidad.",
         "Menores\nMeal Planner no está dirigida a menores de 13 años y no recopila datos de nadie a sabiendas.",
         "Cambios en esta política\nSi cambian las prácticas de datos de la app, esta política se actualiza y la fecha de arriba también.",
-        "Contacto\nPreguntas sobre esta política: [contact email]"
+        "Contacto\nPreguntas sobre esta política: sandragon.inc@gmail.com"
     ),
 
     spendingExportCd = "Exportar informe como PDF",

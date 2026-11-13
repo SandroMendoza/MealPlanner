@@ -247,7 +247,7 @@ val frenchStrings = Strings(
         "Assistants vocaux\nSur les versions d'Android compatibles, les assistants installés sur votre appareil peuvent lire et modifier votre liste de courses, vos recettes, votre plan de repas et votre rapport de dépenses quand vous le leur demandez. L'assistant traite ces données selon sa propre politique de confidentialité.",
         "Enfants\nMeal Planner ne s'adresse pas aux enfants de moins de 13 ans et ne collecte sciemment de données auprès de personne.",
         "Modifications de cette politique\nSi les pratiques de l'application en matière de données changent, cette politique est mise à jour et la date ci-dessus aussi.",
-        "Contact\nQuestions sur cette politique : [contact email]"
+        "Contact\nQuestions sur cette politique : sandragon.inc@gmail.com"
     ),
 
     spendingExportCd = "Exporter le rapport en PDF",
