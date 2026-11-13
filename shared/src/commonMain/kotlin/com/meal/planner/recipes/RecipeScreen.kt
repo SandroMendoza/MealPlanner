@@ -65,6 +65,7 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
+import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
@@ -382,7 +383,7 @@ fun RecipeGridCard(recipe: Recipe, onClick: () -> Unit) {
                     }
                 } else {
                     AsyncImage(
-                        model = recipe.imageUrl,
+                        model = recipeImageModel(recipe.imageUrl),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()

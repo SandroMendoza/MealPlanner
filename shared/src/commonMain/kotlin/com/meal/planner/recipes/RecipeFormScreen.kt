@@ -55,6 +55,7 @@ import com.meal.planner.common.rememberImagePicker
 import com.meal.planner.components.ImageSourceDialog
 import com.meal.planner.components.IngredientNameField
 import com.meal.planner.components.UnitDropdownField
+import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
@@ -203,7 +204,7 @@ fun RecipeFormScreen(
             ) {
                 if (uiState.imageUrl.isNotBlank()) {
                     AsyncImage(
-                        model = uiState.imageUrl,
+                        model = recipeImageModel(uiState.imageUrl),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier

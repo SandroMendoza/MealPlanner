@@ -41,7 +41,7 @@ fun RecipeThumbnail(
         }
     } else {
         AsyncImage(
-            model = imageUrl,
+            model = recipeImageModel(imageUrl),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = modifier

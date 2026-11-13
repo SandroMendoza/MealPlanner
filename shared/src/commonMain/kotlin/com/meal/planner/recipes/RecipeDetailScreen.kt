@@ -61,6 +61,7 @@ import com.meal.domain.model.Instruction
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.planner.common.displayName
 import com.meal.planner.components.MealTypeDialog
+import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerPalette
 import com.meal.planner.theme.MealPlannerTokens
@@ -173,7 +174,7 @@ fun RecipeDetailScreen(
                             }
                         } else {
                             AsyncImage(
-                                model = recipe.imageUrl,
+                                model = recipeImageModel(recipe.imageUrl),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()

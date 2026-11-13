@@ -22,3 +22,4 @@ temp
 play-store-readiness.md
 *.jks
 *.keystore
+/seed-images/
