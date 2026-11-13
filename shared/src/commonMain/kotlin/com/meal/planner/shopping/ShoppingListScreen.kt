@@ -61,6 +61,7 @@ import com.meal.planner.components.SwipeActionsRow
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekSunday
+import com.meal.presentation.common.formatQuantity
 import com.meal.presentation.common.today
 import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.shopping.ShoppingListViewModel
@@ -290,7 +291,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                                         modifier = Modifier.weight(1f).padding(end = spacing.sm)
                                     )
                                     Text(
-                                        text = "${item.totalQuantity} ${item.unit.unit}",
+                                        text = "${formatQuantity(item.totalQuantity)} ${item.unit.unit}",
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = contentColor,
                                         textDecoration = textDecoration,

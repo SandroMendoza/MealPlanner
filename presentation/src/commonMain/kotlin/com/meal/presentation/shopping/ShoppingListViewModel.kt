@@ -19,6 +19,7 @@ import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.service.TtsSpeaker
 import com.meal.presentation.common.currentWeekSunday
+import com.meal.presentation.common.formatQuantity
 import com.meal.presentation.common.sundayOf
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
@@ -290,7 +291,7 @@ class ShoppingListViewModel(
         }
         val items = _uiState.value.items.filterNot { it.checked }
         if (items.isEmpty()) return
-        val text = items.joinToString(". ") { "${it.totalQuantity} ${it.unit.unit} ${it.name}" }
+        val text = items.joinToString(". ") { "${formatQuantity(it.totalQuantity)} ${it.unit.unit} ${it.name}" }
         _uiState.value = _uiState.value.copy(isSpeaking = true)
         ttsSpeaker.speak(text) {
             _uiState.value = _uiState.value.copy(isSpeaking = false)

@@ -64,6 +64,7 @@ import com.meal.planner.components.MealTypeDialog
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerPalette
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.common.formatQuantity
 import com.meal.presentation.common.today
 import com.meal.presentation.recipes.RecipeDetailViewModel
 import kotlinx.coroutines.launch
@@ -304,7 +305,7 @@ fun RecipeDetailScreen(
                             }
                             items(recipe.ingredients, key = { it.id }) { ri ->
                                 Text(
-                                    text = "• ${ri.quantity} ${ri.unit.unit} ${ri.ingredient.name}",
+                                    text = "• ${formatQuantity(ri.quantity)} ${ri.unit.unit} ${ri.ingredient.name}",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(vertical = spacing.sm)

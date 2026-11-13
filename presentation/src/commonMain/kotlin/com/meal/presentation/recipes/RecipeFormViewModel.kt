@@ -13,6 +13,7 @@ import com.meal.domain.usecase.GetAllIngredientsUseCase
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
 import com.meal.domain.usecase.UpdateRecipeUseCase
+import com.meal.presentation.common.formatQuantity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -65,7 +66,7 @@ class RecipeFormViewModel(
                     calories = recipe.calories?.toString().orEmpty(),
                     imageUrl = recipe.imageUrl.orEmpty(),
                     ingredients = recipe.ingredients.map {
-                        IngredientFormRow(it.ingredient.name, it.quantity.toString(), it.unit)
+                        IngredientFormRow(it.ingredient.name, formatQuantity(it.quantity), it.unit)
                     },
                     instructions = recipe.instructions
                         .sortedBy { it.stepNumber }

@@ -8,6 +8,7 @@ import com.meal.domain.usecase.DeleteRecipeUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.ToggleFavoriteUseCase
+import com.meal.presentation.common.formatQuantity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -88,7 +89,7 @@ class RecipeDetailViewModel(
             return
         }
         val recipe = _uiState.value.recipe ?: return
-        val text = recipe.ingredients.joinToString(". ") { "${it.quantity} ${it.unit.unit} ${it.ingredient.name}" }
+        val text = recipe.ingredients.joinToString(". ") { "${formatQuantity(it.quantity)} ${it.unit.unit} ${it.ingredient.name}" }
         _uiState.value = _uiState.value.copy(ingredientsSpeaking = true)
         ttsSpeaker.speak(text) {
             _uiState.value = _uiState.value.copy(ingredientsSpeaking = false)
