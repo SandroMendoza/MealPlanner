@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MealPlanner</string>
+    <string name="app_name">Meal Planner</string>
 
     <string name="shortcut_home_short">Home</string>
     <string name="shortcut_home_long">Open Home</string>
