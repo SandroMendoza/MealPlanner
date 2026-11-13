@@ -2,14 +2,12 @@ package com.meal.presentation.recipes
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
-import com.meal.domain.usecase.ToggleFavoriteUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -21,7 +19,6 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class RecipeViewModel(
     val getAllRecipesUseCase: GetAllRecipesUseCase,
-    private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
     private val getSettingsUseCase: GetSettingsUseCase
 ) : ViewModel() {
 
@@ -98,11 +95,5 @@ class RecipeViewModel(
 
     fun onCreatedOnlyTabSelected(showCreatedOnly: Boolean) {
         _uiState.value = _uiState.value.copy(showCreatedOnly = showCreatedOnly)
-    }
-
-    fun onToggleFavorite(recipe: Recipe) {
-        viewModelScope.launch {
-            toggleFavoriteUseCase.execute(recipe.id, !recipe.isFavorite)
-        }
     }
 }
