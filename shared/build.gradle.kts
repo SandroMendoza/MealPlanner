@@ -41,7 +41,7 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.ktx)
             implementation(libs.koin.android)
-            implementation(libs.androidx.appfunctions)
+            api(libs.androidx.appfunctions)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
