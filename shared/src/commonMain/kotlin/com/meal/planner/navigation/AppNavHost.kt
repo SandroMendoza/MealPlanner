@@ -48,7 +48,7 @@ private val TAB_ROUTES = listOf(Routes.HOME, Routes.CALENDAR, Routes.RECIPES, Ro
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-fun AppNavHost(startRoute: String? = null) {
+fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
@@ -208,7 +208,7 @@ fun AppNavHost(startRoute: String? = null) {
                 )
             }
             composable(Routes.SHOPPING_LIST) {
-                ShoppingListScreen()
+                ShoppingListScreen(quickAddItemName = quickAddItemName)
             }
             composable(Routes.PROFILE) {
                 ProfileScreen(

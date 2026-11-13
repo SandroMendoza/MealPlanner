@@ -20,7 +20,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App(startRoute: String? = null) {
+fun App(startRoute: String? = null, quickAddItemName: String? = null) {
     val preferencesViewModel: AppPreferencesViewModel = koinViewModel()
     val darkModeEnabled by preferencesViewModel.darkModeEnabled.collectAsStateWithLifecycle()
     val language by preferencesViewModel.language.collectAsStateWithLifecycle()
@@ -28,7 +28,7 @@ fun App(startRoute: String? = null) {
     CompositionLocalProvider(LocalStrings provides (language ?: Language.ENGLISH).strings()) {
         MealPlannerTheme(darkTheme = darkModeEnabled == true) {
             Box(modifier = Modifier.fillMaxSize()) {
-                AppNavHost(startRoute = startRoute)
+                AppNavHost(startRoute = startRoute, quickAddItemName = quickAddItemName)
                 KeyboardDismissButton(modifier = Modifier.align(Alignment.BottomEnd))
             }
         }

@@ -43,6 +43,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.common.formatPrice
@@ -73,11 +75,17 @@ private fun ShoppingListRangeMode.label(): String = when (this) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel()) {
+fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quickAddItemName: String? = null) {
     val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     var showDatePicker by remember { mutableStateOf(false) }
     val sections = remember(uiState) { uiState.sections }
+
+    LaunchedEffect(quickAddItemName) {
+        if (quickAddItemName != null) {
+            viewModel.addItem(quickAddItemName, 1.0, MeasurementUnit.PIECE)
+        }
+    }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,

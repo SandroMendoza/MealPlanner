@@ -81,9 +81,12 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
     /**
      * Adds an item to this week's shopping list.
      *
-     * @param name The ingredient or product name.
-     * @param quantity The quantity needed.
-     * @param unit The unit the quantity is measured in (e.g. "g", "kg", "ml", "l", "tsp", "tbsp", "cup", "piece").
+     * Use this when the user asks to add, buy, pick up, or get a food item or ingredient,
+     * e.g. "add milk to my shopping list" or "I need to buy eggs".
+     *
+     * @param name The ingredient or product name (e.g. "milk", "eggs").
+     * @param quantity The quantity needed. Default to 1 if the user doesn't mention an amount.
+     * @param unit The unit the quantity is measured in (e.g. "g", "kg", "ml", "l", "tsp", "tbsp", "cup", "piece"). Default to "piece" if the user doesn't mention a unit.
      * @return Whether the item was added.
      */
     @AppFunctionDeclaration(isDescribedByKDoc = true)
@@ -197,7 +200,10 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
     /**
      * Gets the meal plan entries for today or this week.
      *
-     * @param range Either "today" or "week".
+     * Use this when the user asks what's for dinner, what they're eating, or what meals are
+     * planned, e.g. "what's for dinner tonight" or "what's on the menu this week".
+     *
+     * @param range Either "today" or "week". Default to "today" for questions about a single meal.
      * @return The scheduled entries within the requested range.
      */
     @AppFunctionDeclaration(isDescribedByKDoc = true)

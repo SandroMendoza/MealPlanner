@@ -60,4 +60,16 @@
             android:targetClass="com.meal.planner.MainActivity"
             android:data="mealplanner://open/spendingReports" />
     </shortcut>
+
+    <capability android:name="actions.intent.CREATE_ITEM">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.meal.planner"
+            android:targetClass="com.meal.planner.MainActivity"
+            android:data="mealplanner://open/shoppingList?addItem={itemName}">
+            <parameter
+                android:name="item.name"
+                android:key="itemName" />
+        </intent>
+    </capability>
 </shortcuts>

@@ -28,12 +28,16 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val startRoute = intent?.data
+        val deepLinkUri = intent?.data
             ?.takeIf { it.scheme == "mealplanner" && it.host == "open" }
-            ?.let { Routes.routeForDeepLinkPath(it.pathSegments.firstOrNull()) }
+        val startRoute = deepLinkUri?.let { Routes.routeForDeepLinkPath(it.pathSegments.firstOrNull()) }
+        val quickAddItemName = deepLinkUri
+            ?.takeIf { it.pathSegments.firstOrNull() == Routes.SHOPPING_LIST }
+            ?.getQueryParameter("addItem")
+            ?.takeIf { it.isNotBlank() }
 
         setContent {
-            App(startRoute = startRoute)
+            App(startRoute = startRoute, quickAddItemName = quickAddItemName)
         }
     }
 }
