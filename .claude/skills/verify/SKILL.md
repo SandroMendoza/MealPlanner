@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Build, install, and drive this app (com.meal.planner) on the Android emulator via adb to visually confirm a UI/behavioral change actually works end-to-end — not just that it compiles. Use for any change with a runtime surface (new screen, new flow, redesign, nav change) before reporting it done. Pair with kmp-verify (compiles) first; this is the runtime half.
+description: Build, install, and drive this app (sandragon.inc.mealplanner) on the Android emulator via adb to visually confirm a UI/behavioral change actually works end-to-end — not just that it compiles. Use for any change with a runtime surface (new screen, new flow, redesign, nav change) before reporting it done. Pair with kmp-verify (compiles) first; this is the runtime half.
 ---
 
 # MealPlanner runtime verification (adb + emulator)
@@ -26,8 +26,8 @@ Reuse `$adb` for every call below (PowerShell tool calls don't share shell state
 # (run via Bash tool) ./gradlew :androidApp:assembleDebug -q
 $apk = "C:\Users\Ghel\AndroidStudioProjects\MealPlanner\androidApp\build\outputs\apk\debug\androidApp-debug.apk"
 & $adb install -r -t "$apk"
-& $adb shell am force-stop com.meal.planner
-& $adb shell am start -W -n com.meal.planner/.MainActivity
+& $adb shell am force-stop sandragon.inc.mealplanner
+& $adb shell am start -W -n sandragon.inc.mealplanner/com.meal.planner.MainActivity
 ```
 
 **Gotcha — wrong APK path:** `androidApp/build/intermediates/apk/debug/androidApp-debug.apk` also exists and often looks plausible, but it can be a stale copy left over from an earlier build in the same session. It does NOT get overwritten by every `assembleDebug` run the way `outputs/apk/debug/` does. Installing it silently runs old code and looks like a real regression (this cost a full debugging detour once — the "bug" vanished because it was never there). **Always install from `androidApp/build/outputs/apk/debug/androidApp-debug.apk`.** If unsure, check both files' timestamps against your last source edit before installing.
@@ -69,10 +69,10 @@ Screenshots and `ui.xml` dumps pulled into the repo root are scratch files, not 
 
 ## Quick reference
 
-- Package: `com.meal.planner` · Main activity: `.MainActivity`
+- Application ID: `sandragon.inc.mealplanner` · Main activity: `com.meal.planner.MainActivity` (the Kotlin namespace stays `com.meal.planner`, so adb component names need the full class name, not `.MainActivity`)
 - adb: `$env:LOCALAPPDATA\Android\Sdk\platform-tools\adb.exe`
 - Correct APK: `androidApp/build/outputs/apk/debug/androidApp-debug.apk`
-- DB inspection (favorites/meal-plan persistence bugs): `adb exec-out run-as com.meal.planner cat databases/mealplanner.db > local.db`, then query with the `sqlite3` CLI (see project memory for its install path) — SQLDelight does not auto-migrate existing on-device DBs when new tables/columns are added, so `adb uninstall com.meal.planner` before reinstalling if you've just changed the schema.
+- DB inspection (favorites/meal-plan persistence bugs): `adb exec-out run-as sandragon.inc.mealplanner cat databases/mealplanner.db > local.db`, then query with the `sqlite3` CLI (see project memory for its install path) — SQLDelight does not auto-migrate existing on-device DBs when new tables/columns are added, so `adb uninstall sandragon.inc.mealplanner` before reinstalling if you've just changed the schema.
 
 ## When NOT to use this
 

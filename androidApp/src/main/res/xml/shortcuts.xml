@@ -8,7 +8,7 @@
         android:shortcutLongLabel="@string/shortcut_home_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.meal.planner"
+            android:targetPackage="sandragon.inc.mealplanner"
             android:targetClass="com.meal.planner.MainActivity"
             android:data="mealplanner://open/home" />
     </shortcut>
@@ -20,7 +20,7 @@
         android:shortcutLongLabel="@string/shortcut_calendar_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.meal.planner"
+            android:targetPackage="sandragon.inc.mealplanner"
             android:targetClass="com.meal.planner.MainActivity"
             android:data="mealplanner://open/calendar" />
     </shortcut>
@@ -32,7 +32,7 @@
         android:shortcutLongLabel="@string/shortcut_recipes_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.meal.planner"
+            android:targetPackage="sandragon.inc.mealplanner"
             android:targetClass="com.meal.planner.MainActivity"
             android:data="mealplanner://open/recipes" />
     </shortcut>
@@ -44,7 +44,7 @@
         android:shortcutLongLabel="@string/shortcut_shopping_list_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.meal.planner"
+            android:targetPackage="sandragon.inc.mealplanner"
             android:targetClass="com.meal.planner.MainActivity"
             android:data="mealplanner://open/shoppingList" />
     </shortcut>
@@ -56,7 +56,7 @@
         android:shortcutLongLabel="@string/shortcut_spending_reports_long">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.meal.planner"
+            android:targetPackage="sandragon.inc.mealplanner"
             android:targetClass="com.meal.planner.MainActivity"
             android:data="mealplanner://open/spendingReports" />
     </shortcut>
@@ -64,7 +64,7 @@
     <capability android:name="actions.intent.CREATE_ITEM">
         <intent
             android:action="android.intent.action.VIEW"
-            android:targetPackage="com.meal.planner"
+            android:targetPackage="sandragon.inc.mealplanner"
             android:targetClass="com.meal.planner.MainActivity"
             android:data="mealplanner://open/shoppingList?addItem={itemName}">
             <parameter
