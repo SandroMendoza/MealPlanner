@@ -17,6 +17,12 @@ Use the run configurations provided by the run widget in your IDE's toolbar. You
 - Android app: `./gradlew :androidApp:assembleDebug`
 - iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
 
+### Running the tests
+
+`./run-tests.sh` runs the unit tests of `domain`, `data`, `presentation` and `shared`
+on the JVM, prints a per-module summary, and exits non-zero if anything fails. On Windows,
+run it from Git Bash.
+
 ---
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
