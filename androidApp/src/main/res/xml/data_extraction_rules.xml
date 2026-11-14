@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12 and higher: back up and transfer all app data, including the recipe database
+     and photos. -->
 <data-extraction-rules>
-    <cloud-backup>
-        <exclude domain="database" path="mealplanner.db" />
-        <exclude domain="file" path="recipe_images/" />
-    </cloud-backup>
-    <device-transfer>
-        <exclude domain="database" path="mealplanner.db" />
-        <exclude domain="file" path="recipe_images/" />
-    </device-transfer>
+    <cloud-backup />
+    <device-transfer />
 </data-extraction-rules>
