@@ -127,8 +127,6 @@ val englishStrings = Strings(
     homeTodaysPlan = "Today's plan",
     homeViewAll = "View all",
     homeNoMealsPlannedToday = "No meals planned for today.",
-    homeRecipeOfTheDay = "Recipe of the day",
-    homeShuffleRecipeCd = "Show another recipe",
     homeQuickActions = "Quick actions",
     homeAddAMeal = "Add a meal",
     homeShoppingList = "Shopping list",
@@ -239,6 +237,7 @@ val englishStrings = Strings(
     settingsAbout = "About",
     settingsAboutMealPlanner = "About Meal Planner",
     settingsPrivacyPolicy = "Privacy Policy",
+    settingsAdPrivacyOptions = "Ad privacy options",
     settingsReadAloud = "Read aloud",
 
     notificationSettingsTitle = "Notification Settings",
@@ -258,15 +257,16 @@ val englishStrings = Strings(
         "Built with Kotlin Multiplatform and Jetpack Compose.",
 
     privacyPolicyParagraphs = listOf(
-        "Last updated: 13 November 2026",
-        "Meal Planner is a meal planning app that keeps your data on your device. It has no user accounts, no ads, and no analytics or crash reporting. The developer does not collect, receive or sell any personal data.",
+        "Last updated: 14 November 2026",
+        "Meal Planner is a meal planning app that keeps your data on your device. It has no user accounts and no analytics or crash reporting. It shows ads from Google AdMob, which collects some device data as described under \"Ads\". The developer does not collect, receive or sell any personal data.",
         "Information stored on your device\nThe app stores your recipes, meal plans, shopping lists, spending entries, profile (name, bio and photo) and settings in its private storage on your device. This data is not included in Android cloud backups or device-to-device transfers. Uninstalling the app or clearing its data deletes it permanently.",
         "Photos\nWhen you add a recipe or profile photo, the app uses the Android photo picker, so it only sees the photos you select. Those photos stay on your device and are never uploaded.",
         "Meal reminders\nIf you turn on meal reminders, your device schedules and shows them. Nothing about them is sent anywhere.",
         "Sharing\nWhen you export a spending report, the app passes the file to the app you choose in the Android share menu. That app's own privacy policy covers what happens next.",
         "Read aloud\nThe read-aloud feature uses the text-to-speech service installed on your device. The text being read is handled by that service under its provider's privacy policy.",
         "Voice assistants\nOn supported Android versions, assistant apps on your device can read and update your shopping list, recipes, meal plan and spending report when you ask them to. The assistant handles that data under its own privacy policy.",
-        "Children\nMeal Planner is not directed at children under 13 and does not knowingly collect data from anyone.",
+        "Ads\nThe home and meal plan screens show banner ads from Google AdMob. To show ads, measure them and prevent fraud, the AdMob SDK collects information from your device, such as its advertising ID, IP address, approximate location based on that IP address, how you interact with ads, and diagnostic data. Google handles this data under its own privacy policy: https://policies.google.com/privacy. If you are in the European Economic Area, the United Kingdom or Switzerland, the app asks for your consent before ads are personalised, and you can change your choice at any time under Settings > Ad privacy options. You can reset or delete your advertising ID in your device settings. Your recipes, meal plans and other app data are never sent to Google or the developer.",
+        "Children\nMeal Planner is not directed at children under 13.",
         "Changes to this policy\nIf the app's data practices change, this policy is updated and the date above changes with it.",
         "Contact\nQuestions about this policy: sandragon.inc@gmail.com"
     ),

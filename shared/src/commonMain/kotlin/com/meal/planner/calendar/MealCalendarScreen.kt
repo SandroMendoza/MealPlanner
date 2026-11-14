@@ -63,6 +63,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
 import com.meal.domain.model.enums.MealType
+import com.meal.planner.ads.AdBanner
+import com.meal.planner.ads.AdPlacement
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.MealDatePickerDialog
@@ -223,6 +225,8 @@ fun MealCalendarScreen(
                 Spacer(Modifier.width(spacing.xs))
                 Text(LocalStrings.current.calendarAddMeal)
             }
+
+            AdBanner(placement = AdPlacement.MEAL_PLAN)
         }
 
         if (showDatePicker) {

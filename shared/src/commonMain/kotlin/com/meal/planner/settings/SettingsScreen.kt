@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.RecipeViewMode
+import com.meal.planner.ads.rememberAdPrivacyOptions
 import com.meal.planner.components.CurrencyDropdownField
 import com.meal.planner.components.LanguageDropdownField
 import com.meal.planner.components.SettingsRow
@@ -67,6 +69,7 @@ fun SettingsScreen(
 ) {
     val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
+    val adPrivacyOptions = rememberAdPrivacyOptions()
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -170,6 +173,12 @@ fun SettingsScreen(
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            adPrivacyOptions?.let { openAdPrivacyOptions ->
+                SettingsRow(label = LocalStrings.current.settingsAdPrivacyOptions, icon = Icons.Default.Policy, onClick = openAdPrivacyOptions) {
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+                }
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            }
         }
     }
 }
