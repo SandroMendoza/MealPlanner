@@ -85,11 +85,13 @@ actual fun rememberAdPrivacyOptions(): (() -> Unit)? {
 
 // Ad unit IDs are set per build type in androidApp/build.gradle.kts and reach this module
 // as application meta-data, since this library module has no BuildConfig of its own.
+// The keys must match the <meta-data> names in androidApp's AndroidManifest.xml.
+internal fun AdPlacement.metaDataKey(): String = when (this) {
+    AdPlacement.HOME -> "com.meal.planner.ads.BANNER_HOME"
+    AdPlacement.MEAL_PLAN -> "com.meal.planner.ads.BANNER_MEAL_PLAN"
+}
+
 private fun adUnitIdFor(context: Context, placement: AdPlacement): String {
-    val key = when (placement) {
-        AdPlacement.HOME -> "com.meal.planner.ads.BANNER_HOME"
-        AdPlacement.MEAL_PLAN -> "com.meal.planner.ads.BANNER_MEAL_PLAN"
-    }
     val appInfo = context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-    return appInfo.metaData?.getString(key).orEmpty()
+    return appInfo.metaData?.getString(placement.metaDataKey()).orEmpty()
 }
