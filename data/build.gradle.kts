@@ -9,6 +9,8 @@ sqldelight {
     databases {
         create("MealPlannerDatabase") {
             packageName.set("com.meal.data.db")
+            schemaOutputDirectory.set(file("src/commonMain/sqldelight/databases"))
+            verifyMigrations.set(true)
         }
     }
 }
