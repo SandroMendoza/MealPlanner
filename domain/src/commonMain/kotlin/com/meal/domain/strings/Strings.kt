@@ -76,6 +76,8 @@ data class Strings(
     val homeTodaysPlan: String,
     val homeViewAll: String,
     val homeNoMealsPlannedToday: String,
+    val homeRecipeOfTheDay: String,
+    val homeShuffleRecipeCd: String,
     val homeQuickActions: String,
     val homeAddAMeal: String,
     val homeShoppingList: String,

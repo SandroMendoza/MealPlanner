@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,10 +19,12 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.Shuffle
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -38,12 +41,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.meal.domain.model.MealPlanEntry
+import com.meal.domain.model.Recipe
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.RecipeThumbnail
+import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.today
@@ -202,6 +210,25 @@ fun HomeScreen(
                 onClick = onShoppingListClick
             )
         }
+
+        uiState.featuredRecipe?.let { recipe ->
+            Spacer(Modifier.height(spacing.sectionGap))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(LocalStrings.current.homeRecipeOfTheDay, style = MaterialTheme.typography.titleLarge)
+                IconButton(onClick = viewModel::shuffleFeaturedRecipe) {
+                    Icon(Icons.Filled.Shuffle, contentDescription = LocalStrings.current.homeShuffleRecipeCd)
+                }
+            }
+
+            Spacer(Modifier.height(spacing.sm))
+
+            FeaturedRecipeCard(recipe = recipe, onClick = { onMealClick(recipe.id) })
+        }
     }
 }
 
@@ -231,6 +258,48 @@ private fun TodayPlanRow(entry: MealPlanEntry, onClick: () -> Unit) {
             Text(text = entry.recipe.name, style = MaterialTheme.typography.titleMedium)
         }
         Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+    }
+}
+
+@Composable
+private fun FeaturedRecipeCard(recipe: Recipe, onClick: () -> Unit) {
+    val spacing = MealPlannerTokens.spacing
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Box(modifier = Modifier.fillMaxWidth().aspectRatio(16f / 9f)) {
+            if (recipe.imageUrl.isNullOrBlank()) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+            } else {
+                AsyncImage(
+                    model = recipeImageModel(recipe.imageUrl),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
+        Text(
+            text = recipe.name,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(spacing.cardPadding)
+        )
     }
 }
 

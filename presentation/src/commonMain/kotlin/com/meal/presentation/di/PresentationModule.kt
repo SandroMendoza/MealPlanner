@@ -33,7 +33,7 @@ val presentationModule = module {
     }
     viewModel { MealCalendarViewModel(get(), get(), get(), get(), get()) }
     viewModel { ShoppingListViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get(), get()) }
-    viewModel { HomeViewModel(get(), get(), get(), get()) }
+    viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { SpendingReportsViewModel(get(), get()) }
     viewModel { SettingsViewModel(get(), get()) }
