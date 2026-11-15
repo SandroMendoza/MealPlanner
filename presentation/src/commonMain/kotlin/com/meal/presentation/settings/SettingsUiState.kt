@@ -4,9 +4,10 @@ import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import com.meal.domain.model.RecipeViewMode
+import com.meal.domain.model.ThemeMode
 
 data class SettingsUiState(
-    val darkModeEnabled: Boolean = false,
+    val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val language: Language = Language.ENGLISH,
     val currency: Currency = Currency.USD,
     val lockPastDates: Boolean = false,

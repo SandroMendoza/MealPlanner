@@ -6,6 +6,7 @@ import com.meal.data.datasource.UserProfileLocalDataSource
 import com.meal.data.datasource.WeekNoteLocalDataSource
 import com.meal.data.inMemoryDatabase
 import com.meal.domain.model.AppSettings
+import com.meal.domain.model.ThemeMode
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
@@ -51,7 +52,7 @@ class SingleRowRepositoriesTest {
     @Test
     fun everySettingIsStored() = runTest {
         val changed = AppSettings(
-            darkModeEnabled = true,
+            themeMode = ThemeMode.DARK,
             language = Language.FRENCH,
             currency = Currency.PHP,
             lockPastDates = true,
@@ -63,6 +64,14 @@ class SingleRowRepositoriesTest {
         settings.updateSettings(changed)
 
         assertEquals(changed, settings.getSettings().first())
+    }
+
+    @Test
+    fun everyThemeModeIsStored() = runTest {
+        ThemeMode.entries.forEach { mode ->
+            settings.updateSettings(AppSettings(themeMode = mode))
+            assertEquals(mode, settings.getSettings().first().themeMode)
+        }
     }
 
     @Test

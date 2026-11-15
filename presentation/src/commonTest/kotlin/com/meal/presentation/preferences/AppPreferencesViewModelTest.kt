@@ -1,6 +1,7 @@
 package com.meal.presentation.preferences
 
 import com.meal.domain.model.AppSettings
+import com.meal.domain.model.ThemeMode
 import com.meal.domain.model.Language
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.presentation.fakes.FakeSettingsRepository
@@ -20,7 +21,7 @@ import kotlin.test.assertNull
 @OptIn(ExperimentalCoroutinesApi::class)
 class AppPreferencesViewModelTest {
 
-    private val repository = FakeSettingsRepository(AppSettings(darkModeEnabled = true, language = Language.SPANISH))
+    private val repository = FakeSettingsRepository(AppSettings(themeMode = ThemeMode.DARK, language = Language.SPANISH))
 
     @BeforeTest
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -32,22 +33,22 @@ class AppPreferencesViewModelTest {
     fun valuesAreUnknownUntilCollected() {
         val vm = AppPreferencesViewModel(GetSettingsUseCase(repository))
 
-        assertNull(vm.darkModeEnabled.value)
+        assertNull(vm.themeMode.value)
         assertNull(vm.language.value)
     }
 
     @Test
-    fun exposesAndFollowsDarkModeAndLanguage() = runTest {
+    fun exposesAndFollowsThemeModeAndLanguage() = runTest {
         val vm = AppPreferencesViewModel(GetSettingsUseCase(repository))
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.darkModeEnabled.collect {} }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.themeMode.collect {} }
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { vm.language.collect {} }
 
-        assertEquals(true, vm.darkModeEnabled.value)
+        assertEquals(ThemeMode.DARK, vm.themeMode.value)
         assertEquals(Language.SPANISH, vm.language.value)
 
-        repository.settings.value = AppSettings(darkModeEnabled = false, language = Language.FRENCH)
+        repository.settings.value = AppSettings(themeMode = ThemeMode.LIGHT, language = Language.FRENCH)
 
-        assertEquals(false, vm.darkModeEnabled.value)
+        assertEquals(ThemeMode.LIGHT, vm.themeMode.value)
         assertEquals(Language.FRENCH, vm.language.value)
     }
 }

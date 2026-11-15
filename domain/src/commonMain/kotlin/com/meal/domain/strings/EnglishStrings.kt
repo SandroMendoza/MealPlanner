@@ -229,7 +229,10 @@ val englishStrings = Strings(
 
     settingsPreferences = "Preferences",
     settingsNotifications = "Notifications",
-    settingsDarkMode = "Dark mode",
+    settingsTheme = "Theme",
+    themeSystem = "System",
+    themeLight = "Light",
+    themeDark = "Dark",
     settingsLockPastDates = "Lock past dates",
     settingsDefaultCalendarView = "Default meal plan view",
     settingsDefaultRecipeView = "Default recipe view",

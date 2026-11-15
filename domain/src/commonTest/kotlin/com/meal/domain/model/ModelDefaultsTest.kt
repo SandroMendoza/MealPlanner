@@ -29,7 +29,7 @@ class ModelDefaultsTest {
     fun defaultSettings() {
         assertEquals(
             AppSettings(
-                darkModeEnabled = false,
+                themeMode = ThemeMode.SYSTEM,
                 language = Language.ENGLISH,
                 currency = Currency.USD,
                 lockPastDates = false,

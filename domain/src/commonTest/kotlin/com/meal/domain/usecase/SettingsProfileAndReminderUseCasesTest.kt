@@ -6,6 +6,7 @@ import com.meal.domain.fakes.FakeSettingsRepository
 import com.meal.domain.fakes.FakeUserProfileRepository
 import com.meal.domain.fakes.FakeWeekNoteRepository
 import com.meal.domain.model.AppSettings
+import com.meal.domain.model.ThemeMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import com.meal.domain.model.MealReminder
@@ -23,7 +24,7 @@ class SettingsProfileAndReminderUseCasesTest {
     @Test
     fun settingsCanBeReadAndUpdated() = runTest {
         val repository = FakeSettingsRepository()
-        val updated = AppSettings(darkModeEnabled = true, language = Language.FRENCH, currency = Currency.PHP)
+        val updated = AppSettings(themeMode = ThemeMode.DARK, language = Language.FRENCH, currency = Currency.PHP)
 
         UpdateSettingsUseCase(repository).execute(updated)
 

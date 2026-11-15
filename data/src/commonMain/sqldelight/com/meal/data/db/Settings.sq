@@ -1,6 +1,6 @@
 CREATE TABLE SettingsEntity (
     id INTEGER NOT NULL PRIMARY KEY,
-    darkModeEnabled INTEGER NOT NULL,
+    themeMode TEXT NOT NULL DEFAULT 'SYSTEM',
     language TEXT NOT NULL,
     currency TEXT NOT NULL,
     lockPastDates INTEGER NOT NULL,
@@ -13,5 +13,5 @@ selectSettings:
 SELECT * FROM SettingsEntity WHERE id = 1;
 
 upsertSettings:
-INSERT OR REPLACE INTO SettingsEntity(id, darkModeEnabled, language, currency, lockPastDates, defaultCalendarView, readAloudEnabled, defaultRecipeView)
+INSERT OR REPLACE INTO SettingsEntity(id, themeMode, language, currency, lockPastDates, defaultCalendarView, readAloudEnabled, defaultRecipeView)
 VALUES (1, ?, ?, ?, ?, ?, ?, ?);

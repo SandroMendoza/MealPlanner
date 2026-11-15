@@ -184,7 +184,10 @@ data class Strings(
     // Settings
     val settingsPreferences: String,
     val settingsNotifications: String,
-    val settingsDarkMode: String,
+    val settingsTheme: String,
+    val themeSystem: String,
+    val themeLight: String,
+    val themeDark: String,
     val settingsLockPastDates: String,
     val settingsDefaultCalendarView: String,
     val settingsDefaultRecipeView: String,

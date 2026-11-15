@@ -1,6 +1,7 @@
 package com.meal.presentation.settings
 
 import com.meal.domain.model.AppSettings
+import com.meal.domain.model.ThemeMode
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
@@ -23,7 +24,7 @@ import kotlin.test.assertFalse
 class SettingsViewModelTest {
 
     private val stored = AppSettings(
-        darkModeEnabled = true,
+        themeMode = ThemeMode.DARK,
         language = Language.FRENCH,
         currency = Currency.PHP,
         lockPastDates = true,
@@ -46,7 +47,7 @@ class SettingsViewModelTest {
         val state = viewModel().state.value
 
         assertFalse(state.isLoading)
-        assertEquals(true, state.darkModeEnabled)
+        assertEquals(ThemeMode.DARK, state.themeMode)
         assertEquals(Language.FRENCH, state.language)
         assertEquals(Currency.PHP, state.currency)
         assertEquals(true, state.lockPastDates)
@@ -59,11 +60,11 @@ class SettingsViewModelTest {
     fun eachSetterPersistsOnlyItsOwnField() {
         val vm = viewModel()
 
-        vm.setDarkModeEnabled(false)
-        assertEquals(stored.copy(darkModeEnabled = false), repository.updates.last())
+        vm.setThemeMode(ThemeMode.LIGHT)
+        assertEquals(stored.copy(themeMode = ThemeMode.LIGHT), repository.updates.last())
 
         vm.setLanguage(Language.SPANISH)
-        assertEquals(stored.copy(darkModeEnabled = false, language = Language.SPANISH), repository.updates.last())
+        assertEquals(stored.copy(themeMode = ThemeMode.LIGHT, language = Language.SPANISH), repository.updates.last())
 
         vm.setCurrency(Currency.EUR)
         vm.setLockPastDates(false)
@@ -73,7 +74,7 @@ class SettingsViewModelTest {
 
         assertEquals(
             AppSettings(
-                darkModeEnabled = false,
+                themeMode = ThemeMode.LIGHT,
                 language = Language.SPANISH,
                 currency = Currency.EUR,
                 lockPastDates = false,

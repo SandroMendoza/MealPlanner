@@ -7,6 +7,7 @@ import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import com.meal.domain.model.RecipeViewMode
+import com.meal.domain.model.ThemeMode
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.UpdateSettingsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
                 _uiState.value = _uiState.value.copy(
-                    darkModeEnabled = settings.darkModeEnabled,
+                    themeMode = settings.themeMode,
                     language = settings.language,
                     currency = settings.currency,
                     lockPastDates = settings.lockPastDates,
@@ -38,7 +39,7 @@ class SettingsViewModel(
         }
     }
 
-    fun setDarkModeEnabled(enabled: Boolean) = persist { it.copy(darkModeEnabled = enabled) }
+    fun setThemeMode(mode: ThemeMode) = persist { it.copy(themeMode = mode) }
     fun setLanguage(language: Language) = persist { it.copy(language = language) }
     fun setCurrency(currency: Currency) = persist { it.copy(currency = currency) }
     fun setLockPastDates(enabled: Boolean) = persist { it.copy(lockPastDates = enabled) }
@@ -50,7 +51,7 @@ class SettingsViewModel(
         val current = _uiState.value
         val updated = transform(
             AppSettings(
-                darkModeEnabled = current.darkModeEnabled,
+                themeMode = current.themeMode,
                 language = current.language,
                 currency = current.currency,
                 lockPastDates = current.lockPastDates,
@@ -60,7 +61,7 @@ class SettingsViewModel(
             )
         )
         _uiState.value = current.copy(
-            darkModeEnabled = updated.darkModeEnabled,
+            themeMode = updated.themeMode,
             language = updated.language,
             currency = updated.currency,
             lockPastDates = updated.lockPastDates,

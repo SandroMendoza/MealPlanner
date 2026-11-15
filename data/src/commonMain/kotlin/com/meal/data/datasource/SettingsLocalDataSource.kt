@@ -9,6 +9,7 @@ import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import com.meal.domain.model.RecipeViewMode
+import com.meal.domain.model.ThemeMode
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -30,7 +31,7 @@ class SettingsLocalDataSource(
     suspend fun update(settings: AppSettings) =
         withContext(ioDispatcher) {
             queries.upsertSettings(
-                if (settings.darkModeEnabled) 1L else 0L,
+                settings.themeMode.name,
                 settings.language.name,
                 settings.currency.name,
                 if (settings.lockPastDates) 1L else 0L,
@@ -41,7 +42,7 @@ class SettingsLocalDataSource(
         }
 
     private fun toDomain(row: SettingsEntity) = AppSettings(
-        darkModeEnabled = row.darkModeEnabled != 0L,
+        themeMode = ThemeMode.valueOf(row.themeMode),
         language = Language.valueOf(row.language),
         currency = Currency.valueOf(row.currency),
         lockPastDates = row.lockPastDates != 0L,

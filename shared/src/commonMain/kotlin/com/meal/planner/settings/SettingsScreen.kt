@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.RecipeViewMode
+import com.meal.domain.model.ThemeMode
 import com.meal.planner.ads.rememberAdPrivacyOptions
 import com.meal.planner.components.CurrencyDropdownField
 import com.meal.planner.components.LanguageDropdownField
@@ -56,6 +57,13 @@ import org.koin.compose.viewmodel.koinViewModel
 private fun CalendarViewMode.label(): String = when (this) {
     CalendarViewMode.DAY -> LocalStrings.current.day
     CalendarViewMode.WEEK -> LocalStrings.current.week
+}
+
+@Composable
+private fun ThemeMode.label(): String = when (this) {
+    ThemeMode.SYSTEM -> LocalStrings.current.themeSystem
+    ThemeMode.LIGHT -> LocalStrings.current.themeLight
+    ThemeMode.DARK -> LocalStrings.current.themeDark
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,8 +106,19 @@ fun SettingsScreen(
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            SettingsRow(label = LocalStrings.current.settingsDarkMode, icon = Icons.Default.DarkMode) {
-                Switch(checked = uiState.darkModeEnabled, onCheckedChange = viewModel::setDarkModeEnabled)
+            SettingsRow(label = LocalStrings.current.settingsTheme, icon = Icons.Default.DarkMode) {
+                SingleChoiceSegmentedButtonRow(modifier = Modifier.width(216.dp)) {
+                    ThemeMode.entries.forEachIndexed { index, mode ->
+                        SegmentedButton(
+                            selected = uiState.themeMode == mode,
+                            onClick = { viewModel.setThemeMode(mode) },
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = ThemeMode.entries.size),
+                            icon = {}
+                        ) {
+                            Text(mode.label(), style = MaterialTheme.typography.labelMedium, maxLines = 1)
+                        }
+                    }
+                }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsLockPastDates, icon = Icons.Default.Lock) {

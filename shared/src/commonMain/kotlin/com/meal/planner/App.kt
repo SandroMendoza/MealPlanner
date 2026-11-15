@@ -1,5 +1,6 @@
 package com.meal.planner
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
@@ -10,7 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.Language
+import com.meal.domain.model.ThemeMode
 import com.meal.domain.strings.strings
+import com.meal.planner.common.SystemBarAppearance
 import com.meal.planner.components.KeyboardDismissButton
 import com.meal.planner.navigation.AppNavHost
 import com.meal.planner.strings.LocalStrings
@@ -22,11 +25,17 @@ import org.koin.compose.viewmodel.koinViewModel
 @Preview
 fun App(startRoute: String? = null, quickAddItemName: String? = null) {
     val preferencesViewModel: AppPreferencesViewModel = koinViewModel()
-    val darkModeEnabled by preferencesViewModel.darkModeEnabled.collectAsStateWithLifecycle()
+    val themeMode by preferencesViewModel.themeMode.collectAsStateWithLifecycle()
     val language by preferencesViewModel.language.collectAsStateWithLifecycle()
 
     CompositionLocalProvider(LocalStrings provides (language ?: Language.ENGLISH).strings()) {
-        MealPlannerTheme(darkTheme = darkModeEnabled == true) {
+        val darkTheme = when (themeMode) {
+            ThemeMode.DARK -> true
+            ThemeMode.LIGHT -> false
+            ThemeMode.SYSTEM, null -> isSystemInDarkTheme()
+        }
+        SystemBarAppearance(darkTheme)
+        MealPlannerTheme(darkTheme = darkTheme) {
             Box(modifier = Modifier.fillMaxSize()) {
                 AppNavHost(startRoute = startRoute, quickAddItemName = quickAddItemName)
                 KeyboardDismissButton(modifier = Modifier.align(Alignment.BottomEnd))
