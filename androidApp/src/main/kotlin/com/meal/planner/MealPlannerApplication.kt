@@ -2,6 +2,7 @@ package com.meal.planner
 
 import android.app.Application
 import android.content.pm.ApplicationInfo
+import com.meal.planner.backup.completePendingBackupRestore
 import com.meal.planner.common.MealReminderNotifications
 import com.meal.planner.di.appModule
 import org.koin.android.ext.koin.androidContext
@@ -22,5 +23,6 @@ class MealPlannerApplication : Application() {
             }
         }
         MealReminderNotifications.createChannel(this)
+        completePendingBackupRestore()
     }
 }

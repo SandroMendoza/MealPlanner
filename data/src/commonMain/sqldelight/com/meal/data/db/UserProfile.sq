@@ -11,3 +11,8 @@ SELECT * FROM UserProfileEntity WHERE id = 1;
 upsertProfile:
 INSERT OR REPLACE INTO UserProfileEntity(id, name, bio, avatarUrl)
 VALUES (1, ?, ?, ?);
+
+rewritePhotoPath:
+UPDATE UserProfileEntity
+SET avatarUrl = :photoDirUri || substr(avatarUrl, instr(avatarUrl, '/recipe_images/') + 15)
+WHERE avatarUrl LIKE 'file://%/recipe_images/%';

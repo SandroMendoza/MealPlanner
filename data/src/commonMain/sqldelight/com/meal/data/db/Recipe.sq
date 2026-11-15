@@ -121,3 +121,8 @@ INSERT INTO InstructionEntity(recipeId, stepNumber, description) VALUES (?, ?, ?
 
 deleteInstructionsForRecipe:
 DELETE FROM InstructionEntity WHERE recipeId = ?;
+
+rewritePhotoPaths:
+UPDATE RecipeEntity
+SET imageUrl = :photoDirUri || substr(imageUrl, instr(imageUrl, '/recipe_images/') + 15)
+WHERE imageUrl LIKE 'file://%/recipe_images/%';

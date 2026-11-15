@@ -2,6 +2,7 @@ package com.meal.presentation.fakes
 
 import com.meal.domain.model.MealReminder
 import com.meal.domain.model.enums.MealType
+import com.meal.domain.service.BackupService
 import com.meal.domain.service.ReminderScheduler
 import com.meal.domain.service.TtsSpeaker
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,5 +51,20 @@ class FakeReminderScheduler : ReminderScheduler {
 
     override fun rescheduleAll(reminders: List<MealReminder>) {
         scheduled += reminders
+    }
+}
+
+class FakeBackupService(var failure: Exception? = null) : BackupService {
+    val exported = mutableListOf<String>()
+    val imported = mutableListOf<String>()
+
+    override suspend fun export(destinationUri: String) {
+        failure?.let { throw it }
+        exported += destinationUri
+    }
+
+    override suspend fun import(sourceUri: String) {
+        failure?.let { throw it }
+        imported += sourceUri
     }
 }

@@ -9,6 +9,7 @@ import com.meal.domain.repository.ShoppingGroupRepository
 import com.meal.domain.repository.ShoppingListRepository
 import com.meal.domain.repository.UserProfileRepository
 import com.meal.domain.repository.WeekNoteRepository
+import com.meal.domain.service.BackupService
 import com.meal.domain.service.ReminderScheduler
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.domain.usecase.AddRecipeUseCase
@@ -37,6 +38,8 @@ import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.GetUserProfileUseCase
 import com.meal.domain.usecase.UpdateMealReminderUseCase
 import com.meal.domain.usecase.UpdateSettingsUseCase
+import com.meal.domain.usecase.ExportBackupUseCase
+import com.meal.domain.usecase.ImportBackupUseCase
 import com.meal.domain.usecase.UpdateUserProfileUseCase
 import com.meal.domain.usecase.GetWeekNoteUseCase
 import com.meal.domain.usecase.UpdateWeekNoteUseCase
@@ -132,5 +135,11 @@ val domainModule = module {
     }
     factory {
         UpdateWeekNoteUseCase(get<WeekNoteRepository>())
+    }
+    factory {
+        ExportBackupUseCase(get<BackupService>())
+    }
+    factory {
+        ImportBackupUseCase(get<BackupService>())
     }
 }

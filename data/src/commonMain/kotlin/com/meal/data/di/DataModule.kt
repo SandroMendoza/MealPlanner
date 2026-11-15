@@ -1,5 +1,7 @@
 package com.meal.data.di
 
+import app.cash.sqldelight.db.SqlDriver
+import com.meal.data.datasource.DatabaseBackupDataSource
 import com.meal.data.datasource.IngredientLocalDataSource
 import com.meal.data.datasource.MealReminderLocalDataSource
 import com.meal.data.datasource.MealSlotLocalDataSource
@@ -32,7 +34,9 @@ import com.meal.domain.repository.WeekNoteRepository
 import org.koin.dsl.module
 
 val dataModule = module {
-    single { MealPlannerDatabase(get<DatabaseDriverFactory>().createDriver()) }
+    single<SqlDriver> { get<DatabaseDriverFactory>().createDriver() }
+    single { MealPlannerDatabase(get()) }
+    single { DatabaseBackupDataSource(get(), get()) }
     single { RecipeLocalDataSource(get()) }
     single { MealSlotLocalDataSource(get()) }
     single { ShoppingGroupLocalDataSource(get()) }

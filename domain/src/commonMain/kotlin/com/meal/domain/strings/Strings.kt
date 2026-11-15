@@ -197,6 +197,16 @@ data class Strings(
     val settingsPrivacyPolicy: String,
     val settingsAdPrivacyOptions: String,
     val settingsReadAloud: String,
+    val settingsYourData: String,
+    val settingsExportBackup: String,
+    val settingsImportBackup: String,
+    val backupImportConfirmTitle: String,
+    val backupImportConfirmBody: String,
+    val backupImportConfirmAction: String,
+    val backupWorking: String,
+    val backupExported: String,
+    val backupFailed: String,
+    val backupInvalidFile: String,
 
     // Notification settings
     val notificationSettingsTitle: String,

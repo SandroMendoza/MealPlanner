@@ -1,6 +1,7 @@
 package com.meal.planner.di
 
 import com.meal.data.db.databaseDriverModule
+import com.meal.planner.backup.backupModule
 import com.meal.data.di.dataModule
 import com.meal.domain.di.domainModule
 import com.meal.planner.common.mealReminderSchedulerModule
@@ -13,5 +14,6 @@ val appModule = listOf(
     dataModule,
     databaseDriverModule,
     mealReminderSchedulerModule,
+    backupModule,
     ttsModule
 )

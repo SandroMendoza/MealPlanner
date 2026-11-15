@@ -21,6 +21,7 @@ import com.meal.domain.repository.ShoppingGroupRepository
 import com.meal.domain.repository.ShoppingListRepository
 import com.meal.domain.repository.UserProfileRepository
 import com.meal.domain.repository.WeekNoteRepository
+import com.meal.domain.service.BackupService
 import com.meal.domain.service.ReminderScheduler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -207,5 +208,20 @@ class FakeReminderScheduler : ReminderScheduler {
 
     override fun rescheduleAll(reminders: List<MealReminder>) {
         rescheduled += reminders
+    }
+}
+
+class FakeBackupService(private val failure: Exception? = null) : BackupService {
+    val exported = mutableListOf<String>()
+    val imported = mutableListOf<String>()
+
+    override suspend fun export(destinationUri: String) {
+        failure?.let { throw it }
+        exported += destinationUri
+    }
+
+    override suspend fun import(sourceUri: String) {
+        failure?.let { throw it }
+        imported += sourceUri
     }
 }

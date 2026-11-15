@@ -14,5 +14,8 @@ data class SettingsUiState(
     val defaultCalendarView: CalendarViewMode = CalendarViewMode.DAY,
     val readAloudEnabled: Boolean = false,
     val defaultRecipeView: RecipeViewMode = RecipeViewMode.GRID,
+    val backupStatus: BackupStatus = BackupStatus.IDLE,
     val isLoading: Boolean = true
 )
+
+enum class BackupStatus { IDLE, WORKING, EXPORTED, FAILED, INVALID_FILE }

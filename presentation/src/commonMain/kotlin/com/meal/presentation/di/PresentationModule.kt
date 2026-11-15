@@ -36,7 +36,7 @@ val presentationModule = module {
     viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { SpendingReportsViewModel(get(), get()) }
-    viewModel { SettingsViewModel(get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get(), get()) }
     viewModel { AppPreferencesViewModel(get()) }
     viewModel { NotificationSettingsViewModel(get(), get()) }
 }

@@ -7,6 +7,10 @@ import com.meal.domain.model.Currency
 import com.meal.domain.model.Language
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.usecase.GetSettingsUseCase
+import com.meal.presentation.fakes.FakeBackupService
+import com.meal.domain.usecase.ImportBackupUseCase
+import com.meal.domain.usecase.ExportBackupUseCase
+import com.meal.domain.service.InvalidBackupException
 import com.meal.domain.usecase.UpdateSettingsUseCase
 import com.meal.presentation.fakes.FakeSettingsRepository
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +44,14 @@ class SettingsViewModelTest {
     @AfterTest
     fun tearDown() = Dispatchers.resetMain()
 
-    private fun viewModel() = SettingsViewModel(GetSettingsUseCase(repository), UpdateSettingsUseCase(repository))
+    private val backup = FakeBackupService()
+
+    private fun viewModel() = SettingsViewModel(
+        GetSettingsUseCase(repository),
+        UpdateSettingsUseCase(repository),
+        ExportBackupUseCase(backup),
+        ImportBackupUseCase(backup)
+    )
 
     @Test
     fun loadsStoredSettings() {
@@ -86,5 +97,47 @@ class SettingsViewModelTest {
         )
         assertEquals(7, repository.updates.size)
         assertEquals(Currency.EUR, vm.state.value.currency)
+    }
+
+    @Test
+    fun exportReportsSuccessAndCanBeCleared() {
+        val vm = viewModel()
+
+        vm.exportBackup("content://backup.zip")
+
+        assertEquals(listOf("content://backup.zip"), backup.exported)
+        assertEquals(BackupStatus.EXPORTED, vm.state.value.backupStatus)
+        vm.clearBackupStatus()
+        assertEquals(BackupStatus.IDLE, vm.state.value.backupStatus)
+    }
+
+    @Test
+    fun exportFailureIsReported() {
+        backup.failure = IllegalStateException("disk full")
+        val vm = viewModel()
+
+        vm.exportBackup("content://backup.zip")
+
+        assertEquals(BackupStatus.FAILED, vm.state.value.backupStatus)
+    }
+
+    @Test
+    fun importOfAFileThatIsNotABackupIsReportedSeparately() {
+        backup.failure = InvalidBackupException("not a backup")
+        val vm = viewModel()
+
+        vm.importBackup("content://photo.zip")
+
+        assertEquals(BackupStatus.INVALID_FILE, vm.state.value.backupStatus)
+    }
+
+    @Test
+    fun importPassesTheChosenFile() {
+        val vm = viewModel()
+
+        vm.importBackup("content://backup.zip")
+
+        assertEquals(listOf("content://backup.zip"), backup.imported)
+        assertEquals(BackupStatus.IDLE, vm.state.value.backupStatus)
     }
 }
