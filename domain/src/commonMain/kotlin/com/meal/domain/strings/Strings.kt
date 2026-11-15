@@ -218,7 +218,7 @@ data class Strings(
 
     // About screen
     val aboutAppName: String,
-    val aboutVersion: String,
+    val aboutVersion: (version: String) -> String,
     val aboutBody: String,
 
     // Privacy policy screen

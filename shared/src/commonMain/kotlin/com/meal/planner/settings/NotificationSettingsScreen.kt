@@ -1,5 +1,7 @@
 package com.meal.planner.settings
 
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -111,8 +113,10 @@ fun NotificationSettingsScreen(
                             )
                             Spacer(Modifier.width(spacing.md))
                         }
+                        val mealTypeName = reminder.mealType.displayName()
                         Switch(
                             checked = reminder.enabled,
+                            modifier = Modifier.semantics { contentDescription = mealTypeName },
                             onCheckedChange = { enabled ->
                                 when {
                                     !enabled -> viewModel.setEnabled(reminder.mealType, false)

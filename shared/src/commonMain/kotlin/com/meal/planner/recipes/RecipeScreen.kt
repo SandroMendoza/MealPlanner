@@ -1,5 +1,7 @@
 package com.meal.planner.recipes
 
+import androidx.compose.ui.semantics.Role
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -310,21 +312,24 @@ private fun RecipeFilterSheet(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = spacing.lg),
+                    .padding(top = spacing.lg)
+                    .toggleable(value = uiState.showFavoritesOnly, role = Role.Switch, onValueChange = onFavoritesOnlyChange),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(LocalStrings.current.recipesFavoritesOnly, style = MaterialTheme.typography.bodyLarge)
-                Switch(checked = uiState.showFavoritesOnly, onCheckedChange = onFavoritesOnlyChange)
+                Switch(checked = uiState.showFavoritesOnly, onCheckedChange = null)
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .toggleable(value = uiState.showCreatedOnly, role = Role.Switch, onValueChange = onCreatedOnlyChange),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(LocalStrings.current.recipesCreatedByMe, style = MaterialTheme.typography.bodyLarge)
-                Switch(checked = uiState.showCreatedOnly, onCheckedChange = onCreatedOnlyChange)
+                Switch(checked = uiState.showCreatedOnly, onCheckedChange = null)
             }
 
             HorizontalDivider(modifier = Modifier.padding(vertical = spacing.lg))

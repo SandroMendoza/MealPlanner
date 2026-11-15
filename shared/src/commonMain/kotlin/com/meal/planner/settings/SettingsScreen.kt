@@ -39,7 +39,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -61,6 +60,7 @@ import com.meal.planner.backup.rememberBackupFileLaunchers
 import com.meal.planner.components.CurrencyDropdownField
 import com.meal.planner.components.LanguageDropdownField
 import com.meal.planner.components.SettingsRow
+import com.meal.planner.components.SettingsSwitchRow
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.today
@@ -152,13 +152,19 @@ fun SettingsScreen(
                 }
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            SettingsRow(label = LocalStrings.current.settingsLockPastDates, icon = Icons.Default.Lock) {
-                Switch(checked = uiState.lockPastDates, onCheckedChange = viewModel::setLockPastDates)
-            }
+            SettingsSwitchRow(
+                label = LocalStrings.current.settingsLockPastDates,
+                icon = Icons.Default.Lock,
+                checked = uiState.lockPastDates,
+                onCheckedChange = viewModel::setLockPastDates
+            )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            SettingsRow(label = LocalStrings.current.settingsReadAloud, icon = Icons.AutoMirrored.Filled.VolumeUp) {
-                Switch(checked = uiState.readAloudEnabled, onCheckedChange = viewModel::setReadAloudEnabled)
-            }
+            SettingsSwitchRow(
+                label = LocalStrings.current.settingsReadAloud,
+                icon = Icons.AutoMirrored.Filled.VolumeUp,
+                checked = uiState.readAloudEnabled,
+                onCheckedChange = viewModel::setReadAloudEnabled
+            )
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsDefaultCalendarView, icon = Icons.Default.CalendarMonth) {
                 SingleChoiceSegmentedButtonRow(modifier = Modifier.width(120.dp)) {

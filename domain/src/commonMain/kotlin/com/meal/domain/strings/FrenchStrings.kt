@@ -261,7 +261,7 @@ val frenchStrings = Strings(
     mealReminderNotificationBody = "Appuyez pour voir ce qui est prévu.",
 
     aboutAppName = "Meal Planner",
-    aboutVersion = "Version 1.0",
+    aboutVersion = { version -> "Version $version" },
     aboutBody = "Meal Planner vous aide à planifier vos repas de la semaine, organiser vos recettes, générer " +
         "automatiquement des listes de courses à partir de votre plan de repas, et suivre vos dépenses " +
         "alimentaires.\n\nParcourez et enregistrez des recettes, assignez-les aux créneaux petit-déjeuner, " +

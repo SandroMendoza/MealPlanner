@@ -261,7 +261,7 @@ val englishStrings = Strings(
     mealReminderNotificationBody = "Tap to see what's planned.",
 
     aboutAppName = "Meal Planner",
-    aboutVersion = "Version 1.0",
+    aboutVersion = { version -> "Version $version" },
     aboutBody = "Meal Planner helps you plan weekly meals, organize recipes, build shopping " +
         "lists automatically from your meal plan, and keep track of what you spend on groceries.\n\n" +
         "Browse and save recipes, assign them to breakfast, lunch, dinner, or snack slots on your weekly calendar, " +

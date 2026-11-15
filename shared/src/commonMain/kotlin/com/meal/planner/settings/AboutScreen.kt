@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.meal.planner.common.rememberAppVersionName
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 
@@ -50,7 +51,7 @@ fun AboutScreen(onBack: () -> Unit) {
             Text(text = strings.aboutAppName, style = MaterialTheme.typography.headlineSmall)
             Spacer(Modifier.height(spacing.xs))
             Text(
-                text = strings.aboutVersion,
+                text = strings.aboutVersion(rememberAppVersionName()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
