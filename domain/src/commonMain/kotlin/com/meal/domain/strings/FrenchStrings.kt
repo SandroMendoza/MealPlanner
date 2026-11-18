@@ -240,7 +240,6 @@ val frenchStrings = Strings(
     settingsAbout = "À propos",
     settingsAboutMealPlanner = "À propos de Meal Planner",
     settingsPrivacyPolicy = "Politique de Confidentialité",
-    settingsAdPrivacyOptions = "Options de confidentialité des annonces",
     settingsReadAloud = "Lire à voix haute",
     settingsYourData = "Vos données",
     settingsExportBackup = "Enregistrer une sauvegarde",
@@ -271,16 +270,15 @@ val frenchStrings = Strings(
         "Créé avec Kotlin Multiplatform et Jetpack Compose.",
 
     privacyPolicyParagraphs = listOf(
-        "Dernière mise à jour : 15 novembre 2026",
-        "Meal Planner est une application de planification de repas qui garde vos données sur votre appareil. Elle n'a pas de compte utilisateur, ni d'outil d'analyse ou de rapport de plantage. Elle affiche des publicités de Google AdMob, qui collecte certaines données de l'appareil comme décrit dans la section « Publicités ». Le développeur ne collecte, ne reçoit et ne vend aucune donnée personnelle.",
+        "Dernière mise à jour : 18 novembre 2026",
+        "Meal Planner est une application de planification de repas qui garde vos données sur votre appareil. Elle n'a pas de compte utilisateur, pas de publicité, ni d'outil d'analyse ou de rapport de plantage. Le développeur ne collecte, ne reçoit et ne vend aucune donnée personnelle.",
         "Informations stockées sur votre appareil\nL'application stocke vos recettes, plans de repas, listes de courses, dépenses, profil (nom, bio et photo) et réglages dans son espace privé sur votre appareil. Quand la sauvegarde Android est activée, Android inclut ces données, photos comprises, dans la sauvegarde de votre appareil sur votre compte Google, et les copie quand vous passez à un nouvel appareil. Google conserve cette sauvegarde selon sa propre politique de confidentialité, et le développeur n'y a pas accès. Désinstaller l'application ou effacer ses données les supprime de votre appareil. Vous pouvez gérer ou supprimer les sauvegardes dans les réglages de sauvegarde de votre appareil.",
         "Photos\nQuand vous ajoutez une photo de recette ou de profil, l'application utilise le sélecteur de photos d'Android et ne voit donc que les photos que vous choisissez. L'application enregistre une copie réduite de chaque photo, sans sa localisation ni ses autres métadonnées. Les photos ne sont jamais envoyées, sauf dans la sauvegarde de votre appareil décrite ci-dessus.",
         "Rappels de repas\nSi vous activez les rappels de repas, c'est votre appareil qui les planifie et les affiche. Rien les concernant n'est envoyé ailleurs.",
         "Partage\nQuand vous exportez un rapport de dépenses, l'application transmet le fichier à l'application que vous choisissez dans le menu de partage d'Android. La politique de confidentialité de cette application s'applique ensuite. Quand vous enregistrez une sauvegarde depuis les réglages, le fichier contient vos recettes, plans de repas, listes de courses, réglages et photos, et il est enregistré uniquement à l'endroit que vous choisissez ; l'application ne l'envoie nulle part.",
         "Lecture à voix haute\nLa lecture à voix haute utilise le service de synthèse vocale installé sur votre appareil. Le texte lu est traité par ce service selon la politique de confidentialité de son fournisseur.",
         "Assistants vocaux\nSur les versions d'Android compatibles, les assistants installés sur votre appareil peuvent lire et modifier votre liste de courses, vos recettes, votre plan de repas et votre rapport de dépenses quand vous le leur demandez. L'assistant traite ces données selon sa propre politique de confidentialité.",
-        "Publicités\nLes écrans d'accueil et du plan de repas affichent des bannières publicitaires de Google AdMob. Pour afficher les publicités, mesurer leurs performances et prévenir la fraude, le SDK AdMob collecte des informations sur votre appareil, comme son identifiant publicitaire, son adresse IP, sa localisation approximative déduite de cette adresse IP, vos interactions avec les publicités et des données de diagnostic. Google traite ces données selon sa propre politique de confidentialité : https://policies.google.com/privacy. Si vous êtes dans l'Espace économique européen, au Royaume-Uni ou en Suisse, l'application vous demande votre consentement avant de personnaliser les publicités, et vous pouvez modifier votre choix à tout moment dans Paramètres > Options de confidentialité des annonces. Vous pouvez réinitialiser ou supprimer votre identifiant publicitaire dans les réglages de votre appareil. Vos recettes, plans de repas et autres données de l'application ne sont jamais partagés avec AdMob ni envoyés au développeur.",
-        "Enfants\nMeal Planner ne s'adresse pas aux enfants de moins de 13 ans.",
+        "Enfants\nMeal Planner ne s'adresse pas aux enfants de moins de 13 ans et ne collecte sciemment de données auprès de personne.",
         "Modifications de cette politique\nSi les pratiques de l'application en matière de données changent, cette politique est mise à jour et la date ci-dessus aussi.",
         "Contact\nQuestions sur cette politique : sandragon.inc@gmail.com"
     ),

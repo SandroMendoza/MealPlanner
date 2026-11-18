@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Policy
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material.icons.filled.Save
@@ -54,7 +53,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.CalendarViewMode
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.ThemeMode
-import com.meal.planner.ads.rememberAdPrivacyOptions
 import com.meal.planner.backup.isBackupSupported
 import com.meal.planner.backup.rememberBackupFileLaunchers
 import com.meal.planner.components.CurrencyDropdownField
@@ -92,7 +90,6 @@ fun SettingsScreen(
 ) {
     val spacing = MealPlannerTokens.spacing
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val adPrivacyOptions = rememberAdPrivacyOptions()
     val backupFiles = rememberBackupFileLaunchers(
         onExportDestination = viewModel::exportBackup,
         onImportSource = viewModel::importBackup
@@ -250,12 +247,6 @@ fun SettingsScreen(
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            adPrivacyOptions?.let { openAdPrivacyOptions ->
-                SettingsRow(label = LocalStrings.current.settingsAdPrivacyOptions, icon = Icons.Default.Policy, onClick = openAdPrivacyOptions) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
-                }
-                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            }
         }
     }
 }

@@ -54,8 +54,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.enums.MeasurementUnit
-import com.meal.planner.ads.AdBanner
-import com.meal.planner.ads.AdPlacement
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.common.formatPrice
@@ -348,8 +346,6 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                     Text(LocalStrings.current.shoppingAddItemButton, style = MaterialTheme.typography.labelMedium)
                 }
             }
-
-            AdBanner(placement = AdPlacement.SHOPPING_LIST)
         }
 
         if (uiState.showAddItemDialog) {

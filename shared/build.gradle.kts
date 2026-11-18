@@ -42,8 +42,6 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.koin.android)
             api(libs.androidx.appfunctions)
-            implementation(libs.play.services.ads)
-            implementation(libs.user.messaging.platform)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

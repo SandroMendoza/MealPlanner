@@ -70,8 +70,6 @@ import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
-import com.meal.planner.ads.AdBanner
-import com.meal.planner.ads.AdPlacement
 import com.meal.planner.common.displayName
 import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
@@ -105,7 +103,6 @@ fun RecipeScreen(
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0),
-        bottomBar = { AdBanner(placement = AdPlacement.RECIPES) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = onAddRecipeClick,

@@ -240,7 +240,6 @@ val spanishStrings = Strings(
     settingsAbout = "Acerca de",
     settingsAboutMealPlanner = "Acerca de Meal Planner",
     settingsPrivacyPolicy = "Política de Privacidad",
-    settingsAdPrivacyOptions = "Opciones de privacidad de anuncios",
     settingsReadAloud = "Leer en voz alta",
     settingsYourData = "Tus datos",
     settingsExportBackup = "Guardar una copia de seguridad",
@@ -271,16 +270,15 @@ val spanishStrings = Strings(
         "y Jetpack Compose.",
 
     privacyPolicyParagraphs = listOf(
-        "Última actualización: 15 de noviembre de 2026",
-        "Meal Planner es una app de planificación de comidas que guarda tus datos en tu dispositivo. No tiene cuentas de usuario ni herramientas de análisis o informes de fallos. Muestra anuncios de Google AdMob, que recopila algunos datos del dispositivo como se describe en el apartado «Anuncios». El desarrollador no recopila, recibe ni vende ningún dato personal.",
+        "Última actualización: 18 de noviembre de 2026",
+        "Meal Planner es una app de planificación de comidas que guarda tus datos en tu dispositivo. No tiene cuentas de usuario, ni anuncios, ni herramientas de análisis o informes de fallos. El desarrollador no recopila, recibe ni vende ningún dato personal.",
         "Información guardada en tu dispositivo\nLa app guarda tus recetas, planes de comidas, listas de compras, gastos, perfil (nombre, biografía y foto) y ajustes en su almacenamiento privado de tu dispositivo. Cuando la copia de seguridad de Android está activada, Android incluye estos datos, fotos incluidas, en la copia de seguridad de tu dispositivo en tu cuenta de Google, y los copia cuando pasas a un dispositivo nuevo. Google guarda la copia según su propia política de privacidad, y el desarrollador no tiene acceso a ella. Desinstalar la app o borrar sus datos los elimina de tu dispositivo. Puedes gestionar o eliminar las copias de seguridad en los ajustes de copia de seguridad de tu dispositivo.",
         "Fotos\nCuando añades una foto de receta o de perfil, la app usa el selector de fotos de Android, así que solo ve las fotos que eliges. La app guarda una copia más pequeña de cada foto, sin su ubicación ni otros metadatos. Las fotos nunca se suben, salvo en la copia de seguridad de tu dispositivo descrita arriba.",
         "Recordatorios de comidas\nSi activas los recordatorios de comidas, tu dispositivo los programa y los muestra. No se envía nada sobre ellos a ningún sitio.",
         "Compartir\nCuando exportas un informe de gastos, la app pasa el archivo a la app que elijas en el menú de compartir de Android. A partir de ahí se aplica la política de privacidad de esa app. Cuando guardas una copia de seguridad desde los ajustes, el archivo contiene tus recetas, planes de comidas, listas de compras, ajustes y fotos, y se guarda solo donde tú elijas; la app no lo envía a ningún sitio.",
         "Lectura en voz alta\nLa lectura en voz alta usa el servicio de texto a voz instalado en tu dispositivo. Ese servicio procesa el texto según la política de privacidad de su proveedor.",
         "Asistentes de voz\nEn las versiones de Android compatibles, las apps de asistente de tu dispositivo pueden leer y modificar tu lista de compras, recetas, plan de comidas e informe de gastos cuando se lo pides. El asistente trata esos datos según su propia política de privacidad.",
-        "Anuncios\nLas pantallas de inicio y del plan de comidas muestran anuncios de banner de Google AdMob. Para mostrar anuncios, medirlos y prevenir el fraude, el SDK de AdMob recopila información de tu dispositivo, como su ID de publicidad, su dirección IP, su ubicación aproximada basada en esa dirección IP, cómo interactúas con los anuncios y datos de diagnóstico. Google trata estos datos según su propia política de privacidad: https://policies.google.com/privacy. Si estás en el Espacio Económico Europeo, el Reino Unido o Suiza, la app te pide tu consentimiento antes de personalizar los anuncios, y puedes cambiar tu elección en cualquier momento en Ajustes > Opciones de privacidad de anuncios. Puedes restablecer o eliminar tu ID de publicidad en los ajustes de tu dispositivo. Tus recetas, planes de comidas y otros datos de la app nunca se comparten con AdMob ni se envían al desarrollador.",
-        "Menores\nMeal Planner no está dirigida a menores de 13 años.",
+        "Menores\nMeal Planner no está dirigida a menores de 13 años y no recopila datos de nadie a sabiendas.",
         "Cambios en esta política\nSi cambian las prácticas de datos de la app, esta política se actualiza y la fecha de arriba también.",
         "Contacto\nPreguntas sobre esta política: sandragon.inc@gmail.com"
     ),

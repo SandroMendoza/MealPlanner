@@ -41,8 +41,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
-import com.meal.planner.ads.AdBanner
-import com.meal.planner.ads.AdPlacement
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.RecipeThumbnail
@@ -209,8 +207,6 @@ fun HomeScreen(
                 )
             }
         }
-
-        AdBanner(placement = AdPlacement.HOME)
     }
 }
 

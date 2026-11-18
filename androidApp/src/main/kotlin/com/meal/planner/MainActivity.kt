@@ -7,7 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import com.meal.planner.ads.AdsConsent
 import com.meal.planner.di.appModule
 import com.meal.planner.navigation.Routes
 import org.koin.android.ext.koin.androidContext
@@ -36,8 +35,6 @@ class MainActivity : ComponentActivity() {
             ?.takeIf { it.pathSegments.firstOrNull() == Routes.SHOPPING_LIST }
             ?.getQueryParameter("addItem")
             ?.takeIf { it.isNotBlank() }
-
-        AdsConsent.gatherConsent(this)
 
         setContent {
             App(startRoute = startRoute, quickAddItemName = quickAddItemName)

@@ -195,7 +195,6 @@ data class Strings(
     val settingsAbout: String,
     val settingsAboutMealPlanner: String,
     val settingsPrivacyPolicy: String,
-    val settingsAdPrivacyOptions: String,
     val settingsReadAloud: String,
     val settingsYourData: String,
     val settingsExportBackup: String,

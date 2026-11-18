@@ -38,30 +38,6 @@ val releaseKeyPassword = signingValue("RELEASE_KEY_PASSWORD")
 val hasReleaseSigning = listOf(releaseStoreFile, releaseStorePassword, releaseKeyAlias, releaseKeyPassword)
     .all { !it.isNullOrBlank() }
 
-// Google's published sample IDs, which only ever serve test ads. Debug builds always use
-// them; release builds use the real AdMob IDs from local.properties or environment
-// variables, and fall back to these when the real ones are missing.
-val admobTestAppId = "ca-app-pub-3940256099942544~3347511713"
-val admobTestBannerId = "ca-app-pub-3940256099942544/9214589741"
-
-val admobAppId = signingValue("ADMOB_APP_ID")
-val admobBannerHomeId = signingValue("ADMOB_BANNER_HOME_ID")
-val admobBannerMealPlanId = signingValue("ADMOB_BANNER_MEAL_PLAN_ID")
-val admobBannerRecipesId = signingValue("ADMOB_BANNER_RECIPES_ID")
-val admobBannerRecipeDetailId = signingValue("ADMOB_BANNER_RECIPE_DETAIL_ID")
-val admobBannerShoppingListId = signingValue("ADMOB_BANNER_SHOPPING_LIST_ID")
-val hasAdmobIds = listOf(
-    admobAppId,
-    admobBannerHomeId,
-    admobBannerMealPlanId,
-    admobBannerRecipesId,
-    admobBannerRecipeDetailId,
-    admobBannerShoppingListId
-).all { !it.isNullOrBlank() }
-if (!hasAdmobIds) {
-    logger.warn("AdMob IDs missing from local.properties; release builds will serve test ads only.")
-}
-
 android {
     namespace = "com.meal.planner"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -89,21 +65,7 @@ android {
         }
     }
     buildTypes {
-        getByName("debug") {
-            manifestPlaceholders["admobAppId"] = admobTestAppId
-            manifestPlaceholders["admobBannerHomeId"] = admobTestBannerId
-            manifestPlaceholders["admobBannerMealPlanId"] = admobTestBannerId
-            manifestPlaceholders["admobBannerRecipesId"] = admobTestBannerId
-            manifestPlaceholders["admobBannerRecipeDetailId"] = admobTestBannerId
-            manifestPlaceholders["admobBannerShoppingListId"] = admobTestBannerId
-        }
         getByName("release") {
-            manifestPlaceholders["admobAppId"] = if (hasAdmobIds) admobAppId!! else admobTestAppId
-            manifestPlaceholders["admobBannerHomeId"] = if (hasAdmobIds) admobBannerHomeId!! else admobTestBannerId
-            manifestPlaceholders["admobBannerMealPlanId"] = if (hasAdmobIds) admobBannerMealPlanId!! else admobTestBannerId
-            manifestPlaceholders["admobBannerRecipesId"] = if (hasAdmobIds) admobBannerRecipesId!! else admobTestBannerId
-            manifestPlaceholders["admobBannerRecipeDetailId"] = if (hasAdmobIds) admobBannerRecipeDetailId!! else admobTestBannerId
-            manifestPlaceholders["admobBannerShoppingListId"] = if (hasAdmobIds) admobBannerShoppingListId!! else admobTestBannerId
             isMinifyEnabled = true
             isShrinkResources = true
             if (hasReleaseSigning) {
