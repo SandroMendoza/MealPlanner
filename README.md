@@ -19,7 +19,7 @@ Use the run configurations provided by the run widget in your IDE's toolbar. You
 
 ### Running the tests
 
-`./run-tests.sh` runs the unit tests of `domain`, `data`, `presentation` and `shared`
+`./run-tests.sh` runs the unit tests of `domain`, `data` and `presentation`
 on the JVM, prints a per-module summary, and exits non-zero if anything fails. On Windows,
 run it from Git Bash.
 

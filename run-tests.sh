@@ -6,7 +6,7 @@ set -u
 
 cd "$(dirname "$0")"
 
-modules=(domain data presentation shared)
+modules=(domain data presentation)
 
 tasks=()
 for module in "${modules[@]}"; do
