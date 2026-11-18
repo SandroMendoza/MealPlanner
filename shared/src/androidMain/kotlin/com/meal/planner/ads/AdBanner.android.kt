@@ -89,6 +89,9 @@ actual fun rememberAdPrivacyOptions(): (() -> Unit)? {
 internal fun AdPlacement.metaDataKey(): String = when (this) {
     AdPlacement.HOME -> "com.meal.planner.ads.BANNER_HOME"
     AdPlacement.MEAL_PLAN -> "com.meal.planner.ads.BANNER_MEAL_PLAN"
+    AdPlacement.RECIPES -> "com.meal.planner.ads.BANNER_RECIPES"
+    AdPlacement.RECIPE_DETAIL -> "com.meal.planner.ads.BANNER_RECIPE_DETAIL"
+    AdPlacement.SHOPPING_LIST -> "com.meal.planner.ads.BANNER_SHOPPING_LIST"
 }
 
 private fun adUnitIdFor(context: Context, placement: AdPlacement): String {

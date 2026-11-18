@@ -24,6 +24,15 @@
         <meta-data
             android:name="com.meal.planner.ads.BANNER_MEAL_PLAN"
             android:value="${admobBannerMealPlanId}" />
+        <meta-data
+            android:name="com.meal.planner.ads.BANNER_RECIPES"
+            android:value="${admobBannerRecipesId}" />
+        <meta-data
+            android:name="com.meal.planner.ads.BANNER_RECIPE_DETAIL"
+            android:value="${admobBannerRecipeDetailId}" />
+        <meta-data
+            android:name="com.meal.planner.ads.BANNER_SHOPPING_LIST"
+            android:value="${admobBannerShoppingListId}" />
 
         <activity
             android:exported="true"

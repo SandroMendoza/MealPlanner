@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 /** Screens that show a banner ad. Each has its own ad unit. */
-enum class AdPlacement { HOME, MEAL_PLAN }
+enum class AdPlacement { HOME, MEAL_PLAN, RECIPES, RECIPE_DETAIL, SHOPPING_LIST }
 
 /** A banner ad for [placement]. It takes no space until an ad has loaded. */
 @Composable

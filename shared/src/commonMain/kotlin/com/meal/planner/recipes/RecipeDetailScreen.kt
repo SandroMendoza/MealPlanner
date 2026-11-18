@@ -60,6 +60,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.Instruction
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
+import com.meal.planner.ads.AdBanner
+import com.meal.planner.ads.AdPlacement
 import com.meal.planner.common.displayName
 import com.meal.planner.components.MealTypeDialog
 import com.meal.planner.components.recipeImageModel
@@ -391,6 +393,8 @@ fun RecipeDetailScreen(
                             Text(LocalStrings.current.recipeDetailAddToMealPlan)
                         }
                     }
+
+                    AdBanner(placement = AdPlacement.RECIPE_DETAIL)
                 }
             }
         }
