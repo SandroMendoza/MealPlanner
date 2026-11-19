@@ -6,7 +6,6 @@ import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -19,7 +18,6 @@ fun recipe(
     id = id,
     name = name,
     description = null,
-    mealTypes = listOf(MealType.DINNER),
     category = FoodCategory.MAIN_DISH,
     preparationTimeMinutes = 30,
     servings = 4,

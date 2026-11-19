@@ -69,7 +69,6 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
@@ -145,7 +144,7 @@ fun RecipeScreen(
                             OutlinedTextField(
                                 value = uiState.searchQuery,
                                 onValueChange = viewModel::onSearchQueryChange,
-                                placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder) },
+                                placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
                                 trailingIcon = {
                                     if (uiState.searchQuery.isNotEmpty()) {
@@ -176,21 +175,7 @@ fun RecipeScreen(
                                     Icon(Icons.Default.FilterAlt, contentDescription = LocalStrings.current.recipesFilters)
                                 }
                             }
-                        }
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            LazyRow(
-                                horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                items(listOf<MealType?>(null) + MealType.entries) { mealType ->
-                                    FilterChip(
-                                        selected = uiState.selectedMealType == mealType,
-                                        onClick = { viewModel.onMealTypeSelected(mealType) },
-                                        label = { Text(mealType.quickFilterLabel()) },
-                                        colors = activeFilterChipColors()
-                                    )
-                                }
-                            }
+
                             IconButton(onClick = viewModel::onViewModeToggle) {
                                 if (isListView) {
                                     Icon(Icons.Default.GridView, contentDescription = LocalStrings.current.recipesShowAsGridCd)
@@ -264,13 +249,6 @@ fun RecipeScreen(
             )
         }
     }
-}
-
-@Composable
-private fun MealType?.quickFilterLabel(): String = when (this) {
-    null -> LocalStrings.current.all
-    MealType.SNACK -> LocalStrings.current.recipesSnacks
-    else -> displayName()
 }
 
 @Composable

@@ -37,7 +37,6 @@ class UiStateTest {
     private val adobo = recipe(
         name = "Chicken Adobo",
         description = "Braised in vinegar",
-        mealTypes = listOf(MealType.DINNER),
         category = FoodCategory.MAIN_DISH,
         cuisine = Cuisine.FILIPINO,
         preparationTimeMinutes = 60,
@@ -48,7 +47,6 @@ class UiStateTest {
     )
     private val salad = recipe(
         name = "Garden Salad",
-        mealTypes = listOf(MealType.LUNCH),
         category = FoodCategory.SALAD,
         cuisine = Cuisine.AMERICAN,
         preparationTimeMinutes = 10,
@@ -64,7 +62,6 @@ class UiStateTest {
         assertEquals(listOf(salad), state.copy(showCreatedOnly = true).filteredRecipes)
         assertEquals(listOf(salad), state.copy(selectedCategory = FoodCategory.SALAD).filteredRecipes)
         assertEquals(listOf(adobo), state.copy(selectedCuisine = Cuisine.FILIPINO).filteredRecipes)
-        assertEquals(listOf(salad), state.copy(selectedMealType = MealType.LUNCH).filteredRecipes)
         assertEquals(listOf(salad), state.copy(prepTimeRange = 0f..30f).filteredRecipes)
     }
 
@@ -102,7 +99,6 @@ class UiStateTest {
 
     private val validForm = RecipeFormUiState(
         name = "Pancit",
-        mealTypes = setOf(MealType.LUNCH),
         ingredients = listOf(IngredientFormRow(name = "Noodles", quantity = "1")),
         instructions = listOf(InstructionFormRow("Boil"))
     )
@@ -111,7 +107,6 @@ class UiStateTest {
     fun recipeFormCanSaveOnlyWhenRequiredFieldsAreFilled() {
         assertTrue(validForm.canSave)
         assertFalse(validForm.copy(name = " ").canSave)
-        assertFalse(validForm.copy(mealTypes = emptySet()).canSave)
         assertFalse(validForm.copy(ingredients = listOf(IngredientFormRow(name = " "))).canSave)
         assertFalse(validForm.copy(instructions = listOf(InstructionFormRow(""))).canSave)
     }
@@ -142,14 +137,15 @@ class UiStateTest {
     }
 
     @Test
-    fun calendarEntriesForFiltersByDateAndMealType() {
+    fun calendarEntriesForFiltersByDateAndSortsByMealType() {
         val day = LocalDate(2026, 11, 10)
         val lunch = MealPlanEntry(Uuid.random(), day, MealType.LUNCH, salad)
         val dinner = MealPlanEntry(Uuid.random(), day, MealType.DINNER, adobo)
+        val breakfast = MealPlanEntry(Uuid.random(), day, MealType.BREAKFAST, salad)
         val nextDayLunch = MealPlanEntry(Uuid.random(), day.plus(1, DateTimeUnit.DAY), MealType.LUNCH, salad)
-        val state = MealCalendarUiState(weekStart = day, weekEnd = day, entries = listOf(lunch, dinner, nextDayLunch))
-        assertEquals(listOf(lunch), state.entriesFor(day, MealType.LUNCH))
-        assertEquals(emptyList(), state.entriesFor(day, MealType.BREAKFAST))
+        val state = MealCalendarUiState(weekStart = day, weekEnd = day, entries = listOf(dinner, lunch, nextDayLunch, breakfast))
+        assertEquals(listOf(breakfast, lunch, dinner), state.entriesFor(day))
+        assertEquals(emptyList(), state.entriesFor(day.plus(2, DateTimeUnit.DAY)))
     }
 
     @Test

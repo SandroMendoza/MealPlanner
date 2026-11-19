@@ -48,7 +48,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.common.filterDecimalInput
 import com.meal.planner.common.filterIntegerInput
@@ -159,18 +158,6 @@ fun RecipeFormScreen(
                         selected = uiState.cuisine == cuisine,
                         onClick = { viewModel.updateCuisine(cuisine) },
                         label = { Text(cuisine.displayName()) },
-                        colors = activeFilterChipColors()
-                    )
-                }
-            }
-
-            SectionLabel(LocalStrings.current.recipeFormMealTypes, required = true)
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-                items(MealType.entries.toList(), key = { it.name }) { mealType ->
-                    FilterChip(
-                        selected = mealType in uiState.mealTypes,
-                        onClick = { viewModel.toggleMealType(mealType) },
-                        label = { Text(mealType.displayName()) },
                         colors = activeFilterChipColors()
                     )
                 }

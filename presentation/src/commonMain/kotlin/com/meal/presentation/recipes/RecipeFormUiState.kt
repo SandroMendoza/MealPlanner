@@ -3,7 +3,6 @@ package com.meal.presentation.recipes
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 
 data class IngredientFormRow(
@@ -26,7 +25,6 @@ data class RecipeFormUiState(
     val description: String = "",
     val category: FoodCategory = FoodCategory.MAIN_DISH,
     val cuisine: Cuisine? = null,
-    val mealTypes: Set<MealType> = emptySet(),
     val preparationTimeMinutes: String = "",
     val servings: String = "",
     val calories: String = "",
@@ -42,7 +40,6 @@ data class RecipeFormUiState(
     val canSave: Boolean
         get() = name.isNotBlank() &&
             !isDuplicateName &&
-            mealTypes.isNotEmpty() &&
             ingredients.any { it.name.isNotBlank() } &&
             instructions.any { it.description.isNotBlank() } &&
             (preparationTimeMinutes.isBlank() || preparationTimeMinutes.toIntOrNull() != null) &&
