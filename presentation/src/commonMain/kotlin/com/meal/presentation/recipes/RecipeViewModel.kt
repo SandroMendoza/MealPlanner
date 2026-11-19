@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -74,11 +73,6 @@ class RecipeViewModel(
     fun onViewModeToggle() {
         val next = if (_uiState.value.viewMode == RecipeViewMode.GRID) RecipeViewMode.LIST else RecipeViewMode.GRID
         _uiState.value = _uiState.value.copy(viewMode = next)
-    }
-
-    fun onMealTypeSelected(mealType: MealType?) {
-        val current = _uiState.value.selectedMealType
-        _uiState.value = _uiState.value.copy(selectedMealType = if (current == mealType) null else mealType)
     }
 
     fun onPrepTimeRangeChange(range: ClosedFloatingPointRange<Float>) {

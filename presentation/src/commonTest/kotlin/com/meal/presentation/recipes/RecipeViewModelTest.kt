@@ -4,7 +4,6 @@ import com.meal.domain.model.AppSettings
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.presentation.fakes.FakeRecipeRepository
@@ -106,17 +105,13 @@ class RecipeViewModelTest {
 
         vm.onCategorySelected(FoodCategory.SOUP)
         vm.onCuisineSelected(Cuisine.THAI)
-        vm.onMealTypeSelected(MealType.LUNCH)
         assertEquals(FoodCategory.SOUP, vm.state.value.selectedCategory)
         assertEquals(Cuisine.THAI, vm.state.value.selectedCuisine)
-        assertEquals(MealType.LUNCH, vm.state.value.selectedMealType)
 
         vm.onCategorySelected(FoodCategory.SOUP)
         vm.onCuisineSelected(Cuisine.THAI)
-        vm.onMealTypeSelected(MealType.LUNCH)
         assertNull(vm.state.value.selectedCategory)
         assertNull(vm.state.value.selectedCuisine)
-        assertNull(vm.state.value.selectedMealType)
     }
 
     @Test

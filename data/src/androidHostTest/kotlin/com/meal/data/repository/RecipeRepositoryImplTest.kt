@@ -11,7 +11,6 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,13 +40,11 @@ class RecipeRepositoryImplTest {
 
     private fun recipe(
         name: String = "Pancit",
-        ingredientNames: List<String> = listOf("Noodles", "Carrot"),
-        mealTypes: List<MealType> = listOf(MealType.LUNCH, MealType.DINNER)
+        ingredientNames: List<String> = listOf("Noodles", "Carrot")
     ) = Recipe(
         id = Uuid.random(),
         name = name,
         description = "Stir-fried noodles",
-        mealTypes = mealTypes,
         category = FoodCategory.MAIN_DISH,
         preparationTimeMinutes = 30,
         servings = 4,
@@ -97,7 +94,6 @@ class RecipeRepositoryImplTest {
 
         assertEquals(added.name, stored.name)
         assertEquals(added.description, stored.description)
-        assertEquals(added.mealTypes.toSet(), stored.mealTypes.toSet())
         assertEquals(added.category, stored.category)
         assertEquals(added.preparationTimeMinutes, stored.preparationTimeMinutes)
         assertEquals(added.servings, stored.servings)
@@ -136,7 +132,6 @@ class RecipeRepositoryImplTest {
             name = "Pancit Canton",
             description = null,
             calories = null,
-            mealTypes = listOf(MealType.SNACK),
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cabbage"), 2.0, MeasurementUnit.PIECE)
             ),
@@ -151,7 +146,6 @@ class RecipeRepositoryImplTest {
         assertNull(stored.description)
         assertNull(stored.calories)
         assertNull(stored.cuisine)
-        assertEquals(listOf(MealType.SNACK), stored.mealTypes)
         assertEquals(listOf("Cabbage"), stored.ingredients.map { it.ingredient.name })
         assertEquals(listOf(Instruction(1, "Toss everything")), stored.instructions)
     }

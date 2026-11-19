@@ -22,7 +22,6 @@ fun ingredientLine(name: String, quantity: Double, unit: MeasurementUnit = Measu
 fun recipe(
     name: String = "Chicken Adobo",
     description: String? = null,
-    mealTypes: List<MealType> = listOf(MealType.DINNER),
     category: FoodCategory = FoodCategory.MAIN_DISH,
     cuisine: Cuisine? = null,
     preparationTimeMinutes: Int = 30,
@@ -38,7 +37,6 @@ fun recipe(
     id = id,
     name = name,
     description = description,
-    mealTypes = mealTypes,
     category = category,
     preparationTimeMinutes = preparationTimeMinutes,
     servings = servings,

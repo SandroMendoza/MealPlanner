@@ -11,11 +11,6 @@ import com.meal.domain.model.enums.FoodCategory.DESSERT
 import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
-import com.meal.domain.model.enums.MealType
-import com.meal.domain.model.enums.MealType.BREAKFAST
-import com.meal.domain.model.enums.MealType.DINNER
-import com.meal.domain.model.enums.MealType.LUNCH
-import com.meal.domain.model.enums.MealType.SNACK
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
@@ -44,7 +39,6 @@ object RecipeSeedData {
             name = "Chicken Adobo",
             image = "chicken_adobo",
             description = "Chicken braised in soy sauce, vinegar, garlic and bay leaves until tender and glossy.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 75, servings = 4, calories = 420,
             ingredients = listOf(
@@ -72,7 +66,6 @@ object RecipeSeedData {
             name = "Pork Barbecue",
             image = "pork_barbecue",
             description = "Sweet and savoury pork skewers marinated overnight and grilled with a sticky glaze.",
-            mealTypes = listOf(LUNCH, DINNER, SNACK),
             category = MAIN_DISH,
             minutes = 60, servings = 6, calories = 420,
             ingredients = listOf(
@@ -101,7 +94,6 @@ object RecipeSeedData {
             name = "Kare-Kare",
             image = "kare_kare",
             description = "Oxtail and vegetables in a thick, savoury peanut sauce, served with shrimp paste.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 180, servings = 6, calories = 600,
             ingredients = listOf(
@@ -133,7 +125,6 @@ object RecipeSeedData {
             name = "Bistek Tagalog",
             image = "bistek_tagalog",
             description = "Thin beef slices braised in soy sauce and calamansi, topped with soft onion rings.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 60, servings = 4, calories = 380,
             ingredients = listOf(
@@ -160,7 +151,6 @@ object RecipeSeedData {
             name = "Pork Menudo",
             image = "pork_menudo",
             description = "Pork and liver stewed in tomato sauce with potatoes, carrots, peas and raisins.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 75, servings = 6, calories = 430,
             ingredients = listOf(
@@ -196,7 +186,6 @@ object RecipeSeedData {
             name = "Chicken Afritada",
             image = "chicken_afritada",
             description = "Chicken stewed in tomato sauce with potatoes, carrots and bell peppers.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 60, servings = 5, calories = 380,
             ingredients = listOf(
@@ -231,7 +220,6 @@ object RecipeSeedData {
             name = "Beef Caldereta",
             image = "beef_caldereta",
             description = "Slow-cooked beef in a rich tomato and liver spread sauce with vegetables and cheese.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 150, servings = 6, calories = 520,
             ingredients = listOf(
@@ -265,7 +253,6 @@ object RecipeSeedData {
             name = "Pork Sisig",
             image = "pork_sisig",
             description = "Crisp chopped pork and liver with onion, chili and calamansi, served sizzling.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 90, servings = 4, calories = 550,
             ingredients = listOf(
@@ -299,7 +286,6 @@ object RecipeSeedData {
             name = "Lechon Kawali",
             image = "lechon_kawali",
             description = "Boiled then deep-fried pork belly with crackling skin and juicy meat.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 150, servings = 4, calories = 650,
             ingredients = listOf(
@@ -325,7 +311,6 @@ object RecipeSeedData {
             name = "Chicken Inasal",
             image = "chicken_inasal",
             description = "Grilled chicken marinated in lemongrass, ginger, garlic and vinegar, basted with annatto oil.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 240, servings = 4, calories = 400,
             ingredients = listOf(
@@ -355,7 +340,6 @@ object RecipeSeedData {
             name = "Pancit Canton",
             image = "pancit_canton",
             description = "Stir-fried egg noodles with pork, shrimp and vegetables in a savoury sauce.",
-            mealTypes = listOf(LUNCH, DINNER, SNACK),
             category = MAIN_DISH,
             minutes = 45, servings = 6, calories = 420,
             ingredients = listOf(
@@ -388,7 +372,6 @@ object RecipeSeedData {
             name = "Pancit Bihon",
             image = "pancit_bihon",
             description = "Thin rice noodles stir-fried with chicken and vegetables.",
-            mealTypes = listOf(LUNCH, DINNER, SNACK),
             category = MAIN_DISH,
             minutes = 45, servings = 6, calories = 360,
             ingredients = listOf(
@@ -421,7 +404,6 @@ object RecipeSeedData {
             name = "Lumpiang Shanghai",
             image = "lumpiang_shanghai",
             description = "Thin, crisp spring rolls filled with seasoned ground pork and vegetables.",
-            mealTypes = listOf(LUNCH, DINNER, SNACK),
             category = SIDE_DISH,
             minutes = 60, servings = 8, calories = 300,
             ingredients = listOf(
@@ -450,7 +432,6 @@ object RecipeSeedData {
             name = "Tortang Talong",
             image = "tortang_talong",
             description = "Grilled eggplant flattened and fried in a beaten egg coating.",
-            mealTypes = listOf(BREAKFAST, LUNCH),
             category = MAIN_DISH,
             minutes = 30, servings = 4, calories = 220,
             ingredients = listOf(
@@ -474,7 +455,6 @@ object RecipeSeedData {
             name = "Ginisang Ampalaya",
             image = "ginisang_ampalaya",
             description = "Sautéed bitter gourd with tomato, onion and egg.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = SIDE_DISH,
             minutes = 30, servings = 4, calories = 160,
             ingredients = listOf(
@@ -501,7 +481,6 @@ object RecipeSeedData {
             name = "Pinakbet",
             image = "pinakbet",
             description = "Mixed vegetables cooked with pork and shrimp paste.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 40, servings = 4, calories = 220,
             ingredients = listOf(
@@ -532,7 +511,6 @@ object RecipeSeedData {
             name = "Laing",
             image = "laing",
             description = "Dried taro leaves slow-cooked in coconut milk with pork, ginger and chili.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = SIDE_DISH,
             minutes = 70, servings = 4, calories = 330,
             ingredients = listOf(
@@ -559,7 +537,6 @@ object RecipeSeedData {
             name = "Chicken Curry",
             image = "chicken_curry",
             description = "Filipino-style chicken curry with coconut milk, potatoes and carrots.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 50, servings = 5, calories = 450,
             ingredients = listOf(
@@ -591,7 +568,6 @@ object RecipeSeedData {
             name = "Pork Binagoongan",
             image = "pork_binagoongan",
             description = "Pork belly braised with shrimp paste and tomatoes, with fried eggplant.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 60, servings = 4, calories = 520,
             ingredients = listOf(
@@ -622,7 +598,6 @@ object RecipeSeedData {
             name = "Daing na Bangus",
             image = "daing_na_bangus",
             description = "Milkfish marinated overnight in garlic and vinegar, then fried until crisp.",
-            mealTypes = listOf(BREAKFAST, LUNCH),
             category = MAIN_DISH,
             minutes = 30, servings = 4, calories = 330,
             ingredients = listOf(
@@ -645,7 +620,6 @@ object RecipeSeedData {
             name = "Fish Escabeche",
             image = "fish_escabeche",
             description = "Fried whole fish topped with a sweet and sour sauce and crisp vegetables.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 40, servings = 4, calories = 320,
             ingredients = listOf(
@@ -679,7 +653,6 @@ object RecipeSeedData {
             name = "Ginataang Kalabasa at Sitaw",
             image = "ginataang_kalabasa_at_sitaw",
             description = "Squash and string beans with shrimp in coconut milk.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 35, servings = 4, calories = 280,
             ingredients = listOf(
@@ -707,7 +680,6 @@ object RecipeSeedData {
             name = "Beef Mechado",
             image = "beef_mechado",
             description = "Beef braised in tomato sauce with soy sauce, calamansi, potatoes and carrots.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 150, servings = 6, calories = 480,
             ingredients = listOf(
@@ -740,7 +712,6 @@ object RecipeSeedData {
             name = "Pork Giniling",
             image = "pork_giniling",
             description = "Ground pork sautéed in tomato sauce with diced potatoes, carrots, peas and raisins.",
-            mealTypes = listOf(BREAKFAST, LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 35, servings = 4, calories = 380,
             ingredients = listOf(
@@ -771,7 +742,6 @@ object RecipeSeedData {
             name = "Ginataang Hipon",
             image = "ginataang_hipon",
             description = "Shrimp simmered in coconut milk with ginger and green chili.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = MAIN_DISH,
             minutes = 30, servings = 4, calories = 350,
             ingredients = listOf(
@@ -799,7 +769,6 @@ object RecipeSeedData {
             name = "Sinigang na Baboy",
             image = "sinigang_na_baboy",
             description = "Sour tamarind soup with pork ribs and vegetables.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = SOUP,
             minutes = 90, servings = 6, calories = 380,
             ingredients = listOf(
@@ -831,7 +800,6 @@ object RecipeSeedData {
             name = "Chicken Tinola",
             image = "chicken_tinola",
             description = "Light ginger broth with chicken, green papaya and chili leaves.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = SOUP,
             minutes = 50, servings = 5, calories = 290,
             ingredients = listOf(
@@ -859,7 +827,6 @@ object RecipeSeedData {
             name = "Bulalo",
             image = "bulalo",
             description = "Slow-simmered beef shank and bone marrow soup with corn and greens.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = SOUP,
             minutes = 240, servings = 6, calories = 520,
             ingredients = listOf(
@@ -886,7 +853,6 @@ object RecipeSeedData {
             name = "Nilagang Baka",
             image = "nilagang_baka",
             description = "Clear beef soup with potatoes, saba bananas, corn and cabbage.",
-            mealTypes = listOf(LUNCH, DINNER),
             category = SOUP,
             minutes = 180, servings = 6, calories = 420,
             ingredients = listOf(
@@ -914,7 +880,6 @@ object RecipeSeedData {
             name = "Chicken Sopas",
             image = "chicken_sopas",
             description = "Creamy chicken macaroni soup with vegetables and evaporated milk.",
-            mealTypes = listOf(BREAKFAST, LUNCH, DINNER),
             category = SOUP,
             minutes = 45, servings = 6, calories = 330,
             ingredients = listOf(
@@ -946,7 +911,6 @@ object RecipeSeedData {
             name = "Beef Tapa",
             image = "beef_tapa",
             description = "Sweet and garlicky cured beef, the centre of a classic tapsilog breakfast.",
-            mealTypes = listOf(BREAKFAST),
             category = MAIN_DISH,
             minutes = 30, servings = 4, calories = 380,
             ingredients = listOf(
@@ -971,7 +935,6 @@ object RecipeSeedData {
             name = "Skinless Longganisa",
             image = "skinless_longganisa",
             description = "Sweet garlic pork sausages shaped by hand, no casing needed.",
-            mealTypes = listOf(BREAKFAST),
             category = MAIN_DISH,
             minutes = 30, servings = 6, calories = 350,
             ingredients = listOf(
@@ -998,7 +961,6 @@ object RecipeSeedData {
             name = "Sinangag",
             image = "sinangag",
             description = "Garlic fried rice made from day-old rice.",
-            mealTypes = listOf(BREAKFAST),
             category = SIDE_DISH,
             minutes = 15, servings = 4, calories = 260,
             ingredients = listOf(
@@ -1021,7 +983,6 @@ object RecipeSeedData {
             name = "Arroz Caldo",
             image = "arroz_caldo",
             description = "Chicken and rice porridge with ginger, topped with toasted garlic, egg and calamansi.",
-            mealTypes = listOf(BREAKFAST, SNACK),
             category = SOUP,
             minutes = 60, servings = 6, calories = 320,
             ingredients = listOf(
@@ -1053,7 +1014,6 @@ object RecipeSeedData {
             name = "Champorado",
             image = "champorado",
             description = "Chocolate rice porridge made with cacao tablets, drizzled with evaporated milk.",
-            mealTypes = listOf(BREAKFAST, SNACK),
             category = DESSERT,
             minutes = 35, servings = 4, calories = 360,
             ingredients = listOf(
@@ -1077,7 +1037,6 @@ object RecipeSeedData {
             name = "Leche Flan",
             image = "leche_flan",
             description = "Silky steamed custard with a layer of caramel.",
-            mealTypes = listOf(SNACK),
             category = DESSERT,
             minutes = 75, servings = 8, calories = 290,
             ingredients = listOf(
@@ -1100,7 +1059,6 @@ object RecipeSeedData {
             name = "Turon",
             image = "turon",
             description = "Banana and jackfruit spring rolls fried in a crisp caramel coating.",
-            mealTypes = listOf(SNACK),
             category = DESSERT,
             minutes = 30, servings = 8, calories = 220,
             ingredients = listOf(
@@ -1123,7 +1081,6 @@ object RecipeSeedData {
             name = "Maja Blanca",
             image = "maja_blanca",
             description = "Coconut milk and corn pudding topped with toasted coconut.",
-            mealTypes = listOf(SNACK),
             category = DESSERT,
             minutes = 45, servings = 12, calories = 210,
             ingredients = listOf(
@@ -1150,7 +1107,6 @@ object RecipeSeedData {
             name = "Buko Pandan",
             image = "buko_pandan",
             description = "Young coconut and pandan jelly in a sweet cream dressing.",
-            mealTypes = listOf(SNACK),
             category = DESSERT,
             minutes = 30, servings = 8, calories = 280,
             ingredients = listOf(
@@ -1175,7 +1131,6 @@ object RecipeSeedData {
             name = "Biko",
             image = "biko",
             description = "Sticky rice cake cooked in coconut milk and brown sugar, topped with latik.",
-            mealTypes = listOf(SNACK),
             category = DESSERT,
             minutes = 75, servings = 12, calories = 300,
             ingredients = listOf(
@@ -1202,7 +1157,6 @@ object RecipeSeedData {
         name: String,
         image: String,
         description: String,
-        mealTypes: List<MealType>,
         category: FoodCategory,
         minutes: Int,
         servings: Int,
@@ -1213,7 +1167,6 @@ object RecipeSeedData {
         id = Uuid.random(),
         name = name,
         description = description,
-        mealTypes = mealTypes,
         category = category,
         preparationTimeMinutes = minutes,
         servings = servings,

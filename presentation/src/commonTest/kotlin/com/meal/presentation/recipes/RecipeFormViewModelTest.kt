@@ -4,7 +4,6 @@ import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.usecase.AddRecipeUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
@@ -36,7 +35,6 @@ class RecipeFormViewModelTest {
     private val existing = recipe(
         name = "Kare-Kare",
         description = "Oxtail in peanut sauce",
-        mealTypes = listOf(MealType.LUNCH, MealType.DINNER),
         category = FoodCategory.MAIN_DISH,
         cuisine = Cuisine.FILIPINO,
         preparationTimeMinutes = 120,
@@ -67,7 +65,6 @@ class RecipeFormViewModelTest {
 
     private fun RecipeFormViewModel.fillValidForm(name: String = "Lumpia") {
         updateName(name)
-        toggleMealType(MealType.SNACK)
         addIngredientRow()
         updateIngredientRow(0, IngredientFormRow("Wrapper", "20", MeasurementUnit.PIECE))
         addInstructionRow()
@@ -93,7 +90,6 @@ class RecipeFormViewModelTest {
         assertEquals("Kare-Kare", state.name)
         assertEquals("Oxtail in peanut sauce", state.description)
         assertEquals(Cuisine.FILIPINO, state.cuisine)
-        assertEquals(setOf(MealType.LUNCH, MealType.DINNER), state.mealTypes)
         assertEquals("120", state.preparationTimeMinutes)
         assertEquals("6", state.servings)
         assertEquals("650", state.calories)
@@ -119,18 +115,13 @@ class RecipeFormViewModelTest {
     }
 
     @Test
-    fun cuisineAndMealTypeToggleOnAndOff() {
+    fun cuisineTogglesOnAndOff() {
         val vm = viewModel()
 
         vm.updateCuisine(Cuisine.KOREAN)
         assertEquals(Cuisine.KOREAN, vm.state.value.cuisine)
         vm.updateCuisine(Cuisine.KOREAN)
         assertNull(vm.state.value.cuisine)
-
-        vm.toggleMealType(MealType.BREAKFAST)
-        vm.toggleMealType(MealType.LUNCH)
-        vm.toggleMealType(MealType.BREAKFAST)
-        assertEquals(setOf(MealType.LUNCH), vm.state.value.mealTypes)
     }
 
     @Test
@@ -211,7 +202,6 @@ class RecipeFormViewModelTest {
         assertNull(saved.calories)
         assertEquals(0, saved.preparationTimeMinutes)
         assertEquals(1, saved.servings)
-        assertEquals(listOf(MealType.SNACK), saved.mealTypes)
         assertEquals(listOf("Wrapper"), saved.ingredients.map { it.ingredient.name })
         assertEquals(20.0, saved.ingredients.single().quantity)
         assertEquals(listOf(Instruction(1, "Roll and fry"), Instruction(2, "Serve")), saved.instructions)

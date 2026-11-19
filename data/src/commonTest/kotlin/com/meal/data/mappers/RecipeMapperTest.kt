@@ -6,7 +6,6 @@ import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -20,7 +19,6 @@ class RecipeMapperTest {
         id = Uuid.random(),
         name = "Chicken Adobo",
         description = "Braised chicken",
-        mealTypes = listOf(MealType.LUNCH, MealType.DINNER),
         category = FoodCategory.MAIN_DISH,
         preparationTimeMinutes = 45,
         servings = 4,
@@ -42,7 +40,6 @@ class RecipeMapperTest {
         assertEquals(dto.id, recipe.id)
         assertEquals(dto.name, recipe.name)
         assertEquals(dto.description, recipe.description)
-        assertEquals(dto.mealTypes, recipe.mealTypes)
         assertEquals(dto.category, recipe.category)
         assertEquals(dto.preparationTimeMinutes, recipe.preparationTimeMinutes)
         assertEquals(dto.servings, recipe.servings)
