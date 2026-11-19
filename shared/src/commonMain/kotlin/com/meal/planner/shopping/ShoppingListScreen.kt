@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -29,8 +31,6 @@ import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -50,11 +50,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.DateRangePickerDialog
+import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.common.formatPrice
 import com.meal.planner.components.SwipeActionsRow
@@ -274,14 +276,19 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .background(MaterialTheme.colorScheme.background)
-                                        .clickable { viewModel.toggleItem(item.itemKey, !item.checked) }
+                                        .toggleable(
+                                            value = item.checked,
+                                            role = Role.Checkbox,
+                                            onValueChange = { checked -> viewModel.toggleItem(item.itemKey, checked) }
+                                        )
+                                        .heightIn(min = MealPlannerTokens.iconSize.xl)
                                         .padding(horizontal = spacing.lg),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Checkbox(
-                                        checked = item.checked,
-                                        onCheckedChange = { checked -> viewModel.toggleItem(item.itemKey, checked) },
-                                        colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colorScheme.primary)
+                                    IngredientThumbnail(
+                                        name = item.name,
+                                        alpha = if (item.checked) 0.4f else 1f,
+                                        modifier = Modifier.padding(end = spacing.md)
                                     )
                                     Text(
                                         text = item.name,
