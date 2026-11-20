@@ -1,0 +1,7 @@
+UPDATE IngredientEntity
+SET name = upper(substr(name, 1, 1)) || substr(name, 2)
+WHERE name <> upper(substr(name, 1, 1)) || substr(name, 2);
+
+UPDATE ShoppingListItemEntity
+SET name = upper(substr(name, 1, 1)) || substr(name, 2)
+WHERE name <> upper(substr(name, 1, 1)) || substr(name, 2);

@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.common.filterDecimalInput
 import com.meal.planner.components.IngredientNameField
@@ -56,7 +57,10 @@ fun AddShoppingItemDialog(
                 IngredientNameField(
                     value = name,
                     suggestions = suggestions,
-                    onValueChange = { name = it },
+                    onValueChange = {
+                        unit = IngredientUnits.unitAfterRename(name, it, unit)
+                        name = it
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     onSuggestionsVisibleChange = { suggestionsVisible = it }
                 )
@@ -76,7 +80,8 @@ fun AddShoppingItemDialog(
                     UnitDropdownField(
                         value = unit,
                         onValueChange = { unit = it },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
+                        units = remember(name) { IngredientUnits.unitsFor(name) }
                     )
                 }
                 if (!suggestionsVisible) {

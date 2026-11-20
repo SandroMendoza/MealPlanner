@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.People
@@ -55,18 +57,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.Instruction
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.planner.common.displayName
+import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.MealTypeDialog
 import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerPalette
 import com.meal.planner.theme.MealPlannerTokens
-import com.meal.presentation.common.formatQuantity
+import com.meal.presentation.common.formatAmount
 import com.meal.presentation.common.today
 import com.meal.presentation.recipes.RecipeDetailViewModel
 import kotlinx.coroutines.launch
@@ -272,22 +276,25 @@ fun RecipeDetailScreen(
                                     )
                                 }
 
-                                recipe.cuisine?.let { cuisine ->
-                                    Row(modifier = Modifier.padding(top = spacing.xs)) {
-                                        RecipeDetailMetaItem(
-                                            icon = Icons.Filled.Public,
-                                            text = cuisine.displayName()
-                                        )
+                                if (recipe.cuisine != null || recipe.calories != null) {
+                                    Row(
+                                        modifier = Modifier.padding(top = spacing.xs),
+                                        horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        recipe.cuisine?.let { cuisine ->
+                                            RecipeDetailMetaItem(
+                                                icon = Icons.Filled.Public,
+                                                text = cuisine.displayName()
+                                            )
+                                        }
+                                        recipe.calories?.let {
+                                            RecipeDetailMetaItem(
+                                                icon = Icons.Filled.LocalFireDepartment,
+                                                text = LocalStrings.current.caloriesLabel(it)
+                                            )
+                                        }
                                     }
-                                }
-
-                                recipe.calories?.let {
-                                    Text(
-                                        text = LocalStrings.current.caloriesLabel(it),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(top = spacing.xs)
-                                    )
                                 }
 
                                 Row(
@@ -314,13 +321,39 @@ fun RecipeDetailScreen(
                                     }
                                 }
                             }
-                            items(recipe.ingredients, key = { it.id }) { ri ->
-                                Text(
-                                    text = "• ${formatQuantity(ri.quantity)} ${ri.unit.unit} ${ri.ingredient.name}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(vertical = spacing.sm)
-                                )
+                            items(recipe.ingredients.chunked(2), key = { it.first().id }) { pair ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm),
+                                    horizontalArrangement = Arrangement.spacedBy(spacing.md)
+                                ) {
+                                    pair.forEach { ri ->
+                                        Row(
+                                            modifier = Modifier.weight(1f),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            IngredientThumbnail(
+                                                name = ri.ingredient.name,
+                                                size = MealPlannerTokens.iconSize.lg,
+                                                modifier = Modifier.padding(end = spacing.sm)
+                                            )
+                                            Column {
+                                                Text(
+                                                    text = ri.ingredient.name,
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                    color = MaterialTheme.colorScheme.onSurface,
+                                                    maxLines = 2,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                                Text(
+                                                    text = formatAmount(ri.quantity, ri.unit),
+                                                    style = MaterialTheme.typography.bodySmall,
+                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                )
+                                            }
+                                        }
+                                    }
+                                    if (pair.size == 1) Spacer(Modifier.weight(1f))
+                                }
                             }
 
                             item {

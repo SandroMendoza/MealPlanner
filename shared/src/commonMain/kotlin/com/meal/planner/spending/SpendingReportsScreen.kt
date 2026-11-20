@@ -47,7 +47,7 @@ import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekSunday
-import com.meal.presentation.common.formatQuantity
+import com.meal.presentation.common.formatAmount
 import com.meal.presentation.common.today
 import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.spending.SpendingReportsViewModel
@@ -232,7 +232,7 @@ fun SpendingReportsScreen(
                             items(report.lineItems, key = { "${it.itemKey}_${it.rangeStart}_${it.rangeEnd}" }) { item ->
                                 SpendingLineItemRow(
                                     name = item.name,
-                                    quantityLabel = "${formatQuantity(item.totalQuantity)} ${item.unit.unit}",
+                                    quantityLabel = formatAmount(item.totalQuantity, item.unit),
                                     rangeLabel = "${item.rangeStart} - ${item.rangeEnd}",
                                     price = item.price,
                                     currencySymbol = uiState.currencySymbol

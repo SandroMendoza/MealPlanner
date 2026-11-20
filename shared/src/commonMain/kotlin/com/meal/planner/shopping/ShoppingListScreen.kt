@@ -54,6 +54,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.IngredientThumbnail
@@ -63,7 +64,7 @@ import com.meal.planner.components.SwipeActionsRow
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekSunday
-import com.meal.presentation.common.formatQuantity
+import com.meal.presentation.common.formatAmount
 import com.meal.presentation.common.today
 import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.shopping.ShoppingListViewModel
@@ -86,7 +87,8 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
 
     LaunchedEffect(quickAddItemName) {
         if (quickAddItemName != null) {
-            viewModel.addItem(quickAddItemName, 1.0, MeasurementUnit.PIECE)
+            val unit = IngredientUnits.unitsFor(quickAddItemName)?.first() ?: MeasurementUnit.PIECE
+            viewModel.addItem(quickAddItemName, 1.0, unit)
         }
     }
 
@@ -298,7 +300,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                                         modifier = Modifier.weight(1f).padding(end = spacing.sm)
                                     )
                                     Text(
-                                        text = "${formatQuantity(item.totalQuantity)} ${item.unit.unit}",
+                                        text = formatAmount(item.totalQuantity, item.unit),
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = contentColor,
                                         textDecoration = textDecoration,

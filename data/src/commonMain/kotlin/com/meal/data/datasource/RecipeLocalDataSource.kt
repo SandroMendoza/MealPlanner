@@ -9,6 +9,7 @@ import com.meal.data.model.RecipeDto
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
+import com.meal.domain.model.ingredientDisplayName
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MeasurementUnit
@@ -129,7 +130,7 @@ class RecipeLocalDataSource(
     private fun resolveIngredientId(name: String): String {
         val normalized = name.trim().lowercase()
         return ingredientQueries.selectIngredientByNormalizedName(normalized).executeAsOneOrNull()?.id
-            ?: Uuid.random().toString().also { ingredientQueries.insertIngredientDefinition(it, name.trim(), normalized) }
+            ?: Uuid.random().toString().also { ingredientQueries.insertIngredientDefinition(it, ingredientDisplayName(name), normalized) }
     }
 
     // Loads the child rows of every active recipe in one query per table, so building the

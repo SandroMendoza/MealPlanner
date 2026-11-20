@@ -1,6 +1,7 @@
 package com.meal.domain.usecase
 
 import com.meal.domain.model.ShoppingListItem
+import com.meal.domain.model.ingredientDisplayName
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.repository.ShoppingListRepository
 import kotlinx.datetime.LocalDate
@@ -14,7 +15,7 @@ class AddShoppingListItemUseCase(
     suspend fun execute(name: String, quantity: Double, unit: MeasurementUnit, rangeStart: LocalDate, rangeEnd: LocalDate) {
         val item = ShoppingListItem(
             itemKey = Uuid.random().toString(),
-            name = name.trim(),
+            name = ingredientDisplayName(name),
             totalQuantity = quantity,
             unit = unit,
             checked = false
