@@ -46,6 +46,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.planner.common.displayName
@@ -320,7 +321,7 @@ private fun IngredientRowEditor(
             IngredientNameField(
                 value = row.name,
                 suggestions = suggestions,
-                onValueChange = { onChange(row.copy(name = it)) },
+                onValueChange = { onChange(row.copy(name = it, unit = IngredientUnits.unitAfterRename(row.name, it, row.unit))) },
                 modifier = Modifier.weight(2f)
             )
             OutlinedTextField(
@@ -341,7 +342,8 @@ private fun IngredientRowEditor(
             UnitDropdownField(
                 value = row.unit,
                 onValueChange = { onChange(row.copy(unit = it)) },
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                units = remember(row.name) { IngredientUnits.unitsFor(row.name) }
             )
             TextButton(onClick = onRemove) {
                 Text(LocalStrings.current.remove)

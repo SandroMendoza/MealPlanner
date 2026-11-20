@@ -8,6 +8,7 @@ import com.meal.data.db.ShoppingListItemEntity
 import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.model.SpendingLineItem
 import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.domain.model.normalizedIngredientName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -79,15 +80,32 @@ class ShoppingListLocalDataSource(
 
     suspend fun addManual(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) =
         withContext(ioDispatcher) {
-            queries.insertItem(
-                itemKey = item.itemKey,
-                rangeStart = rangeStart.toString(),
-                rangeEnd = rangeEnd.toString(),
-                name = item.name,
-                quantity = item.totalQuantity,
-                unit = item.unit.name,
-                checked = 0
-            )
+            database.transaction {
+                val existingKey = queries.selectActiveItemByName(
+                    rangeStart = rangeStart.toString(),
+                    rangeEnd = rangeEnd.toString(),
+                    unit = item.unit.name,
+                    normalizedName = normalizedIngredientName(item.name)
+                ).executeAsOneOrNull()
+                if (existingKey != null) {
+                    queries.addToQuantity(
+                        quantity = item.totalQuantity,
+                        itemKey = existingKey,
+                        rangeStart = rangeStart.toString(),
+                        rangeEnd = rangeEnd.toString()
+                    )
+                } else {
+                    queries.insertItem(
+                        itemKey = item.itemKey,
+                        rangeStart = rangeStart.toString(),
+                        rangeEnd = rangeEnd.toString(),
+                        name = item.name,
+                        quantity = item.totalQuantity,
+                        unit = item.unit.name,
+                        checked = 0
+                    )
+                }
+            }
         }
 
     suspend fun remove(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) =

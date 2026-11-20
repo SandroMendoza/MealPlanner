@@ -21,6 +21,7 @@ data class Strings(
     val name: String,
     val qty: String,
     val unit: String,
+    val moreUnits: String,
     val languageLabel: String,
     val currencyLabel: String,
     val week: String,

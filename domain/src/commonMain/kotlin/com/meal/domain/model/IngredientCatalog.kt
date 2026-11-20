@@ -33,6 +33,18 @@ data class CatalogIngredient(
 fun normalizedIngredientName(name: String): String = name.trim().lowercase()
 
 /**
+ * How a typed ingredient name is stored and shown: the catalogue's spelling when [name] is a
+ * catalogue ingredient's name, otherwise trimmed with every word starting in upper case.
+ * Other letters keep their typed case, so abbreviations such as "MSG" stay as they are.
+ */
+fun ingredientDisplayName(name: String): String {
+    val trimmed = name.trim()
+    val entry = IngredientCatalog.find(trimmed)
+    if (entry != null && normalizedIngredientName(entry.name) == normalizedIngredientName(trimmed)) return entry.name
+    return trimmed.split(' ').joinToString(" ") { word -> word.replaceFirstChar { it.uppercaseChar() } }
+}
+
+/**
  * Ingredients seeded into every install, with their picture in the ingredient image sheets.
  * Generated from the ingredient catalogue list; edit that list and regenerate rather than
  * editing entries by hand.
@@ -429,7 +441,7 @@ object IngredientCatalog {
         CatalogIngredient("Cooked Rice", GRAIN_AND_NOODLES, "grain_and_noodles_3", 1, listOf("Kanin")),
         CatalogIngredient("Lumpia Wrappers", GRAIN_AND_NOODLES, "grain_and_noodles_3", 2, listOf("Spring Roll Wrappers", "Lumpia Wrapper")),
         CatalogIngredient("Pancit Canton Noodles", GRAIN_AND_NOODLES, "grain_and_noodles_3", 3, listOf("Canton Noodles", "Flour Sticks")),
-        CatalogIngredient("White Rice", GRAIN_AND_NOODLES, "grain_and_noodles_3", 4, listOf("Bigas")),
+        CatalogIngredient("White Rice", GRAIN_AND_NOODLES, "grain_and_noodles_3", 4, listOf("Bigas", "Rice")),
         CatalogIngredient("White Bread", GRAIN_AND_NOODLES, "grain_and_noodles_3", 5),
         CatalogIngredient("Whole Wheat Bread", GRAIN_AND_NOODLES, "grain_and_noodles_3", 6),
         CatalogIngredient("Pandesal", GRAIN_AND_NOODLES, "grain_and_noodles_3", 7, listOf("Pan de Sal")),

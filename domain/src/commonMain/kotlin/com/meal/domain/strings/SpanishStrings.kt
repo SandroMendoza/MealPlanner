@@ -60,8 +60,42 @@ private fun spanishMeasurementUnitName(unit: MeasurementUnit): String {
         MeasurementUnit.TABLESPOON -> "Cucharada"
         MeasurementUnit.CUP -> "Taza"
         MeasurementUnit.PIECE -> "Pieza"
+        MeasurementUnit.OUNCE -> "Onza"
+        MeasurementUnit.POUND -> "Libra"
+        MeasurementUnit.FLUID_OUNCE -> "Onza líquida"
+        MeasurementUnit.PINT -> "Pinta"
+        MeasurementUnit.QUART -> "Cuarto de galón"
+        MeasurementUnit.GALLON -> "Galón"
+        MeasurementUnit.PINCH -> "Pizca"
+        MeasurementUnit.DASH -> "Chorrito"
+        MeasurementUnit.DROP -> "Gota"
+        MeasurementUnit.HANDFUL -> "Puñado"
+        MeasurementUnit.DOZEN -> "Docena"
+        MeasurementUnit.SLICE -> "Rebanada"
+        MeasurementUnit.CUBE -> "Cubo"
+        MeasurementUnit.STICK -> "Barra"
+        MeasurementUnit.FILLET -> "Filete"
+        MeasurementUnit.CLOVE -> "Diente"
+        MeasurementUnit.HEAD -> "Cabeza"
+        MeasurementUnit.BUNCH -> "Manojo"
+        MeasurementUnit.STALK -> "Tallo"
+        MeasurementUnit.SPRIG -> "Ramita"
+        MeasurementUnit.LEAF -> "Hoja"
+        MeasurementUnit.PACK -> "Paquete"
+        MeasurementUnit.SACHET -> "Sobre"
+        MeasurementUnit.CAN -> "Lata"
+        MeasurementUnit.BOTTLE -> "Botella"
+        MeasurementUnit.JAR -> "Frasco"
+        MeasurementUnit.BOX -> "Caja"
+        MeasurementUnit.BAG -> "Bolsa"
+        MeasurementUnit.CARTON -> "Cartón"
+        MeasurementUnit.TRAY -> "Bandeja"
+        MeasurementUnit.LOAF -> "Hogaza"
+        MeasurementUnit.CENTIMETER -> "Centímetro"
+        MeasurementUnit.INCH -> "Pulgada"
+        MeasurementUnit.TO_TASTE -> "Al gusto"
     }
-    return "$name (${unit.unit})"
+    return if (unit == MeasurementUnit.TO_TASTE || name.equals(unit.unit, ignoreCase = true)) name else "$name (${unit.unit})"
 }
 
 val spanishStrings = Strings(
@@ -74,6 +108,7 @@ val spanishStrings = Strings(
     name = "Nombre",
     qty = "Cant.",
     unit = "Unidad",
+    moreUnits = "Más unidades…",
     languageLabel = "Idioma",
     currencyLabel = "Moneda",
     week = "Semana",

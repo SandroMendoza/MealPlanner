@@ -3,6 +3,7 @@ package com.meal.data.datasource
 import com.meal.data.inMemoryDatabase
 import com.meal.domain.model.IngredientCatalog
 import com.meal.domain.model.enums.IngredientCategory
+import com.meal.domain.model.ingredientDisplayName
 import com.meal.domain.model.normalizedIngredientName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -73,6 +74,23 @@ class IngredientCatalogSeedTest {
         IngredientCatalog.entries.groupBy { it.sheet }.forEach { (sheet, entries) ->
             assertEquals(entries.indices.toList(), entries.map { it.tile }.sorted(), sheet)
         }
+    }
+
+    @Test
+    fun typedNameStartsEveryWordInUpperCase() {
+        assertEquals("Gabi", ingredientDisplayName("  gabi "))
+        assertEquals("Grandma's Spice Mix", ingredientDisplayName("grandma's spice mix"))
+        assertEquals("MSG Blend", ingredientDisplayName("MSG blend"))
+    }
+
+    @Test
+    fun typedCatalogueNameTakesTheCatalogueSpelling() {
+        assertEquals("Nata de Coco", ingredientDisplayName("nata de coco"))
+    }
+
+    @Test
+    fun typedAliasKeepsTheTypedWord() {
+        assertEquals("Sitaw", ingredientDisplayName("sitaw"))
     }
 
     @Test

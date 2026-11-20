@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,10 +24,22 @@ import com.meal.planner.strings.LocalStrings
 fun UnitDropdownField(
     value: MeasurementUnit,
     onValueChange: (MeasurementUnit) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    units: List<MeasurementUnit>? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }, modifier = modifier) {
+    var showAll by remember { mutableStateOf(false) }
+    val close = {
+        expanded = false
+        showAll = false
+    }
+    // The current value stays listed even when it isn't one of the suggested units.
+    val shown = if (units == null || showAll) MeasurementUnit.entries else listOf(value).filterNot { it in units } + units
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { if (it) expanded = true else close() },
+        modifier = modifier
+    ) {
         OutlinedTextField(
             value = value.displayName(),
             onValueChange = {},
@@ -35,14 +48,20 @@ fun UnitDropdownField(
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
             modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
         )
-        ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            MeasurementUnit.entries.forEach { unit ->
+        ExposedDropdownMenu(expanded = expanded, onDismissRequest = close) {
+            shown.forEach { unit ->
                 DropdownMenuItem(
                     text = { Text(unit.displayName()) },
                     onClick = {
                         onValueChange(unit)
-                        expanded = false
+                        close()
                     }
+                )
+            }
+            if (units != null && !showAll) {
+                DropdownMenuItem(
+                    text = { Text(LocalStrings.current.moreUnits, color = MaterialTheme.colorScheme.primary) },
+                    onClick = { showAll = true }
                 )
             }
         }

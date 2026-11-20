@@ -183,6 +183,20 @@ class UiStateTest {
     }
 
     @Test
+    fun shoppingItemsAreOrderedByCategoryThenNameWithUnknownItemsLast() {
+        val state = ShoppingListUiState(
+            mode = ShoppingListRangeMode.WEEK,
+            rangeStart = start,
+            rangeEnd = end,
+            items = listOf("Soap", "Garlic", "Fish Sauce", "Chicken", "Gabi", "Pork Belly", "Carrot").map { shoppingItem(it) }
+        )
+        assertEquals(
+            listOf("Pork Belly", "Chicken", "Carrot", "Gabi", "Garlic", "Fish Sauce", "Soap"),
+            state.sections.single().items.map { it.name }
+        )
+    }
+
+    @Test
     fun shoppingSectionsOmitUngroupedWhenEverythingIsGrouped() {
         val dairy = ShoppingGroup("dairy", "Dairy", sortOrder = 0)
         val state = ShoppingListUiState(
