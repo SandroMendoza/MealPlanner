@@ -5,8 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
 import com.meal.planner.di.appModule
 import com.meal.planner.navigation.Routes
 import org.koin.android.ext.koin.androidContext
@@ -40,10 +38,4 @@ class MainActivity : ComponentActivity() {
             App(startRoute = startRoute, quickAddItemName = quickAddItemName)
         }
     }
-}
-
-@Preview
-@Composable
-fun AppAndroidPreview() {
-    App()
 }

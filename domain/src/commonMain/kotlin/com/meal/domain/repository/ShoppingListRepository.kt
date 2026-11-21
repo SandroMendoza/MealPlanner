@@ -9,6 +9,10 @@ interface ShoppingListRepository {
     fun getItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>>
     suspend fun syncGeneratedItems(rangeStart: LocalDate, rangeEnd: LocalDate, required: List<ShoppingListItem>)
     suspend fun setItemChecked(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, checked: Boolean)
+    /**
+     * Adds [item] to the range's list. When the list already has an item with the same name
+     * (ignoring case) and unit, [item]'s quantity is added to that item instead of a new row.
+     */
     suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate)
     suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate)
     suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double)

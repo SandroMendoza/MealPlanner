@@ -23,11 +23,11 @@ class ShoppingUseCasesTest {
     private val groups = FakeShoppingGroupRepository()
 
     @Test
-    fun addingAnItemTrimsItsNameAndStartsUnchecked() = runTest {
-        AddShoppingListItemUseCase(list).execute("  Fish sauce ", 2.0, MeasurementUnit.TABLESPOON, start, end)
+    fun addingAnItemTidiesItsNameAndStartsUnchecked() = runTest {
+        AddShoppingListItemUseCase(list).execute("  fish sauce ", 2.0, MeasurementUnit.TABLESPOON, start, end)
 
         val (item, rangeStart, rangeEnd) = list.addedItems.single()
-        assertEquals("Fish sauce", item.name)
+        assertEquals("Fish Sauce", item.name)
         assertEquals(2.0, item.totalQuantity)
         assertEquals(MeasurementUnit.TABLESPOON, item.unit)
         assertFalse(item.checked)

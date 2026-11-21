@@ -31,6 +31,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.uuid.ExperimentalUuidApi
 import com.meal.domain.model.CalendarViewMode as DomainCalendarViewMode
@@ -194,6 +195,48 @@ class MealCalendarViewModelTest {
     }
 
     @Test
+    fun swipeRemovalWaitsForConfirmation() {
+        val tomorrow = today().plus(1, DateTimeUnit.DAY)
+        val planned = slot(tomorrow, MealType.DINNER, dish)
+        mealPlan.slots.value = listOf(planned)
+        val entry = MealPlanEntry(planned.id, tomorrow, MealType.DINNER, dish)
+        val vm = viewModel()
+
+        vm.requestRemoveSlot(entry)
+        assertEquals(entry, vm.state.value.entryPendingRemoval)
+        assertTrue(mealPlan.removedSlots.isEmpty())
+
+        vm.confirmRemoveSlot()
+        assertNull(vm.state.value.entryPendingRemoval)
+        assertEquals(listOf(planned.id), mealPlan.removedSlots)
+    }
+
+    @Test
+    fun dismissingTheRemovalKeepsTheMeal() {
+        val tomorrow = today().plus(1, DateTimeUnit.DAY)
+        val planned = slot(tomorrow, MealType.DINNER, dish)
+        val vm = viewModel()
+
+        vm.requestRemoveSlot(MealPlanEntry(planned.id, tomorrow, MealType.DINNER, dish))
+        vm.dismissRemoveSlot()
+
+        assertNull(vm.state.value.entryPendingRemoval)
+        assertTrue(mealPlan.removedSlots.isEmpty())
+    }
+
+    @Test
+    fun removalIsNotOfferedForLockedPastEntries() {
+        settings.settings.value = AppSettings(lockPastDates = true)
+        val yesterday = today().minus(1, DateTimeUnit.DAY)
+        val planned = slot(yesterday, MealType.DINNER, dish)
+        val vm = viewModel()
+
+        vm.requestRemoveSlot(MealPlanEntry(planned.id, yesterday, MealType.DINNER, dish))
+
+        assertNull(vm.state.value.entryPendingRemoval)
+    }
+
+    @Test
     fun weekNoteIsLoadedPerWeekAndSaved() {
         val sunday = currentWeekSunday()
         val nextSunday = sunday.plus(7, DateTimeUnit.DAY)
@@ -207,5 +250,16 @@ class MealCalendarViewModelTest {
         vm.updateWeekNote("Party at 7")
         assertEquals(nextSunday to "Party at 7", notes.updates.single())
         assertEquals("Party at 7", vm.state.value.weekNote)
+    }
+
+    @Test
+    fun aLateSaveOfAnOlderNoteDoesNotOverwriteWhatIsBeingTyped() {
+        val sunday = currentWeekSunday()
+        val vm = viewModel()
+
+        vm.updateWeekNote("Buy bananas")
+        notes.notes.value = mapOf(sunday to "Buy ban")
+
+        assertEquals("Buy bananas", vm.state.value.weekNote)
     }
 }

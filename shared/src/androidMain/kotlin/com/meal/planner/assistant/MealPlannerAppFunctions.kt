@@ -177,7 +177,6 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             id = Uuid.random(),
             name = params.name,
             description = params.description,
-            mealTypes = params.mealTypes.map { parseMealType(it) },
             category = parseFoodCategory(params.category),
             preparationTimeMinutes = params.preparationTimeMinutes,
             servings = params.servings,
