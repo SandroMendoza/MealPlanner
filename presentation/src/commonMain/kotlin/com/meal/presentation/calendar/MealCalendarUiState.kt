@@ -15,6 +15,7 @@ data class MealCalendarUiState(
     val lockPastDates: Boolean = false,
     val viewMode: CalendarViewMode = CalendarViewMode.DAY,
     val weekNote: String = "",
+    val entryPendingRemoval: MealPlanEntry? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 ) {
