@@ -22,16 +22,16 @@ import com.meal.planner.theme.MealPlannerTokens
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SwipeActionsRow(
-    onSwipeRightToAssignGroup: () -> Unit,
     onSwipeLeftToDelete: () -> Unit,
     modifier: Modifier = Modifier,
+    onSwipeRightToAssignGroup: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = { value ->
             when (value) {
-                SwipeToDismissBoxValue.StartToEnd -> onSwipeRightToAssignGroup()
+                SwipeToDismissBoxValue.StartToEnd -> onSwipeRightToAssignGroup?.invoke()
                 SwipeToDismissBoxValue.EndToStart -> onSwipeLeftToDelete()
                 SwipeToDismissBoxValue.Settled -> Unit
             }
@@ -42,6 +42,7 @@ fun SwipeActionsRow(
     SwipeToDismissBox(
         state = dismissState,
         modifier = modifier,
+        enableDismissFromStartToEnd = onSwipeRightToAssignGroup != null,
         backgroundContent = {
             when (dismissState.dismissDirection) {
                 SwipeToDismissBoxValue.StartToEnd -> Box(

@@ -16,6 +16,8 @@ import com.meal.presentation.common.weekEndFor
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -63,9 +65,18 @@ class MealCalendarViewModel(
     private var noteJob: Job? = null
     private var defaultViewModeApplied = false
 
+    // Saves run one at a time from this conflated flow, so they reach the database in typing
+    // order and the latest text is always the last one written.
+    private val pendingNote = MutableStateFlow<Pair<LocalDate, String>?>(null)
+
     init {
         loadWeek()
         loadNote()
+        viewModelScope.launch {
+            pendingNote.filterNotNull().collect { (weekStart, note) ->
+                updateWeekNoteUseCase.execute(weekStart, note)
+            }
+        }
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
                 _uiState.value = _uiState.value.copy(
@@ -99,13 +110,14 @@ class MealCalendarViewModel(
         }
     }
 
+    // The note is read once per week: the text field owns the value while the user types,
+    // and replaying the saved note back into it would overwrite keystrokes typed since.
     private fun loadNote() {
         noteJob?.cancel()
         val weekStart = _uiState.value.weekStart
         noteJob = viewModelScope.launch {
-            getWeekNoteUseCase.execute(weekStart).collect { note ->
-                _uiState.value = _uiState.value.copy(weekNote = note)
-            }
+            val note = getWeekNoteUseCase.execute(weekStart).first()
+            _uiState.value = _uiState.value.copy(weekNote = note)
         }
     }
 
@@ -127,6 +139,20 @@ class MealCalendarViewModel(
         viewModelScope.launch {
             removeMealSlotUseCase.execute(entry.id)
         }
+    }
+
+    fun requestRemoveSlot(entry: MealPlanEntry) {
+        if (_uiState.value.isLocked(entry.date)) return
+        _uiState.value = _uiState.value.copy(entryPendingRemoval = entry)
+    }
+
+    fun confirmRemoveSlot() {
+        _uiState.value.entryPendingRemoval?.let(::removeSlot)
+        _uiState.value = _uiState.value.copy(entryPendingRemoval = null)
+    }
+
+    fun dismissRemoveSlot() {
+        _uiState.value = _uiState.value.copy(entryPendingRemoval = null)
     }
 
     fun goToToday() {
@@ -152,8 +178,6 @@ class MealCalendarViewModel(
     fun updateWeekNote(note: String) {
         val weekStart = _uiState.value.weekStart
         _uiState.value = _uiState.value.copy(weekNote = note)
-        viewModelScope.launch {
-            updateWeekNoteUseCase.execute(weekStart, note)
-        }
+        pendingNote.value = weekStart to note
     }
 }

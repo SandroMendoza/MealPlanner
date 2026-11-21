@@ -52,13 +52,14 @@ class LocalizedStringsTest {
         assertDistinctNonBlankNames("cuisine", Cuisine.entries) { s, cuisine -> s.cuisineName(cuisine) }
 
     @Test
-    fun everyMeasurementUnitHasADistinctNameEndingWithItsSymbol() {
+    fun everyMeasurementUnitNameShowsItsSymbolUnlessTheNameIsTheSymbol() {
         assertDistinctNonBlankNames("measurement unit", MeasurementUnit.entries) { s, unit -> s.measurementUnitName(unit) }
         allStrings.forEach { (language, strings) ->
-            MeasurementUnit.entries.forEach { unit ->
+            MeasurementUnit.entries.filter { it != MeasurementUnit.TO_TASTE }.forEach { unit ->
+                val name = strings.measurementUnitName(unit)
                 assertTrue(
-                    strings.measurementUnitName(unit).endsWith("(${unit.unit})"),
-                    "$language name for $unit does not end with (${unit.unit})"
+                    name.endsWith("(${unit.unit})") || name.equals(unit.unit, ignoreCase = true),
+                    "$language name for $unit neither ends with (${unit.unit}) nor is ${unit.unit}"
                 )
             }
         }
@@ -74,6 +75,8 @@ class LocalizedStringsTest {
         assertEquals("350 calories", en.caloriesLabel(350))
         assertEquals("Week 46", en.calendarWeekNumber(46))
         assertEquals("Grams (g)", en.measurementUnitName(MeasurementUnit.GRAMS))
+        assertEquals("To taste", en.measurementUnitName(MeasurementUnit.TO_TASTE))
+        assertEquals("Clove", en.measurementUnitName(MeasurementUnit.CLOVE))
         assertEquals("Prep time: 10–30 min", en.recipesPrepTimeRange(10, 30))
         assertEquals("Good morning, Ana", en.homeGreetingWithName("Ana"))
         assertEquals("Dinner reminder", en.mealReminderNotificationTitle(MealType.DINNER))

@@ -29,6 +29,16 @@ insertItem:
 INSERT INTO ShoppingListItemEntity(itemKey, rangeStart, rangeEnd, name, quantity, unit, checked, removed)
 VALUES (?, ?, ?, ?, ?, ?, ?, 0);
 
+selectActiveItemByName:
+SELECT itemKey FROM ShoppingListItemEntity
+WHERE rangeStart = :rangeStart AND rangeEnd = :rangeEnd AND removed = 0
+  AND unit = :unit AND lower(trim(name)) = :normalizedName
+LIMIT 1;
+
+addToQuantity:
+UPDATE ShoppingListItemEntity SET quantity = quantity + :quantity
+WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
+
 setChecked:
 UPDATE ShoppingListItemEntity SET checked = :checked
 WHERE itemKey = :itemKey AND removed = 0 AND rangeStart <= :rangeEnd AND rangeEnd >= :rangeStart;

@@ -60,8 +60,42 @@ private fun englishMeasurementUnitName(unit: MeasurementUnit): String {
         MeasurementUnit.TABLESPOON -> "Tablespoon"
         MeasurementUnit.CUP -> "Cup"
         MeasurementUnit.PIECE -> "Piece"
+        MeasurementUnit.OUNCE -> "Ounce"
+        MeasurementUnit.POUND -> "Pound"
+        MeasurementUnit.FLUID_OUNCE -> "Fluid ounce"
+        MeasurementUnit.PINT -> "Pint"
+        MeasurementUnit.QUART -> "Quart"
+        MeasurementUnit.GALLON -> "Gallon"
+        MeasurementUnit.PINCH -> "Pinch"
+        MeasurementUnit.DASH -> "Dash"
+        MeasurementUnit.DROP -> "Drop"
+        MeasurementUnit.HANDFUL -> "Handful"
+        MeasurementUnit.DOZEN -> "Dozen"
+        MeasurementUnit.SLICE -> "Slice"
+        MeasurementUnit.CUBE -> "Cube"
+        MeasurementUnit.STICK -> "Stick"
+        MeasurementUnit.FILLET -> "Fillet"
+        MeasurementUnit.CLOVE -> "Clove"
+        MeasurementUnit.HEAD -> "Head"
+        MeasurementUnit.BUNCH -> "Bunch"
+        MeasurementUnit.STALK -> "Stalk"
+        MeasurementUnit.SPRIG -> "Sprig"
+        MeasurementUnit.LEAF -> "Leaf"
+        MeasurementUnit.PACK -> "Pack"
+        MeasurementUnit.SACHET -> "Sachet"
+        MeasurementUnit.CAN -> "Can"
+        MeasurementUnit.BOTTLE -> "Bottle"
+        MeasurementUnit.JAR -> "Jar"
+        MeasurementUnit.BOX -> "Box"
+        MeasurementUnit.BAG -> "Bag"
+        MeasurementUnit.CARTON -> "Carton"
+        MeasurementUnit.TRAY -> "Tray"
+        MeasurementUnit.LOAF -> "Loaf"
+        MeasurementUnit.CENTIMETER -> "Centimeter"
+        MeasurementUnit.INCH -> "Inch"
+        MeasurementUnit.TO_TASTE -> "To taste"
     }
-    return "$name (${unit.unit})"
+    return if (unit == MeasurementUnit.TO_TASTE || name.equals(unit.unit, ignoreCase = true)) name else "$name (${unit.unit})"
 }
 
 val englishStrings = Strings(
@@ -74,6 +108,7 @@ val englishStrings = Strings(
     name = "Name",
     qty = "Qty",
     unit = "Unit",
+    moreUnits = "More units…",
     languageLabel = "Language",
     currencyLabel = "Currency",
     week = "Week",
@@ -135,8 +170,10 @@ val englishStrings = Strings(
 
     calendarTitle = "Meal Plan",
     calendarAddMeal = "Add Meal",
-    calendarNoMealTypePlanned = { mealType -> "No $mealType planned" },
-    calendarAddMealTypeCd = { mealType -> "Add $mealType" },
+    calendarNoMealsPlannedDay = "No meals planned for this day.",
+    calendarNoMealsPlanned = "No meals planned",
+    calendarRemoveMealTitle = "Remove meal?",
+    calendarRemoveMealBody = { recipeName -> "Remove $recipeName from the meal plan?" },
     calendarMealOptionsCd = "Meal options",
     calendarViewRecipe = "View recipe",
     calendarChangeRecipe = "Change recipe",
@@ -154,7 +191,6 @@ val englishStrings = Strings(
     recipesFiltersActiveCd = "Filters (active)",
     recipesShowAsListCd = "Show as list",
     recipesShowAsGridCd = "Show as grid",
-    recipesSnacks = "Snacks",
     recipesFavoritesOnly = "Favorites only",
     recipesCreatedByMe = "Created by me",
     recipesPrepTimeRange = { start, end -> "Prep time: $start–$end min" },
@@ -191,7 +227,6 @@ val englishStrings = Strings(
     recipeFormNewTitle = "New Recipe",
     recipeFormNameExists = "A recipe with this name already exists.",
     recipeFormDescription = "Description",
-    recipeFormMealTypes = "Meal types",
     recipeFormPrepMin = "Prep (min)",
     recipeFormServings = "Servings",
     recipeFormCalories = "Calories",

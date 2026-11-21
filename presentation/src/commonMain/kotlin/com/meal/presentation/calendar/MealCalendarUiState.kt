@@ -1,7 +1,6 @@
 package com.meal.presentation.calendar
 
 import com.meal.domain.model.MealPlanEntry
-import com.meal.domain.model.enums.MealType
 import com.meal.presentation.common.today
 import kotlinx.datetime.LocalDate
 
@@ -16,11 +15,12 @@ data class MealCalendarUiState(
     val lockPastDates: Boolean = false,
     val viewMode: CalendarViewMode = CalendarViewMode.DAY,
     val weekNote: String = "",
+    val entryPendingRemoval: MealPlanEntry? = null,
     val isLoading: Boolean = false,
     val errorMessage: String? = null
 ) {
-    fun entriesFor(date: LocalDate, mealType: MealType): List<MealPlanEntry> =
-        entries.filter { it.date == date && it.mealType == mealType }
+    fun entriesFor(date: LocalDate): List<MealPlanEntry> =
+        entries.filter { it.date == date }.sortedBy { it.mealType.ordinal }
 
     fun isLocked(date: LocalDate): Boolean = lockPastDates && date < today()
 }

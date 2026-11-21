@@ -2,8 +2,6 @@ package com.meal.planner.calendar
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,13 +21,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Today
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,9 +39,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
@@ -47,9 +52,11 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,7 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,6 +74,7 @@ import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.components.RecipeThumbnail
+import com.meal.planner.components.SwipeActionsRow
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.calendar.CalendarViewMode
@@ -100,9 +108,7 @@ fun MealCalendarScreen(
 
     val isCurrentWeek = uiState.weekStart == currentWeekSunday()
 
-    val entriesByMealType = remember(uiState.entries, selectedDate) {
-        MealType.entries.associateWith { uiState.entriesFor(selectedDate, it) }
-    }
+    val dayEntries = remember(uiState.entries, selectedDate) { uiState.entriesFor(selectedDate) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -120,7 +126,7 @@ fun MealCalendarScreen(
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(LocalStrings.current.calendarTitle, style = MaterialTheme.typography.titleLarge)
                     Text(
-                        text = "${uiState.weekStart} - ${uiState.weekEnd}",
+                        text = formatWeekRange(uiState.weekStart, uiState.weekEnd),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -185,43 +191,61 @@ fun MealCalendarScreen(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
-                uiState.viewMode == CalendarViewMode.WEEK -> MealWeekGrid(
+                uiState.viewMode == CalendarViewMode.WEEK -> MealWeekList(
                     modifier = Modifier.weight(1f),
                     days = uiState.days,
                     entries = uiState.entries,
                     weekNote = uiState.weekNote,
                     onNoteChange = viewModel::updateWeekNote,
-                    onSlotClick = onSlotClick,
-                    onOpenRecipe = onRecipeClick
+                    onEntryClick = { entry -> onRecipeClick(entry.recipe.id) },
+                    onAddMeal = { day -> onSlotClick(day, null, null) },
+                    isLocked = uiState::isLocked,
+                    onRemove = viewModel::requestRemoveSlot
                 )
                 else -> LazyColumn(
                     modifier = Modifier.weight(1f),
                     contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm),
-                    verticalArrangement = Arrangement.spacedBy(spacing.lg)
+                    verticalArrangement = Arrangement.spacedBy(spacing.sm)
                 ) {
-                    items(MealType.entries, key = { it.name }) { mealType ->
-                        MealSection(
-                            mealType = mealType,
-                            entries = entriesByMealType[mealType].orEmpty(),
-                            locked = uiState.isLocked(selectedDate),
-                            onAdd = { onSlotClick(selectedDate, mealType, null) },
-                            onChangeEntry = { entry -> onSlotClick(selectedDate, mealType, entry.id) },
-                            onRemoveEntry = { entry -> viewModel.removeSlot(entry) },
-                            onOpenRecipe = onRecipeClick
-                        )
+                    if (dayEntries.isEmpty()) {
+                        item {
+                            Text(
+                                text = LocalStrings.current.calendarNoMealsPlannedDay,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                    items(dayEntries, key = { it.id.toString() }) { entry ->
+                        val locked = uiState.isLocked(selectedDate)
+                        SwipeToRemove(
+                            enabled = !locked,
+                            onRemove = { viewModel.requestRemoveSlot(entry) },
+                            shape = MaterialTheme.shapes.large
+                        ) {
+                            MealEntryCard(
+                                entry = entry,
+                                locked = locked,
+                                onClick = { onRecipeClick(entry.recipe.id) },
+                                onChange = { onSlotClick(selectedDate, entry.mealType, entry.id) },
+                                onRemove = { viewModel.removeSlot(entry) }
+                            )
+                        }
                     }
                 }
             }
 
-            Button(
-                onClick = { onSlotClick(selectedDate, null, null) },
-                shape = MaterialTheme.shapes.extraLarge,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                modifier = Modifier.fillMaxWidth().padding(spacing.lg)
-            ) {
-                Icon(Icons.Default.Add, contentDescription = null)
-                Spacer(Modifier.width(spacing.xs))
-                Text(LocalStrings.current.calendarAddMeal)
+            if (uiState.viewMode == CalendarViewMode.DAY) {
+                Button(
+                    onClick = { onSlotClick(selectedDate, null, null) },
+                    shape = MaterialTheme.shapes.extraLarge,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                    modifier = Modifier.fillMaxWidth().padding(spacing.lg)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null)
+                    Spacer(Modifier.width(spacing.xs))
+                    Text(LocalStrings.current.calendarAddMeal)
+                }
             }
         }
 
@@ -232,6 +256,36 @@ fun MealCalendarScreen(
                 onDismiss = { showDatePicker = false }
             )
         }
+
+        uiState.entryPendingRemoval?.let { entry ->
+            AlertDialog(
+                onDismissRequest = viewModel::dismissRemoveSlot,
+                title = { Text(LocalStrings.current.calendarRemoveMealTitle) },
+                text = { Text(LocalStrings.current.calendarRemoveMealBody(entry.recipe.name)) },
+                confirmButton = {
+                    TextButton(onClick = viewModel::confirmRemoveSlot) {
+                        Text(LocalStrings.current.remove, color = MaterialTheme.colorScheme.error)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = viewModel::dismissRemoveSlot) { Text(LocalStrings.current.cancel) }
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun SwipeToRemove(
+    enabled: Boolean,
+    onRemove: () -> Unit,
+    shape: Shape,
+    content: @Composable () -> Unit
+) {
+    if (enabled) {
+        SwipeActionsRow(onSwipeLeftToDelete = onRemove, modifier = Modifier.clip(shape)) { content() }
+    } else {
+        content()
     }
 }
 
@@ -264,244 +318,158 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalUuidApi::class)
 @Composable
-private fun MealWeekGrid(
+private fun formatWeekRange(start: LocalDate, end: LocalDate): String {
+    val strings = LocalStrings.current
+    val startText = "${strings.monthAbbreviation(start.monthNumber)} ${start.dayOfMonth}"
+    val endText = "${strings.monthAbbreviation(end.monthNumber)} ${end.dayOfMonth}, ${end.year}"
+    return if (start.year == end.year) {
+        "$startText – $endText"
+    } else {
+        "$startText, ${start.year} – $endText"
+    }
+}
+
+@Composable
+private fun MealWeekList(
     modifier: Modifier = Modifier,
     days: List<LocalDate>,
     entries: List<MealPlanEntry>,
     weekNote: String,
     onNoteChange: (String) -> Unit,
-    onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
-    onOpenRecipe: (Uuid) -> Unit
+    onEntryClick: (MealPlanEntry) -> Unit,
+    onAddMeal: (LocalDate) -> Unit,
+    isLocked: (LocalDate) -> Boolean,
+    onRemove: (MealPlanEntry) -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
     val todayDate = today()
 
-    // uiState.days already starts on Sunday (the app's week model is Sunday-first).
-    val onEntryClick: (MealPlanEntry) -> Unit = { entry -> onOpenRecipe(entry.recipe.id) }
-    val onAddMeal: (LocalDate) -> Unit = { day -> onSlotClick(day, null, null) }
-
-    Column(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = spacing.sm, vertical = spacing.sm)
+    LazyColumn(
+        modifier = modifier,
+        contentPadding = PaddingValues(start = spacing.lg, end = spacing.lg, bottom = spacing.lg),
+        verticalArrangement = Arrangement.spacedBy(spacing.sm)
     ) {
-        WeekTable(
-            days = days.take(3),
-            entries = entries,
-            todayDate = todayDate,
-            noteText = null,
-            onNoteChange = onNoteChange,
-            onEntryClick = onEntryClick,
-            onAddMeal = onAddMeal
-        )
-        Spacer(Modifier.height(spacing.lg))
-        WeekTable(
-            days = days.drop(3).take(3),
-            entries = entries,
-            todayDate = todayDate,
-            noteText = null,
-            onNoteChange = onNoteChange,
-            onEntryClick = onEntryClick,
-            onAddMeal = onAddMeal
-        )
-        Spacer(Modifier.height(spacing.lg))
-        WeekTable(
-            days = days.drop(6),
-            entries = entries,
-            todayDate = todayDate,
-            noteText = weekNote,
-            onNoteChange = onNoteChange,
-            onEntryClick = onEntryClick,
-            onAddMeal = onAddMeal
-        )
-    }
-}
-
-@Composable
-private fun WeekTable(
-    days: List<LocalDate>,
-    entries: List<MealPlanEntry>,
-    todayDate: LocalDate,
-    noteText: String?,
-    onNoteChange: (String) -> Unit,
-    onEntryClick: (MealPlanEntry) -> Unit,
-    onAddMeal: (LocalDate) -> Unit
-) {
-    val spacing = MealPlannerTokens.spacing
-    Card(
-        shape = MaterialTheme.shapes.large,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Row(modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min)) {
-            days.forEachIndexed { index, day ->
-                if (index != 0) {
-                    VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                }
-                val dayEntries = entries.filter { it.date == day }.sortedBy { it.mealType.ordinal }
-                WeekDayColumn(
-                    day = day,
-                    entries = dayEntries,
-                    isToday = day == todayDate,
-                    onEntryClick = onEntryClick,
-                    onAddMeal = { onAddMeal(day) },
-                    modifier = Modifier.weight(1f)
-                )
-            }
-            if (noteText != null) {
-                VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                Column(modifier = Modifier.weight(2f).padding(spacing.xxs)) {
-                    Text(
-                        text = LocalStrings.current.calendarWeekNotes,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth().padding(vertical = spacing.xxs)
-                    )
-                    OutlinedTextField(
-                        value = noteText,
-                        onValueChange = onNoteChange,
-                        placeholder = {
-                            Text(LocalStrings.current.calendarWeekNotesPlaceholder, style = MaterialTheme.typography.labelSmall)
-                        },
-                        textStyle = MaterialTheme.typography.labelSmall,
-                        colors = OutlinedTextFieldDefaults.colors(
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedBorderColor = Color.Transparent
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
+        items(days, key = { it.toString() }) { day ->
+            WeekDayCard(
+                day = day,
+                entries = entries.filter { it.date == day }.sortedBy { it.mealType.ordinal },
+                isToday = day == todayDate,
+                onEntryClick = onEntryClick,
+                onAddMeal = { onAddMeal(day) },
+                canRemove = !isLocked(day),
+                onRemove = onRemove
+            )
         }
-    }
-}
-
-@Composable
-private fun WeekGridHeaderCell(day: LocalDate, isToday: Boolean, modifier: Modifier = Modifier) {
-    val spacing = MealPlannerTokens.spacing
-    val backgroundColor = if (isToday) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primaryContainer
-    val contentColor = if (isToday) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimaryContainer
-    Row(
-        modifier = modifier
-            .background(backgroundColor)
-            .padding(vertical = spacing.xxs),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = LocalStrings.current.weekdayShort(day.dayOfWeek),
-            style = MaterialTheme.typography.labelMedium,
-            color = contentColor
-        )
-        Text(
-            text = " - ${day.dayOfMonth}",
-            style = MaterialTheme.typography.labelMedium,
-            color = contentColor
-        )
+        item(key = "week-notes") {
+            WeekNotesCard(note = weekNote, onNoteChange = onNoteChange)
+        }
     }
 }
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-private fun WeekDayColumn(
+private fun WeekDayCard(
     day: LocalDate,
     entries: List<MealPlanEntry>,
     isToday: Boolean,
     onEntryClick: (MealPlanEntry) -> Unit,
     onAddMeal: () -> Unit,
-    modifier: Modifier = Modifier
+    canRemove: Boolean,
+    onRemove: (MealPlanEntry) -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
-    Column(
-        modifier = (if (isToday) modifier.background(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)) else modifier)
-            .padding(horizontal = spacing.sm),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        WeekGridHeaderCell(day = day, isToday = isToday, modifier = Modifier.fillMaxWidth())
-        entries.forEach { entry ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onEntryClick(entry) }
-                    .padding(vertical = spacing.xxs)
-            ) {
-                Text(
-                    text = "•",
-                    style = MaterialTheme.typography.labelSmall,
-                    modifier = Modifier.padding(end = spacing.xxs)
-                )
-                Text(
-                    text = entry.recipe.name,
-                    style = MaterialTheme.typography.labelSmall,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Left,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-        Box(
-            modifier = Modifier
-                .padding(top = spacing.xxs, bottom = spacing.xxs)
-                .size(MealPlannerTokens.iconSize.md)
-                .clip(MaterialTheme.shapes.large)
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .clickable(onClick = onAddMeal),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                Icons.Default.Add,
-                contentDescription = LocalStrings.current.calendarAddMeal,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
-            )
-        }
-    }
-}
+    val iconSize = MealPlannerTokens.iconSize
+    val colors = MaterialTheme.colorScheme
+    val strings = LocalStrings.current
+    val cardColor = if (isToday) colors.primaryContainer else colors.surface
+    // Today's card is tinted with primaryContainer, which the default tonal/outlined
+    // button colours blend into, so its action buttons sit on the plain surface colour.
+    val actionContainer = if (isToday) colors.surface else colors.secondaryContainer
+    val tonalColors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = actionContainer)
 
-@OptIn(ExperimentalUuidApi::class)
-@Composable
-private fun MealSection(
-    mealType: MealType,
-    entries: List<MealPlanEntry>,
-    locked: Boolean,
-    onAdd: () -> Unit,
-    onChangeEntry: (MealPlanEntry) -> Unit,
-    onRemoveEntry: (MealPlanEntry) -> Unit,
-    onOpenRecipe: (Uuid) -> Unit
-) {
-    val spacing = MealPlannerTokens.spacing
-    Column {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = cardColor)
+    ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(mealType.displayName(), style = MaterialTheme.typography.titleMedium)
-            AddMealButton(mealType = mealType, onClick = onAdd)
-        }
-        Spacer(Modifier.height(spacing.xs))
-        if (entries.isEmpty()) {
-            Text(
-                text = LocalStrings.current.calendarNoMealTypePlanned(mealType.displayName().lowercase()),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        } else {
-            entries.forEachIndexed { index, entry ->
-                MealEntryCard(
-                    entry = entry,
-                    locked = locked,
-                    onClick = { onOpenRecipe(entry.recipe.id) },
-                    onChange = { onChangeEntry(entry) },
-                    onRemove = { onRemoveEntry(entry) }
+            WeekDayDateBlock(day = day, isToday = isToday, modifier = Modifier.fillMaxHeight())
+            if (!isToday) {
+                VerticalDivider(
+                    modifier = Modifier.padding(vertical = spacing.md),
+                    color = colors.outlineVariant
                 )
-                if (index != entries.lastIndex) {
-                    Spacer(Modifier.height(spacing.xs))
+            }
+            if (entries.isEmpty()) {
+                Row(
+                    modifier = Modifier.weight(1f).padding(horizontal = spacing.md, vertical = spacing.md),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(iconSize.lg)
+                            .clip(CircleShape)
+                            .background(colors.surfaceVariant),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Filled.Restaurant,
+                            contentDescription = null,
+                            tint = colors.onSurfaceVariant,
+                            modifier = Modifier.size(iconSize.sm)
+                        )
+                    }
+                    Spacer(Modifier.width(spacing.sm))
+                    Text(
+                        text = strings.calendarNoMealsPlanned,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = colors.onSurfaceVariant,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+                OutlinedButton(
+                    onClick = onAddMeal,
+                    shape = CircleShape,
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = if (isToday) colors.surface else Color.Transparent
+                    ),
+                    contentPadding = PaddingValues(horizontal = spacing.md),
+                    modifier = Modifier.padding(end = spacing.md)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(iconSize.sm))
+                    Spacer(Modifier.width(spacing.xs))
+                    Text(strings.add)
+                }
+            } else {
+                Column(
+                    modifier = Modifier.weight(1f).padding(horizontal = spacing.md, vertical = spacing.sm)
+                ) {
+                    entries.forEach { entry ->
+                        key(entry.id.toString()) {
+                            SwipeToRemove(
+                                enabled = canRemove,
+                                onRemove = { onRemove(entry) },
+                                shape = MaterialTheme.shapes.small
+                            ) {
+                                WeekMealRow(
+                                    entry = entry,
+                                    backgroundColor = cardColor,
+                                    onClick = { onEntryClick(entry) }
+                                )
+                            }
+                        }
+                    }
+                }
+                FilledTonalIconButton(
+                    onClick = onAddMeal,
+                    colors = tonalColors,
+                    modifier = Modifier.padding(end = spacing.sm)
+                ) {
+                    Icon(Icons.Default.Add, contentDescription = strings.calendarAddMeal, modifier = Modifier.size(iconSize.sm))
                 }
             }
         }
@@ -509,21 +477,93 @@ private fun MealSection(
 }
 
 @Composable
-private fun AddMealButton(mealType: MealType, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .size(28.dp)
+private fun WeekDayDateBlock(day: LocalDate, isToday: Boolean, modifier: Modifier = Modifier) {
+    val spacing = MealPlannerTokens.spacing
+    val colors = MaterialTheme.colorScheme
+    val contentColor = if (isToday) colors.onPrimary else colors.onSurface
+
+    Column(
+        modifier = modifier
             .clip(MaterialTheme.shapes.large)
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center
+            .background(if (isToday) colors.primary else Color.Transparent)
+            .padding(horizontal = spacing.md, vertical = spacing.md)
+            .width(MealPlannerTokens.iconSize.xl),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = LocalStrings.current.weekdayShort(day.dayOfWeek),
+            style = MaterialTheme.typography.labelLarge,
+            color = if (isToday) contentColor else colors.onSurfaceVariant,
+            maxLines = 1
+        )
+        Text(
+            text = day.dayOfMonth.toString(),
+            style = MaterialTheme.typography.headlineSmall,
+            color = contentColor,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+private fun WeekMealRow(entry: MealPlanEntry, backgroundColor: Color, onClick: () -> Unit) {
+    val spacing = MealPlannerTokens.spacing
+    // Opaque so the delete background stays hidden until the row is swiped.
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.small)
+            .background(backgroundColor)
+            .clickable(onClick = onClick)
+            .padding(vertical = spacing.xs),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            Icons.Default.Add,
-            contentDescription = LocalStrings.current.calendarAddMealTypeCd(mealType.displayName().lowercase()),
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            entry.mealType.icon(),
+            contentDescription = entry.mealType.displayName(),
+            tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
         )
+        Spacer(Modifier.width(spacing.sm))
+        Text(
+            text = entry.recipe.name,
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Composable
+private fun WeekNotesCard(note: String, onNoteChange: (String) -> Unit) {
+    val spacing = MealPlannerTokens.spacing
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+    ) {
+        Column(modifier = Modifier.padding(spacing.cardPadding)) {
+            Text(
+                text = LocalStrings.current.calendarWeekNotes,
+                style = MaterialTheme.typography.titleSmall
+            )
+            Spacer(Modifier.height(spacing.sm))
+            OutlinedTextField(
+                value = note,
+                onValueChange = onNoteChange,
+                placeholder = { Text(LocalStrings.current.calendarWeekNotesPlaceholder) },
+                textStyle = MaterialTheme.typography.bodyMedium,
+                minLines = 2,
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                    unfocusedBorderColor = Color.Transparent,
+                    focusedBorderColor = Color.Transparent
+                ),
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
 
@@ -549,6 +589,11 @@ private fun MealEntryCard(entry: MealPlanEntry, locked: Boolean, onClick: () -> 
             )
             Spacer(Modifier.width(spacing.md))
             Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = entry.mealType.displayName().uppercase(),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
                 Text(text = entry.recipe.name, style = MaterialTheme.typography.titleMedium)
                 Text(
                     text = LocalStrings.current.minutesLabel(entry.recipe.preparationTimeMinutes),

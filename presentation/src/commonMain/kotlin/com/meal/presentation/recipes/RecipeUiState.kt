@@ -4,7 +4,6 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
-import com.meal.domain.model.enums.MealType
 
 enum class RecipeEmptyState { NO_RECIPES, NO_FAVORITES, NO_CREATED, NO_MATCHES }
 
@@ -15,7 +14,6 @@ data class RecipeUiState(
     val searchQuery: String = "",
     val selectedCategory: FoodCategory? = null,
     val selectedCuisine: Cuisine? = null,
-    val selectedMealType: MealType? = null,
     val prepTimeRange: ClosedFloatingPointRange<Float> = 0f..180f,
     val calorieRange: ClosedFloatingPointRange<Float> = 0f..1500f,
     val showFavoritesOnly: Boolean = false,
@@ -32,7 +30,6 @@ data class RecipeUiState(
             .filter { !showCreatedOnly || it.isUserCreated }
             .filter { selectedCategory == null || it.category == selectedCategory }
             .filter { selectedCuisine == null || it.cuisine == selectedCuisine }
-            .filter { selectedMealType == null || it.mealTypes.contains(selectedMealType) }
             .filter { it.preparationTimeMinutes.toFloat() in prepTimeRange }
             .filter { recipe -> recipe.calories?.let { it.toFloat() in calorieRange } ?: true }
             .filter { recipe -> matchesSearch(recipe, searchQuery) }

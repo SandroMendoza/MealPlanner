@@ -103,8 +103,6 @@ data class AddRecipeParams(
     val name: String,
     /** A short description of the recipe. */
     val description: String?,
-    /** The meals this recipe is suitable for (e.g. "BREAKFAST", "LUNCH", "DINNER", "SNACK"). */
-    val mealTypes: List<String>,
     /** The recipe's category (e.g. "MAIN_DISH", "SIDE_DISH", "SOUP", "SALAD", "DESSERT", "BEVERAGE"). */
     val category: String,
     /**

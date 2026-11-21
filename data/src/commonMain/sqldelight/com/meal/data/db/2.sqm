@@ -1,0 +1,1 @@
+ALTER TABLE IngredientEntity ADD COLUMN category TEXT;
