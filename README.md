@@ -1,28 +1,43 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Meal Planner
 
-* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+Meal Planner is a meal planning app for Android and iOS. You plan meals for the week,
+keep your recipes, build a shopping list from the plan and track what you spend on food.
+All data stays on the device: there are no accounts, no ads and no analytics. A backup
+can be exported and restored by hand.
 
-* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
+It is a Kotlin Multiplatform project with a shared Compose Multiplatform UI.
 
-### Running the apps
+## Modules
 
-Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
+| Module | What it holds |
+|---|---|
+| [`androidApp`](./androidApp) | The Android entry point (application ID `sandragon.inc.mealplanner`). |
+| [`iosApp`](./iosApp) | The iOS entry point, an Xcode project that hosts the shared UI. |
+| [`shared`](./shared/src) | The Compose Multiplatform UI: screens, navigation, components and the design tokens in `theme/`. |
+| [`presentation`](./presentation/src) | View models and screen state for each feature. |
+| [`domain`](./domain/src) | Models, use cases, repository interfaces and the app's strings. No platform code. |
+| [`data`](./data/src) | Repository implementations on a SQLDelight database, with Android and iOS drivers. |
 
-- Android app: `./gradlew :androidApp:assembleDebug`
-- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+`shared` brings the other modules together and Koin wires them up. `presentation` and
+`data` both build on `domain`, and `domain` depends on nothing else in the project.
 
-### Running the tests
+## Building and running
 
-`./run-tests.sh` runs the unit tests of `domain`, `data` and `presentation`
-on the JVM, prints a per-module summary, and exits non-zero if anything fails. On Windows,
-run it from Git Bash.
+- **Android:** `./gradlew :androidApp:assembleDebug`, or the run configuration in Android
+  Studio. The app needs Android 7.0 (API 24) or later.
+- **iOS:** open [`iosApp`](./iosApp) in Xcode and run it from there.
 
----
+## Tests
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+`./run-tests.sh` runs the unit tests of `domain`, `data` and `presentation` on the JVM,
+prints a summary per module, and exits non-zero if anything fails. On Windows, run it from
+Git Bash. HTML reports land in `<module>/build/reports/tests/testAndroidHostTest/`.
+
+## Privacy
+
+The privacy policy is in [`docs/privacy-policy.html`](./docs/privacy-policy.html).
+
+## Project tracking
+
+- Notion: https://app.notion.com/p/MealPlanner-41f2582d747381d6ae45c0b80f6f5018
+- Jira: https://sandromendoza.atlassian.net/jira/software/projects/MEAL/boards (key `MEAL`)
