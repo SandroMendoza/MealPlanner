@@ -1,5 +1,9 @@
 package com.meal.planner.recipes
 
+import com.meal.planner.common.LocalCompactHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.background
@@ -187,7 +191,7 @@ fun RecipeScreen(
                     }
 
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(if (isListView) 1 else 2),
+                        columns = if (isListView) GridCells.Fixed(1) else GridCells.Adaptive(RECIPE_GRID_CARD_MIN_WIDTH),
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(
                             start = spacing.lg,
                             end = spacing.lg,
@@ -273,12 +277,13 @@ private fun RecipeFilterSheet(
     onClearFilters: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = LocalCompactHeight.current)
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = spacing.lg, vertical = spacing.sm)
         ) {
             Text(
@@ -428,6 +433,9 @@ private fun RecipeListRow(recipe: Recipe, onClick: () -> Unit) {
         }
     }
 }
+
+/** Grid cards are square, so this keeps them small enough to fit on a short screen. */
+internal val RECIPE_GRID_CARD_MIN_WIDTH = 140.dp
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable

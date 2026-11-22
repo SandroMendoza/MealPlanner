@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -43,7 +45,9 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.components.MealTypeDialog
+import com.meal.planner.recipes.RECIPE_GRID_CARD_MIN_WIDTH
 import com.meal.planner.recipes.RecipeGridCard
 import com.meal.planner.recipes.message
 import com.meal.planner.strings.LocalStrings
@@ -89,6 +93,28 @@ fun RecipePickerScreen(
         }
     }
 
+    val compactHeight = LocalCompactHeight.current
+    val searchField: @Composable (Modifier) -> Unit = { modifier ->
+        OutlinedTextField(
+            value = uiState.searchQuery,
+            onValueChange = recipeViewModel::onSearchQueryChange,
+            placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder) },
+            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+            trailingIcon = {
+                if (uiState.searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { recipeViewModel.onSearchQueryChange("") }) {
+                        Icon(Icons.Default.Clear, contentDescription = LocalStrings.current.clearSearch)
+                    }
+                }
+            },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+            shape = MaterialTheme.shapes.extraLarge,
+            modifier = modifier
+        )
+    }
+
     pendingRecipe?.let { recipe ->
         MealTypeDialog(
             recipeName = recipe.name,
@@ -106,13 +132,27 @@ fun RecipePickerScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0),
         topBar = {
-            TopAppBar(
-                title = { Text(LocalStrings.current.recipePickerTitle, style = MaterialTheme.typography.titleLarge) },
-                navigationIcon = {
-                    TextButton(onClick = onBack) { Text(LocalStrings.current.cancel) }
-                },
-                windowInsets = WindowInsets(0)
-            )
+            if (compactHeight) {
+                Surface {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.xs, vertical = spacing.xs),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                    ) {
+                        TextButton(onClick = onBack) { Text(LocalStrings.current.cancel) }
+                        Text(LocalStrings.current.recipePickerTitle, style = MaterialTheme.typography.titleLarge)
+                        searchField(Modifier.weight(1f).padding(end = spacing.sm))
+                    }
+                }
+            } else {
+                TopAppBar(
+                    title = { Text(LocalStrings.current.recipePickerTitle, style = MaterialTheme.typography.titleLarge) },
+                    navigationIcon = {
+                        TextButton(onClick = onBack) { Text(LocalStrings.current.cancel) }
+                    },
+                    windowInsets = WindowInsets(0)
+                )
+            }
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -125,24 +165,9 @@ fun RecipePickerScreen(
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-            OutlinedTextField(
-                value = uiState.searchQuery,
-                onValueChange = recipeViewModel::onSearchQueryChange,
-                placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder) },
-                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-                trailingIcon = {
-                    if (uiState.searchQuery.isNotEmpty()) {
-                        IconButton(onClick = { recipeViewModel.onSearchQueryChange("") }) {
-                            Icon(Icons.Default.Clear, contentDescription = LocalStrings.current.clearSearch)
-                        }
-                    }
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                shape = MaterialTheme.shapes.extraLarge,
-                modifier = Modifier.fillMaxWidth().padding(spacing.lg)
-            )
+            if (!compactHeight) {
+                searchField(Modifier.fillMaxWidth().padding(spacing.lg))
+            }
 
             Box(modifier = Modifier.fillMaxSize()) {
                 when {
@@ -154,8 +179,13 @@ fun RecipePickerScreen(
                         modifier = Modifier.align(Alignment.Center)
                     )
                     else -> LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        contentPadding = PaddingValues(start = spacing.lg, end = spacing.lg, bottom = spacing.lg),
+                        columns = GridCells.Adaptive(RECIPE_GRID_CARD_MIN_WIDTH),
+                        contentPadding = PaddingValues(
+                            start = spacing.lg,
+                            end = spacing.lg,
+                            top = if (compactHeight) spacing.sm else spacing.none,
+                            bottom = spacing.lg
+                        ),
                         horizontalArrangement = Arrangement.spacedBy(spacing.sm),
                         verticalArrangement = Arrangement.spacedBy(spacing.sm)
                     ) {
