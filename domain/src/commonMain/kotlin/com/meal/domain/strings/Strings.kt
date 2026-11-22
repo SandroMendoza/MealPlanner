@@ -159,6 +159,11 @@ data class Strings(
     val ingredientAddCustom: (name: String) -> String,
     val ingredientAddAndNext: String,
     val ingredientDone: String,
+    val instructionsSteps: String,
+    val instructionsWriteAll: String,
+    val instructionsWriteAllHint: String,
+    val moveUp: String,
+    val moveDown: String,
 
     // Shopping list
     val shoppingNoMealsPlannedPeriod: String,

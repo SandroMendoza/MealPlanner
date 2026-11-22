@@ -66,7 +66,6 @@ class RecipeFormViewModelTest {
     private fun RecipeFormViewModel.fillValidForm(name: String = "Lumpia") {
         updateName(name)
         addIngredient(IngredientFormRow("Wrapper", "20", MeasurementUnit.PIECE))
-        addInstructionRow()
         updateInstructionRow(0, InstructionFormRow("Roll and fry"))
     }
 
@@ -78,6 +77,7 @@ class RecipeFormViewModelTest {
         assertEquals("", state.name)
         assertEquals(listOf("Garlic"), state.availableIngredients.map { it.name })
         assertEquals(setOf("Kare-Kare", "Pancit"), state.existingRecipeNames.toSet())
+        assertEquals(listOf(InstructionFormRow()), state.instructions)
     }
 
     @Test
@@ -153,11 +153,31 @@ class RecipeFormViewModelTest {
         vm.removeIngredientRow(0)
         assertEquals(listOf(IngredientFormRow("Salt", "1", MeasurementUnit.TEASPOON)), vm.state.value.ingredients)
 
-        vm.addInstructionRow()
-        vm.addInstructionRow()
         vm.updateInstructionRow(0, InstructionFormRow("Mix"))
+        vm.addInstructionRow()
         vm.removeInstructionRow(1)
         assertEquals(listOf(InstructionFormRow("Mix")), vm.state.value.instructions)
+    }
+
+    @Test
+    fun aStepCanBeSplitMovedAndAllStepsReplaced() {
+        val vm = viewModel()
+        vm.updateInstructionRow(0, InstructionFormRow("Boil"))
+        vm.addInstructionRow()
+        vm.updateInstructionRow(1, InstructionFormRow("Serve"))
+
+        vm.replaceInstructionRow(0, listOf("Boil water", "Add rice"))
+        assertEquals(listOf("Boil water", "Add rice", "Serve"), vm.state.value.instructions.map { it.description })
+
+        vm.moveInstructionRow(2, 0)
+        assertEquals(listOf("Serve", "Boil water", "Add rice"), vm.state.value.instructions.map { it.description })
+        vm.moveInstructionRow(0, 5)
+        assertEquals(listOf("Serve", "Boil water", "Add rice"), vm.state.value.instructions.map { it.description })
+
+        vm.replaceInstructions(listOf("Only step"))
+        assertEquals(listOf(InstructionFormRow("Only step")), vm.state.value.instructions)
+        vm.replaceInstructions(emptyList())
+        assertEquals(listOf(InstructionFormRow()), vm.state.value.instructions)
     }
 
     @Test

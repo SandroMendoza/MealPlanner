@@ -241,6 +241,11 @@ val frenchStrings = Strings(
     ingredientAddCustom = { name -> "Ajouter « $name »" },
     ingredientAddAndNext = "Ajouter et suivant",
     ingredientDone = "Terminé",
+    instructionsSteps = "Étapes",
+    instructionsWriteAll = "Tout écrire",
+    instructionsWriteAllHint = "Une étape par ligne",
+    moveUp = "Monter",
+    moveDown = "Descendre",
 
     shoppingNoMealsPlannedPeriod = "Aucun repas prévu pour cette période.",
     shoppingAddItemButton = "Ajouter un Article",
