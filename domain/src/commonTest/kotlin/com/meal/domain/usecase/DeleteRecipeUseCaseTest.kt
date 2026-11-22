@@ -11,6 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class DeleteRecipeUseCaseTest {
 
@@ -20,6 +21,16 @@ class DeleteRecipeUseCaseTest {
     private val useCase = DeleteRecipeUseCase(recipes, mealPlan)
 
     private val futureDates = listOf(LocalDate(2026, 11, 20), LocalDate(2026, 11, 27))
+
+    @Test
+    fun plannedDatesListsTheFutureDatesWithoutDeletingAnything() = runTest {
+        mealPlan.futureDates = mapOf(adobo.id to futureDates)
+
+        assertEquals(futureDates, useCase.plannedDates(adobo.id))
+        assertEquals(emptyList(), useCase.plannedDates(Uuid.random()))
+        assertTrue(recipes.softDeleted.isEmpty())
+        assertTrue(mealPlan.removedFutureSlotsFor.isEmpty())
+    }
 
     @Test
     fun deletesARecipeThatIsNotPlannedAhead() = runTest {

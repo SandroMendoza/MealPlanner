@@ -314,7 +314,7 @@ private fun CalendarContent(
                         locked = locked,
                         onClick = { onRecipeClick(entry.recipe.id) },
                         onChange = { onSlotClick(selectedDate, entry.mealType, entry.id) },
-                        onRemove = { viewModel.removeSlot(entry) }
+                        onRemove = { viewModel.requestRemoveSlot(entry) }
                     )
                 }
             }

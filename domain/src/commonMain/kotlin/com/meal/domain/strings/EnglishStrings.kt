@@ -205,6 +205,7 @@ val englishStrings = Strings(
     recipeDetailDeleteBody = { count, dates ->
         "This recipe is scheduled on $count future date(s): $dates. Deleting it will remove it from those days."
     },
+    recipeDetailDeleteUnplannedBody = { recipeName -> "\"$recipeName\" will be deleted. This can't be undone." },
     recipeDetailDelete = "Delete",
     recipeDetailNotFound = "Recipe not found.",
     recipeDetailEditCd = "Edit recipe",

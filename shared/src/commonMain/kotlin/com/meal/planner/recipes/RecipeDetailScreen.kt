@@ -119,7 +119,11 @@ fun RecipeDetailScreen(
             title = { Text(LocalStrings.current.recipeDetailDeleteTitle, style = MaterialTheme.typography.titleLarge) },
             text = {
                 Text(
-                    LocalStrings.current.recipeDetailDeleteBody(dates.size, dates.joinToString { it.toString() }),
+                    if (dates.isEmpty()) {
+                        LocalStrings.current.recipeDetailDeleteUnplannedBody(uiState.recipe?.name.orEmpty())
+                    } else {
+                        LocalStrings.current.recipeDetailDeleteBody(dates.size, dates.joinToString { it.toString() })
+                    },
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -190,7 +194,7 @@ fun RecipeDetailScreen(
                                             recipe = recipe,
                                             onBack = onBack,
                                             onEdit = { onEdit(recipeId) },
-                                            onDelete = { viewModel.delete() },
+                                            onDelete = { viewModel.requestDelete() },
                                             onToggleFavorite = { viewModel.toggleFavorite() },
                                             modifier = Modifier.fillMaxWidth()
                                         )
@@ -216,7 +220,7 @@ fun RecipeDetailScreen(
                                         recipe = recipe,
                                         onBack = onBack,
                                         onEdit = { onEdit(recipeId) },
-                                        onDelete = { viewModel.delete() },
+                                        onDelete = { viewModel.requestDelete() },
                                         onToggleFavorite = { viewModel.toggleFavorite() },
                                         modifier = Modifier.fillMaxWidth().padding(spacing.lg)
                                     )
