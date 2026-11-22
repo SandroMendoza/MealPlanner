@@ -193,15 +193,6 @@ fun RecipeFormScreen(
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
                     modifier = Modifier.weight(1f)
                 )
-                OutlinedTextField(
-                    value = uiState.calories,
-                    onValueChange = { viewModel.updateCalories(filterIntegerInput(it)) },
-                    label = { NumericFieldLabel(LocalStrings.current.recipeFormCalories) },
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                    modifier = Modifier.weight(1f)
-                )
             }
 
             SectionLabel(LocalStrings.current.recipeFormPhoto)

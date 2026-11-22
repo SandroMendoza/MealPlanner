@@ -75,8 +75,6 @@ data class RecipeDetailsResult(
     val preparationTimeMinutes: Int,
     /** Number of servings the recipe makes. */
     val servings: Int,
-    /** Calories per serving, if known. */
-    val calories: Int?,
     /** The recipe's cuisine (e.g. "FILIPINO", "ITALIAN"), if one was set. */
     val cuisine: String?,
     /** The recipe's ingredients. */
@@ -114,8 +112,6 @@ data class AddRecipeParams(
     val preparationTimeMinutes: Int,
     /** Number of servings the recipe makes. */
     val servings: Int,
-    /** Calories per serving, if known. */
-    val calories: Int?,
     /** The recipe's ingredients. */
     val ingredients: List<AddRecipeIngredientParams>,
     /** The recipe's instructions, one step per entry, in order. */

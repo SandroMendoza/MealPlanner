@@ -194,7 +194,6 @@ val englishStrings = Strings(
     recipesFavoritesOnly = "Favorites only",
     recipesCreatedByMe = "Created by me",
     recipesPrepTimeRange = { start, end -> "Prep time: $start–$end min" },
-    recipesCalorieRange = { start, end -> "Calories: $start–$end" },
     recipesClearFilters = "Clear filters",
     recipesNoRecipesYet = "No recipes yet.",
     recipesNoFavoritesYet = "No favorites yet. Tap the heart on a recipe to add one.",
@@ -220,7 +219,6 @@ val englishStrings = Strings(
     recipeDetailCookModeNextCd = "Next step",
     recipeDetailCookModePreviousCd = "Previous step",
     recipeDetailCookModeStopCd = "Exit cook mode",
-    caloriesLabel = { count -> "$count calories" },
     servingsLabel = { count -> if (count == 1) "$count serving" else "$count servings" },
     recipeDetailAddToMealPlan = "Add to Meal Plan",
 
@@ -230,7 +228,6 @@ val englishStrings = Strings(
     recipeFormDescription = "Description",
     recipeFormPrepMin = "Prep (min)",
     recipeFormServings = "Servings",
-    recipeFormCalories = "Calories",
     recipeFormPhoto = "Photo",
     recipeFormAddIngredient = "+ Add ingredient",
     recipeFormAddInstruction = "+ Add instruction",

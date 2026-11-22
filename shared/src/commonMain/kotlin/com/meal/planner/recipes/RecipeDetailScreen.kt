@@ -27,7 +27,6 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.People
@@ -508,24 +507,16 @@ private fun RecipeDetailSummary(recipe: Recipe, modifier: Modifier = Modifier) {
             )
         }
 
-        if (recipe.cuisine != null || recipe.calories != null) {
+        recipe.cuisine?.let { cuisine ->
             Row(
                 modifier = Modifier.padding(top = spacing.xs),
                 horizontalArrangement = Arrangement.spacedBy(spacing.lg),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                recipe.cuisine?.let { cuisine ->
-                    RecipeDetailMetaItem(
-                        icon = Icons.Filled.Public,
-                        text = cuisine.displayName()
-                    )
-                }
-                recipe.calories?.let {
-                    RecipeDetailMetaItem(
-                        icon = Icons.Filled.LocalFireDepartment,
-                        text = LocalStrings.current.caloriesLabel(it)
-                    )
-                }
+                RecipeDetailMetaItem(
+                    icon = Icons.Filled.Public,
+                    text = cuisine.displayName()
+                )
             }
         }
     }

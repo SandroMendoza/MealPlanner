@@ -5,7 +5,6 @@ CREATE TABLE RecipeEntity (
     category TEXT NOT NULL,
     preparationTimeMinutes INTEGER NOT NULL,
     servings INTEGER NOT NULL,
-    calories INTEGER,
     imageUrl TEXT,
     isDeleted INTEGER NOT NULL DEFAULT 0,
     isFavorite INTEGER NOT NULL DEFAULT 0,
@@ -75,12 +74,12 @@ WHERE RecipeEntity.isDeleted = 0
 ORDER BY InstructionEntity.recipeId, InstructionEntity.stepNumber;
 
 insertRecipe:
-INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, calories, imageUrl, isDeleted, isUserCreated, cuisine)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?);
+INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, imageUrl, isDeleted, isUserCreated, cuisine)
+VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?);
 
 updateRecipe:
 UPDATE RecipeEntity
-SET name = ?, description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, calories = ?, imageUrl = ?, cuisine = ?
+SET name = ?, description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, imageUrl = ?, cuisine = ?
 WHERE id = ?;
 
 softDeleteRecipe:

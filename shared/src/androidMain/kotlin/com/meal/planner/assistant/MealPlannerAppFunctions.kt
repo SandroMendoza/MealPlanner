@@ -156,7 +156,6 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             description = recipe.description,
             preparationTimeMinutes = recipe.preparationTimeMinutes,
             servings = recipe.servings,
-            calories = recipe.calories,
             cuisine = recipe.cuisine?.name,
             ingredients = recipe.ingredients.map {
                 RecipeIngredientResult(name = it.ingredient.name, quantity = it.quantity, unit = it.unit.unit)
@@ -180,7 +179,6 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             category = parseFoodCategory(params.category),
             preparationTimeMinutes = params.preparationTimeMinutes,
             servings = params.servings,
-            calories = params.calories,
             imageUrl = null,
             ingredients = params.ingredients.map { ingredient ->
                 RecipeIngredient(

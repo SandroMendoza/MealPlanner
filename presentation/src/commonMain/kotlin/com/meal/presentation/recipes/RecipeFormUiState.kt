@@ -27,7 +27,6 @@ data class RecipeFormUiState(
     val cuisine: Cuisine? = null,
     val preparationTimeMinutes: String = "",
     val servings: String = "",
-    val calories: String = "",
     val imageUrl: String = "",
     val ingredients: List<IngredientFormRow> = emptyList(),
     val instructions: List<InstructionFormRow> = emptyList(),

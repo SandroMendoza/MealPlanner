@@ -39,7 +39,6 @@ class RecipeFormViewModelTest {
         cuisine = Cuisine.FILIPINO,
         preparationTimeMinutes = 120,
         servings = 6,
-        calories = 650,
         imageUrl = "seed:kare_kare.webp",
         ingredients = listOf(ingredientLine("Oxtail", 1.5, MeasurementUnit.KILOGRAMS)),
         instructions = listOf(Instruction(2, "Add peanut sauce"), Instruction(1, "Simmer oxtail"))
@@ -91,7 +90,6 @@ class RecipeFormViewModelTest {
         assertEquals(Cuisine.FILIPINO, state.cuisine)
         assertEquals("120", state.preparationTimeMinutes)
         assertEquals("6", state.servings)
-        assertEquals("650", state.calories)
         assertEquals("seed:kare_kare.webp", state.imageUrl)
         assertEquals(listOf(IngredientFormRow("Oxtail", "1.5", MeasurementUnit.KILOGRAMS)), state.ingredients)
         assertEquals(listOf("Simmer oxtail", "Add peanut sauce"), state.instructions.map { it.description })
@@ -131,7 +129,6 @@ class RecipeFormViewModelTest {
         vm.updateCategory(FoodCategory.SIDE_DISH)
         vm.updatePreparationTime("25")
         vm.updateServings("3")
-        vm.updateCalories("220")
         vm.updateImageUrl("file:x.jpg")
 
         val state = vm.state.value
@@ -139,7 +136,6 @@ class RecipeFormViewModelTest {
         assertEquals(FoodCategory.SIDE_DISH, state.category)
         assertEquals("25", state.preparationTimeMinutes)
         assertEquals("3", state.servings)
-        assertEquals("220", state.calories)
         assertEquals("file:x.jpg", state.imageUrl)
     }
 
@@ -218,7 +214,6 @@ class RecipeFormViewModelTest {
         assertEquals("Lumpia", saved.name)
         assertNull(saved.description)
         assertNull(saved.imageUrl)
-        assertNull(saved.calories)
         assertEquals(0, saved.preparationTimeMinutes)
         assertEquals(1, saved.servings)
         assertEquals(listOf("Wrapper"), saved.ingredients.map { it.ingredient.name })
@@ -239,7 +234,6 @@ class RecipeFormViewModelTest {
         assertEquals(existing.id, saved.id)
         assertEquals("Kare-Kare Special", saved.name)
         assertEquals(8, saved.servings)
-        assertEquals(650, saved.calories)
         assertTrue(vm.state.value.saved)
     }
 
