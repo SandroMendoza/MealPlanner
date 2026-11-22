@@ -23,6 +23,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -165,11 +166,21 @@ private fun ProfileAvatar(name: String, avatarUrl: String, size: androidx.compos
                 .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = name.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "?",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+            val initial = name.trim().firstOrNull()?.uppercaseChar()?.toString()
+            if (initial == null) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(MealPlannerTokens.iconSize.xl)
+                )
+            } else {
+                Text(
+                    text = initial,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     } else {
         AsyncImage(

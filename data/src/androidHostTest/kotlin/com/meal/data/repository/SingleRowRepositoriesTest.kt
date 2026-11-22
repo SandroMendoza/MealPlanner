@@ -32,8 +32,8 @@ class SingleRowRepositoriesTest {
     private val notes = WeekNoteRepositoryImpl(WeekNoteLocalDataSource(database, Dispatchers.Unconfined))
 
     @Test
-    fun profileDefaultsToChefBeforeAnyEdit() = runTest {
-        assertEquals(UserProfile(name = "Chef", bio = "", avatarUrl = ""), profiles.getProfile().first())
+    fun profileHasNoNameBeforeAnyEdit() = runTest {
+        assertEquals(UserProfile(name = "", bio = "", avatarUrl = ""), profiles.getProfile().first())
     }
 
     @Test
