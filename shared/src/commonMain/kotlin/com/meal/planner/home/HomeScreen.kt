@@ -48,6 +48,7 @@ import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.today
 import com.meal.presentation.home.HomeViewModel
+import kotlinx.datetime.number
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -146,7 +147,7 @@ fun HomeScreen(
             val todayDate = today()
             Text(
                 text = "${LocalStrings.current.weekdayShort(todayDate.dayOfWeek)}, " +
-                    "${LocalStrings.current.monthAbbreviation(todayDate.monthNumber)} ${todayDate.dayOfMonth}",
+                    "${LocalStrings.current.monthAbbreviation(todayDate.month.number)} ${todayDate.day}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )

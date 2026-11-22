@@ -28,12 +28,13 @@ import com.meal.domain.strings.Strings
 import com.meal.planner.common.formatPrice
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import kotlinx.datetime.number
 
 private fun bucketAxisLabel(bucket: SpendingBucket, strings: Strings): String =
     if (bucket.bucketStart == bucket.bucketEnd) {
         strings.weekdayInitial(bucket.bucketStart.dayOfWeek)
     } else {
-        "${strings.monthAbbreviation(bucket.bucketStart.monthNumber)} ${bucket.bucketStart.dayOfMonth}"
+        "${strings.monthAbbreviation(bucket.bucketStart.month.number)} ${bucket.bucketStart.day}"
     }
 
 /**

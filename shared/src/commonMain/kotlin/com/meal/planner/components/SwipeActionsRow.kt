@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Label
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Label
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -14,10 +14,12 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,21 +30,23 @@ fun SwipeActionsRow(
     content: @Composable () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            when (value) {
-                SwipeToDismissBoxValue.StartToEnd -> onSwipeRightToAssignGroup?.invoke()
-                SwipeToDismissBoxValue.EndToStart -> onSwipeLeftToDelete()
-                SwipeToDismissBoxValue.Settled -> Unit
-            }
-            false
-        }
-    )
+    val dismissState = rememberSwipeToDismissBoxState()
+    val scope = rememberCoroutineScope()
 
     SwipeToDismissBox(
         state = dismissState,
         modifier = modifier,
         enableDismissFromStartToEnd = onSwipeRightToAssignGroup != null,
+        onDismiss = { value ->
+            when (value) {
+                SwipeToDismissBoxValue.StartToEnd -> onSwipeRightToAssignGroup?.invoke()
+                SwipeToDismissBoxValue.EndToStart -> onSwipeLeftToDelete()
+                SwipeToDismissBoxValue.Settled -> Unit
+            }
+            // A swipe triggers its action but never dismisses the row: the caller decides
+            // whether the row goes away, so the row always returns to rest.
+            scope.launch { dismissState.reset() }
+        },
         backgroundContent = {
             when (dismissState.dismissDirection) {
                 SwipeToDismissBoxValue.StartToEnd -> Box(
@@ -53,7 +57,7 @@ fun SwipeActionsRow(
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Icon(
-                        Icons.Filled.Label,
+                        Icons.AutoMirrored.Filled.Label,
                         contentDescription = LocalStrings.current.shoppingAssignGroupCd,
                         tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
