@@ -16,6 +16,10 @@ sqldelight {
 }
 
 kotlin {
+    compilerOptions {
+        // DatabaseDriverFactory is an expect/actual class, which Kotlin still marks as Beta.
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 
     // Target declarations - add or remove as needed below. These define
     // which platforms this KMP module supports.

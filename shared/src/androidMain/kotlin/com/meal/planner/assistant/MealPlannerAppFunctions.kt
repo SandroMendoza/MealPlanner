@@ -265,7 +265,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
         "today" -> today().let { it to it }
         "week" -> currentWeekSunday().let { it to weekEndFor(it) }
         "month" -> {
-            val firstOfMonth = LocalDate(today().year, today().monthNumber, 1)
+            val firstOfMonth = LocalDate(today().year, today().month, 1)
             val lastOfMonth = firstOfMonth.plus(1, DateTimeUnit.MONTH).minus(1, DateTimeUnit.DAY)
             firstOfMonth to lastOfMonth
         }

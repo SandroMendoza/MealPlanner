@@ -92,7 +92,7 @@ class HomeViewModelTest {
 
         assertFalse(state.isLoading)
         assertNotNull(state.errorMessage)
-        assertTrue("disk full" in state.errorMessage!!)
+        assertTrue("disk full" in state.errorMessage)
     }
 
     @Test
