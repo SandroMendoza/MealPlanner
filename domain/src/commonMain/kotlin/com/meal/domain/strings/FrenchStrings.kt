@@ -235,6 +235,12 @@ val frenchStrings = Strings(
     recipeFormAddInstruction = "+ Ajouter une instruction",
     recipeFormSaving = "Enregistrement...",
     recipeFormSaveRecipe = "Enregistrer la Recette",
+    recipeFormNoIngredients = "Aucun ingrédient pour l'instant.",
+    ingredientSearchPlaceholder = "Rechercher des ingrédients",
+    ingredientSearchHint = "Tapez un nom pour trouver un ingrédient, ou ajoutez le vôtre.",
+    ingredientAddCustom = { name -> "Ajouter « $name »" },
+    ingredientAddAndNext = "Ajouter et suivant",
+    ingredientDone = "Terminé",
 
     shoppingNoMealsPlannedPeriod = "Aucun repas prévu pour cette période.",
     shoppingAddItemButton = "Ajouter un Article",

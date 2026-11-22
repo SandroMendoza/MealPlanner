@@ -66,6 +66,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.DateRangePickerDialog
+import com.meal.planner.components.IngredientPickerSheet
 import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.common.formatPrice
@@ -156,10 +157,13 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
         }
 
         if (uiState.showAddItemDialog) {
-            AddShoppingItemDialog(
-                suggestions = uiState.availableIngredients.map { it.name },
-                onConfirm = { name, quantity, unit -> viewModel.addItem(name, quantity, unit) },
-                onDismiss = { viewModel.dismissAddItemDialog() }
+            IngredientPickerSheet(
+                knownNames = remember(uiState.availableIngredients) { uiState.availableIngredients.map { it.name } },
+                editing = null,
+                onConfirm = { row -> row.quantity.toDoubleOrNull()?.let { viewModel.addItem(row.name, it, row.unit) } },
+                onDismiss = { viewModel.dismissAddItemDialog() },
+                defaultQuantity = "1",
+                requireQuantity = true
             )
         }
 

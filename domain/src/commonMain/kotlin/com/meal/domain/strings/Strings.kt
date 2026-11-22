@@ -153,6 +153,12 @@ data class Strings(
     val recipeFormAddInstruction: String,
     val recipeFormSaving: String,
     val recipeFormSaveRecipe: String,
+    val recipeFormNoIngredients: String,
+    val ingredientSearchPlaceholder: String,
+    val ingredientSearchHint: String,
+    val ingredientAddCustom: (name: String) -> String,
+    val ingredientAddAndNext: String,
+    val ingredientDone: String,
 
     // Shopping list
     val shoppingNoMealsPlannedPeriod: String,

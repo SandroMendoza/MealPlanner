@@ -1,5 +1,6 @@
 package com.meal.planner.recipes
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -17,9 +18,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -48,21 +53,20 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
-import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.displayName
-import com.meal.planner.common.filterDecimalInput
 import com.meal.planner.common.filterIntegerInput
 import com.meal.planner.common.rememberImagePicker
 import com.meal.planner.components.ImageSourceDialog
-import com.meal.planner.components.IngredientNameField
-import com.meal.planner.components.UnitDropdownField
+import com.meal.planner.components.IngredientPickerSheet
+import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
+import com.meal.presentation.common.formatAmount
 import com.meal.presentation.recipes.IngredientFormRow
 import com.meal.presentation.recipes.InstructionFormRow
 import com.meal.presentation.recipes.RecipeFormViewModel
@@ -240,16 +244,43 @@ fun RecipeFormScreen(
             }
 
             SectionLabel(LocalStrings.current.ingredients, required = true)
-            uiState.ingredients.forEachIndexed { index, row ->
-                IngredientRowEditor(
-                    row = row,
-                    suggestions = uiState.availableIngredients.map { it.name },
-                    onChange = { viewModel.updateIngredientRow(index, it) },
-                    onRemove = { viewModel.removeIngredientRow(index) }
+            var pickerOpen by remember { mutableStateOf(false) }
+            var editingIndex by remember { mutableStateOf<Int?>(null) }
+            if (uiState.ingredients.isEmpty()) {
+                Text(
+                    text = LocalStrings.current.recipeFormNoIngredients,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            TextButton(onClick = { viewModel.addIngredientRow() }) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                uiState.ingredients.forEachIndexed { index, row ->
+                    IngredientListRow(
+                        row = row,
+                        onClick = {
+                            editingIndex = index
+                            pickerOpen = true
+                        },
+                        onRemove = { viewModel.removeIngredientRow(index) }
+                    )
+                }
+            }
+            OutlinedButton(onClick = {
+                editingIndex = null
+                pickerOpen = true
+            }) {
                 Text(LocalStrings.current.recipeFormAddIngredient)
+            }
+            if (pickerOpen) {
+                val index = editingIndex
+                IngredientPickerSheet(
+                    knownNames = remember(uiState.availableIngredients) { uiState.availableIngredients.map { it.name } },
+                    editing = index?.let { uiState.ingredients.getOrNull(it) },
+                    onConfirm = { row ->
+                        if (index != null) viewModel.updateIngredientRow(index, row) else viewModel.addIngredient(row)
+                    },
+                    onDismiss = { pickerOpen = false }
+                )
             }
 
             SectionLabel(LocalStrings.current.instructions, required = true)
@@ -311,50 +342,37 @@ private fun NumericFieldLabel(text: String) {
 }
 
 @Composable
-private fun IngredientRowEditor(
+private fun IngredientListRow(
     row: IngredientFormRow,
-    suggestions: List<String>,
-    onChange: (IngredientFormRow) -> Unit,
+    onClick: () -> Unit,
     onRemove: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
-    val focusManager = LocalFocusManager.current
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            IngredientNameField(
-                value = row.name,
-                suggestions = suggestions,
-                onValueChange = { onChange(row.copy(name = it, unit = IngredientUnits.unitAfterRename(row.name, it, row.unit))) },
-                modifier = Modifier.weight(2f)
-            )
-            OutlinedTextField(
-                value = row.quantity,
-                onValueChange = { onChange(row.copy(quantity = filterDecimalInput(it))) },
-                label = { Text(LocalStrings.current.qty) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-            modifier = Modifier.fillMaxWidth().padding(top = spacing.xs)
-        ) {
-            UnitDropdownField(
-                value = row.unit,
-                onValueChange = { onChange(row.copy(unit = it)) },
-                modifier = Modifier.weight(1f),
-                units = remember(row.name) { IngredientUnits.unitsFor(row.name) }
-            )
-            TextButton(onClick = onRemove) {
-                Text(LocalStrings.current.remove)
-            }
+    val amount = if (row.quantity.isBlank()) row.unit.unit else formatAmount(row.quantity.toDoubleOrNull() ?: 0.0, row.unit)
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(MaterialTheme.shapes.small)
+            .clickable(onClick = onClick)
+            .padding(start = spacing.xs, top = spacing.xs, bottom = spacing.xs)
+    ) {
+        IngredientThumbnail(name = row.name, size = MealPlannerTokens.iconSize.lg)
+        Text(
+            text = row.name,
+            style = MaterialTheme.typography.bodyMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
+        Text(
+            text = amount,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        IconButton(onClick = onRemove) {
+            Icon(Icons.Filled.Close, contentDescription = LocalStrings.current.remove)
         }
     }
 }
