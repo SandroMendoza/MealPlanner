@@ -65,8 +65,7 @@ class RecipeFormViewModelTest {
 
     private fun RecipeFormViewModel.fillValidForm(name: String = "Lumpia") {
         updateName(name)
-        addIngredientRow()
-        updateIngredientRow(0, IngredientFormRow("Wrapper", "20", MeasurementUnit.PIECE))
+        addIngredient(IngredientFormRow("Wrapper", "20", MeasurementUnit.PIECE))
         addInstructionRow()
         updateInstructionRow(0, InstructionFormRow("Roll and fry"))
     }
@@ -148,8 +147,8 @@ class RecipeFormViewModelTest {
     fun ingredientAndInstructionRowsCanBeAddedEditedAndRemoved() {
         val vm = viewModel()
 
-        vm.addIngredientRow()
-        vm.addIngredientRow()
+        vm.addIngredient(IngredientFormRow("Garlic", "3", MeasurementUnit.CLOVE))
+        vm.addIngredient(IngredientFormRow("Pepper", "", MeasurementUnit.PINCH))
         vm.updateIngredientRow(1, IngredientFormRow("Salt", "1", MeasurementUnit.TEASPOON))
         vm.removeIngredientRow(0)
         assertEquals(listOf(IngredientFormRow("Salt", "1", MeasurementUnit.TEASPOON)), vm.state.value.ingredients)
@@ -186,7 +185,7 @@ class RecipeFormViewModelTest {
     fun savingANewRecipeAddsItWithBlankRowsDroppedAndDefaultsApplied() {
         val vm = viewModel()
         vm.fillValidForm()
-        vm.addIngredientRow()
+        vm.addIngredient(IngredientFormRow())
         vm.addInstructionRow()
         vm.addInstructionRow()
         vm.updateInstructionRow(2, InstructionFormRow("Serve"))

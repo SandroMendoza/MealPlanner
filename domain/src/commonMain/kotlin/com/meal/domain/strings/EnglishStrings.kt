@@ -235,6 +235,12 @@ val englishStrings = Strings(
     recipeFormAddInstruction = "+ Add instruction",
     recipeFormSaving = "Saving...",
     recipeFormSaveRecipe = "Save Recipe",
+    recipeFormNoIngredients = "No ingredients yet.",
+    ingredientSearchPlaceholder = "Search ingredients",
+    ingredientSearchHint = "Type a name to find an ingredient, or add your own.",
+    ingredientAddCustom = { name -> "Add \"$name\"" },
+    ingredientAddAndNext = "Add & next",
+    ingredientDone = "Done",
 
     shoppingNoMealsPlannedPeriod = "No meals planned for this period.",
     shoppingAddItemButton = "Add Item",

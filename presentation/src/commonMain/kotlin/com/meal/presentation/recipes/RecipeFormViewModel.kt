@@ -111,8 +111,8 @@ class RecipeFormViewModel(
         _uiState.value = _uiState.value.copy(imageUrl = value)
     }
 
-    fun addIngredientRow() {
-        _uiState.value = _uiState.value.copy(ingredients = _uiState.value.ingredients + IngredientFormRow())
+    fun addIngredient(row: IngredientFormRow) {
+        _uiState.value = _uiState.value.copy(ingredients = _uiState.value.ingredients + row)
     }
 
     fun updateIngredientRow(index: Int, row: IngredientFormRow) {
