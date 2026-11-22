@@ -122,6 +122,7 @@ data class Strings(
     // Recipe detail
     val recipeDetailDeleteTitle: String,
     val recipeDetailDeleteBody: (futureDateCount: Int, dates: String) -> String,
+    val recipeDetailDeleteUnplannedBody: (recipeName: String) -> String,
     val recipeDetailDelete: String,
     val recipeDetailNotFound: String,
     val recipeDetailEditCd: String,

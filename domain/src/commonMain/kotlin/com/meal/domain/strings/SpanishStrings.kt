@@ -205,6 +205,7 @@ val spanishStrings = Strings(
     recipeDetailDeleteBody = { count, dates ->
         "Esta receta está programada en $count fecha(s) futura(s): $dates. Eliminarla la quitará de esos días."
     },
+    recipeDetailDeleteUnplannedBody = { recipeName -> "Se eliminará «$recipeName». No se puede deshacer." },
     recipeDetailDelete = "Eliminar",
     recipeDetailNotFound = "Receta no encontrada.",
     recipeDetailEditCd = "Editar receta",

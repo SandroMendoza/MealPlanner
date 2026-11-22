@@ -205,6 +205,7 @@ val frenchStrings = Strings(
     recipeDetailDeleteBody = { count, dates ->
         "Cette recette est programmée pour $count date(s) future(s) : $dates. La supprimer l'enlèvera de ces jours."
     },
+    recipeDetailDeleteUnplannedBody = { recipeName -> "« $recipeName » sera supprimée. Cette action est irréversible." },
     recipeDetailDelete = "Supprimer",
     recipeDetailNotFound = "Recette introuvable.",
     recipeDetailEditCd = "Modifier la recette",

@@ -16,6 +16,10 @@ class DeleteRecipeUseCase(
     private val recipeRepository: RecipeRepository,
     private val mealPlanRepository: MealPlanRepository
 ) {
+    /** Future dates the recipe is planned on, which deleting it would clear. */
+    suspend fun plannedDates(recipeId: Uuid): List<LocalDate> =
+        mealPlanRepository.getFutureSlotDatesForRecipe(recipeId)
+
     suspend fun execute(recipeId: Uuid, force: Boolean = false): DeleteRecipeResult {
         val futureDates = mealPlanRepository.getFutureSlotDatesForRecipe(recipeId)
         if (futureDates.isNotEmpty() && !force) {
