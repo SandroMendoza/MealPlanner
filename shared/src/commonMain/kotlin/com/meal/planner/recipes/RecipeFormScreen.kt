@@ -2,11 +2,13 @@ package com.meal.planner.recipes
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
@@ -49,6 +51,7 @@ import coil3.compose.AsyncImage
 import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.displayName
 import com.meal.planner.common.filterDecimalInput
 import com.meal.planner.common.filterIntegerInput
@@ -66,7 +69,7 @@ import com.meal.presentation.recipes.RecipeFormViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun RecipeFormScreen(
     recipeId: String?,
@@ -87,23 +90,27 @@ fun RecipeFormScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0),
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        if (uiState.isEditMode) LocalStrings.current.recipeFormEditTitle else LocalStrings.current.recipeFormNewTitle,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                },
-                navigationIcon = {
-                    TextButton(onClick = onDone) { Text(LocalStrings.current.cancel) }
-                },
-                actions = {
-                    TextButton(onClick = { viewModel.save() }, enabled = uiState.canSave && !uiState.isSaving) {
-                        Text(LocalStrings.current.save)
-                    }
-                },
-                windowInsets = WindowInsets(0)
-            )
+            // On a short screen the keyboard leaves room for only one of the bar and the field
+            // being typed in, so the bar steps aside until the keyboard closes.
+            if (!(LocalCompactHeight.current && WindowInsets.isImeVisible)) {
+                TopAppBar(
+                    title = {
+                        Text(
+                            if (uiState.isEditMode) LocalStrings.current.recipeFormEditTitle else LocalStrings.current.recipeFormNewTitle,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    },
+                    navigationIcon = {
+                        TextButton(onClick = onDone) { Text(LocalStrings.current.cancel) }
+                    },
+                    actions = {
+                        TextButton(onClick = { viewModel.save() }, enabled = uiState.canSave && !uiState.isSaving) {
+                            Text(LocalStrings.current.save)
+                        }
+                    },
+                    windowInsets = WindowInsets(0)
+                )
+            }
         }
     ) { padding ->
         Column(

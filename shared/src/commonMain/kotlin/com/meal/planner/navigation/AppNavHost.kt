@@ -2,7 +2,17 @@ package com.meal.planner.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -12,12 +22,15 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -29,6 +42,7 @@ import androidx.savedstate.read
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.calendar.MealCalendarScreen
 import com.meal.planner.calendar.RecipePickerScreen
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.home.HomeScreen
 import com.meal.planner.profile.ProfileScreen
 import com.meal.planner.recipes.RecipeDetailScreen
@@ -62,184 +76,212 @@ fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
         }
     }
 
-    Scaffold(
-        bottomBar = {
-            if (currentRoute in TAB_ROUTES) {
-                NavigationBar {
-                    NavigationBarItem(
-                        selected = currentRoute == Routes.HOME,
-                        onClick = { navController.navigateToTab(Routes.HOME) },
-                        icon = { Icon(Icons.Default.Home, contentDescription = null) },
-                        label = { Text(LocalStrings.current.navHome) }
+    val showTabs = currentRoute in TAB_ROUTES
+    val useRail = showTabs && LocalCompactHeight.current
+    val strings = LocalStrings.current
+    val tabs = listOf(
+        TabItem(Routes.HOME, Icons.Default.Home, strings.navHome),
+        TabItem(Routes.CALENDAR, Icons.Default.CalendarMonth, strings.navMealPlan),
+        TabItem(
+            Routes.RECIPES,
+            Icons.AutoMirrored.Filled.MenuBook,
+            strings.navRecipes,
+            alsoSelectedOn = setOf(Routes.RECIPES_FAVORITES, Routes.RECIPES_CREATED)
+        ),
+        TabItem(Routes.SHOPPING_LIST, Icons.Default.ShoppingCart, strings.navShopping),
+        TabItem(Routes.PROFILE, Icons.Default.Person, strings.navProfile)
+    )
+    val systemInsets = WindowInsets.systemBars.union(WindowInsets.displayCutout)
+
+    Row {
+        if (useRail) {
+            NavigationRail(
+                windowInsets = systemInsets.only(WindowInsetsSides.Vertical + WindowInsetsSides.Start)
+            ) {
+                Spacer(Modifier.weight(1f))
+                tabs.forEach { tab ->
+                    NavigationRailItem(
+                        selected = tab.isSelected(currentRoute),
+                        onClick = { navController.navigateToTab(tab.route) },
+                        icon = { Icon(tab.icon, contentDescription = null) },
+                        label = { Text(tab.label) }
                     )
-                    NavigationBarItem(
-                        selected = currentRoute == Routes.CALENDAR,
-                        onClick = { navController.navigateToTab(Routes.CALENDAR) },
-                        icon = { Icon(Icons.Default.CalendarMonth, contentDescription = null) },
-                        label = { Text(LocalStrings.current.navMealPlan) }
+                }
+                Spacer(Modifier.weight(1f))
+            }
+        }
+        Scaffold(
+            modifier = Modifier.weight(1f),
+            contentWindowInsets = if (useRail) {
+                systemInsets.only(WindowInsetsSides.Vertical + WindowInsetsSides.End)
+            } else {
+                systemInsets
+            },
+            bottomBar = {
+                if (showTabs && !useRail) {
+                    NavigationBar {
+                        tabs.forEach { tab ->
+                            NavigationBarItem(
+                                selected = tab.isSelected(currentRoute),
+                                onClick = { navController.navigateToTab(tab.route) },
+                                icon = { Icon(tab.icon, contentDescription = null) },
+                                label = { Text(tab.label) }
+                            )
+                        }
+                    }
+                }
+            }
+        ) { padding ->
+            NavHost(
+                navController = navController,
+                startDestination = Routes.HOME,
+                modifier = Modifier.padding(padding).consumeWindowInsets(padding).imePadding(),
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None }
+            ) {
+                composable(Routes.HOME) {
+                    HomeScreen(
+                        onViewAllClick = { navController.navigateToTab(Routes.CALENDAR) },
+                        onAddMealClick = { navController.navigateToTab(Routes.CALENDAR) },
+                        onShoppingListClick = { navController.navigateToTab(Routes.SHOPPING_LIST) },
+                        onMealClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) },
+                        onNotificationsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) }
                     )
-                    NavigationBarItem(
-                        selected = currentRoute == Routes.RECIPES || currentRoute == Routes.RECIPES_FAVORITES || currentRoute == Routes.RECIPES_CREATED,
-                        onClick = { navController.navigateToTab(Routes.RECIPES) },
-                        icon = { Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null) },
-                        label = { Text(LocalStrings.current.navRecipes) }
+                }
+                composable(Routes.RECIPES) {
+                    RecipeScreen(
+                        onRecipeClick = { recipeId ->
+                            navController.navigate(Routes.recipeDetail(recipeId.toString()))
+                        },
+                        onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) }
                     )
-                    NavigationBarItem(
-                        selected = currentRoute == Routes.SHOPPING_LIST,
-                        onClick = { navController.navigateToTab(Routes.SHOPPING_LIST) },
-                        icon = { Icon(Icons.Default.ShoppingCart, contentDescription = null) },
-                        label = { Text(LocalStrings.current.navShopping) }
+                }
+                composable(Routes.RECIPES_FAVORITES) {
+                    RecipeScreen(
+                        onRecipeClick = { recipeId ->
+                            navController.navigate(Routes.recipeDetail(recipeId.toString()))
+                        },
+                        onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) },
+                        initialFavoritesOnly = true
                     )
-                    NavigationBarItem(
-                        selected = currentRoute == Routes.PROFILE,
-                        onClick = { navController.navigateToTab(Routes.PROFILE) },
-                        icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                        label = { Text(LocalStrings.current.navProfile) }
+                }
+                composable(Routes.RECIPES_CREATED) {
+                    RecipeScreen(
+                        onRecipeClick = { recipeId ->
+                            navController.navigate(Routes.recipeDetail(recipeId.toString()))
+                        },
+                        onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) },
+                        initialCreatedOnly = true
                     )
+                }
+                composable(Routes.RECIPE_NEW) {
+                    RecipeFormScreen(
+                        recipeId = null,
+                        onDone = { navController.popBackStack() }
+                    )
+                }
+                composable(
+                    route = Routes.RECIPE_DETAIL_PATTERN,
+                    arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
+                ) { entry ->
+                    val recipeId = entry.arguments?.read { getStringOrNull("recipeId") }.orEmpty()
+                    RecipeDetailScreen(
+                        recipeId = recipeId,
+                        onBack = { navController.popBackStack() },
+                        onEdit = { id -> navController.navigate(Routes.recipeEdit(id)) },
+                        onAddToMealPlan = { navController.navigateToTab(Routes.CALENDAR) }
+                    )
+                }
+                composable(
+                    route = Routes.RECIPE_EDIT_PATTERN,
+                    arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
+                ) { entry ->
+                    val recipeId = entry.arguments?.read { getStringOrNull("recipeId") }.orEmpty()
+                    RecipeFormScreen(
+                        recipeId = recipeId,
+                        onDone = { navController.popBackStack() }
+                    )
+                }
+                composable(Routes.CALENDAR) {
+                    MealCalendarScreen(
+                        onSlotClick = { date, mealType, replaceSlotId ->
+                            navController.navigate(
+                                Routes.calendarSlotPick(date.toString(), mealType?.name, replaceSlotId?.toString())
+                            )
+                        },
+                        onRecipeClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) }
+                    )
+                }
+                composable(
+                    route = Routes.CALENDAR_SLOT_PICK_PATTERN,
+                    arguments = listOf(
+                        navArgument("date") { type = NavType.StringType },
+                        navArgument("mealType") { type = NavType.StringType },
+                        navArgument("replaceSlotId") {
+                            type = NavType.StringType
+                            nullable = true
+                            defaultValue = null
+                        }
+                    )
+                ) { entry ->
+                    val date = LocalDate.parse(entry.arguments?.read { getStringOrNull("date") }.orEmpty())
+                    val mealTypeArg = entry.arguments?.read { getStringOrNull("mealType") }.orEmpty()
+                    val mealType = mealTypeArg.takeIf { it != Routes.ANY_MEAL_TYPE }?.let { MealType.valueOf(it) }
+                    val replaceSlotId = entry.arguments?.read { getStringOrNull("replaceSlotId") }
+                    RecipePickerScreen(
+                        date = date,
+                        mealType = mealType,
+                        replaceSlotId = replaceSlotId,
+                        onBack = { navController.popBackStack() },
+                        onAssigned = { navController.popBackStack() },
+                        onCreateRecipeClick = { navController.navigate(Routes.RECIPE_NEW) }
+                    )
+                }
+                composable(Routes.SHOPPING_LIST) {
+                    ShoppingListScreen(quickAddItemName = quickAddItemName)
+                }
+                composable(Routes.PROFILE) {
+                    ProfileScreen(
+                        onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES_CREATED) },
+                        onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) },
+                        onSpendingReportsClick = { navController.navigate(Routes.SPENDING_REPORTS) },
+                        onSettingsClick = { navController.navigate(Routes.SETTINGS) }
+                    )
+                }
+                composable(Routes.SPENDING_REPORTS) {
+                    SpendingReportsScreen(onBack = { navController.popBackStack() })
+                }
+                composable(Routes.SETTINGS) {
+                    SettingsScreen(
+                        onBack = { navController.popBackStack() },
+                        onNotificationSettingsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) },
+                        onAboutClick = { navController.navigate(Routes.ABOUT) },
+                        onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) }
+                    )
+                }
+                composable(Routes.NOTIFICATION_SETTINGS) {
+                    NotificationSettingsScreen(onBack = { navController.popBackStack() })
+                }
+                composable(Routes.ABOUT) {
+                    AboutScreen(onBack = { navController.popBackStack() })
+                }
+                composable(Routes.PRIVACY_POLICY) {
+                    PrivacyPolicyScreen(onBack = { navController.popBackStack() })
                 }
             }
         }
-    ) { padding ->
-        NavHost(
-            navController = navController,
-            startDestination = Routes.HOME,
-            modifier = Modifier.padding(padding),
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None }
-        ) {
-            composable(Routes.HOME) {
-                HomeScreen(
-                    onViewAllClick = { navController.navigateToTab(Routes.CALENDAR) },
-                    onAddMealClick = { navController.navigateToTab(Routes.CALENDAR) },
-                    onShoppingListClick = { navController.navigateToTab(Routes.SHOPPING_LIST) },
-                    onMealClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) },
-                    onNotificationsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) }
-                )
-            }
-            composable(Routes.RECIPES) {
-                RecipeScreen(
-                    onRecipeClick = { recipeId ->
-                        navController.navigate(Routes.recipeDetail(recipeId.toString()))
-                    },
-                    onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) }
-                )
-            }
-            composable(Routes.RECIPES_FAVORITES) {
-                RecipeScreen(
-                    onRecipeClick = { recipeId ->
-                        navController.navigate(Routes.recipeDetail(recipeId.toString()))
-                    },
-                    onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) },
-                    initialFavoritesOnly = true
-                )
-            }
-            composable(Routes.RECIPES_CREATED) {
-                RecipeScreen(
-                    onRecipeClick = { recipeId ->
-                        navController.navigate(Routes.recipeDetail(recipeId.toString()))
-                    },
-                    onAddRecipeClick = { navController.navigate(Routes.RECIPE_NEW) },
-                    initialCreatedOnly = true
-                )
-            }
-            composable(Routes.RECIPE_NEW) {
-                RecipeFormScreen(
-                    recipeId = null,
-                    onDone = { navController.popBackStack() }
-                )
-            }
-            composable(
-                route = Routes.RECIPE_DETAIL_PATTERN,
-                arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
-            ) { entry ->
-                val recipeId = entry.arguments?.read { getStringOrNull("recipeId") }.orEmpty()
-                RecipeDetailScreen(
-                    recipeId = recipeId,
-                    onBack = { navController.popBackStack() },
-                    onEdit = { id -> navController.navigate(Routes.recipeEdit(id)) },
-                    onAddToMealPlan = { navController.navigateToTab(Routes.CALENDAR) }
-                )
-            }
-            composable(
-                route = Routes.RECIPE_EDIT_PATTERN,
-                arguments = listOf(navArgument("recipeId") { type = NavType.StringType })
-            ) { entry ->
-                val recipeId = entry.arguments?.read { getStringOrNull("recipeId") }.orEmpty()
-                RecipeFormScreen(
-                    recipeId = recipeId,
-                    onDone = { navController.popBackStack() }
-                )
-            }
-            composable(Routes.CALENDAR) {
-                MealCalendarScreen(
-                    onSlotClick = { date, mealType, replaceSlotId ->
-                        navController.navigate(
-                            Routes.calendarSlotPick(date.toString(), mealType?.name, replaceSlotId?.toString())
-                        )
-                    },
-                    onRecipeClick = { recipeId -> navController.navigate(Routes.recipeDetail(recipeId.toString())) }
-                )
-            }
-            composable(
-                route = Routes.CALENDAR_SLOT_PICK_PATTERN,
-                arguments = listOf(
-                    navArgument("date") { type = NavType.StringType },
-                    navArgument("mealType") { type = NavType.StringType },
-                    navArgument("replaceSlotId") {
-                        type = NavType.StringType
-                        nullable = true
-                        defaultValue = null
-                    }
-                )
-            ) { entry ->
-                val date = LocalDate.parse(entry.arguments?.read { getStringOrNull("date") }.orEmpty())
-                val mealTypeArg = entry.arguments?.read { getStringOrNull("mealType") }.orEmpty()
-                val mealType = mealTypeArg.takeIf { it != Routes.ANY_MEAL_TYPE }?.let { MealType.valueOf(it) }
-                val replaceSlotId = entry.arguments?.read { getStringOrNull("replaceSlotId") }
-                RecipePickerScreen(
-                    date = date,
-                    mealType = mealType,
-                    replaceSlotId = replaceSlotId,
-                    onBack = { navController.popBackStack() },
-                    onAssigned = { navController.popBackStack() },
-                    onCreateRecipeClick = { navController.navigate(Routes.RECIPE_NEW) }
-                )
-            }
-            composable(Routes.SHOPPING_LIST) {
-                ShoppingListScreen(quickAddItemName = quickAddItemName)
-            }
-            composable(Routes.PROFILE) {
-                ProfileScreen(
-                    onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES_CREATED) },
-                    onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) },
-                    onSpendingReportsClick = { navController.navigate(Routes.SPENDING_REPORTS) },
-                    onSettingsClick = { navController.navigate(Routes.SETTINGS) }
-                )
-            }
-            composable(Routes.SPENDING_REPORTS) {
-                SpendingReportsScreen(onBack = { navController.popBackStack() })
-            }
-            composable(Routes.SETTINGS) {
-                SettingsScreen(
-                    onBack = { navController.popBackStack() },
-                    onNotificationSettingsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) },
-                    onAboutClick = { navController.navigate(Routes.ABOUT) },
-                    onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) }
-                )
-            }
-            composable(Routes.NOTIFICATION_SETTINGS) {
-                NotificationSettingsScreen(onBack = { navController.popBackStack() })
-            }
-            composable(Routes.ABOUT) {
-                AboutScreen(onBack = { navController.popBackStack() })
-            }
-            composable(Routes.PRIVACY_POLICY) {
-                PrivacyPolicyScreen(onBack = { navController.popBackStack() })
-            }
-        }
     }
+}
+
+private class TabItem(
+    val route: String,
+    val icon: ImageVector,
+    val label: String,
+    val alsoSelectedOn: Set<String> = emptySet()
+) {
+    fun isSelected(currentRoute: String?): Boolean = currentRoute == route || currentRoute in alsoSelectedOn
 }
 
 private fun NavController.navigateToTab(route: String) {

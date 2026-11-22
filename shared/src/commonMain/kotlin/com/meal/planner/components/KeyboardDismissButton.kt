@@ -5,9 +5,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
@@ -44,7 +48,10 @@ fun KeyboardDismissButton(modifier: Modifier = Modifier) {
                 focusManager.clearFocus(force = true)
                 keyboardController?.hide()
             },
-            modifier = Modifier.imePadding().padding(8.dp)
+            modifier = Modifier
+                .imePadding()
+                .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+                .padding(8.dp)
         ) {
             Icon(Icons.Default.KeyboardArrowDown, contentDescription = LocalStrings.current.hideKeyboard)
         }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -72,12 +74,15 @@ import com.meal.domain.model.MealPlanEntry
 import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.components.RecipeThumbnail
+import com.meal.planner.components.ScrollAwayHeader
 import com.meal.planner.components.SwipeActionsRow
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.calendar.CalendarViewMode
+import com.meal.presentation.calendar.MealCalendarUiState
 import com.meal.presentation.calendar.MealCalendarViewModel
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
@@ -94,7 +99,7 @@ private fun CalendarViewMode.label(): String = when (this) {
     CalendarViewMode.WEEK -> LocalStrings.current.week
 }
 
-@OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun MealCalendarScreen(
     onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
@@ -116,127 +121,17 @@ fun MealCalendarScreen(
         contentWindowInsets = WindowInsets(0)
     ) { padding ->
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.sm, vertical = spacing.sm),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+            ScrollAwayHeader(
+                modifier = Modifier.weight(1f),
+                header = { CalendarHeader(uiState, isCurrentWeek, selectedDate, viewModel, onPickDate = { showDatePicker = true }) }
             ) {
-                IconButton(onClick = { viewModel.previousWeek() }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
-                }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(LocalStrings.current.calendarTitle, style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        text = formatWeekRange(uiState.weekStart, uiState.weekEnd),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = LocalStrings.current.calendarWeekNumber(weekNumberFor(uiState.weekStart)),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    if (!isCurrentWeek) {
-                        IconButton(onClick = { viewModel.goToToday() }) {
-                            Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
-                        }
-                    }
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
-                    }
-                    IconButton(onClick = { viewModel.nextWeek() }) {
-                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
-                    }
-                }
+                CalendarContent(uiState, dayEntries, selectedDate, viewModel, onSlotClick, onRecipeClick)
             }
 
-            SingleChoiceSegmentedButtonRow(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg)
-            ) {
-                CalendarViewMode.entries.forEachIndexed { index, mode ->
-                    SegmentedButton(
-                        selected = uiState.viewMode == mode,
-                        onClick = { viewModel.setViewMode(mode) },
-                        shape = SegmentedButtonDefaults.itemShape(index = index, count = CalendarViewMode.entries.size)
-                    ) {
-                        Text(mode.label())
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(spacing.sm))
-
-            if (uiState.viewMode == CalendarViewMode.DAY) {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = spacing.lg),
-                    horizontalArrangement = Arrangement.spacedBy(spacing.sm)
-                ) {
-                    items(uiState.days, key = { it }) { day ->
-                        DayChip(date = day, selected = day == selectedDate, onClick = { viewModel.selectDate(day) })
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(spacing.lg))
-
-            when {
-                uiState.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-                uiState.errorMessage != null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = uiState.errorMessage.orEmpty(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-                uiState.viewMode == CalendarViewMode.WEEK -> MealWeekList(
-                    modifier = Modifier.weight(1f),
-                    days = uiState.days,
-                    entries = uiState.entries,
-                    weekNote = uiState.weekNote,
-                    onNoteChange = viewModel::updateWeekNote,
-                    onEntryClick = { entry -> onRecipeClick(entry.recipe.id) },
-                    onAddMeal = { day -> onSlotClick(day, null, null) },
-                    isLocked = uiState::isLocked,
-                    onRemove = viewModel::requestRemoveSlot
-                )
-                else -> LazyColumn(
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm),
-                    verticalArrangement = Arrangement.spacedBy(spacing.sm)
-                ) {
-                    if (dayEntries.isEmpty()) {
-                        item {
-                            Text(
-                                text = LocalStrings.current.calendarNoMealsPlannedDay,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                    items(dayEntries, key = { it.id.toString() }) { entry ->
-                        val locked = uiState.isLocked(selectedDate)
-                        SwipeToRemove(
-                            enabled = !locked,
-                            onRemove = { viewModel.requestRemoveSlot(entry) },
-                            shape = MaterialTheme.shapes.large
-                        ) {
-                            MealEntryCard(
-                                entry = entry,
-                                locked = locked,
-                                onClick = { onRecipeClick(entry.recipe.id) },
-                                onChange = { onSlotClick(selectedDate, entry.mealType, entry.id) },
-                                onRemove = { viewModel.removeSlot(entry) }
-                            )
-                        }
-                    }
-                }
-            }
-
-            if (uiState.viewMode == CalendarViewMode.DAY) {
+            // On a short screen the open keyboard leaves no room for both this button and the
+            // note being typed, so the button steps aside until the keyboard closes.
+            val keyboardCoversButton = LocalCompactHeight.current && WindowInsets.isImeVisible
+            if (uiState.viewMode == CalendarViewMode.DAY && !keyboardCoversButton) {
                 Button(
                     onClick = { onSlotClick(selectedDate, null, null) },
                     shape = MaterialTheme.shapes.extraLarge,
@@ -272,6 +167,160 @@ fun MealCalendarScreen(
                     TextButton(onClick = viewModel::dismissRemoveSlot) { Text(LocalStrings.current.cancel) }
                 }
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CalendarHeader(
+    uiState: MealCalendarUiState,
+    isCurrentWeek: Boolean,
+    selectedDate: LocalDate,
+    viewModel: MealCalendarViewModel,
+    onPickDate: () -> Unit
+) {
+    val spacing = MealPlannerTokens.spacing
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.sm, vertical = spacing.sm),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { viewModel.previousWeek() }) {
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(LocalStrings.current.calendarTitle, style = MaterialTheme.typography.titleLarge)
+                Text(
+                    text = formatWeekRange(uiState.weekStart, uiState.weekEnd),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = LocalStrings.current.calendarWeekNumber(weekNumberFor(uiState.weekStart)),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (!isCurrentWeek) {
+                    IconButton(onClick = { viewModel.goToToday() }) {
+                        Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
+                    }
+                }
+                IconButton(onClick = onPickDate) {
+                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
+                }
+                IconButton(onClick = { viewModel.nextWeek() }) {
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
+                }
+            }
+        }
+
+        SingleChoiceSegmentedButtonRow(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg)
+        ) {
+            CalendarViewMode.entries.forEachIndexed { index, mode ->
+                SegmentedButton(
+                    selected = uiState.viewMode == mode,
+                    onClick = { viewModel.setViewMode(mode) },
+                    shape = SegmentedButtonDefaults.itemShape(index = index, count = CalendarViewMode.entries.size)
+                ) {
+                    Text(mode.label())
+                }
+            }
+        }
+
+        Spacer(Modifier.height(spacing.sm))
+
+        if (uiState.viewMode == CalendarViewMode.DAY) {
+            val compactHeight = LocalCompactHeight.current
+            LazyRow(
+                modifier = if (compactHeight) Modifier.fillMaxWidth() else Modifier,
+                contentPadding = PaddingValues(horizontal = spacing.lg),
+                horizontalArrangement = if (compactHeight) {
+                    Arrangement.spacedBy(spacing.sm, Alignment.CenterHorizontally)
+                } else {
+                    Arrangement.spacedBy(spacing.sm)
+                }
+            ) {
+                items(uiState.days, key = { it }) { day ->
+                    DayChip(date = day, selected = day == selectedDate, onClick = { viewModel.selectDate(day) })
+                }
+            }
+        }
+
+        Spacer(Modifier.height(spacing.lg))
+    }
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun CalendarContent(
+    uiState: MealCalendarUiState,
+    dayEntries: List<MealPlanEntry>,
+    selectedDate: LocalDate,
+    viewModel: MealCalendarViewModel,
+    onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
+    onRecipeClick: (Uuid) -> Unit
+) {
+    val spacing = MealPlannerTokens.spacing
+    when {
+        uiState.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        uiState.errorMessage != null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                text = uiState.errorMessage.orEmpty(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+        uiState.viewMode == CalendarViewMode.WEEK -> MealWeekList(
+            modifier = Modifier.fillMaxSize(),
+            days = uiState.days,
+            entries = uiState.entries,
+            weekNote = uiState.weekNote,
+            onNoteChange = viewModel::updateWeekNote,
+            onEntryClick = { entry -> onRecipeClick(entry.recipe.id) },
+            onAddMeal = { day -> onSlotClick(day, null, null) },
+            isLocked = uiState::isLocked,
+            onRemove = viewModel::requestRemoveSlot
+        )
+        else -> LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm),
+            verticalArrangement = Arrangement.spacedBy(spacing.sm)
+        ) {
+            if (dayEntries.isEmpty()) {
+                item {
+                    Text(
+                        text = LocalStrings.current.calendarNoMealsPlannedDay,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            items(dayEntries, key = { it.id.toString() }) { entry ->
+                val locked = uiState.isLocked(selectedDate)
+                SwipeToRemove(
+                    enabled = !locked,
+                    onRemove = { viewModel.requestRemoveSlot(entry) },
+                    shape = MaterialTheme.shapes.large
+                ) {
+                    MealEntryCard(
+                        entry = entry,
+                        locked = locked,
+                        onClick = { onRecipeClick(entry.recipe.id) },
+                        onChange = { onSlotClick(selectedDate, entry.mealType, entry.id) },
+                        onRemove = { viewModel.removeSlot(entry) }
+                    )
+                }
+            }
+            item(key = "week-notes") {
+                WeekNotesCard(note = uiState.weekNote, onNoteChange = viewModel::updateWeekNote)
+            }
         }
     }
 }

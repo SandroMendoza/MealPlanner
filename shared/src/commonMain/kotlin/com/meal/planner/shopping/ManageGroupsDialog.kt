@@ -1,5 +1,7 @@
 package com.meal.planner.shopping
 
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +41,10 @@ fun ManageGroupsDialog(
         onDismissRequest = onDismiss,
         title = { Text(LocalStrings.current.shoppingManageGroupsTitle) },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(spacing.sm)
+            ) {
                 groups.forEach { group ->
                     GroupManagementRow(group = group, onRename = onRename, onRequestDelete = onRequestDelete)
                 }
