@@ -83,6 +83,7 @@ import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekNumberFor
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.number
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -311,7 +312,7 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
             color = if (selected) contentColor else MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
-            text = date.dayOfMonth.toString(),
+            text = date.day.toString(),
             style = MaterialTheme.typography.titleMedium,
             color = contentColor
         )
@@ -321,8 +322,8 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
 @Composable
 private fun formatWeekRange(start: LocalDate, end: LocalDate): String {
     val strings = LocalStrings.current
-    val startText = "${strings.monthAbbreviation(start.monthNumber)} ${start.dayOfMonth}"
-    val endText = "${strings.monthAbbreviation(end.monthNumber)} ${end.dayOfMonth}, ${end.year}"
+    val startText = "${strings.monthAbbreviation(start.month.number)} ${start.day}"
+    val endText = "${strings.monthAbbreviation(end.month.number)} ${end.day}, ${end.year}"
     return if (start.year == end.year) {
         "$startText – $endText"
     } else {
@@ -498,7 +499,7 @@ private fun WeekDayDateBlock(day: LocalDate, isToday: Boolean, modifier: Modifie
             maxLines = 1
         )
         Text(
-            text = day.dayOfMonth.toString(),
+            text = day.day.toString(),
             style = MaterialTheme.typography.headlineSmall,
             color = contentColor,
             maxLines = 1
