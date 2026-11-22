@@ -194,7 +194,6 @@ val spanishStrings = Strings(
     recipesFavoritesOnly = "Solo favoritos",
     recipesCreatedByMe = "Creadas por mí",
     recipesPrepTimeRange = { start, end -> "Tiempo de preparación: $start–$end min" },
-    recipesCalorieRange = { start, end -> "Calorías: $start–$end" },
     recipesClearFilters = "Borrar filtros",
     recipesNoRecipesYet = "Aún no hay recetas.",
     recipesNoFavoritesYet = "Aún no hay favoritos. Toca el corazón de una receta para añadirla.",
@@ -220,7 +219,6 @@ val spanishStrings = Strings(
     recipeDetailCookModeNextCd = "Paso siguiente",
     recipeDetailCookModePreviousCd = "Paso anterior",
     recipeDetailCookModeStopCd = "Salir del modo cocina",
-    caloriesLabel = { count -> "$count calorías" },
     servingsLabel = { count -> if (count == 1) "$count porción" else "$count porciones" },
     recipeDetailAddToMealPlan = "Añadir al Plan de Comidas",
 
@@ -230,7 +228,6 @@ val spanishStrings = Strings(
     recipeFormDescription = "Descripción",
     recipeFormPrepMin = "Preparación (min)",
     recipeFormServings = "Porciones",
-    recipeFormCalories = "Calorías",
     recipeFormPhoto = "Foto",
     recipeFormAddIngredient = "+ Añadir ingrediente",
     recipeFormAddInstruction = "+ Añadir instrucción",

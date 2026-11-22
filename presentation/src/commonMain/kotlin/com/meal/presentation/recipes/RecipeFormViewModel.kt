@@ -69,7 +69,6 @@ class RecipeFormViewModel(
                     cuisine = recipe.cuisine,
                     preparationTimeMinutes = recipe.preparationTimeMinutes.toString(),
                     servings = recipe.servings.toString(),
-                    calories = recipe.calories?.toString().orEmpty(),
                     imageUrl = recipe.imageUrl.orEmpty(),
                     ingredients = recipe.ingredients.map {
                         IngredientFormRow(it.ingredient.name, formatQuantity(it.quantity), it.unit)
@@ -107,10 +106,6 @@ class RecipeFormViewModel(
 
     fun updateServings(value: String) {
         _uiState.value = _uiState.value.copy(servings = value)
-    }
-
-    fun updateCalories(value: String) {
-        _uiState.value = _uiState.value.copy(calories = value)
     }
 
     fun updateImageUrl(value: String) {
@@ -186,7 +181,6 @@ class RecipeFormViewModel(
                     cuisine = current.cuisine,
                     preparationTimeMinutes = current.preparationTimeMinutes.toIntOrNull() ?: 0,
                     servings = current.servings.toIntOrNull() ?: 1,
-                    calories = current.calories.toIntOrNull(),
                     imageUrl = current.imageUrl.ifBlank { null },
                     ingredients = current.ingredients
                         .filter { it.name.isNotBlank() }

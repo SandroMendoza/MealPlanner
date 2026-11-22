@@ -67,7 +67,6 @@ class RecipeLocalDataSource(
                 category = dto.category.name,
                 preparationTimeMinutes = dto.preparationTimeMinutes.toLong(),
                 servings = dto.servings.toLong(),
-                calories = dto.calories?.toLong(),
                 imageUrl = dto.imageUrl,
                 cuisine = dto.cuisine?.name,
                 id = dto.id.toString()
@@ -93,7 +92,6 @@ class RecipeLocalDataSource(
                 category = dto.category.name,
                 preparationTimeMinutes = dto.preparationTimeMinutes.toLong(),
                 servings = dto.servings.toLong(),
-                calories = dto.calories?.toLong(),
                 imageUrl = dto.imageUrl,
                 isUserCreated = if (dto.isUserCreated) 1 else 0,
                 cuisine = dto.cuisine?.name
@@ -188,7 +186,6 @@ class RecipeLocalDataSource(
             category = FoodCategory.valueOf(row.category),
             preparationTimeMinutes = row.preparationTimeMinutes.toInt(),
             servings = row.servings.toInt(),
-            calories = row.calories?.toInt(),
             imageUrl = row.imageUrl,
             ingredients = ingredients,
             instructions = instructions,

@@ -121,8 +121,7 @@ fun RecipeScreen(
             uiState.selectedCuisine != null ||
             uiState.showFavoritesOnly ||
             uiState.showCreatedOnly ||
-            uiState.prepTimeRange != 0f..180f ||
-            uiState.calorieRange != 0f..1500f
+            uiState.prepTimeRange != 0f..180f
         val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
         val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
         val isListView = uiState.viewMode == RecipeViewMode.LIST
@@ -241,14 +240,12 @@ fun RecipeScreen(
                 onFavoritesOnlyChange = viewModel::onFavoritesTabSelected,
                 onCreatedOnlyChange = viewModel::onCreatedOnlyTabSelected,
                 onPrepTimeRangeChange = viewModel::onPrepTimeRangeChange,
-                onCalorieRangeChange = viewModel::onCalorieRangeChange,
                 onClearFilters = {
                     viewModel.onCategorySelected(null)
                     viewModel.onCuisineSelected(null)
                     viewModel.onFavoritesTabSelected(false)
                     viewModel.onCreatedOnlyTabSelected(false)
                     viewModel.onPrepTimeRangeChange(0f..180f)
-                    viewModel.onCalorieRangeChange(0f..1500f)
                 }
             )
         }
@@ -273,7 +270,6 @@ private fun RecipeFilterSheet(
     onFavoritesOnlyChange: (Boolean) -> Unit,
     onCreatedOnlyChange: (Boolean) -> Unit,
     onPrepTimeRangeChange: (ClosedFloatingPointRange<Float>) -> Unit,
-    onCalorieRangeChange: (ClosedFloatingPointRange<Float>) -> Unit,
     onClearFilters: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
@@ -343,7 +339,7 @@ private fun RecipeFilterSheet(
                 }
             }
 
-            Column(modifier = Modifier.padding(top = spacing.lg)) {
+            Column(modifier = Modifier.padding(top = spacing.lg, bottom = spacing.lg)) {
                 SectionLabel(
                     LocalStrings.current.recipesPrepTimeRange(
                         uiState.prepTimeRange.start.toInt(),
@@ -354,21 +350,6 @@ private fun RecipeFilterSheet(
                     value = uiState.prepTimeRange,
                     onValueChange = onPrepTimeRangeChange,
                     valueRange = 0f..180f,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            Column(modifier = Modifier.padding(top = spacing.sm, bottom = spacing.lg)) {
-                SectionLabel(
-                    LocalStrings.current.recipesCalorieRange(
-                        uiState.calorieRange.start.toInt(),
-                        uiState.calorieRange.endInclusive.toInt()
-                    )
-                )
-                RangeSlider(
-                    value = uiState.calorieRange,
-                    onValueChange = onCalorieRangeChange,
-                    valueRange = 0f..1500f,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

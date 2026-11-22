@@ -48,7 +48,6 @@ class RecipeRepositoryImplTest {
         category = FoodCategory.MAIN_DISH,
         preparationTimeMinutes = 30,
         servings = 4,
-        calories = 400,
         imageUrl = null,
         ingredients = ingredientNames.mapIndexed { index, ingredientName ->
             RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), ingredientName), index + 1.5, MeasurementUnit.GRAMS)
@@ -97,7 +96,6 @@ class RecipeRepositoryImplTest {
         assertEquals(added.category, stored.category)
         assertEquals(added.preparationTimeMinutes, stored.preparationTimeMinutes)
         assertEquals(added.servings, stored.servings)
-        assertEquals(added.calories, stored.calories)
         assertEquals(added.cuisine, stored.cuisine)
         assertTrue(stored.isUserCreated)
         assertEquals(added.instructions, stored.instructions)
@@ -131,7 +129,6 @@ class RecipeRepositoryImplTest {
         val updated = original.copy(
             name = "Pancit Canton",
             description = null,
-            calories = null,
             ingredients = listOf(
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cabbage"), 2.0, MeasurementUnit.PIECE)
             ),
@@ -144,7 +141,6 @@ class RecipeRepositoryImplTest {
 
         assertEquals("Pancit Canton", stored.name)
         assertNull(stored.description)
-        assertNull(stored.calories)
         assertNull(stored.cuisine)
         assertEquals(listOf("Cabbage"), stored.ingredients.map { it.ingredient.name })
         assertEquals(listOf(Instruction(1, "Toss everything")), stored.instructions)

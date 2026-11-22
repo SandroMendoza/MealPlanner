@@ -17,7 +17,7 @@ class DatabaseBackupDataSourceTest {
     private val newDir = "file:///data/user/10/sandragon.inc.mealplanner/files/recipe_images/"
 
     private fun insertRecipe(id: String, imageUrl: String?) =
-        database.recipeQueries.insertRecipe(id, "Recipe $id", null, "MAIN", 10, 2, null, imageUrl, 1, null)
+        database.recipeQueries.insertRecipe(id, "Recipe $id", null, "MAIN", 10, 2, imageUrl, 1, null)
 
     private fun imageUrl(id: String) = database.recipeQueries.selectRecipeById(id).executeAsOne().imageUrl
 
