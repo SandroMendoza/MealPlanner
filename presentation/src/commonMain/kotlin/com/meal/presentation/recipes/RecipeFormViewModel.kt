@@ -31,7 +31,13 @@ class RecipeFormViewModel(
     private val getAllRecipesUseCase: GetAllRecipesUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(RecipeFormUiState(isEditMode = recipeId != null))
+    // A new recipe starts with one empty step, ready to type into.
+    private val _uiState = MutableStateFlow(
+        RecipeFormUiState(
+            isEditMode = recipeId != null,
+            instructions = if (recipeId == null) listOf(InstructionFormRow()) else emptyList()
+        )
+    )
     val state = _uiState.asStateFlow()
 
     init {
@@ -140,6 +146,29 @@ class RecipeFormViewModel(
     fun removeInstructionRow(index: Int) {
         _uiState.value = _uiState.value.copy(
             instructions = _uiState.value.instructions.filterIndexed { i, _ -> i != index }
+        )
+    }
+
+    /** Replaces step [index] with [steps], in order; used when an edit splits one step into several. */
+    fun replaceInstructionRow(index: Int, steps: List<String>) {
+        val current = _uiState.value.instructions
+        _uiState.value = _uiState.value.copy(
+            instructions = current.take(index) + steps.map(::InstructionFormRow) + current.drop(index + 1)
+        )
+    }
+
+    fun moveInstructionRow(from: Int, to: Int) {
+        val rows = _uiState.value.instructions
+        if (from !in rows.indices || to !in rows.indices) return
+        _uiState.value = _uiState.value.copy(
+            instructions = rows.toMutableList().apply { add(to, removeAt(from)) }
+        )
+    }
+
+    /** Replaces every step with [steps], keeping one empty step when there are none. */
+    fun replaceInstructions(steps: List<String>) {
+        _uiState.value = _uiState.value.copy(
+            instructions = steps.ifEmpty { listOf("") }.map(::InstructionFormRow)
         )
     }
 

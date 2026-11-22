@@ -68,7 +68,6 @@ import com.meal.planner.theme.MealPlannerTokens
 import com.meal.planner.theme.activeFilterChipColors
 import com.meal.presentation.common.formatAmount
 import com.meal.presentation.recipes.IngredientFormRow
-import com.meal.presentation.recipes.InstructionFormRow
 import com.meal.presentation.recipes.RecipeFormViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -284,26 +283,14 @@ fun RecipeFormScreen(
             }
 
             SectionLabel(LocalStrings.current.instructions, required = true)
-            uiState.instructions.forEachIndexed { index, row ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("${index + 1}.", style = MaterialTheme.typography.bodyMedium)
-                    OutlinedTextField(
-                        value = row.description,
-                        onValueChange = { viewModel.updateInstructionRow(index, InstructionFormRow(it)) },
-                        modifier = Modifier.weight(1f)
-                    )
-                    TextButton(onClick = { viewModel.removeInstructionRow(index) }) {
-                        Text(LocalStrings.current.remove)
-                    }
-                }
-            }
-            TextButton(onClick = { viewModel.addInstructionRow() }) {
-                Text(LocalStrings.current.recipeFormAddInstruction)
-            }
+            InstructionStepsEditor(
+                steps = uiState.instructions.map { it.description },
+                onReplaceStep = viewModel::replaceInstructionRow,
+                onRemoveStep = viewModel::removeInstructionRow,
+                onMoveStep = viewModel::moveInstructionRow,
+                onAddStep = viewModel::addInstructionRow,
+                onReplaceAll = viewModel::replaceInstructions
+            )
 
             Button(
                 onClick = { viewModel.save() },

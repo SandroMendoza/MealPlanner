@@ -241,6 +241,11 @@ val englishStrings = Strings(
     ingredientAddCustom = { name -> "Add \"$name\"" },
     ingredientAddAndNext = "Add & next",
     ingredientDone = "Done",
+    instructionsSteps = "Steps",
+    instructionsWriteAll = "Write all",
+    instructionsWriteAllHint = "One step per line",
+    moveUp = "Move up",
+    moveDown = "Move down",
 
     shoppingNoMealsPlannedPeriod = "No meals planned for this period.",
     shoppingAddItemButton = "Add Item",
