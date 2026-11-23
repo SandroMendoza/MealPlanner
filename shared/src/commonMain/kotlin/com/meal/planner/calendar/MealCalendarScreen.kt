@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -235,18 +234,19 @@ private fun CalendarHeader(
         Spacer(Modifier.height(spacing.sm))
 
         if (uiState.viewMode == CalendarViewMode.DAY) {
-            val compactHeight = LocalCompactHeight.current
-            LazyRow(
-                modifier = if (compactHeight) Modifier.fillMaxWidth() else Modifier,
-                contentPadding = PaddingValues(horizontal = spacing.lg),
-                horizontalArrangement = if (compactHeight) {
-                    Arrangement.spacedBy(spacing.sm, Alignment.CenterHorizontally)
-                } else {
-                    Arrangement.spacedBy(spacing.sm)
-                }
+            // Each chip gets an equal share of the width but never grows past its natural size, so
+            // all seven days fit on a narrow phone and sit centered on a wide screen.
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg),
+                horizontalArrangement = Arrangement.spacedBy(spacing.sm, Alignment.CenterHorizontally)
             ) {
-                items(uiState.days, key = { it }) { day ->
-                    DayChip(date = day, selected = day == selectedDate, onClick = { viewModel.selectDate(day) })
+                uiState.days.forEach { day ->
+                    DayChip(
+                        date = day,
+                        selected = day == selectedDate,
+                        onClick = { viewModel.selectDate(day) },
+                        modifier = Modifier.weight(1f, fill = false)
+                    )
                 }
             }
         }
@@ -340,13 +340,13 @@ private fun SwipeToRemove(
 }
 
 @Composable
-private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
+private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val spacing = MealPlannerTokens.spacing
     val containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface
     val contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(MaterialTheme.shapes.large)
             .background(containerColor)
             .clickable(onClick = onClick)
@@ -358,6 +358,7 @@ private fun DayChip(date: LocalDate, selected: Boolean, onClick: () -> Unit) {
         Text(
             text = LocalStrings.current.weekdayShort(date.dayOfWeek),
             style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
             color = if (selected) contentColor else MaterialTheme.colorScheme.onSurfaceVariant
         )
         Text(
