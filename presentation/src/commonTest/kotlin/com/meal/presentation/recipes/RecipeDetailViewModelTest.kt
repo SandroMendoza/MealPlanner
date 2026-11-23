@@ -166,7 +166,7 @@ class RecipeDetailViewModelTest {
 
         vm.toggleReadIngredientsAloud()
 
-        assertEquals("0.5 kg Pork. 2 piece Tamarind", tts.spoken.single())
+        assertEquals("0.5 kg Pork. 2 pieces Tamarind", tts.spoken.single())
         assertTrue(vm.state.value.ingredientsSpeaking)
 
         tts.finishCurrent()

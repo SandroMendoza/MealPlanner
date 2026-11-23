@@ -98,6 +98,40 @@ private fun englishMeasurementUnitName(unit: MeasurementUnit): String {
     return if (unit == MeasurementUnit.TO_TASTE || name.equals(unit.unit, ignoreCase = true)) name else "$name (${unit.unit})"
 }
 
+/** Abbreviated units stay the same; word units take the plural for any amount other than 1. */
+private fun englishMeasurementUnitLabel(unit: MeasurementUnit, quantity: Double): String {
+    fun word(one: String, many: String = "${one}s") = if (quantity == 1.0) one else many
+    return when (unit) {
+        MeasurementUnit.CUP -> word("cup")
+        MeasurementUnit.PINCH -> word("pinch", "pinches")
+        MeasurementUnit.DASH -> word("dash", "dashes")
+        MeasurementUnit.DROP -> word("drop")
+        MeasurementUnit.HANDFUL -> word("handful")
+        MeasurementUnit.PIECE -> word("piece")
+        MeasurementUnit.SLICE -> word("slice")
+        MeasurementUnit.CUBE -> word("cube")
+        MeasurementUnit.STICK -> word("stick")
+        MeasurementUnit.FILLET -> word("fillet")
+        MeasurementUnit.CLOVE -> word("clove")
+        MeasurementUnit.HEAD -> word("head")
+        MeasurementUnit.BUNCH -> word("bunch", "bunches")
+        MeasurementUnit.STALK -> word("stalk")
+        MeasurementUnit.SPRIG -> word("sprig")
+        MeasurementUnit.LEAF -> word("leaf", "leaves")
+        MeasurementUnit.PACK -> word("pack")
+        MeasurementUnit.SACHET -> word("sachet")
+        MeasurementUnit.CAN -> word("can")
+        MeasurementUnit.BOTTLE -> word("bottle")
+        MeasurementUnit.JAR -> word("jar")
+        MeasurementUnit.BOX -> word("box", "boxes")
+        MeasurementUnit.BAG -> word("bag")
+        MeasurementUnit.CARTON -> word("carton")
+        MeasurementUnit.TRAY -> word("tray")
+        MeasurementUnit.LOAF -> word("loaf", "loaves")
+        else -> unit.unit
+    }
+}
+
 val englishStrings = Strings(
     back = "Back",
     cancel = "Cancel",
@@ -148,6 +182,7 @@ val englishStrings = Strings(
     foodCategoryName = ::englishFoodCategoryName,
     cuisineName = ::englishCuisineName,
     measurementUnitName = ::englishMeasurementUnitName,
+    measurementUnitLabel = ::englishMeasurementUnitLabel,
 
     navHome = "Home",
     navMealPlan = "Meal plan",

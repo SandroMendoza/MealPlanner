@@ -302,7 +302,7 @@ fun RecipeDetailScreen(
                                                         overflow = TextOverflow.Ellipsis
                                                     )
                                                     Text(
-                                                        text = formatAmount(ri.quantity, ri.unit),
+                                                        text = formatAmount(ri.quantity, ri.unit, LocalStrings.current),
                                                         style = MaterialTheme.typography.bodySmall,
                                                         color = MaterialTheme.colorScheme.onSurfaceVariant
                                                     )
