@@ -77,6 +77,7 @@ class LocalizedStringsTest {
         assertEquals("To taste", en.measurementUnitName(MeasurementUnit.TO_TASTE))
         assertEquals("Clove", en.measurementUnitName(MeasurementUnit.CLOVE))
         assertEquals("Prep time: 10–30 min", en.recipesPrepTimeRange(10, 30))
+        assertEquals("Prep time: 10–180+ min", en.recipesPrepTimeRangeNoMax(10, 180))
         assertEquals("Good morning, Ana", en.homeGreetingWithName("Ana"))
         assertEquals("Dinner reminder", en.mealReminderNotificationTitle(MealType.DINNER))
     }
