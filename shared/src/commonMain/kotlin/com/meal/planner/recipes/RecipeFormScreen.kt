@@ -358,7 +358,8 @@ private fun IngredientListRow(
     onRemove: () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
-    val amount = if (row.quantity.isBlank()) row.unit.unit else formatAmount(row.quantity.toDoubleOrNull() ?: 0.0, row.unit)
+    val strings = LocalStrings.current
+    val amount = if (row.quantity.isBlank()) strings.measurementUnitLabel(row.unit, 1.0) else formatAmount(row.quantity.toDoubleOrNull() ?: 0.0, row.unit, strings)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(spacing.sm),

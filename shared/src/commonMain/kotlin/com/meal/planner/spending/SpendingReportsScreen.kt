@@ -237,7 +237,7 @@ fun SpendingReportsScreen(
                                 items(report.lineItems, key = { "${it.itemKey}_${it.rangeStart}_${it.rangeEnd}" }) { item ->
                                     SpendingLineItemRow(
                                         name = item.name,
-                                        quantityLabel = formatAmount(item.totalQuantity, item.unit),
+                                        quantityLabel = formatAmount(item.totalQuantity, item.unit, LocalStrings.current),
                                         rangeLabel = "${item.rangeStart} - ${item.rangeEnd}",
                                         price = item.price,
                                         currencySymbol = uiState.currencySymbol

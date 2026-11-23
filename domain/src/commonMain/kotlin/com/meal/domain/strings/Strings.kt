@@ -61,6 +61,8 @@ data class Strings(
     val foodCategoryName: (FoodCategory) -> String,
     val cuisineName: (Cuisine) -> String,
     val measurementUnitName: (MeasurementUnit) -> String,
+    /** The unit as written after an amount ("2 cloves", "0.5 tsp"), in the form the language uses for [quantity]. */
+    val measurementUnitLabel: (unit: MeasurementUnit, quantity: Double) -> String,
 
     // Bottom navigation
     val navHome: String,
