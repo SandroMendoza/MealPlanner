@@ -98,6 +98,48 @@ private fun spanishMeasurementUnitName(unit: MeasurementUnit): String {
     return if (unit == MeasurementUnit.TO_TASTE || name.equals(unit.unit, ignoreCase = true)) name else "$name (${unit.unit})"
 }
 
+/** Metric symbols never change; word units take the plural for any amount other than 1. */
+private fun spanishMeasurementUnitLabel(unit: MeasurementUnit, quantity: Double): String {
+    fun word(one: String, many: String = "${one}s") = if (quantity == 1.0) one else many
+    return when (unit) {
+        MeasurementUnit.TEASPOON -> "cdta."
+        MeasurementUnit.TABLESPOON -> "cda."
+        MeasurementUnit.CUP -> word("taza")
+        MeasurementUnit.PINT -> word("pinta")
+        MeasurementUnit.QUART -> word("cuarto de galón", "cuartos de galón")
+        MeasurementUnit.GALLON -> word("galón", "galones")
+        MeasurementUnit.PINCH -> word("pizca")
+        MeasurementUnit.DASH -> word("chorrito")
+        MeasurementUnit.DROP -> word("gota")
+        MeasurementUnit.HANDFUL -> word("puñado")
+        MeasurementUnit.PIECE -> word("pieza")
+        MeasurementUnit.DOZEN -> word("docena")
+        MeasurementUnit.SLICE -> word("rebanada")
+        MeasurementUnit.CUBE -> word("cubo")
+        MeasurementUnit.STICK -> word("barra")
+        MeasurementUnit.FILLET -> word("filete")
+        MeasurementUnit.CLOVE -> word("diente")
+        MeasurementUnit.HEAD -> word("cabeza")
+        MeasurementUnit.BUNCH -> word("manojo")
+        MeasurementUnit.STALK -> word("tallo")
+        MeasurementUnit.SPRIG -> word("ramita")
+        MeasurementUnit.LEAF -> word("hoja")
+        MeasurementUnit.PACK -> word("paquete")
+        MeasurementUnit.SACHET -> word("sobre")
+        MeasurementUnit.CAN -> word("lata")
+        MeasurementUnit.BOTTLE -> word("botella")
+        MeasurementUnit.JAR -> word("frasco")
+        MeasurementUnit.BOX -> word("caja")
+        MeasurementUnit.BAG -> word("bolsa")
+        MeasurementUnit.CARTON -> word("cartón", "cartones")
+        MeasurementUnit.TRAY -> word("bandeja")
+        MeasurementUnit.LOAF -> word("hogaza")
+        MeasurementUnit.INCH -> "pulg."
+        MeasurementUnit.TO_TASTE -> "al gusto"
+        else -> unit.unit
+    }
+}
+
 val spanishStrings = Strings(
     back = "Atrás",
     cancel = "Cancelar",
@@ -148,6 +190,7 @@ val spanishStrings = Strings(
     foodCategoryName = ::spanishFoodCategoryName,
     cuisineName = ::spanishCuisineName,
     measurementUnitName = ::spanishMeasurementUnitName,
+    measurementUnitLabel = ::spanishMeasurementUnitLabel,
 
     navHome = "Inicio",
     navMealPlan = "Plan de comidas",

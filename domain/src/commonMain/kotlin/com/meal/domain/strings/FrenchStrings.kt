@@ -98,6 +98,48 @@ private fun frenchMeasurementUnitName(unit: MeasurementUnit): String {
     return if (unit == MeasurementUnit.TO_TASTE || name.equals(unit.unit, ignoreCase = true)) name else "$name (${unit.unit})"
 }
 
+/** French puts a unit in the plural from 2 upwards ("1,5 tasse", "2 tasses"); metric symbols never change. */
+private fun frenchMeasurementUnitLabel(unit: MeasurementUnit, quantity: Double): String {
+    fun word(one: String, many: String = "${one}s") = if (quantity < 2.0) one else many
+    return when (unit) {
+        MeasurementUnit.TEASPOON -> "c. à c."
+        MeasurementUnit.TABLESPOON -> "c. à s."
+        MeasurementUnit.CUP -> word("tasse")
+        MeasurementUnit.PINT -> word("pinte")
+        MeasurementUnit.QUART -> word("quart")
+        MeasurementUnit.GALLON -> word("gallon")
+        MeasurementUnit.PINCH -> word("pincée")
+        MeasurementUnit.DASH -> word("trait")
+        MeasurementUnit.DROP -> word("goutte")
+        MeasurementUnit.HANDFUL -> word("poignée")
+        MeasurementUnit.PIECE -> word("pièce")
+        MeasurementUnit.DOZEN -> word("douzaine")
+        MeasurementUnit.SLICE -> word("tranche")
+        MeasurementUnit.CUBE -> word("cube")
+        MeasurementUnit.STICK -> word("bâton")
+        MeasurementUnit.FILLET -> word("filet")
+        MeasurementUnit.CLOVE -> word("gousse")
+        MeasurementUnit.HEAD -> word("tête")
+        MeasurementUnit.BUNCH -> word("botte")
+        MeasurementUnit.STALK -> word("tige")
+        MeasurementUnit.SPRIG -> word("brin")
+        MeasurementUnit.LEAF -> word("feuille")
+        MeasurementUnit.PACK -> word("paquet")
+        MeasurementUnit.SACHET -> word("sachet")
+        MeasurementUnit.CAN -> word("boîte de conserve", "boîtes de conserve")
+        MeasurementUnit.BOTTLE -> word("bouteille")
+        MeasurementUnit.JAR -> word("bocal", "bocaux")
+        MeasurementUnit.BOX -> word("boîte")
+        MeasurementUnit.BAG -> word("sac")
+        MeasurementUnit.CARTON -> word("brique")
+        MeasurementUnit.TRAY -> word("plateau", "plateaux")
+        MeasurementUnit.LOAF -> word("pain")
+        MeasurementUnit.INCH -> "po"
+        MeasurementUnit.TO_TASTE -> "au goût"
+        else -> unit.unit
+    }
+}
+
 val frenchStrings = Strings(
     back = "Retour",
     cancel = "Annuler",
@@ -148,6 +190,7 @@ val frenchStrings = Strings(
     foodCategoryName = ::frenchFoodCategoryName,
     cuisineName = ::frenchCuisineName,
     measurementUnitName = ::frenchMeasurementUnitName,
+    measurementUnitLabel = ::frenchMeasurementUnitLabel,
 
     navHome = "Accueil",
     navMealPlan = "Plan de repas",
