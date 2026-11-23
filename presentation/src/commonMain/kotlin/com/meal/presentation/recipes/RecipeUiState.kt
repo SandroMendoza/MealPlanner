@@ -14,7 +14,7 @@ data class RecipeUiState(
     val searchQuery: String = "",
     val selectedCategory: FoodCategory? = null,
     val selectedCuisine: Cuisine? = null,
-    val prepTimeRange: ClosedFloatingPointRange<Float> = 0f..180f,
+    val prepTimeRange: ClosedFloatingPointRange<Float> = FULL_PREP_TIME_RANGE,
     val showFavoritesOnly: Boolean = false,
     val showCreatedOnly: Boolean = false,
     val viewMode: RecipeViewMode = RecipeViewMode.GRID
@@ -29,7 +29,7 @@ data class RecipeUiState(
             .filter { !showCreatedOnly || it.isUserCreated }
             .filter { selectedCategory == null || it.category == selectedCategory }
             .filter { selectedCuisine == null || it.cuisine == selectedCuisine }
-            .filter { it.preparationTimeMinutes.toFloat() in prepTimeRange }
+            .filter { matchesPrepTime(it.preparationTimeMinutes) }
             .filter { recipe -> matchesSearch(recipe, searchQuery) }
             .toList()
 
@@ -47,11 +47,23 @@ data class RecipeUiState(
             else -> RecipeEmptyState.NO_MATCHES
         }
 
+    /** At the slider's top value the range has no upper limit, so longer recipes still match. */
+    val prepTimeHasNoMax: Boolean
+        get() = prepTimeRange.endInclusive >= MAX_PREP_TIME_MINUTES
+
+    private fun matchesPrepTime(minutes: Int): Boolean =
+        minutes >= prepTimeRange.start && (prepTimeHasNoMax || minutes <= prepTimeRange.endInclusive)
+
     private fun matchesSearch(recipe: Recipe, query: String): Boolean {
         if (query.isBlank()) return true
         val needle = query.trim()
         return recipe.name.contains(needle, ignoreCase = true) ||
             recipe.description?.contains(needle, ignoreCase = true) == true ||
             recipe.ingredients.any { it.ingredient.name.contains(needle, ignoreCase = true) }
+    }
+
+    companion object {
+        const val MAX_PREP_TIME_MINUTES = 180f
+        val FULL_PREP_TIME_RANGE = 0f..MAX_PREP_TIME_MINUTES
     }
 }
