@@ -36,7 +36,7 @@ class RecipeFormViewModel(
         RecipeFormUiState(
             isEditMode = recipeId != null,
             instructions = if (recipeId == null) listOf(InstructionFormRow()) else emptyList()
-        )
+        ).let { it.copy(initialContent = it.content) }
     )
     val state = _uiState.asStateFlow()
 
@@ -76,7 +76,7 @@ class RecipeFormViewModel(
                     instructions = recipe.instructions
                         .sortedBy { it.stepNumber }
                         .map { InstructionFormRow(it.description) }
-                )
+                ).let { it.copy(initialContent = it.content) }
             } else {
                 _uiState.value.copy(isLoading = false, errorMessage = "Recipe not found")
             }

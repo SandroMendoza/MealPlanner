@@ -249,4 +249,49 @@ class RecipeFormViewModelTest {
         assertFalse(vm.state.value.isSaving)
         assertTrue(vm.state.value.errorMessage!!.contains("disk full"))
     }
+
+    @Test
+    fun aFormThatWasNotTouchedHasNoUnsavedChanges() {
+        assertFalse(viewModel().state.value.hasUnsavedChanges)
+        assertFalse(viewModel(existing.id).state.value.hasUnsavedChanges)
+    }
+
+    @Test
+    fun typingIntoANewFormCountsAsUnsavedChanges() {
+        val vm = viewModel()
+
+        vm.updateName("Lumpia")
+
+        assertTrue(vm.state.value.hasUnsavedChanges)
+    }
+
+    @Test
+    fun emptyStepsAloneAreNotUnsavedChanges() {
+        val vm = viewModel()
+
+        vm.addInstructionRow()
+
+        assertFalse(vm.state.value.hasUnsavedChanges)
+    }
+
+    @Test
+    fun undoingAnEditLeavesNoUnsavedChanges() {
+        val vm = viewModel(existing.id)
+
+        vm.updateServings("8")
+        assertTrue(vm.state.value.hasUnsavedChanges)
+
+        vm.updateServings("6")
+        assertFalse(vm.state.value.hasUnsavedChanges)
+    }
+
+    @Test
+    fun aSavedRecipeHasNoUnsavedChanges() {
+        val vm = viewModel()
+        vm.fillValidForm()
+
+        vm.save()
+
+        assertFalse(vm.state.value.hasUnsavedChanges)
+    }
 }
