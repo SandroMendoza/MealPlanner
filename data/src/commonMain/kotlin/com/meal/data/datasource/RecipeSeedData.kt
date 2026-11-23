@@ -26,7 +26,6 @@ import kotlin.uuid.Uuid
  *
  * The shopping list merges ingredients by name and unit, so each ingredient keeps the same
  * name and unit across recipes (meat in grams, garlic in cloves, sauces in tablespoons).
- * Calories are rough per-serving estimates.
  */
 @OptIn(ExperimentalUuidApi::class)
 object RecipeSeedData {
@@ -40,7 +39,7 @@ object RecipeSeedData {
             image = "chicken_adobo",
             description = "Chicken braised in soy sauce, vinegar, garlic and bay leaves until tender and glossy.",
             category = MAIN_DISH,
-            minutes = 75, servings = 4, calories = 420,
+            minutes = 75, servings = 4,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
                 ingredient("Soy Sauce", 6.0, TABLESPOON),
@@ -67,7 +66,7 @@ object RecipeSeedData {
             image = "pork_barbecue",
             description = "Sweet and savoury pork skewers marinated overnight and grilled with a sticky glaze.",
             category = MAIN_DISH,
-            minutes = 60, servings = 6, calories = 420,
+            minutes = 60, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Shoulder", 1000.0, GRAMS),
                 ingredient("Soy Sauce", 8.0, TABLESPOON),
@@ -95,7 +94,7 @@ object RecipeSeedData {
             image = "kare_kare",
             description = "Oxtail and vegetables in a thick, savoury peanut sauce, served with shrimp paste.",
             category = MAIN_DISH,
-            minutes = 180, servings = 6, calories = 600,
+            minutes = 180, servings = 6,
             ingredients = listOf(
                 ingredient("Oxtail", 1000.0, GRAMS),
                 ingredient("Water", 10.0, CUP),
@@ -126,7 +125,7 @@ object RecipeSeedData {
             image = "bistek_tagalog",
             description = "Thin beef slices braised in soy sauce and calamansi, topped with soft onion rings.",
             category = MAIN_DISH,
-            minutes = 60, servings = 4, calories = 380,
+            minutes = 60, servings = 4,
             ingredients = listOf(
                 ingredient("Beef Sirloin", 500.0, GRAMS),
                 ingredient("Soy Sauce", 5.0, TABLESPOON),
@@ -152,7 +151,7 @@ object RecipeSeedData {
             image = "pork_menudo",
             description = "Pork and liver stewed in tomato sauce with potatoes, carrots, peas and raisins.",
             category = MAIN_DISH,
-            minutes = 75, servings = 6, calories = 430,
+            minutes = 75, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Shoulder", 700.0, GRAMS),
                 ingredient("Pork Liver", 200.0, GRAMS),
@@ -187,7 +186,7 @@ object RecipeSeedData {
             image = "chicken_afritada",
             description = "Chicken stewed in tomato sauce with potatoes, carrots and bell peppers.",
             category = MAIN_DISH,
-            minutes = 60, servings = 5, calories = 380,
+            minutes = 60, servings = 5,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
                 ingredient("Tomato Sauce", 1.0, CUP),
@@ -221,7 +220,7 @@ object RecipeSeedData {
             image = "beef_caldereta",
             description = "Slow-cooked beef in a rich tomato and liver spread sauce with vegetables and cheese.",
             category = MAIN_DISH,
-            minutes = 150, servings = 6, calories = 520,
+            minutes = 150, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Chuck", 1000.0, GRAMS),
                 ingredient("Tomato Sauce", 1.0, CUP),
@@ -254,7 +253,7 @@ object RecipeSeedData {
             image = "pork_sisig",
             description = "Crisp chopped pork and liver with onion, chili and calamansi, served sizzling.",
             category = MAIN_DISH,
-            minutes = 90, servings = 4, calories = 550,
+            minutes = 90, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 500.0, GRAMS),
                 ingredient("Chicken Liver", 150.0, GRAMS),
@@ -287,7 +286,7 @@ object RecipeSeedData {
             image = "lechon_kawali",
             description = "Boiled then deep-fried pork belly with crackling skin and juicy meat.",
             category = MAIN_DISH,
-            minutes = 150, servings = 4, calories = 650,
+            minutes = 150, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 1000.0, GRAMS),
                 ingredient("Water", 8.0, CUP),
@@ -312,7 +311,7 @@ object RecipeSeedData {
             image = "chicken_inasal",
             description = "Grilled chicken marinated in lemongrass, ginger, garlic and vinegar, basted with annatto oil.",
             category = MAIN_DISH,
-            minutes = 240, servings = 4, calories = 400,
+            minutes = 240, servings = 4,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
                 ingredient("Lemongrass", 3.0, PIECE),
@@ -341,7 +340,7 @@ object RecipeSeedData {
             image = "pancit_canton",
             description = "Stir-fried egg noodles with pork, shrimp and vegetables in a savoury sauce.",
             category = MAIN_DISH,
-            minutes = 45, servings = 6, calories = 420,
+            minutes = 45, servings = 6,
             ingredients = listOf(
                 ingredient("Pancit Canton Noodles", 450.0, GRAMS),
                 ingredient("Pork Shoulder", 200.0, GRAMS),
@@ -373,7 +372,7 @@ object RecipeSeedData {
             image = "pancit_bihon",
             description = "Thin rice noodles stir-fried with chicken and vegetables.",
             category = MAIN_DISH,
-            minutes = 45, servings = 6, calories = 360,
+            minutes = 45, servings = 6,
             ingredients = listOf(
                 ingredient("Rice Noodles", 450.0, GRAMS),
                 ingredient("Chicken Breast", 300.0, GRAMS),
@@ -405,7 +404,7 @@ object RecipeSeedData {
             image = "lumpiang_shanghai",
             description = "Thin, crisp spring rolls filled with seasoned ground pork and vegetables.",
             category = SIDE_DISH,
-            minutes = 60, servings = 8, calories = 300,
+            minutes = 60, servings = 8,
             ingredients = listOf(
                 ingredient("Ground Pork", 500.0, GRAMS),
                 ingredient("Carrot", 1.0, PIECE),
@@ -433,7 +432,7 @@ object RecipeSeedData {
             image = "tortang_talong",
             description = "Grilled eggplant flattened and fried in a beaten egg coating.",
             category = MAIN_DISH,
-            minutes = 30, servings = 4, calories = 220,
+            minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Eggplant", 4.0, PIECE),
                 ingredient("Egg", 4.0, PIECE),
@@ -456,7 +455,7 @@ object RecipeSeedData {
             image = "ginisang_ampalaya",
             description = "Sautéed bitter gourd with tomato, onion and egg.",
             category = SIDE_DISH,
-            minutes = 30, servings = 4, calories = 160,
+            minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Bitter Gourd", 2.0, PIECE),
                 ingredient("Salt", 1.5, TEASPOON),
@@ -482,7 +481,7 @@ object RecipeSeedData {
             image = "pinakbet",
             description = "Mixed vegetables cooked with pork and shrimp paste.",
             category = MAIN_DISH,
-            minutes = 40, servings = 4, calories = 220,
+            minutes = 40, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 250.0, GRAMS),
                 ingredient("Shrimp Paste", 3.0, TABLESPOON),
@@ -512,7 +511,7 @@ object RecipeSeedData {
             image = "laing",
             description = "Dried taro leaves slow-cooked in coconut milk with pork, ginger and chili.",
             category = SIDE_DISH,
-            minutes = 70, servings = 4, calories = 330,
+            minutes = 70, servings = 4,
             ingredients = listOf(
                 ingredient("Dried Taro Leaves", 100.0, GRAMS),
                 ingredient("Coconut Milk", 4.0, CUP),
@@ -538,7 +537,7 @@ object RecipeSeedData {
             image = "chicken_curry",
             description = "Filipino-style chicken curry with coconut milk, potatoes and carrots.",
             category = MAIN_DISH,
-            minutes = 50, servings = 5, calories = 450,
+            minutes = 50, servings = 5,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
                 ingredient("Curry Powder", 2.0, TABLESPOON),
@@ -569,7 +568,7 @@ object RecipeSeedData {
             image = "pork_binagoongan",
             description = "Pork belly braised with shrimp paste and tomatoes, with fried eggplant.",
             category = MAIN_DISH,
-            minutes = 60, servings = 4, calories = 520,
+            minutes = 60, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 700.0, GRAMS),
                 ingredient("Shrimp Paste", 4.0, TABLESPOON),
@@ -599,7 +598,7 @@ object RecipeSeedData {
             image = "daing_na_bangus",
             description = "Milkfish marinated overnight in garlic and vinegar, then fried until crisp.",
             category = MAIN_DISH,
-            minutes = 30, servings = 4, calories = 330,
+            minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Milkfish", 2.0, PIECE),
                 ingredient("Vinegar", 8.0, TABLESPOON),
@@ -621,7 +620,7 @@ object RecipeSeedData {
             image = "fish_escabeche",
             description = "Fried whole fish topped with a sweet and sour sauce and crisp vegetables.",
             category = MAIN_DISH,
-            minutes = 40, servings = 4, calories = 320,
+            minutes = 40, servings = 4,
             ingredients = listOf(
                 ingredient("Tilapia", 2.0, PIECE),
                 ingredient("Salt", 1.0, TEASPOON),
@@ -654,7 +653,7 @@ object RecipeSeedData {
             image = "ginataang_kalabasa_at_sitaw",
             description = "Squash and string beans with shrimp in coconut milk.",
             category = MAIN_DISH,
-            minutes = 35, servings = 4, calories = 280,
+            minutes = 35, servings = 4,
             ingredients = listOf(
                 ingredient("Squash", 500.0, GRAMS),
                 ingredient("String Beans", 200.0, GRAMS),
@@ -681,7 +680,7 @@ object RecipeSeedData {
             image = "beef_mechado",
             description = "Beef braised in tomato sauce with soy sauce, calamansi, potatoes and carrots.",
             category = MAIN_DISH,
-            minutes = 150, servings = 6, calories = 480,
+            minutes = 150, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Chuck", 1000.0, GRAMS),
                 ingredient("Soy Sauce", 4.0, TABLESPOON),
@@ -713,7 +712,7 @@ object RecipeSeedData {
             image = "pork_giniling",
             description = "Ground pork sautéed in tomato sauce with diced potatoes, carrots, peas and raisins.",
             category = MAIN_DISH,
-            minutes = 35, servings = 4, calories = 380,
+            minutes = 35, servings = 4,
             ingredients = listOf(
                 ingredient("Ground Pork", 500.0, GRAMS),
                 ingredient("Tomato Sauce", 1.0, CUP),
@@ -743,7 +742,7 @@ object RecipeSeedData {
             image = "ginataang_hipon",
             description = "Shrimp simmered in coconut milk with ginger and green chili.",
             category = MAIN_DISH,
-            minutes = 30, servings = 4, calories = 350,
+            minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Shrimp", 500.0, GRAMS),
                 ingredient("Coconut Milk", 2.0, CUP),
@@ -770,7 +769,7 @@ object RecipeSeedData {
             image = "sinigang_na_baboy",
             description = "Sour tamarind soup with pork ribs and vegetables.",
             category = SOUP,
-            minutes = 90, servings = 6, calories = 380,
+            minutes = 90, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Ribs", 1000.0, GRAMS),
                 ingredient("Water", 10.0, CUP),
@@ -801,7 +800,7 @@ object RecipeSeedData {
             image = "chicken_tinola",
             description = "Light ginger broth with chicken, green papaya and chili leaves.",
             category = SOUP,
-            minutes = 50, servings = 5, calories = 290,
+            minutes = 50, servings = 5,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
                 ingredient("Ginger", 40.0, GRAMS),
@@ -828,7 +827,7 @@ object RecipeSeedData {
             image = "bulalo",
             description = "Slow-simmered beef shank and bone marrow soup with corn and greens.",
             category = SOUP,
-            minutes = 240, servings = 6, calories = 520,
+            minutes = 240, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Shank", 1500.0, GRAMS),
                 ingredient("Water", 12.0, CUP),
@@ -854,7 +853,7 @@ object RecipeSeedData {
             image = "nilagang_baka",
             description = "Clear beef soup with potatoes, saba bananas, corn and cabbage.",
             category = SOUP,
-            minutes = 180, servings = 6, calories = 420,
+            minutes = 180, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Chuck", 1000.0, GRAMS),
                 ingredient("Water", 10.0, CUP),
@@ -881,7 +880,7 @@ object RecipeSeedData {
             image = "chicken_sopas",
             description = "Creamy chicken macaroni soup with vegetables and evaporated milk.",
             category = SOUP,
-            minutes = 45, servings = 6, calories = 330,
+            minutes = 45, servings = 6,
             ingredients = listOf(
                 ingredient("Chicken Breast", 300.0, GRAMS),
                 ingredient("Chicken Broth", 6.0, CUP),
@@ -912,7 +911,7 @@ object RecipeSeedData {
             image = "beef_tapa",
             description = "Sweet and garlicky cured beef, the centre of a classic tapsilog breakfast.",
             category = MAIN_DISH,
-            minutes = 30, servings = 4, calories = 380,
+            minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Beef Sirloin", 500.0, GRAMS),
                 ingredient("Soy Sauce", 5.0, TABLESPOON),
@@ -936,7 +935,7 @@ object RecipeSeedData {
             image = "skinless_longganisa",
             description = "Sweet garlic pork sausages shaped by hand, no casing needed.",
             category = MAIN_DISH,
-            minutes = 30, servings = 6, calories = 350,
+            minutes = 30, servings = 6,
             ingredients = listOf(
                 ingredient("Ground Pork", 500.0, GRAMS),
                 ingredient("Garlic", 8.0, PIECE),
@@ -962,7 +961,7 @@ object RecipeSeedData {
             image = "sinangag",
             description = "Garlic fried rice made from day-old rice.",
             category = SIDE_DISH,
-            minutes = 15, servings = 4, calories = 260,
+            minutes = 15, servings = 4,
             ingredients = listOf(
                 ingredient("Cooked Rice", 4.0, CUP),
                 ingredient("Garlic", 10.0, PIECE),
@@ -984,7 +983,7 @@ object RecipeSeedData {
             image = "arroz_caldo",
             description = "Chicken and rice porridge with ginger, topped with toasted garlic, egg and calamansi.",
             category = SOUP,
-            minutes = 60, servings = 6, calories = 320,
+            minutes = 60, servings = 6,
             ingredients = listOf(
                 ingredient("Chicken", 700.0, GRAMS),
                 ingredient("Glutinous Rice", 1.0, CUP),
@@ -1015,7 +1014,7 @@ object RecipeSeedData {
             image = "champorado",
             description = "Chocolate rice porridge made with cacao tablets, drizzled with evaporated milk.",
             category = DESSERT,
-            minutes = 35, servings = 4, calories = 360,
+            minutes = 35, servings = 4,
             ingredients = listOf(
                 ingredient("Glutinous Rice", 1.0, CUP),
                 ingredient("Water", 6.0, CUP),
@@ -1038,7 +1037,7 @@ object RecipeSeedData {
             image = "leche_flan",
             description = "Silky steamed custard with a layer of caramel.",
             category = DESSERT,
-            minutes = 75, servings = 8, calories = 290,
+            minutes = 75, servings = 8,
             ingredients = listOf(
                 ingredient("Egg Yolk", 10.0, PIECE),
                 ingredient("Condensed Milk", 1.0, CUP),
@@ -1060,7 +1059,7 @@ object RecipeSeedData {
             image = "turon",
             description = "Banana and jackfruit spring rolls fried in a crisp caramel coating.",
             category = DESSERT,
-            minutes = 30, servings = 8, calories = 220,
+            minutes = 30, servings = 8,
             ingredients = listOf(
                 ingredient("Saba Banana", 4.0, PIECE),
                 ingredient("Jackfruit", 100.0, GRAMS),
@@ -1082,7 +1081,7 @@ object RecipeSeedData {
             image = "maja_blanca",
             description = "Coconut milk and corn pudding topped with toasted coconut.",
             category = DESSERT,
-            minutes = 45, servings = 12, calories = 210,
+            minutes = 45, servings = 12,
             ingredients = listOf(
                 ingredient("Coconut Milk", 4.0, CUP),
                 ingredient("Fresh Milk", 1.0, CUP),
@@ -1108,7 +1107,7 @@ object RecipeSeedData {
             image = "buko_pandan",
             description = "Young coconut and pandan jelly in a sweet cream dressing.",
             category = DESSERT,
-            minutes = 30, servings = 8, calories = 280,
+            minutes = 30, servings = 8,
             ingredients = listOf(
                 ingredient("Pandan Gelatin Powder", 25.0, GRAMS),
                 ingredient("Water", 4.0, CUP),
@@ -1132,7 +1131,7 @@ object RecipeSeedData {
             image = "biko",
             description = "Sticky rice cake cooked in coconut milk and brown sugar, topped with latik.",
             category = DESSERT,
-            minutes = 75, servings = 12, calories = 300,
+            minutes = 75, servings = 12,
             ingredients = listOf(
                 ingredient("Glutinous Rice", 2.0, CUP),
                 ingredient("Water", 2.0, CUP),
@@ -1160,7 +1159,6 @@ object RecipeSeedData {
         category: FoodCategory,
         minutes: Int,
         servings: Int,
-        calories: Int,
         ingredients: List<RecipeIngredient>,
         steps: List<String>,
     ) = RecipeDto(
@@ -1170,7 +1168,6 @@ object RecipeSeedData {
         category = category,
         preparationTimeMinutes = minutes,
         servings = servings,
-        calories = calories,
         imageUrl = "$BUNDLED_IMAGE_PREFIX$image.webp",
         ingredients = ingredients,
         instructions = steps.mapIndexed { index, step -> Instruction(index + 1, step) },

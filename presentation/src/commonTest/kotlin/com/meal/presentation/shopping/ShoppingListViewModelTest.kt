@@ -155,7 +155,7 @@ class ShoppingListViewModelTest {
     }
 
     @Test
-    fun addingAnItemSavesItTrimmedAndClosesTheDialog() {
+    fun addingAnItemSavesItTrimmedAndKeepsThePickerOpenForTheNext() {
         val vm = viewModel()
         vm.openAddItemDialog()
         assertTrue(vm.state.value.showAddItemDialog)
@@ -166,8 +166,11 @@ class ShoppingListViewModelTest {
         assertEquals("Eggs", item.name)
         assertEquals(12.0, item.totalQuantity)
         assertEquals(weekStart to weekEnd, range)
-        assertFalse(vm.state.value.showAddItemDialog)
+        assertTrue(vm.state.value.showAddItemDialog)
         assertEquals(listOf("Eggs"), vm.state.value.items.map { it.name })
+
+        vm.dismissAddItemDialog()
+        assertFalse(vm.state.value.showAddItemDialog)
     }
 
     @Test

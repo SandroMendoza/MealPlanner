@@ -21,8 +21,8 @@ class ModelDefaultsTest {
     }
 
     @Test
-    fun aNewProfileIsCalledChef() {
-        assertEquals("Chef", UserProfile().name)
+    fun aNewProfileHasNoName() {
+        assertEquals("", UserProfile().name)
     }
 
     @Test

@@ -1,5 +1,14 @@
 package com.meal.planner.shopping
 
+import com.meal.presentation.shopping.ShoppingListUiState
+import com.meal.presentation.shopping.ShoppingListSection
+import com.meal.planner.common.LocalCompactHeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -57,9 +66,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.DateRangePickerDialog
+import com.meal.planner.components.IngredientPickerSheet
 import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.common.formatPrice
+import com.meal.planner.components.ScrollAwayHeader
 import com.meal.planner.components.SwipeActionsRow
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
@@ -69,6 +80,8 @@ import com.meal.presentation.common.today
 import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.shopping.ShoppingListViewModel
 import org.koin.compose.viewmodel.koinViewModel
+
+private val CONTROLS_PANE_WIDTH = 280.dp
 
 @Composable
 private fun ShoppingListRangeMode.label(): String = when (this) {
@@ -96,272 +109,61 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0)
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-            Column(modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm)) {
-                SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                    ShoppingListRangeMode.entries.forEachIndexed { index, mode ->
-                        SegmentedButton(
-                            selected = uiState.mode == mode,
-                            onClick = { viewModel.selectMode(mode) },
-                            shape = SegmentedButtonDefaults.itemShape(
-                                index = index,
-                                count = ShoppingListRangeMode.entries.size
-                            )
-                        ) {
-                            Text(mode.label())
+        if (LocalCompactHeight.current) {
+            Row(modifier = Modifier.padding(padding).fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .width(CONTROLS_PANE_WIDTH)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .padding(spacing.lg),
+                    verticalArrangement = Arrangement.spacedBy(spacing.sm)
+                ) {
+                    ShoppingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true }, stacked = true)
+                    Spacer(Modifier.height(spacing.sectionGap))
+                    ShoppingTotal(uiState)
+                    AddItemButton(onClick = { viewModel.openAddItemDialog() }, modifier = Modifier.fillMaxWidth())
+                }
+                VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                ShoppingListContent(
+                    uiState = uiState,
+                    sections = sections,
+                    viewModel = viewModel,
+                    modifier = Modifier.weight(1f).fillMaxHeight()
+                )
+            }
+        } else {
+            Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+                ScrollAwayHeader(
+                    modifier = Modifier.weight(1f),
+                    header = {
+                        Column(modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm)) {
+                            ShoppingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true }, stacked = false)
                         }
                     }
+                ) {
+                    ShoppingListContent(uiState = uiState, sections = sections, viewModel = viewModel, modifier = Modifier.fillMaxSize())
                 }
 
-                Spacer(Modifier.height(spacing.sm))
-
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg, vertical = spacing.sm),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    when (uiState.mode) {
-                        ShoppingListRangeMode.WEEK -> {
-                            IconButton(onClick = { viewModel.previousWeek() }) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
-                            }
-                            Text(
-                                text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (uiState.rangeStart != currentWeekSunday()) {
-                                    IconButton(onClick = { viewModel.goToToday() }) {
-                                        Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToCurrentWeek)
-                                    }
-                                }
-                                IconButton(onClick = { showDatePicker = true }) {
-                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickAWeek)
-                                }
-                                IconButton(onClick = { viewModel.openGroupManagement() }) {
-                                    Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
-                                }
-                                if (uiState.readAloudAvailable) {
-                                    IconButton(onClick = { viewModel.toggleReadAloud() }) {
-                                        Icon(
-                                            imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
-                                            contentDescription = if (uiState.isSpeaking) {
-                                                LocalStrings.current.shoppingStopReadAloudCd
-                                            } else {
-                                                LocalStrings.current.shoppingReadAloudCd
-                                            }
-                                        )
-                                    }
-                                }
-                                IconButton(onClick = { viewModel.nextWeek() }) {
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
-                                }
-                            }
-                        }
-                        ShoppingListRangeMode.DAY -> {
-                            IconButton(onClick = { viewModel.previousDay() }) {
-                                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousDay)
-                            }
-                            Text(
-                                text = "${uiState.rangeStart}",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                if (uiState.rangeStart != today()) {
-                                    IconButton(onClick = { viewModel.goToToday() }) {
-                                        Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
-                                    }
-                                }
-                                IconButton(onClick = { showDatePicker = true }) {
-                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
-                                }
-                                IconButton(onClick = { viewModel.openGroupManagement() }) {
-                                    Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
-                                }
-                                if (uiState.readAloudAvailable) {
-                                    IconButton(onClick = { viewModel.toggleReadAloud() }) {
-                                        Icon(
-                                            imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
-                                            contentDescription = if (uiState.isSpeaking) {
-                                                LocalStrings.current.shoppingStopReadAloudCd
-                                            } else {
-                                                LocalStrings.current.shoppingReadAloudCd
-                                            }
-                                        )
-                                    }
-                                }
-                                IconButton(onClick = { viewModel.nextDay() }) {
-                                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextDay)
-                                }
-                            }
-                        }
-                        ShoppingListRangeMode.RANGE -> {
-                            Text(
-                                text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
-                                style = MaterialTheme.typography.titleMedium,
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                modifier = Modifier.weight(1f)
-                            )
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                IconButton(onClick = { showDatePicker = true }) {
-                                    Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADateRange)
-                                }
-                                IconButton(onClick = { viewModel.openGroupManagement() }) {
-                                    Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
-                                }
-                                if (uiState.readAloudAvailable) {
-                                    IconButton(onClick = { viewModel.toggleReadAloud() }) {
-                                        Icon(
-                                            imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
-                                            contentDescription = if (uiState.isSpeaking) {
-                                                LocalStrings.current.shoppingStopReadAloudCd
-                                            } else {
-                                                LocalStrings.current.shoppingReadAloudCd
-                                            }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            when {
-                uiState.isLoading -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-                uiState.errorMessage != null -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text(
-                        uiState.errorMessage.orEmpty(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
-                uiState.isEmpty -> Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text(
-                        LocalStrings.current.shoppingNoMealsPlannedPeriod,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-                else -> LazyColumn(modifier = Modifier.weight(1f)) {
-                    sections.forEach { section ->
-                        item(key = "header-${section.group?.id ?: "ungrouped"}") {
-                            Text(
-                                text = section.group?.name ?: LocalStrings.current.shoppingUngrouped,
-                                style = MaterialTheme.typography.titleSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .padding(horizontal = spacing.lg)
-                            )
-                        }
-                        items(section.items, key = { it.itemKey }) { item ->
-                            SwipeActionsRow(
-                                onSwipeRightToAssignGroup = { viewModel.openGroupPicker(item) },
-                                onSwipeLeftToDelete = { viewModel.requestDeleteItem(item) }
-                            ) {
-                                val contentColor = if (item.checked) {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                } else {
-                                    MaterialTheme.colorScheme.onSurface
-                                }
-                                val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
-
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.background)
-                                        .toggleable(
-                                            value = item.checked,
-                                            role = Role.Checkbox,
-                                            onValueChange = { checked -> viewModel.toggleItem(item.itemKey, checked) }
-                                        )
-                                        .heightIn(min = MealPlannerTokens.iconSize.xl)
-                                        .padding(horizontal = spacing.lg),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    IngredientThumbnail(
-                                        name = item.name,
-                                        alpha = if (item.checked) 0.4f else 1f,
-                                        modifier = Modifier.padding(end = spacing.md)
-                                    )
-                                    Text(
-                                        text = item.name,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = contentColor,
-                                        textDecoration = textDecoration,
-                                        modifier = Modifier.weight(1f).padding(end = spacing.sm)
-                                    )
-                                    Text(
-                                        text = formatAmount(item.totalQuantity, item.unit),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = contentColor,
-                                        textDecoration = textDecoration,
-                                        modifier = Modifier.padding(end = spacing.sm)
-                                    )
-                                    val price = item.price
-                                    if (price != null) {
-                                        Text(
-                                            text = "${uiState.currencySymbol}${formatPrice(price)}",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
-                                        )
-                                    } else {
-                                        Text(
-                                            text = uiState.currencySymbol,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = spacing.lg, vertical = spacing.sm),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    if (!uiState.isEmpty) {
-                        Text(LocalStrings.current.totalSpent, style = MaterialTheme.typography.titleMedium)
-                        Text(
-                            "${uiState.currencySymbol}${formatPrice(uiState.totalSpent)}",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-                Button(
-                    onClick = { viewModel.openAddItemDialog() },
-                    shape = MaterialTheme.shapes.extraLarge,
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    contentPadding = PaddingValues(horizontal = spacing.md, vertical = spacing.xs)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(MealPlannerTokens.iconSize.sm))
-                    Spacer(Modifier.width(spacing.xxs))
-                    Text(LocalStrings.current.shoppingAddItemButton, style = MaterialTheme.typography.labelMedium)
+                    ShoppingTotal(uiState)
+                    AddItemButton(onClick = { viewModel.openAddItemDialog() })
                 }
             }
         }
 
         if (uiState.showAddItemDialog) {
-            AddShoppingItemDialog(
-                suggestions = uiState.availableIngredients.map { it.name },
-                onConfirm = { name, quantity, unit -> viewModel.addItem(name, quantity, unit) },
-                onDismiss = { viewModel.dismissAddItemDialog() }
+            IngredientPickerSheet(
+                knownNames = remember(uiState.availableIngredients) { uiState.availableIngredients.map { it.name } },
+                editing = null,
+                onConfirm = { row -> row.quantity.toDoubleOrNull()?.let { viewModel.addItem(row.name, it, row.unit) } },
+                onDismiss = { viewModel.dismissAddItemDialog() },
+                defaultQuantity = "1",
+                requireQuantity = true
             )
         }
 
@@ -439,5 +241,321 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                 )
             }
         }
+    }
+}
+
+/** Label, arrows and "go to today" for the selected range mode. Range mode has no arrows. */
+private class RangeNavigation(
+    val label: String,
+    val labelFillsRow: Boolean,
+    val onPrevious: (() -> Unit)?,
+    val previousCd: String,
+    val onNext: (() -> Unit)?,
+    val nextCd: String,
+    val showToday: Boolean,
+    val todayCd: String,
+    val pickCd: String
+)
+
+@Composable
+private fun rangeNavigation(uiState: ShoppingListUiState, viewModel: ShoppingListViewModel): RangeNavigation {
+    val strings = LocalStrings.current
+    return when (uiState.mode) {
+        ShoppingListRangeMode.WEEK -> RangeNavigation(
+            label = "${uiState.rangeStart} - ${uiState.rangeEnd}",
+            labelFillsRow = true,
+            onPrevious = { viewModel.previousWeek() },
+            previousCd = strings.previousWeek,
+            onNext = { viewModel.nextWeek() },
+            nextCd = strings.nextWeek,
+            showToday = uiState.rangeStart != currentWeekSunday(),
+            todayCd = strings.goToCurrentWeek,
+            pickCd = strings.pickAWeek
+        )
+        ShoppingListRangeMode.DAY -> RangeNavigation(
+            label = "${uiState.rangeStart}",
+            labelFillsRow = false,
+            onPrevious = { viewModel.previousDay() },
+            previousCd = strings.previousDay,
+            onNext = { viewModel.nextDay() },
+            nextCd = strings.nextDay,
+            showToday = uiState.rangeStart != today(),
+            todayCd = strings.goToToday,
+            pickCd = strings.pickADate
+        )
+        ShoppingListRangeMode.RANGE -> RangeNavigation(
+            label = "${uiState.rangeStart} - ${uiState.rangeEnd}",
+            labelFillsRow = true,
+            onPrevious = null,
+            previousCd = "",
+            onNext = null,
+            nextCd = "",
+            showToday = false,
+            todayCd = "",
+            pickCd = strings.pickADateRange
+        )
+    }
+}
+
+/**
+ * The range mode toggle, the range label with its arrows, and the range actions. [stacked] puts
+ * the actions on their own row under the label, for the narrow side pane on short screens.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ShoppingRangeControls(
+    uiState: ShoppingListUiState,
+    viewModel: ShoppingListViewModel,
+    onPickDate: () -> Unit,
+    stacked: Boolean
+) {
+    val spacing = MealPlannerTokens.spacing
+    val nav = rangeNavigation(uiState, viewModel)
+
+    Column {
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            ShoppingListRangeMode.entries.forEachIndexed { index, mode ->
+                SegmentedButton(
+                    selected = uiState.mode == mode,
+                    onClick = { viewModel.selectMode(mode) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = ShoppingListRangeMode.entries.size
+                    )
+                ) {
+                    Text(mode.label())
+                }
+            }
+        }
+
+        Spacer(Modifier.height(spacing.sm))
+
+        if (stacked) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                nav.onPrevious?.let { onPrevious ->
+                    IconButton(onClick = onPrevious) {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = nav.previousCd)
+                    }
+                }
+                Text(
+                    text = nav.label,
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    modifier = Modifier.weight(1f)
+                )
+                nav.onNext?.let { onNext ->
+                    IconButton(onClick = onNext) {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = nav.nextCd)
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RangeActions(nav, uiState, viewModel, onPickDate)
+            }
+        } else {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                nav.onPrevious?.let { onPrevious ->
+                    IconButton(onClick = onPrevious) {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = nav.previousCd)
+                    }
+                }
+                Text(
+                    text = nav.label,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = if (nav.labelFillsRow) Modifier.weight(1f) else Modifier
+                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RangeActions(nav, uiState, viewModel, onPickDate)
+                    nav.onNext?.let { onNext ->
+                        IconButton(onClick = onNext) {
+                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = nav.nextCd)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RangeActions(
+    nav: RangeNavigation,
+    uiState: ShoppingListUiState,
+    viewModel: ShoppingListViewModel,
+    onPickDate: () -> Unit
+) {
+    if (nav.showToday) {
+        IconButton(onClick = { viewModel.goToToday() }) {
+            Icon(Icons.Filled.Today, contentDescription = nav.todayCd)
+        }
+    }
+    IconButton(onClick = onPickDate) {
+        Icon(Icons.Filled.CalendarMonth, contentDescription = nav.pickCd)
+    }
+    IconButton(onClick = { viewModel.openGroupManagement() }) {
+        Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingManageGroupsCd)
+    }
+    if (uiState.readAloudAvailable) {
+        IconButton(onClick = { viewModel.toggleReadAloud() }) {
+            Icon(
+                imageVector = if (uiState.isSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
+                contentDescription = if (uiState.isSpeaking) {
+                    LocalStrings.current.shoppingStopReadAloudCd
+                } else {
+                    LocalStrings.current.shoppingReadAloudCd
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun ShoppingListContent(
+    uiState: ShoppingListUiState,
+    sections: List<ShoppingListSection>,
+    viewModel: ShoppingListViewModel,
+    modifier: Modifier = Modifier
+) {
+    val spacing = MealPlannerTokens.spacing
+    when {
+        uiState.isLoading -> Box(modifier = modifier, contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+        uiState.errorMessage != null -> Box(modifier = modifier, contentAlignment = Alignment.Center) {
+            Text(
+                uiState.errorMessage.orEmpty(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+        }
+        uiState.isEmpty -> Box(modifier = modifier, contentAlignment = Alignment.Center) {
+            Text(
+                LocalStrings.current.shoppingNoMealsPlannedPeriod,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        else -> LazyColumn(modifier = modifier) {
+            sections.forEach { section ->
+                item(key = "header-${section.group?.id ?: "ungrouped"}") {
+                    Text(
+                        text = section.group?.name ?: LocalStrings.current.shoppingUngrouped,
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background)
+                            .padding(horizontal = spacing.lg)
+                    )
+                }
+                items(section.items, key = { it.itemKey }) { item ->
+                    SwipeActionsRow(
+                        onSwipeRightToAssignGroup = { viewModel.openGroupPicker(item) },
+                        onSwipeLeftToDelete = { viewModel.requestDeleteItem(item) }
+                    ) {
+                        val contentColor = if (item.checked) {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                        val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.background)
+                                .toggleable(
+                                    value = item.checked,
+                                    role = Role.Checkbox,
+                                    onValueChange = { checked -> viewModel.toggleItem(item.itemKey, checked) }
+                                )
+                                .heightIn(min = MealPlannerTokens.iconSize.xl)
+                                .padding(horizontal = spacing.lg),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IngredientThumbnail(
+                                name = item.name,
+                                alpha = if (item.checked) 0.4f else 1f,
+                                modifier = Modifier.padding(end = spacing.md)
+                            )
+                            Text(
+                                text = item.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = contentColor,
+                                textDecoration = textDecoration,
+                                modifier = Modifier.weight(1f).padding(end = spacing.sm)
+                            )
+                            Text(
+                                text = formatAmount(item.totalQuantity, item.unit),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = contentColor,
+                                textDecoration = textDecoration,
+                                modifier = Modifier.padding(end = spacing.sm)
+                            )
+                            val price = item.price
+                            if (price != null) {
+                                Text(
+                                    text = "${uiState.currencySymbol}${formatPrice(price)}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
+                                )
+                            } else {
+                                Text(
+                                    text = uiState.currencySymbol,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.clickable { viewModel.openRecordPriceDialog(item) }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShoppingTotal(uiState: ShoppingListUiState) {
+    Column {
+        if (!uiState.isEmpty) {
+            Text(LocalStrings.current.totalSpent, style = MaterialTheme.typography.titleMedium)
+            Text(
+                "${uiState.currencySymbol}${formatPrice(uiState.totalSpent)}",
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+    }
+}
+
+@Composable
+private fun AddItemButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val spacing = MealPlannerTokens.spacing
+    Button(
+        onClick = onClick,
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+        contentPadding = PaddingValues(horizontal = spacing.md, vertical = spacing.xs),
+        modifier = modifier
+    ) {
+        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(MealPlannerTokens.iconSize.sm))
+        Spacer(Modifier.width(spacing.xxs))
+        Text(LocalStrings.current.shoppingAddItemButton, style = MaterialTheme.typography.labelMedium)
     }
 }

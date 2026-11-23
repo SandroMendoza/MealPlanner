@@ -15,7 +15,6 @@ data class RecipeDto(
     val category: FoodCategory,
     val preparationTimeMinutes: Int,
     val servings: Int,
-    val calories: Int?,
     val imageUrl: String?,
     val ingredients: List<RecipeIngredient>,
     val instructions: List<Instruction>,

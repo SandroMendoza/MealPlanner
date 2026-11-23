@@ -22,7 +22,6 @@ class RecipeMapperTest {
         category = FoodCategory.MAIN_DISH,
         preparationTimeMinutes = 45,
         servings = 4,
-        calories = 520,
         imageUrl = "files/recipes/chicken_adobo.webp",
         ingredients = listOf(
             RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Chicken"), 1.0, MeasurementUnit.KILOGRAMS)
@@ -43,7 +42,6 @@ class RecipeMapperTest {
         assertEquals(dto.category, recipe.category)
         assertEquals(dto.preparationTimeMinutes, recipe.preparationTimeMinutes)
         assertEquals(dto.servings, recipe.servings)
-        assertEquals(dto.calories, recipe.calories)
         assertEquals(dto.imageUrl, recipe.imageUrl)
         assertEquals(dto.ingredients, recipe.ingredients)
         assertEquals(dto.instructions, recipe.instructions)
@@ -59,7 +57,7 @@ class RecipeMapperTest {
 
     @Test
     fun nullableFieldsStayNull() {
-        val bare = dto.copy(description = null, calories = null, imageUrl = null, cuisine = null)
+        val bare = dto.copy(description = null, imageUrl = null, cuisine = null)
 
         val roundTripped = RecipeMapper.toDto(RecipeMapper.toDomain(bare))
 

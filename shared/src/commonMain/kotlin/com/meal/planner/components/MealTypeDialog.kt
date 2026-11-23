@@ -1,8 +1,11 @@
 package com.meal.planner.components
 
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.meal.domain.model.enums.MealType
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.strings.LocalStrings
@@ -43,7 +47,7 @@ fun MealTypeDialog(
         onDismissRequest = onDismiss,
         title = { Text(LocalStrings.current.recipePickerAddRecipeNameTo(recipeName), style = MaterialTheme.typography.titleLarge) },
         text = {
-            Column {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -69,21 +73,14 @@ fun MealTypeDialog(
                     )
                 }
                 HorizontalDivider(modifier = Modifier.padding(vertical = spacing.xs))
-                MealType.entries.forEach { mealType ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onSelect(mealType) }
-                            .padding(vertical = spacing.sm),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(spacing.md)
-                    ) {
-                        Icon(
-                            imageVector = mealType.icon(),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                        Text(mealType.displayName(), style = MaterialTheme.typography.bodyLarge)
+                // On a short screen two meal types share a row so all of them fit without scrolling.
+                val perRow = if (LocalCompactHeight.current) 2 else 1
+                MealType.entries.chunked(perRow).forEach { rowTypes ->
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        rowTypes.forEach { mealType ->
+                            MealTypeOption(mealType, onClick = { onSelect(mealType) }, modifier = Modifier.weight(1f))
+                        }
+                        repeat(perRow - rowTypes.size) { Spacer(Modifier.weight(1f)) }
                     }
                 }
             }
@@ -99,5 +96,24 @@ fun MealTypeDialog(
             onDateSelected = onDateChange,
             onDismiss = { showDatePicker = false }
         )
+    }
+}
+
+@Composable
+private fun MealTypeOption(mealType: MealType, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val spacing = MealPlannerTokens.spacing
+    Row(
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .padding(vertical = spacing.sm),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(spacing.md)
+    ) {
+        Icon(
+            imageVector = mealType.icon(),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Text(mealType.displayName(), style = MaterialTheme.typography.bodyLarge)
     }
 }

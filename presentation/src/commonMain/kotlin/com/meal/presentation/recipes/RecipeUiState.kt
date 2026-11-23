@@ -15,7 +15,6 @@ data class RecipeUiState(
     val selectedCategory: FoodCategory? = null,
     val selectedCuisine: Cuisine? = null,
     val prepTimeRange: ClosedFloatingPointRange<Float> = 0f..180f,
-    val calorieRange: ClosedFloatingPointRange<Float> = 0f..1500f,
     val showFavoritesOnly: Boolean = false,
     val showCreatedOnly: Boolean = false,
     val viewMode: RecipeViewMode = RecipeViewMode.GRID
@@ -31,7 +30,6 @@ data class RecipeUiState(
             .filter { selectedCategory == null || it.category == selectedCategory }
             .filter { selectedCuisine == null || it.cuisine == selectedCuisine }
             .filter { it.preparationTimeMinutes.toFloat() in prepTimeRange }
-            .filter { recipe -> recipe.calories?.let { it.toFloat() in calorieRange } ?: true }
             .filter { recipe -> matchesSearch(recipe, searchQuery) }
             .toList()
 

@@ -21,7 +21,6 @@ fun recipe(
     category = FoodCategory.MAIN_DISH,
     preparationTimeMinutes = 30,
     servings = 4,
-    calories = null,
     imageUrl = null,
     ingredients = ingredients,
     instructions = emptyList()

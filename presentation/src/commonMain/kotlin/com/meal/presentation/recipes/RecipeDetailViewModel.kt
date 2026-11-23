@@ -57,6 +57,18 @@ class RecipeDetailViewModel(
         }
     }
 
+    /**
+     * Opens the delete confirmation. It lists the future dates the recipe is planned on, which
+     * deleting clears; an empty list means the recipe isn't planned.
+     */
+    fun requestDelete() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                pendingDeleteConfirmationDates = deleteRecipeUseCase.plannedDates(recipeId)
+            )
+        }
+    }
+
     fun delete(force: Boolean = false) {
         viewModelScope.launch {
             when (val result = deleteRecipeUseCase.execute(recipeId, force)) {

@@ -72,7 +72,6 @@ class LocalizedStringsTest {
         assertEquals("1 serving", en.servingsLabel(1))
         assertEquals("4 servings", en.servingsLabel(4))
         assertEquals("45 min", en.minutesLabel(45))
-        assertEquals("350 calories", en.caloriesLabel(350))
         assertEquals("Week 46", en.calendarWeekNumber(46))
         assertEquals("Grams (g)", en.measurementUnitName(MeasurementUnit.GRAMS))
         assertEquals("To taste", en.measurementUnitName(MeasurementUnit.TO_TASTE))

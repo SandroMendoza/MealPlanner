@@ -126,8 +126,8 @@ class RecipeViewModelTest {
 
     @Test
     fun searchRangesAndTabsUpdateFilteredRecipes() {
-        val quickSoup = recipe(name = "Miso Soup", preparationTimeMinutes = 10, calories = 100, isFavorite = true)
-        val slowStew = recipe(name = "Beef Stew", preparationTimeMinutes = 150, calories = 900, isUserCreated = false)
+        val quickSoup = recipe(name = "Miso Soup", preparationTimeMinutes = 10, isFavorite = true)
+        val slowStew = recipe(name = "Beef Stew", preparationTimeMinutes = 150, isUserCreated = false)
         repository.recipes.value = listOf(quickSoup, slowStew)
         val vm = viewModel()
 
@@ -138,10 +138,6 @@ class RecipeViewModelTest {
         vm.onPrepTimeRangeChange(0f..30f)
         assertEquals(listOf(quickSoup), vm.state.value.filteredRecipes)
         vm.onPrepTimeRangeChange(0f..180f)
-
-        vm.onCalorieRangeChange(500f..1500f)
-        assertEquals(listOf(slowStew), vm.state.value.filteredRecipes)
-        vm.onCalorieRangeChange(0f..1500f)
 
         vm.onFavoritesTabSelected(true)
         assertEquals(listOf(quickSoup), vm.state.value.filteredRecipes)
