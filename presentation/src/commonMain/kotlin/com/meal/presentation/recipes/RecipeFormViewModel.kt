@@ -31,7 +31,13 @@ class RecipeFormViewModel(
     private val getAllRecipesUseCase: GetAllRecipesUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(RecipeFormUiState(isEditMode = recipeId != null))
+    // A new recipe starts with one empty step, ready to type into.
+    private val _uiState = MutableStateFlow(
+        RecipeFormUiState(
+            isEditMode = recipeId != null,
+            instructions = if (recipeId == null) listOf(InstructionFormRow()) else emptyList()
+        ).let { it.copy(initialContent = it.content) }
+    )
     val state = _uiState.asStateFlow()
 
     init {
@@ -63,7 +69,6 @@ class RecipeFormViewModel(
                     cuisine = recipe.cuisine,
                     preparationTimeMinutes = recipe.preparationTimeMinutes.toString(),
                     servings = recipe.servings.toString(),
-                    calories = recipe.calories?.toString().orEmpty(),
                     imageUrl = recipe.imageUrl.orEmpty(),
                     ingredients = recipe.ingredients.map {
                         IngredientFormRow(it.ingredient.name, formatQuantity(it.quantity), it.unit)
@@ -71,7 +76,7 @@ class RecipeFormViewModel(
                     instructions = recipe.instructions
                         .sortedBy { it.stepNumber }
                         .map { InstructionFormRow(it.description) }
-                )
+                ).let { it.copy(initialContent = it.content) }
             } else {
                 _uiState.value.copy(isLoading = false, errorMessage = "Recipe not found")
             }
@@ -103,16 +108,12 @@ class RecipeFormViewModel(
         _uiState.value = _uiState.value.copy(servings = value)
     }
 
-    fun updateCalories(value: String) {
-        _uiState.value = _uiState.value.copy(calories = value)
-    }
-
     fun updateImageUrl(value: String) {
         _uiState.value = _uiState.value.copy(imageUrl = value)
     }
 
-    fun addIngredientRow() {
-        _uiState.value = _uiState.value.copy(ingredients = _uiState.value.ingredients + IngredientFormRow())
+    fun addIngredient(row: IngredientFormRow) {
+        _uiState.value = _uiState.value.copy(ingredients = _uiState.value.ingredients + row)
     }
 
     fun updateIngredientRow(index: Int, row: IngredientFormRow) {
@@ -143,6 +144,29 @@ class RecipeFormViewModel(
         )
     }
 
+    /** Replaces step [index] with [steps], in order; used when an edit splits one step into several. */
+    fun replaceInstructionRow(index: Int, steps: List<String>) {
+        val current = _uiState.value.instructions
+        _uiState.value = _uiState.value.copy(
+            instructions = current.take(index) + steps.map(::InstructionFormRow) + current.drop(index + 1)
+        )
+    }
+
+    fun moveInstructionRow(from: Int, to: Int) {
+        val rows = _uiState.value.instructions
+        if (from !in rows.indices || to !in rows.indices) return
+        _uiState.value = _uiState.value.copy(
+            instructions = rows.toMutableList().apply { add(to, removeAt(from)) }
+        )
+    }
+
+    /** Replaces every step with [steps], keeping one empty step when there are none. */
+    fun replaceInstructions(steps: List<String>) {
+        _uiState.value = _uiState.value.copy(
+            instructions = steps.ifEmpty { listOf("") }.map(::InstructionFormRow)
+        )
+    }
+
     fun save() {
         val current = _uiState.value
         if (!current.canSave) return
@@ -157,7 +181,6 @@ class RecipeFormViewModel(
                     cuisine = current.cuisine,
                     preparationTimeMinutes = current.preparationTimeMinutes.toIntOrNull() ?: 0,
                     servings = current.servings.toIntOrNull() ?: 1,
-                    calories = current.calories.toIntOrNull(),
                     imageUrl = current.imageUrl.ifBlank { null },
                     ingredients = current.ingredients
                         .filter { it.name.isNotBlank() }

@@ -40,7 +40,6 @@ class UiStateTest {
         category = FoodCategory.MAIN_DISH,
         cuisine = Cuisine.FILIPINO,
         preparationTimeMinutes = 60,
-        calories = 500,
         ingredients = listOf(ingredientLine("Soy sauce", 2.0)),
         isFavorite = true,
         isUserCreated = false
@@ -50,7 +49,6 @@ class UiStateTest {
         category = FoodCategory.SALAD,
         cuisine = Cuisine.AMERICAN,
         preparationTimeMinutes = 10,
-        calories = null,
         isUserCreated = true
     )
 
@@ -63,12 +61,6 @@ class UiStateTest {
         assertEquals(listOf(salad), state.copy(selectedCategory = FoodCategory.SALAD).filteredRecipes)
         assertEquals(listOf(adobo), state.copy(selectedCuisine = Cuisine.FILIPINO).filteredRecipes)
         assertEquals(listOf(salad), state.copy(prepTimeRange = 0f..30f).filteredRecipes)
-    }
-
-    @Test
-    fun recipeCalorieFilterKeepsRecipesWithoutCalories() {
-        val state = RecipeUiState(recipes = listOf(adobo, salad), calorieRange = 0f..100f)
-        assertEquals(listOf(salad), state.filteredRecipes)
     }
 
     @Test

@@ -79,10 +79,6 @@ class RecipeViewModel(
         _uiState.value = _uiState.value.copy(prepTimeRange = range)
     }
 
-    fun onCalorieRangeChange(range: ClosedFloatingPointRange<Float>) {
-        _uiState.value = _uiState.value.copy(calorieRange = range)
-    }
-
     fun onFavoritesTabSelected(showFavoritesOnly: Boolean) {
         _uiState.value = _uiState.value.copy(showFavoritesOnly = showFavoritesOnly)
     }

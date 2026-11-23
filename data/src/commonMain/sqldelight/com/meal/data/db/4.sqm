@@ -1,0 +1,22 @@
+-- SQLite before 3.35 (Android below 14) has no DROP COLUMN, so the table is rebuilt without calories.
+CREATE TABLE RecipeEntity_new (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    category TEXT NOT NULL,
+    preparationTimeMinutes INTEGER NOT NULL,
+    servings INTEGER NOT NULL,
+    imageUrl TEXT,
+    isDeleted INTEGER NOT NULL DEFAULT 0,
+    isFavorite INTEGER NOT NULL DEFAULT 0,
+    isUserCreated INTEGER NOT NULL DEFAULT 1,
+    cuisine TEXT
+);
+
+INSERT INTO RecipeEntity_new(id, name, description, category, preparationTimeMinutes, servings, imageUrl, isDeleted, isFavorite, isUserCreated, cuisine)
+SELECT id, name, description, category, preparationTimeMinutes, servings, imageUrl, isDeleted, isFavorite, isUserCreated, cuisine
+FROM RecipeEntity;
+
+DROP TABLE RecipeEntity;
+
+ALTER TABLE RecipeEntity_new RENAME TO RecipeEntity;

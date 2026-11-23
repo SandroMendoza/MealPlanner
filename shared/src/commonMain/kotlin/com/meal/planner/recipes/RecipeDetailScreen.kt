@@ -3,16 +3,20 @@ package com.meal.planner.recipes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -23,7 +27,6 @@ import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.People
@@ -62,10 +65,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.Instruction
+import com.meal.domain.model.Recipe
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.displayName
 import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.MealTypeDialog
+import com.meal.planner.components.ScrollAwayHeader
 import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerPalette
@@ -79,6 +85,10 @@ import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
+private val HEADER_HEIGHT = 320.dp
+private val COMPACT_HEADER_HEIGHT = 200.dp
+private val COMPACT_IMAGE_WIDTH = 280.dp
 
 @OptIn(ExperimentalUuidApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -108,7 +118,11 @@ fun RecipeDetailScreen(
             title = { Text(LocalStrings.current.recipeDetailDeleteTitle, style = MaterialTheme.typography.titleLarge) },
             text = {
                 Text(
-                    LocalStrings.current.recipeDetailDeleteBody(dates.size, dates.joinToString { it.toString() }),
+                    if (dates.isEmpty()) {
+                        LocalStrings.current.recipeDetailDeleteUnplannedBody(uiState.recipe?.name.orEmpty())
+                    } else {
+                        LocalStrings.current.recipeDetailDeleteBody(dates.size, dates.joinToString { it.toString() })
+                    },
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
@@ -162,269 +176,347 @@ fun RecipeDetailScreen(
                     modifier = Modifier.align(Alignment.Center)
                 )
                 recipe != null -> Column(modifier = Modifier.fillMaxSize()) {
-                    Box(modifier = Modifier.fillMaxWidth().height(320.dp)) {
-                        if (recipe.imageUrl.isNullOrBlank()) {
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.primaryContainer),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                                    modifier = Modifier.size(64.dp)
-                                )
-                            }
-                        } else {
-                            AsyncImage(
-                                model = recipeImageModel(recipe.imageUrl),
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.fillMaxSize()
-                            )
-                        }
-
-                        RecipeDetailOverlayButton(
-                            icon = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = LocalStrings.current.back,
-                            onClick = onBack,
-                            modifier = Modifier
-                                .align(Alignment.TopStart)
-                                .padding(spacing.lg)
-                        )
-
-                        Row(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd)
-                                .padding(spacing.lg),
-                            horizontalArrangement = Arrangement.spacedBy(spacing.sm)
-                        ) {
-                            RecipeDetailOverlayButton(
-                                icon = Icons.Filled.Edit,
-                                contentDescription = LocalStrings.current.recipeDetailEditCd,
-                                onClick = { onEdit(recipeId) }
-                            )
-                            RecipeDetailOverlayButton(
-                                icon = Icons.Filled.Delete,
-                                contentDescription = LocalStrings.current.recipeDetailDeleteCd,
-                                tint = MaterialTheme.colorScheme.error,
-                                onClick = { viewModel.delete() }
-                            )
-                            RecipeDetailOverlayButton(
-                                icon = if (recipe.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                                contentDescription = if (recipe.isFavorite) {
-                                    LocalStrings.current.recipeDetailRemoveFavoriteCd
-                                } else {
-                                    LocalStrings.current.recipeDetailAddFavoriteCd
-                                },
-                                tint = if (recipe.isFavorite) MealPlannerPalette.FavoriteRed else MaterialTheme.colorScheme.onSurface,
-                                onClick = { viewModel.toggleFavorite() }
-                            )
-                        }
-                    }
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .offset(y = -spacing.lg)
-                            .clip(
-                                androidx.compose.foundation.shape.RoundedCornerShape(
-                                    topStart = MealPlannerTokens.radius.xl,
-                                    topEnd = MealPlannerTokens.radius.xl
-                                )
-                            )
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(horizontal = spacing.lg)
-                    ) {
-                        LazyColumn(modifier = Modifier.weight(1f)) {
-                            item {
-                                Text(
-                                    text = recipe.name,
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    modifier = Modifier.padding(top = spacing.lg)
-                                )
-
-                                recipe.description?.let {
-                                    Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(top = spacing.xxs)
-                                    )
+                    val compactHeight = LocalCompactHeight.current
+                    ScrollAwayHeader(
+                        modifier = Modifier.weight(1f),
+                        header = {
+                            if (compactHeight) {
+                                Box(modifier = Modifier.fillMaxWidth()) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .heightIn(min = COMPACT_HEADER_HEIGHT)
+                                            .padding(start = spacing.lg + COMPACT_IMAGE_WIDTH + spacing.lg, end = spacing.lg, top = spacing.lg, bottom = spacing.lg),
+                                        verticalArrangement = Arrangement.spacedBy(spacing.sm)
+                                    ) {
+                                        RecipeDetailActions(
+                                            recipe = recipe,
+                                            onBack = onBack,
+                                            onEdit = { onEdit(recipeId) },
+                                            onDelete = { viewModel.requestDelete() },
+                                            onToggleFavorite = { viewModel.toggleFavorite() },
+                                            modifier = Modifier.fillMaxWidth()
+                                        )
+                                        RecipeDetailSummary(recipe = recipe)
+                                    }
+                                    Box(modifier = Modifier.matchParentSize()) {
+                                        RecipeDetailImage(
+                                            recipe = recipe,
+                                            modifier = Modifier
+                                                .fillMaxHeight()
+                                                .padding(start = spacing.lg, top = spacing.lg, bottom = spacing.lg)
+                                                .width(COMPACT_IMAGE_WIDTH)
+                                                .clip(MaterialTheme.shapes.large)
+                                        )
+                                    }
                                 }
-
-                                Row(
-                                    modifier = Modifier.padding(top = spacing.sm),
-                                    horizontalArrangement = Arrangement.spacedBy(spacing.lg),
-                                    verticalAlignment = Alignment.CenterVertically
+                            } else {
+                                RecipeDetailImage(
+                                    recipe = recipe,
+                                    modifier = Modifier.fillMaxWidth().height(HEADER_HEIGHT)
                                 ) {
-                                    RecipeDetailMetaItem(
-                                        icon = Icons.Filled.AccessTime,
-                                        text = LocalStrings.current.minutesLabel(recipe.preparationTimeMinutes)
-                                    )
-                                    RecipeDetailMetaItem(
-                                        icon = Icons.Filled.People,
-                                        text = LocalStrings.current.servingsLabel(recipe.servings)
-                                    )
-                                    RecipeDetailMetaItem(
-                                        icon = Icons.AutoMirrored.Filled.MenuBook,
-                                        text = recipe.category.displayName()
+                                    RecipeDetailActions(
+                                        recipe = recipe,
+                                        onBack = onBack,
+                                        onEdit = { onEdit(recipeId) },
+                                        onDelete = { viewModel.requestDelete() },
+                                        onToggleFavorite = { viewModel.toggleFavorite() },
+                                        modifier = Modifier.fillMaxWidth().padding(spacing.lg)
                                     )
                                 }
+                            }
+                        }
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .then(
+                                    if (compactHeight) {
+                                        Modifier
+                                    } else {
+                                        // The rounded sheet overlaps the bottom of the full-width image.
+                                        Modifier
+                                            .offset(y = -spacing.lg)
+                                            .clip(
+                                                androidx.compose.foundation.shape.RoundedCornerShape(
+                                                    topStart = MealPlannerTokens.radius.xl,
+                                                    topEnd = MealPlannerTokens.radius.xl
+                                                )
+                                            )
+                                    }
+                                )
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(horizontal = spacing.lg)
+                        ) {
+                            LazyColumn(modifier = Modifier.weight(1f)) {
+                                item {
+                                    if (!compactHeight) {
+                                        RecipeDetailSummary(recipe, Modifier.padding(top = spacing.lg))
+                                    }
 
-                                if (recipe.cuisine != null || recipe.calories != null) {
                                     Row(
-                                        modifier = Modifier.padding(top = spacing.xs),
-                                        horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+                                        modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        recipe.cuisine?.let { cuisine ->
-                                            RecipeDetailMetaItem(
-                                                icon = Icons.Filled.Public,
-                                                text = cuisine.displayName()
-                                            )
-                                        }
-                                        recipe.calories?.let {
-                                            RecipeDetailMetaItem(
-                                                icon = Icons.Filled.LocalFireDepartment,
-                                                text = LocalStrings.current.caloriesLabel(it)
-                                            )
-                                        }
-                                    }
-                                }
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = LocalStrings.current.ingredients,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    if (uiState.readAloudAvailable) {
-                                        IconButton(onClick = { viewModel.toggleReadIngredientsAloud() }) {
-                                            Icon(
-                                                imageVector = if (uiState.ingredientsSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
-                                                contentDescription = if (uiState.ingredientsSpeaking) {
-                                                    LocalStrings.current.recipeDetailStopIngredientsCd
-                                                } else {
-                                                    LocalStrings.current.recipeDetailReadIngredientsCd
-                                                }
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                            items(recipe.ingredients.chunked(2), key = { it.first().id }) { pair ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm),
-                                    horizontalArrangement = Arrangement.spacedBy(spacing.md)
-                                ) {
-                                    pair.forEach { ri ->
-                                        Row(
-                                            modifier = Modifier.weight(1f),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            IngredientThumbnail(
-                                                name = ri.ingredient.name,
-                                                size = MealPlannerTokens.iconSize.lg,
-                                                modifier = Modifier.padding(end = spacing.sm)
-                                            )
-                                            Column {
-                                                Text(
-                                                    text = ri.ingredient.name,
-                                                    style = MaterialTheme.typography.bodyMedium,
-                                                    color = MaterialTheme.colorScheme.onSurface,
-                                                    maxLines = 2,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
-                                                Text(
-                                                    text = formatAmount(ri.quantity, ri.unit),
-                                                    style = MaterialTheme.typography.bodySmall,
-                                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        Text(
+                                            text = LocalStrings.current.ingredients,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        if (uiState.readAloudAvailable) {
+                                            IconButton(onClick = { viewModel.toggleReadIngredientsAloud() }) {
+                                                Icon(
+                                                    imageVector = if (uiState.ingredientsSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
+                                                    contentDescription = if (uiState.ingredientsSpeaking) {
+                                                        LocalStrings.current.recipeDetailStopIngredientsCd
+                                                    } else {
+                                                        LocalStrings.current.recipeDetailReadIngredientsCd
+                                                    }
                                                 )
                                             }
                                         }
                                     }
-                                    if (pair.size == 1) Spacer(Modifier.weight(1f))
                                 }
-                            }
+                                items(recipe.ingredients.chunked(2), key = { it.first().id }) { pair ->
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm),
+                                        horizontalArrangement = Arrangement.spacedBy(spacing.md)
+                                    ) {
+                                        pair.forEach { ri ->
+                                            Row(
+                                                modifier = Modifier.weight(1f),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                IngredientThumbnail(
+                                                    name = ri.ingredient.name,
+                                                    size = MealPlannerTokens.iconSize.lg,
+                                                    modifier = Modifier.padding(end = spacing.sm)
+                                                )
+                                                Column {
+                                                    Text(
+                                                        text = ri.ingredient.name,
+                                                        style = MaterialTheme.typography.bodyMedium,
+                                                        color = MaterialTheme.colorScheme.onSurface,
+                                                        maxLines = 2,
+                                                        overflow = TextOverflow.Ellipsis
+                                                    )
+                                                    Text(
+                                                        text = formatAmount(ri.quantity, ri.unit),
+                                                        style = MaterialTheme.typography.bodySmall,
+                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                    )
+                                                }
+                                            }
+                                        }
+                                        if (pair.size == 1) Spacer(Modifier.weight(1f))
+                                    }
+                                }
 
-                            item {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = LocalStrings.current.instructions,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                    if (uiState.readAloudAvailable && !uiState.cookModeActive) {
-                                        TextButton(onClick = { viewModel.startCookMode() }) {
-                                            Icon(
-                                                imageVector = Icons.Filled.PlayArrow,
-                                                contentDescription = null,
-                                                modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
-                                            )
-                                            Text(
-                                                text = LocalStrings.current.recipeDetailCookMode,
-                                                style = MaterialTheme.typography.labelLarge,
-                                                modifier = Modifier.padding(start = spacing.xxs)
-                                            )
+                                item {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = LocalStrings.current.instructions,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = MaterialTheme.colorScheme.onSurface
+                                        )
+                                        if (uiState.readAloudAvailable && !uiState.cookModeActive) {
+                                            TextButton(onClick = { viewModel.startCookMode() }) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.PlayArrow,
+                                                    contentDescription = null,
+                                                    modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+                                                )
+                                                Text(
+                                                    text = LocalStrings.current.recipeDetailCookMode,
+                                                    style = MaterialTheme.typography.labelLarge,
+                                                    modifier = Modifier.padding(start = spacing.xxs)
+                                                )
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            if (uiState.cookModeActive) {
-                                item {
-                                    CookModeStep(
-                                        instructions = recipe.instructions,
-                                        stepIndex = uiState.cookModeStepIndex,
-                                        speaking = uiState.cookModeSpeaking,
-                                        onPrevious = { viewModel.previousStep() },
-                                        onNext = { viewModel.nextStep() },
-                                        onTogglePlayPause = { viewModel.togglePlayPause() },
-                                        onStop = { viewModel.stopCookMode() }
-                                    )
+                                if (uiState.cookModeActive) {
+                                    item {
+                                        CookModeStep(
+                                            instructions = recipe.instructions,
+                                            stepIndex = uiState.cookModeStepIndex,
+                                            speaking = uiState.cookModeSpeaking,
+                                            onPrevious = { viewModel.previousStep() },
+                                            onNext = { viewModel.nextStep() },
+                                            onTogglePlayPause = { viewModel.togglePlayPause() },
+                                            onStop = { viewModel.stopCookMode() }
+                                        )
+                                    }
+                                } else {
+                                    items(recipe.instructions, key = { it.stepNumber }) { instruction ->
+                                        Text(
+                                            text = "${instruction.stepNumber}. ${instruction.description}",
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(vertical = spacing.sm)
+                                        )
+                                    }
                                 }
-                            } else {
-                                items(recipe.instructions, key = { it.stepNumber }) { instruction ->
-                                    Text(
-                                        text = "${instruction.stepNumber}. ${instruction.description}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(vertical = spacing.sm)
-                                    )
-                                }
                             }
-                        }
 
-                        Button(
-                            onClick = {
-                                assignDate = today()
-                                showMealTypeDialog = true
-                            },
-                            shape = MaterialTheme.shapes.extraLarge,
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            ),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = spacing.sm, bottom = spacing.lg)
-                        ) {
-                            Text(LocalStrings.current.recipeDetailAddToMealPlan)
+                            Button(
+                                onClick = {
+                                    assignDate = today()
+                                    showMealTypeDialog = true
+                                },
+                                shape = MaterialTheme.shapes.extraLarge,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                ),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = spacing.sm, bottom = spacing.lg)
+                            ) {
+                                Text(LocalStrings.current.recipeDetailAddToMealPlan)
+                            }
                         }
                     }
+
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun RecipeDetailImage(
+    recipe: Recipe,
+    modifier: Modifier = Modifier,
+    overlay: @Composable BoxScope.() -> Unit = {}
+) {
+    Box(modifier = modifier) {
+        if (recipe.imageUrl.isNullOrBlank()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    modifier = Modifier.size(64.dp)
+                )
+            }
+        } else {
+            AsyncImage(
+                model = recipeImageModel(recipe.imageUrl),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        overlay()
+    }
+}
+
+@Composable
+private fun RecipeDetailActions(
+    recipe: Recipe,
+    onBack: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onToggleFavorite: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val spacing = MealPlannerTokens.spacing
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        RecipeDetailOverlayButton(
+            icon = Icons.AutoMirrored.Filled.ArrowBack,
+            contentDescription = LocalStrings.current.back,
+            onClick = onBack
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
+            RecipeDetailOverlayButton(
+                icon = Icons.Filled.Edit,
+                contentDescription = LocalStrings.current.recipeDetailEditCd,
+                onClick = onEdit
+            )
+            RecipeDetailOverlayButton(
+                icon = Icons.Filled.Delete,
+                contentDescription = LocalStrings.current.recipeDetailDeleteCd,
+                tint = MaterialTheme.colorScheme.error,
+                onClick = onDelete
+            )
+            RecipeDetailOverlayButton(
+                icon = if (recipe.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = if (recipe.isFavorite) {
+                    LocalStrings.current.recipeDetailRemoveFavoriteCd
+                } else {
+                    LocalStrings.current.recipeDetailAddFavoriteCd
+                },
+                tint = if (recipe.isFavorite) MealPlannerPalette.FavoriteRed else MaterialTheme.colorScheme.onSurface,
+                onClick = onToggleFavorite
+            )
+        }
+    }
+}
+
+@Composable
+private fun RecipeDetailSummary(recipe: Recipe, modifier: Modifier = Modifier) {
+    val spacing = MealPlannerTokens.spacing
+    Column(modifier = modifier) {
+        Text(
+            text = recipe.name,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+
+        recipe.description?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = spacing.xxs)
+            )
+        }
+
+        Row(
+            modifier = Modifier.padding(top = spacing.sm),
+            horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RecipeDetailMetaItem(
+                icon = Icons.Filled.AccessTime,
+                text = LocalStrings.current.minutesLabel(recipe.preparationTimeMinutes)
+            )
+            RecipeDetailMetaItem(
+                icon = Icons.Filled.People,
+                text = LocalStrings.current.servingsLabel(recipe.servings)
+            )
+            RecipeDetailMetaItem(
+                icon = Icons.AutoMirrored.Filled.MenuBook,
+                text = recipe.category.displayName()
+            )
+        }
+
+        recipe.cuisine?.let { cuisine ->
+            Row(
+                modifier = Modifier.padding(top = spacing.xs),
+                horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RecipeDetailMetaItem(
+                    icon = Icons.Filled.Public,
+                    text = cuisine.displayName()
+                )
             }
         }
     }

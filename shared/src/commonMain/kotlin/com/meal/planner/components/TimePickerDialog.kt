@@ -1,5 +1,8 @@
 package com.meal.planner.components
 
+import com.meal.planner.common.LocalCompactHeight
+import androidx.compose.material3.TimePickerLayoutType
+import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -32,6 +35,11 @@ fun TimePickerDialog(
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(LocalStrings.current.cancel) }
         },
-        text = { TimePicker(state = state) }
+        text = {
+            TimePicker(
+                state = state,
+                layoutType = if (LocalCompactHeight.current) TimePickerLayoutType.Horizontal else TimePickerDefaults.layoutType()
+            )
+        }
     )
 }

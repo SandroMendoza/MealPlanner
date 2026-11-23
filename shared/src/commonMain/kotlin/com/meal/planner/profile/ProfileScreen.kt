@@ -1,5 +1,7 @@
 package com.meal.planner.profile
 
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -38,13 +43,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.profile.ProfileUiState
 import com.meal.presentation.profile.ProfileViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 private val AVATAR_SIZE = 112.dp
 private val EDIT_BADGE_SIZE = 32.dp
+private val SUMMARY_PANE_WIDTH = 280.dp
 
 @Composable
 fun ProfileScreen(
@@ -61,83 +69,53 @@ fun ProfileScreen(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0)
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize()
-                .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
-        ) {
-            Text(
-                text = LocalStrings.current.profileTitle,
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
+        val summary: @Composable () -> Unit = {
+            ProfileSummary(uiState = uiState, onEditClick = { viewModel.openEditDialog() })
+        }
+        val links: @Composable () -> Unit = {
+            ProfileLinks(
+                onMyRecipesClick = onMyRecipesClick,
+                onFavoritesClick = onFavoritesClick,
+                onSpendingReportsClick = onSpendingReportsClick,
+                onSettingsClick = onSettingsClick
             )
+        }
 
-            Spacer(Modifier.height(spacing.sectionGap))
-
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                Box {
-                    ProfileAvatar(name = uiState.name, avatarUrl = uiState.avatarUrl, size = AVATAR_SIZE)
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .size(EDIT_BADGE_SIZE)
-                            .clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        IconButton(onClick = { viewModel.openEditDialog() }) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = LocalStrings.current.profileEditProfile,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        }
-                    }
+        if (LocalCompactHeight.current) {
+            Row(modifier = Modifier.padding(padding).fillMaxSize()) {
+                Column(
+                    modifier = Modifier
+                        .width(SUMMARY_PANE_WIDTH)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .padding(spacing.lg),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    summary()
+                }
+                VerticalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
+                ) {
+                    links()
                 }
             }
-
-            Spacer(Modifier.height(spacing.md))
-
-            Text(
-                text = uiState.name.ifBlank { LocalStrings.current.profileYourNamePlaceholder },
-                style = MaterialTheme.typography.titleLarge,
-                color = if (uiState.name.isBlank()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-
-            if (uiState.bio.isNotBlank()) {
-                Spacer(Modifier.height(spacing.xs))
-                Text(
-                    text = uiState.bio,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
+        } else {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
+            ) {
+                summary()
+                Spacer(Modifier.height(spacing.sectionGap))
+                links()
             }
-
-            Spacer(Modifier.height(spacing.sectionGap))
-
-            Row(modifier = Modifier.fillMaxWidth()) {
-                ProfileStat(label = LocalStrings.current.profileRecipesStat, value = uiState.recipeCount, modifier = Modifier.weight(1f))
-                ProfileStat(label = LocalStrings.current.profileCreatedStat, value = uiState.createdCount, modifier = Modifier.weight(1f))
-                ProfileStat(label = LocalStrings.current.profileThisWeekStat, value = uiState.thisWeekCount, modifier = Modifier.weight(1f))
-            }
-
-            Spacer(Modifier.height(spacing.sectionGap))
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
-            ProfileNavRow(label = LocalStrings.current.myRecipes, icon = Icons.AutoMirrored.Filled.MenuBook, onClick = onMyRecipesClick)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            ProfileNavRow(label = LocalStrings.current.favorites, icon = Icons.Default.Favorite, onClick = onFavoritesClick)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            ProfileNavRow(label = LocalStrings.current.spendingReports, icon = Icons.AutoMirrored.Filled.ReceiptLong, onClick = onSpendingReportsClick)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-            ProfileNavRow(label = LocalStrings.current.settings, icon = Icons.Default.Settings, onClick = onSettingsClick)
-            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         }
 
         if (uiState.showEditDialog) {
@@ -153,6 +131,92 @@ fun ProfileScreen(
 }
 
 @Composable
+private fun ProfileSummary(uiState: ProfileUiState, onEditClick: () -> Unit) {
+    val spacing = MealPlannerTokens.spacing
+    Column {
+        Text(
+            text = LocalStrings.current.profileTitle,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(Modifier.height(spacing.sectionGap))
+
+        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+            Box {
+                ProfileAvatar(name = uiState.name, avatarUrl = uiState.avatarUrl, size = AVATAR_SIZE)
+                Box(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .size(EDIT_BADGE_SIZE)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.surface)
+                ) {
+                    IconButton(onClick = onEditClick) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = LocalStrings.current.profileEditProfile,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(spacing.md))
+
+        Text(
+            text = uiState.name.ifBlank { LocalStrings.current.profileYourNamePlaceholder },
+            style = MaterialTheme.typography.titleLarge,
+            color = if (uiState.name.isBlank()) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+
+        if (uiState.bio.isNotBlank()) {
+            Spacer(Modifier.height(spacing.xs))
+            Text(
+                text = uiState.bio,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
+        }
+
+        Spacer(Modifier.height(spacing.sectionGap))
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            ProfileStat(label = LocalStrings.current.profileRecipesStat, value = uiState.recipeCount, modifier = Modifier.weight(1f))
+            ProfileStat(label = LocalStrings.current.profileCreatedStat, value = uiState.createdCount, modifier = Modifier.weight(1f))
+            ProfileStat(label = LocalStrings.current.profileThisWeekStat, value = uiState.thisWeekCount, modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun ProfileLinks(
+    onMyRecipesClick: () -> Unit,
+    onFavoritesClick: () -> Unit,
+    onSpendingReportsClick: () -> Unit,
+    onSettingsClick: () -> Unit
+) {
+    Column {
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        ProfileNavRow(label = LocalStrings.current.myRecipes, icon = Icons.AutoMirrored.Filled.MenuBook, onClick = onMyRecipesClick)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        ProfileNavRow(label = LocalStrings.current.favorites, icon = Icons.Default.Favorite, onClick = onFavoritesClick)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        ProfileNavRow(label = LocalStrings.current.spendingReports, icon = Icons.AutoMirrored.Filled.ReceiptLong, onClick = onSpendingReportsClick)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        ProfileNavRow(label = LocalStrings.current.settings, icon = Icons.Default.Settings, onClick = onSettingsClick)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+    }
+}
+
+@Composable
 private fun ProfileAvatar(name: String, avatarUrl: String, size: androidx.compose.ui.unit.Dp) {
     if (avatarUrl.isBlank()) {
         Box(
@@ -162,11 +226,21 @@ private fun ProfileAvatar(name: String, avatarUrl: String, size: androidx.compos
                 .background(MaterialTheme.colorScheme.primary),
             contentAlignment = Alignment.Center
         ) {
-            Text(
-                text = name.trim().firstOrNull()?.uppercaseChar()?.toString() ?: "?",
-                style = MaterialTheme.typography.headlineMedium,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
+            val initial = name.trim().firstOrNull()?.uppercaseChar()?.toString()
+            if (initial == null) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onPrimary,
+                    modifier = Modifier.size(MealPlannerTokens.iconSize.xl)
+                )
+            } else {
+                Text(
+                    text = initial,
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     } else {
         AsyncImage(

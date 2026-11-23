@@ -129,7 +129,6 @@ class ShoppingListViewModel(
         viewModelScope.launch {
             addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
         }
-        dismissAddItemDialog()
     }
 
     fun openAddItemDialog() {

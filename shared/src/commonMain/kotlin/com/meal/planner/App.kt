@@ -1,7 +1,7 @@
 package com.meal.planner
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
@@ -13,7 +13,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.Language
 import com.meal.domain.model.ThemeMode
 import com.meal.domain.strings.strings
+import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.SystemBarAppearance
+import com.meal.planner.common.isCompactHeight
 import com.meal.planner.components.KeyboardDismissButton
 import com.meal.planner.navigation.AppNavHost
 import com.meal.planner.strings.LocalStrings
@@ -36,9 +38,11 @@ fun App(startRoute: String? = null, quickAddItemName: String? = null) {
         }
         SystemBarAppearance(darkTheme)
         MealPlannerTheme(darkTheme = darkTheme) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                AppNavHost(startRoute = startRoute, quickAddItemName = quickAddItemName)
-                KeyboardDismissButton(modifier = Modifier.align(Alignment.BottomEnd))
+            BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                CompositionLocalProvider(LocalCompactHeight provides isCompactHeight(maxHeight)) {
+                    AppNavHost(startRoute = startRoute, quickAddItemName = quickAddItemName)
+                    KeyboardDismissButton(modifier = Modifier.align(Alignment.BottomEnd))
+                }
             }
         }
     }

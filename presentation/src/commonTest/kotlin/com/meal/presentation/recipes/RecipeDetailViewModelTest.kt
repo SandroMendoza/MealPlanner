@@ -99,12 +99,19 @@ class RecipeDetailViewModelTest {
     }
 
     @Test
-    fun deletingAnUnplannedRecipeDeletesItStraightAway() {
+    fun deletingAnUnplannedRecipeAsksForConfirmationFirst() {
         val vm = viewModel()
 
-        vm.delete()
+        vm.requestDelete()
+
+        assertEquals(emptyList(), vm.state.value.pendingDeleteConfirmationDates)
+        assertFalse(vm.state.value.isDeleted)
+        assertTrue(recipes.softDeleted.isEmpty())
+
+        vm.delete(force = true)
 
         assertTrue(vm.state.value.isDeleted)
+        assertTrue(mealPlan.slotsRemovedForRecipe.isEmpty())
         assertEquals(listOf(dish.id), recipes.softDeleted)
     }
 
@@ -114,7 +121,7 @@ class RecipeDetailViewModelTest {
         mealPlan.futureDatesByRecipe[dish.id] = dates
         val vm = viewModel()
 
-        vm.delete()
+        vm.requestDelete()
 
         assertEquals(dates, vm.state.value.pendingDeleteConfirmationDates)
         assertFalse(vm.state.value.isDeleted)
@@ -132,12 +139,13 @@ class RecipeDetailViewModelTest {
     fun dismissingTheConfirmationKeepsTheRecipe() {
         mealPlan.futureDatesByRecipe[dish.id] = listOf(LocalDate(2030, 1, 5))
         val vm = viewModel()
-        vm.delete()
+        vm.requestDelete()
 
         vm.dismissDeleteConfirmation()
 
         assertNull(vm.state.value.pendingDeleteConfirmationDates)
         assertFalse(vm.state.value.isDeleted)
+        assertTrue(recipes.softDeleted.isEmpty())
     }
 
     @Test

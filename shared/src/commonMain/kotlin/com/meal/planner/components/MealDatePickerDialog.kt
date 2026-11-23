@@ -1,5 +1,7 @@
 package com.meal.planner.components
 
+import com.meal.planner.common.LocalCompactHeight
+import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +30,8 @@ fun MealDatePickerDialog(
     onDismiss: () -> Unit
 ) {
     val state = rememberDatePickerState(
-        initialSelectedDateMillis = initialDate.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds()
+        initialSelectedDateMillis = initialDate.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
+        initialDisplayMode = if (LocalCompactHeight.current) DisplayMode.Input else DisplayMode.Picker
     )
 
     DatePickerDialog(
