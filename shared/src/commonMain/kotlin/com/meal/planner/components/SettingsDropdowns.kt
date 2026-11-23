@@ -37,7 +37,7 @@ fun LanguageDropdownField(
             modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true).fillMaxWidth()
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            Language.entries.forEach { lang ->
+            Language.available.forEach { lang ->
                 DropdownMenuItem(
                     text = { Text(lang.displayName()) },
                     onClick = {
