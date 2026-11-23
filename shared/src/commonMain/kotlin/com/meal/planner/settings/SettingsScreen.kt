@@ -51,6 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.CalendarViewMode
+import com.meal.domain.model.Language
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.ThemeMode
 import com.meal.planner.backup.isBackupSupported
@@ -205,11 +206,13 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(spacing.sectionGap))
             SectionLabel(LocalStrings.current.settingsLocalization)
-            LanguageDropdownField(
-                value = uiState.language,
-                onValueChange = viewModel::setLanguage,
-                modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm)
-            )
+            if (Language.available.size > 1) {
+                LanguageDropdownField(
+                    value = uiState.language,
+                    onValueChange = viewModel::setLanguage,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm)
+                )
+            }
             CurrencyDropdownField(
                 value = uiState.currency,
                 onValueChange = viewModel::setCurrency,

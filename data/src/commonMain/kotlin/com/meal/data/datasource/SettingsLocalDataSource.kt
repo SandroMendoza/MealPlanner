@@ -43,7 +43,7 @@ class SettingsLocalDataSource(
 
     private fun toDomain(row: SettingsEntity) = AppSettings(
         themeMode = ThemeMode.valueOf(row.themeMode),
-        language = Language.valueOf(row.language),
+        language = Language.valueOf(row.language).takeIf { it in Language.available } ?: Language.ENGLISH,
         currency = Currency.valueOf(row.currency),
         lockPastDates = row.lockPastDates != 0L,
         defaultCalendarView = CalendarViewMode.valueOf(row.defaultCalendarView),

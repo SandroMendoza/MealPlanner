@@ -53,7 +53,7 @@ class SingleRowRepositoriesTest {
     fun everySettingIsStored() = runTest {
         val changed = AppSettings(
             themeMode = ThemeMode.DARK,
-            language = Language.FRENCH,
+            language = Language.available.last(),
             currency = Currency.PHP,
             lockPastDates = true,
             defaultCalendarView = CalendarViewMode.WEEK,
@@ -64,6 +64,14 @@ class SingleRowRepositoriesTest {
         settings.updateSettings(changed)
 
         assertEquals(changed, settings.getSettings().first())
+    }
+
+    @Test
+    fun aSavedLanguageTheAppDoesNotOfferReadsAsEnglish() = runTest {
+        (Language.entries - Language.available.toSet()).forEach { language ->
+            settings.updateSettings(AppSettings(language = language))
+            assertEquals(Language.ENGLISH, settings.getSettings().first().language)
+        }
     }
 
     @Test
