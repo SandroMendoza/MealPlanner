@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.ShoppingGroup
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.model.ShoppingListItem
+import com.meal.domain.strings.Strings
+import com.meal.domain.strings.englishStrings
+import com.meal.domain.strings.strings
 import com.meal.domain.usecase.AddShoppingListItemUseCase
 import com.meal.domain.usecase.AssignItemToGroupUseCase
 import com.meal.domain.usecase.CreateShoppingGroupUseCase
@@ -58,6 +61,7 @@ class ShoppingListViewModel(
     val state = _uiState.asStateFlow()
 
     private var loadJob: Job? = null
+    private var strings: Strings = englishStrings
 
     init {
         loadList()
@@ -68,6 +72,7 @@ class ShoppingListViewModel(
         }
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
+                strings = settings.language.strings()
                 _uiState.value = _uiState.value.copy(
                     currencySymbol = settings.currency.symbol,
                     readAloudAvailable = settings.readAloudEnabled
@@ -290,7 +295,7 @@ class ShoppingListViewModel(
         }
         val items = _uiState.value.sections.flatMap { it.items }.filterNot { it.checked }
         if (items.isEmpty()) return
-        val text = items.joinToString(". ") { "${formatAmount(it.totalQuantity, it.unit)} ${it.name}" }
+        val text = items.joinToString(". ") { "${formatAmount(it.totalQuantity, it.unit, strings)} ${it.name}" }
         _uiState.value = _uiState.value.copy(isSpeaking = true)
         ttsSpeaker.speak(text) {
             _uiState.value = _uiState.value.copy(isSpeaking = false)

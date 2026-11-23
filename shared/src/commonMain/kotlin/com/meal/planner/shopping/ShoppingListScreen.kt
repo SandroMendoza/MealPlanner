@@ -500,7 +500,7 @@ private fun ShoppingListContent(
                                 modifier = Modifier.weight(1f).padding(end = spacing.sm)
                             )
                             Text(
-                                text = formatAmount(item.totalQuantity, item.unit),
+                                text = formatAmount(item.totalQuantity, item.unit, LocalStrings.current),
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = contentColor,
                                 textDecoration = textDecoration,

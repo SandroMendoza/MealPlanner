@@ -364,7 +364,7 @@ class ShoppingListViewModelTest {
         val vm = viewModel()
 
         vm.toggleReadAloud()
-        assertEquals("2 kg Rice. 12 piece Eggs", tts.spoken.single())
+        assertEquals("2 kg Rice. 12 pieces Eggs", tts.spoken.single())
         assertTrue(vm.state.value.isSpeaking)
 
         tts.finishCurrent()

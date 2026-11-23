@@ -3,6 +3,9 @@ package com.meal.presentation.recipes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meal.domain.service.TtsSpeaker
+import com.meal.domain.strings.Strings
+import com.meal.domain.strings.englishStrings
+import com.meal.domain.strings.strings
 import com.meal.domain.usecase.DeleteRecipeResult
 import com.meal.domain.usecase.DeleteRecipeUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
@@ -28,10 +31,13 @@ class RecipeDetailViewModel(
     private val _uiState = MutableStateFlow(RecipeDetailUiState())
     val state = _uiState.asStateFlow()
 
+    private var strings: Strings = englishStrings
+
     init {
         loadRecipe()
         viewModelScope.launch {
             getSettingsUseCase.execute().collect { settings ->
+                strings = settings.language.strings()
                 _uiState.value = _uiState.value.copy(readAloudAvailable = settings.readAloudEnabled)
             }
         }
@@ -101,7 +107,7 @@ class RecipeDetailViewModel(
             return
         }
         val recipe = _uiState.value.recipe ?: return
-        val text = recipe.ingredients.joinToString(". ") { "${formatAmount(it.quantity, it.unit)} ${it.ingredient.name}" }
+        val text = recipe.ingredients.joinToString(". ") { "${formatAmount(it.quantity, it.unit, strings)} ${it.ingredient.name}" }
         _uiState.value = _uiState.value.copy(ingredientsSpeaking = true)
         ttsSpeaker.speak(text) {
             _uiState.value = _uiState.value.copy(ingredientsSpeaking = false)
