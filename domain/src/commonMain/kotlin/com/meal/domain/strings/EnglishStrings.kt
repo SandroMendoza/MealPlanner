@@ -194,6 +194,7 @@ val englishStrings = Strings(
     recipesFavoritesOnly = "Favorites only",
     recipesCreatedByMe = "Created by me",
     recipesPrepTimeRange = { start, end -> "Prep time: $start–$end min" },
+    recipesPrepTimeRangeNoMax = { start, end -> "Prep time: $start–$end+ min" },
     recipesClearFilters = "Clear filters",
     recipesNoRecipesYet = "No recipes yet.",
     recipesNoFavoritesYet = "No favorites yet. Tap the heart on a recipe to add one.",

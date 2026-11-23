@@ -112,6 +112,7 @@ data class Strings(
     val recipesFavoritesOnly: String,
     val recipesCreatedByMe: String,
     val recipesPrepTimeRange: (start: Int, end: Int) -> String,
+    val recipesPrepTimeRangeNoMax: (start: Int, end: Int) -> String,
     val recipesClearFilters: String,
     val recipesNoRecipesYet: String,
     val recipesNoFavoritesYet: String,

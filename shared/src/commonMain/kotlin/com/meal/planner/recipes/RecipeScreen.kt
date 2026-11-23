@@ -121,7 +121,7 @@ fun RecipeScreen(
             uiState.selectedCuisine != null ||
             uiState.showFavoritesOnly ||
             uiState.showCreatedOnly ||
-            uiState.prepTimeRange != 0f..180f
+            uiState.prepTimeRange != RecipeUiState.FULL_PREP_TIME_RANGE
         val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
         val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
         val isListView = uiState.viewMode == RecipeViewMode.LIST
@@ -245,7 +245,7 @@ fun RecipeScreen(
                     viewModel.onCuisineSelected(null)
                     viewModel.onFavoritesTabSelected(false)
                     viewModel.onCreatedOnlyTabSelected(false)
-                    viewModel.onPrepTimeRangeChange(0f..180f)
+                    viewModel.onPrepTimeRangeChange(RecipeUiState.FULL_PREP_TIME_RANGE)
                 }
             )
         }
@@ -340,16 +340,19 @@ private fun RecipeFilterSheet(
             }
 
             Column(modifier = Modifier.padding(top = spacing.lg, bottom = spacing.lg)) {
+                val start = uiState.prepTimeRange.start.toInt()
+                val end = uiState.prepTimeRange.endInclusive.toInt()
                 SectionLabel(
-                    LocalStrings.current.recipesPrepTimeRange(
-                        uiState.prepTimeRange.start.toInt(),
-                        uiState.prepTimeRange.endInclusive.toInt()
-                    )
+                    if (uiState.prepTimeHasNoMax) {
+                        LocalStrings.current.recipesPrepTimeRangeNoMax(start, end)
+                    } else {
+                        LocalStrings.current.recipesPrepTimeRange(start, end)
+                    }
                 )
                 RangeSlider(
                     value = uiState.prepTimeRange,
                     onValueChange = onPrepTimeRangeChange,
-                    valueRange = 0f..180f,
+                    valueRange = RecipeUiState.FULL_PREP_TIME_RANGE,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
