@@ -64,6 +64,18 @@ class UiStateTest {
     }
 
     @Test
+    fun prepTimeRangeAtTheSliderMaximumHasNoUpperLimit() {
+        val bulalo = recipe(name = "Bulalo", preparationTimeMinutes = 240, isUserCreated = false)
+        val state = RecipeUiState(recipes = listOf(adobo, salad, bulalo))
+
+        assertTrue(state.prepTimeHasNoMax)
+        assertEquals(listOf(adobo, salad, bulalo), state.filteredRecipes)
+        assertEquals(listOf(adobo, bulalo), state.copy(prepTimeRange = 30f..180f).filteredRecipes)
+        assertFalse(state.copy(prepTimeRange = 0f..120f).prepTimeHasNoMax)
+        assertEquals(listOf(adobo, salad), state.copy(prepTimeRange = 0f..120f).filteredRecipes)
+    }
+
+    @Test
     fun recipeSearchMatchesNameDescriptionAndIngredientsIgnoringCase() {
         val state = RecipeUiState(recipes = listOf(adobo, salad))
         assertEquals(listOf(salad), state.copy(searchQuery = "  garden ").filteredRecipes)

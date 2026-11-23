@@ -194,6 +194,7 @@ val frenchStrings = Strings(
     recipesFavoritesOnly = "Favoris uniquement",
     recipesCreatedByMe = "Créées par moi",
     recipesPrepTimeRange = { start, end -> "Temps de préparation : $start–$end min" },
+    recipesPrepTimeRangeNoMax = { start, end -> "Temps de préparation : $start–$end+ min" },
     recipesClearFilters = "Effacer les filtres",
     recipesNoRecipesYet = "Pas encore de recettes.",
     recipesNoFavoritesYet = "Pas encore de favoris. Touchez le cœur d'une recette pour en ajouter une.",
