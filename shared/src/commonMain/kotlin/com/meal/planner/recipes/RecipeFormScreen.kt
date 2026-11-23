@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -52,6 +53,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
@@ -89,6 +93,34 @@ fun RecipeFormScreen(
         if (uiState.saved) onDone()
     }
 
+    var showDiscardDialog by remember { mutableStateOf(false) }
+    val close = { if (uiState.hasUnsavedChanges) showDiscardDialog = true else onDone() }
+
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = uiState.hasUnsavedChanges,
+        onBackCompleted = { showDiscardDialog = true }
+    )
+
+    if (showDiscardDialog) {
+        AlertDialog(
+            onDismissRequest = { showDiscardDialog = false },
+            title = { Text(LocalStrings.current.recipeFormDiscardTitle, style = MaterialTheme.typography.titleLarge) },
+            text = { Text(LocalStrings.current.recipeFormDiscardBody, style = MaterialTheme.typography.bodyMedium) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDiscardDialog = false
+                    onDone()
+                }) {
+                    Text(LocalStrings.current.recipeFormDiscard, color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDiscardDialog = false }) { Text(LocalStrings.current.recipeFormKeepEditing) }
+            }
+        )
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0),
@@ -104,7 +136,7 @@ fun RecipeFormScreen(
                         )
                     },
                     navigationIcon = {
-                        TextButton(onClick = onDone) { Text(LocalStrings.current.cancel) }
+                        TextButton(onClick = close) { Text(LocalStrings.current.cancel) }
                     },
                     actions = {
                         TextButton(onClick = { viewModel.save() }, enabled = uiState.canSave && !uiState.isSaving) {
