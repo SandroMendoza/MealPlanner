@@ -57,6 +57,8 @@ import com.meal.domain.model.ThemeMode
 import com.meal.planner.backup.isBackupSupported
 import com.meal.planner.backup.rememberBackupFileLaunchers
 import com.meal.planner.components.CurrencyDropdownField
+import com.meal.planner.common.LocalWideWidth
+import com.meal.planner.common.centeredMaxWidth
 import com.meal.planner.components.LanguageDropdownField
 import com.meal.planner.components.SettingsRow
 import com.meal.planner.components.SettingsSwitchRow
@@ -128,6 +130,7 @@ fun SettingsScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .then(if (LocalWideWidth.current) Modifier.centeredMaxWidth() else Modifier)
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
         ) {
             SectionLabel(LocalStrings.current.settingsPreferences)
