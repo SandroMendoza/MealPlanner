@@ -3,6 +3,8 @@ package com.meal.planner.shopping
 import com.meal.presentation.shopping.ShoppingListUiState
 import com.meal.presentation.shopping.ShoppingListSection
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalWideWidth
+import com.meal.planner.common.centeredMaxWidth
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.material3.VerticalDivider
@@ -109,7 +111,8 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0)
     ) { padding ->
-        if (LocalCompactHeight.current) {
+        val wide = LocalWideWidth.current
+        if (LocalCompactHeight.current || wide) {
             Row(modifier = Modifier.padding(padding).fillMaxSize()) {
                 Column(
                     modifier = Modifier
@@ -129,7 +132,10 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                     uiState = uiState,
                     sections = sections,
                     viewModel = viewModel,
-                    modifier = Modifier.weight(1f).fillMaxHeight()
+                    modifier = Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .then(if (wide) Modifier.centeredMaxWidth() else Modifier)
                 )
             }
         } else {

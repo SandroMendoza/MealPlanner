@@ -2,8 +2,10 @@ package com.meal.planner.recipes
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -68,6 +70,7 @@ import com.meal.domain.model.Instruction
 import com.meal.domain.model.Recipe
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalWideWidth
 import com.meal.planner.common.displayName
 import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.MealTypeDialog
@@ -78,6 +81,7 @@ import com.meal.planner.theme.MealPlannerPalette
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.formatAmount
 import com.meal.presentation.common.today
+import com.meal.presentation.recipes.RecipeDetailUiState
 import com.meal.presentation.recipes.RecipeDetailViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
@@ -155,6 +159,11 @@ fun RecipeDetailScreen(
         }
     }
 
+    val onAddToMealPlanClick = {
+        assignDate = today()
+        showMealTypeDialog = true
+    }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         contentWindowInsets = WindowInsets(0)
@@ -175,6 +184,37 @@ fun RecipeDetailScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center)
                 )
+                recipe != null && LocalWideWidth.current -> Row(
+                    modifier = Modifier.fillMaxSize().padding(start = spacing.lg, top = spacing.lg, end = spacing.lg),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.xxl)
+                ) {
+                    RecipeDetailImage(
+                        recipe = recipe,
+                        modifier = Modifier
+                            .weight(0.45f)
+                            .padding(bottom = spacing.lg)
+                            .aspectRatio(3f / 4f)
+                            .clip(MaterialTheme.shapes.large)
+                    ) {
+                        RecipeDetailActions(
+                            recipe = recipe,
+                            onBack = onBack,
+                            onEdit = { onEdit(recipeId) },
+                            onDelete = { viewModel.requestDelete() },
+                            onToggleFavorite = { viewModel.toggleFavorite() },
+                            modifier = Modifier.fillMaxWidth().padding(spacing.lg)
+                        )
+                    }
+                    Column(modifier = Modifier.weight(0.55f).fillMaxHeight()) {
+                        RecipeDetailBody(
+                            recipe = recipe,
+                            uiState = uiState,
+                            viewModel = viewModel,
+                            showSummary = true,
+                            onAddToMealPlanClick = onAddToMealPlanClick
+                        )
+                    }
+                }
                 recipe != null -> Column(modifier = Modifier.fillMaxSize()) {
                     val compactHeight = LocalCompactHeight.current
                     ScrollAwayHeader(
@@ -248,144 +288,160 @@ fun RecipeDetailScreen(
                                 .background(MaterialTheme.colorScheme.background)
                                 .padding(horizontal = spacing.lg)
                         ) {
-                            LazyColumn(modifier = Modifier.weight(1f)) {
-                                item {
-                                    if (!compactHeight) {
-                                        RecipeDetailSummary(recipe, Modifier.padding(top = spacing.lg))
-                                    }
-
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = LocalStrings.current.ingredients,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        if (uiState.readAloudAvailable) {
-                                            IconButton(onClick = { viewModel.toggleReadIngredientsAloud() }) {
-                                                Icon(
-                                                    imageVector = if (uiState.ingredientsSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
-                                                    contentDescription = if (uiState.ingredientsSpeaking) {
-                                                        LocalStrings.current.recipeDetailStopIngredientsCd
-                                                    } else {
-                                                        LocalStrings.current.recipeDetailReadIngredientsCd
-                                                    }
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                                items(recipe.ingredients.chunked(2), key = { it.first().id }) { pair ->
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm),
-                                        horizontalArrangement = Arrangement.spacedBy(spacing.md)
-                                    ) {
-                                        pair.forEach { ri ->
-                                            Row(
-                                                modifier = Modifier.weight(1f),
-                                                verticalAlignment = Alignment.CenterVertically
-                                            ) {
-                                                IngredientThumbnail(
-                                                    name = ri.ingredient.name,
-                                                    size = MealPlannerTokens.iconSize.lg,
-                                                    modifier = Modifier.padding(end = spacing.sm)
-                                                )
-                                                Column {
-                                                    Text(
-                                                        text = ri.ingredient.name,
-                                                        style = MaterialTheme.typography.bodyMedium,
-                                                        color = MaterialTheme.colorScheme.onSurface,
-                                                        maxLines = 2,
-                                                        overflow = TextOverflow.Ellipsis
-                                                    )
-                                                    Text(
-                                                        text = formatAmount(ri.quantity, ri.unit, LocalStrings.current),
-                                                        style = MaterialTheme.typography.bodySmall,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                                    )
-                                                }
-                                            }
-                                        }
-                                        if (pair.size == 1) Spacer(Modifier.weight(1f))
-                                    }
-                                }
-
-                                item {
-                                    Row(
-                                        modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = LocalStrings.current.instructions,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        if (uiState.readAloudAvailable && !uiState.cookModeActive) {
-                                            TextButton(onClick = { viewModel.startCookMode() }) {
-                                                Icon(
-                                                    imageVector = Icons.Filled.PlayArrow,
-                                                    contentDescription = null,
-                                                    modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
-                                                )
-                                                Text(
-                                                    text = LocalStrings.current.recipeDetailCookMode,
-                                                    style = MaterialTheme.typography.labelLarge,
-                                                    modifier = Modifier.padding(start = spacing.xxs)
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                                if (uiState.cookModeActive) {
-                                    item {
-                                        CookModeStep(
-                                            instructions = recipe.instructions,
-                                            stepIndex = uiState.cookModeStepIndex,
-                                            speaking = uiState.cookModeSpeaking,
-                                            onPrevious = { viewModel.previousStep() },
-                                            onNext = { viewModel.nextStep() },
-                                            onTogglePlayPause = { viewModel.togglePlayPause() },
-                                            onStop = { viewModel.stopCookMode() }
-                                        )
-                                    }
-                                } else {
-                                    items(recipe.instructions, key = { it.stepNumber }) { instruction ->
-                                        Text(
-                                            text = "${instruction.stepNumber}. ${instruction.description}",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            modifier = Modifier.padding(vertical = spacing.sm)
-                                        )
-                                    }
-                                }
-                            }
-
-                            Button(
-                                onClick = {
-                                    assignDate = today()
-                                    showMealTypeDialog = true
-                                },
-                                shape = MaterialTheme.shapes.extraLarge,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                ),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(top = spacing.sm, bottom = spacing.lg)
-                            ) {
-                                Text(LocalStrings.current.recipeDetailAddToMealPlan)
-                            }
+                            RecipeDetailBody(
+                                recipe = recipe,
+                                uiState = uiState,
+                                viewModel = viewModel,
+                                showSummary = !compactHeight,
+                                onAddToMealPlanClick = onAddToMealPlanClick
+                            )
                         }
                     }
 
                 }
             }
         }
+    }
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun ColumnScope.RecipeDetailBody(
+    recipe: Recipe,
+    uiState: RecipeDetailUiState,
+    viewModel: RecipeDetailViewModel,
+    showSummary: Boolean,
+    onAddToMealPlanClick: () -> Unit
+) {
+    val spacing = MealPlannerTokens.spacing
+    LazyColumn(modifier = Modifier.weight(1f)) {
+        item {
+            if (showSummary) {
+                RecipeDetailSummary(recipe, Modifier.padding(top = spacing.lg))
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = LocalStrings.current.ingredients,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                if (uiState.readAloudAvailable) {
+                    IconButton(onClick = { viewModel.toggleReadIngredientsAloud() }) {
+                        Icon(
+                            imageVector = if (uiState.ingredientsSpeaking) Icons.Filled.Stop else Icons.AutoMirrored.Filled.VolumeUp,
+                            contentDescription = if (uiState.ingredientsSpeaking) {
+                                LocalStrings.current.recipeDetailStopIngredientsCd
+                            } else {
+                                LocalStrings.current.recipeDetailReadIngredientsCd
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        items(recipe.ingredients.chunked(2), key = { it.first().id }) { pair ->
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = spacing.sm),
+                horizontalArrangement = Arrangement.spacedBy(spacing.md)
+            ) {
+                pair.forEach { ri ->
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IngredientThumbnail(
+                            name = ri.ingredient.name,
+                            size = MealPlannerTokens.iconSize.lg,
+                            modifier = Modifier.padding(end = spacing.sm)
+                        )
+                        Column {
+                            Text(
+                                text = ri.ingredient.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = formatAmount(ri.quantity, ri.unit, LocalStrings.current),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                    }
+                }
+                if (pair.size == 1) Spacer(Modifier.weight(1f))
+            }
+        }
+
+        item {
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = LocalStrings.current.instructions,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                if (uiState.readAloudAvailable && !uiState.cookModeActive) {
+                    TextButton(onClick = { viewModel.startCookMode() }) {
+                        Icon(
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = null,
+                            modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+                        )
+                        Text(
+                            text = LocalStrings.current.recipeDetailCookMode,
+                            style = MaterialTheme.typography.labelLarge,
+                            modifier = Modifier.padding(start = spacing.xxs)
+                        )
+                    }
+                }
+            }
+        }
+        if (uiState.cookModeActive) {
+            item {
+                CookModeStep(
+                    instructions = recipe.instructions,
+                    stepIndex = uiState.cookModeStepIndex,
+                    speaking = uiState.cookModeSpeaking,
+                    onPrevious = { viewModel.previousStep() },
+                    onNext = { viewModel.nextStep() },
+                    onTogglePlayPause = { viewModel.togglePlayPause() },
+                    onStop = { viewModel.stopCookMode() }
+                )
+            }
+        } else {
+            items(recipe.instructions, key = { it.stepNumber }) { instruction ->
+                Text(
+                    text = "${instruction.stepNumber}. ${instruction.description}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(vertical = spacing.sm)
+                )
+            }
+        }
+    }
+
+    Button(
+        onClick = onAddToMealPlanClick,
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = spacing.sm, bottom = spacing.lg)
+    ) {
+        Text(LocalStrings.current.recipeDetailAddToMealPlan)
     }
 }
 

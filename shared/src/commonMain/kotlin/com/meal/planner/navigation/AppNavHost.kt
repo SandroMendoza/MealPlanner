@@ -43,6 +43,7 @@ import com.meal.domain.model.enums.MealType
 import com.meal.planner.calendar.MealCalendarScreen
 import com.meal.planner.calendar.RecipePickerScreen
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalExpandedWidth
 import com.meal.planner.home.HomeScreen
 import com.meal.planner.profile.ProfileScreen
 import com.meal.planner.recipes.RecipeDetailScreen
@@ -77,7 +78,7 @@ fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
     }
 
     val showTabs = currentRoute in TAB_ROUTES
-    val useRail = showTabs && LocalCompactHeight.current
+    val useRail = showTabs && (LocalCompactHeight.current || LocalExpandedWidth.current)
     val strings = LocalStrings.current
     val tabs = listOf(
         TabItem(Routes.HOME, Icons.Default.Home, strings.navHome),
