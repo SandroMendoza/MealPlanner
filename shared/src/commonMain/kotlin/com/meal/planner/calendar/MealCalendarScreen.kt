@@ -74,6 +74,9 @@ import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalWideWidth
+import com.meal.planner.common.WideContentWidth
+import com.meal.planner.common.centeredMaxWidth
 import com.meal.planner.components.MealDatePickerDialog
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.components.ScrollAwayHeader
@@ -114,6 +117,7 @@ fun MealCalendarScreen(
     val isCurrentWeek = uiState.weekStart == currentWeekSunday()
 
     val dayEntries = remember(uiState.entries, selectedDate) { uiState.entriesFor(selectedDate) }
+    val wide = LocalWideWidth.current
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -122,9 +126,13 @@ fun MealCalendarScreen(
         Column(modifier = Modifier.padding(padding).fillMaxSize()) {
             ScrollAwayHeader(
                 modifier = Modifier.weight(1f),
-                header = { CalendarHeader(uiState, isCurrentWeek, selectedDate, viewModel, onPickDate = { showDatePicker = true }) }
+                header = {
+                    Box(modifier = if (wide) Modifier.centeredMaxWidth() else Modifier) {
+                        CalendarHeader(uiState, isCurrentWeek, selectedDate, viewModel, onPickDate = { showDatePicker = true })
+                    }
+                }
             ) {
-                CalendarContent(uiState, dayEntries, selectedDate, viewModel, onSlotClick, onRecipeClick)
+                CalendarContent(uiState, dayEntries, selectedDate, viewModel, onSlotClick, onRecipeClick, wide)
             }
 
             // On a short screen the open keyboard leaves no room for both this button and the
@@ -135,7 +143,9 @@ fun MealCalendarScreen(
                     onClick = { onSlotClick(selectedDate, null, null) },
                     shape = MaterialTheme.shapes.extraLarge,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    modifier = Modifier.fillMaxWidth().padding(spacing.lg)
+                    modifier = Modifier
+                        .then(if (wide) Modifier.centeredMaxWidth() else Modifier.fillMaxWidth())
+                        .padding(spacing.lg)
                 ) {
                     Icon(Icons.Default.Add, contentDescription = null)
                     Spacer(Modifier.width(spacing.xs))
@@ -263,7 +273,8 @@ private fun CalendarContent(
     selectedDate: LocalDate,
     viewModel: MealCalendarViewModel,
     onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
-    onRecipeClick: (Uuid) -> Unit
+    onRecipeClick: (Uuid) -> Unit,
+    wide: Boolean
 ) {
     val spacing = MealPlannerTokens.spacing
     when {
@@ -278,7 +289,8 @@ private fun CalendarContent(
             )
         }
         uiState.viewMode == CalendarViewMode.WEEK -> MealWeekList(
-            modifier = Modifier.fillMaxSize(),
+            modifier = if (wide) Modifier.fillMaxSize().centeredMaxWidth(WideContentWidth) else Modifier.fillMaxSize(),
+            columns = if (wide) 2 else 1,
             days = uiState.days,
             entries = uiState.entries,
             weekNote = uiState.weekNote,
@@ -289,7 +301,7 @@ private fun CalendarContent(
             onRemove = viewModel::requestRemoveSlot
         )
         else -> LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = if (wide) Modifier.fillMaxSize().centeredMaxWidth() else Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm),
             verticalArrangement = Arrangement.spacedBy(spacing.sm)
         ) {
@@ -384,6 +396,7 @@ private fun formatWeekRange(start: LocalDate, end: LocalDate): String {
 @Composable
 private fun MealWeekList(
     modifier: Modifier = Modifier,
+    columns: Int,
     days: List<LocalDate>,
     entries: List<MealPlanEntry>,
     weekNote: String,
@@ -396,21 +409,38 @@ private fun MealWeekList(
     val spacing = MealPlannerTokens.spacing
     val todayDate = today()
 
+    @Composable
+    fun DayCard(day: LocalDate, modifier: Modifier = Modifier) {
+        WeekDayCard(
+            day = day,
+            entries = entries.filter { it.date == day }.sortedBy { it.mealType.ordinal },
+            isToday = day == todayDate,
+            onEntryClick = onEntryClick,
+            onAddMeal = { onAddMeal(day) },
+            canRemove = !isLocked(day),
+            onRemove = onRemove,
+            modifier = modifier
+        )
+    }
+
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(start = spacing.lg, end = spacing.lg, bottom = spacing.lg),
         verticalArrangement = Arrangement.spacedBy(spacing.sm)
     ) {
-        items(days, key = { it.toString() }) { day ->
-            WeekDayCard(
-                day = day,
-                entries = entries.filter { it.date == day }.sortedBy { it.mealType.ordinal },
-                isToday = day == todayDate,
-                onEntryClick = onEntryClick,
-                onAddMeal = { onAddMeal(day) },
-                canRemove = !isLocked(day),
-                onRemove = onRemove
-            )
+        if (columns == 1) {
+            items(days, key = { it.toString() }) { day -> DayCard(day) }
+        } else {
+            // Cards in a row share the height of the tallest one, so the rows read as a grid.
+            items(days.chunked(columns), key = { it.first().toString() }) { rowDays ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+                ) {
+                    rowDays.forEach { day -> DayCard(day, Modifier.weight(1f).fillMaxHeight()) }
+                    repeat(columns - rowDays.size) { Spacer(Modifier.weight(1f)) }
+                }
+            }
         }
         item(key = "week-notes") {
             WeekNotesCard(note = weekNote, onNoteChange = onNoteChange)
@@ -427,7 +457,8 @@ private fun WeekDayCard(
     onEntryClick: (MealPlanEntry) -> Unit,
     onAddMeal: () -> Unit,
     canRemove: Boolean,
-    onRemove: (MealPlanEntry) -> Unit
+    onRemove: (MealPlanEntry) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val spacing = MealPlannerTokens.spacing
     val iconSize = MealPlannerTokens.iconSize
@@ -440,12 +471,14 @@ private fun WeekDayCard(
     val tonalColors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = actionContainer)
 
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(containerColor = cardColor)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
+            // fillMaxHeight lets the card stretch to a taller neighbour's height in a row of
+            // cards; on its own the card is as tall as its content.
+            modifier = Modifier.fillMaxWidth().fillMaxHeight().height(IntrinsicSize.Min),
             verticalAlignment = Alignment.CenterVertically
         ) {
             WeekDayDateBlock(day = day, isToday = isToday, modifier = Modifier.fillMaxHeight())
