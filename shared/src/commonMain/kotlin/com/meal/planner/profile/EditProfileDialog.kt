@@ -2,11 +2,7 @@ package com.meal.planner.profile
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -29,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -39,7 +36,6 @@ import com.meal.planner.components.ImageSourceDialog
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.strings.LocalStrings
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun EditProfileDialog(
     name: String,
@@ -48,11 +44,11 @@ fun EditProfileDialog(
     onConfirm: (name: String, bio: String, avatarUrl: String) -> Unit,
     onDismiss: () -> Unit
 ) {
-    val focusManager = LocalFocusManager.current
-    val keyboardController = LocalSoftwareKeyboardController.current
     var nameText by remember { mutableStateOf(name) }
     var bioText by remember { mutableStateOf(bio) }
     var avatarUrlText by remember { mutableStateOf(avatarUrl) }
+    var nameFocused by remember { mutableStateOf(false) }
+    var bioFocused by remember { mutableStateOf(false) }
 
     var showImageSourceDialog by remember { mutableStateOf(false) }
     val imagePicker = rememberImagePicker(onImagePicked = { uri ->
@@ -64,6 +60,21 @@ fun EditProfileDialog(
         properties = DialogProperties(decorFitsSystemWindows = false),
         title = { Text(LocalStrings.current.profileEditProfile) },
         text = {
+            // The dialog is its own window with its own focus owner and keyboard connection,
+            // so these must be read here rather than from the screen that opened the dialog.
+            val focusManager = LocalFocusManager.current
+            val keyboardController = LocalSoftwareKeyboardController.current
+
+            // Lives inside the focused field, which the system keeps scrolled above the keyboard.
+            val hideKeyboardIcon: @Composable () -> Unit = {
+                IconButton(onClick = {
+                    focusManager.clearFocus(force = true)
+                    keyboardController?.hide()
+                }) {
+                    Icon(Icons.Default.KeyboardArrowDown, contentDescription = LocalStrings.current.hideKeyboard)
+                }
+            }
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -85,24 +96,16 @@ fun EditProfileDialog(
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-                    modifier = Modifier.fillMaxWidth()
+                    trailingIcon = if (nameFocused) hideKeyboardIcon else null,
+                    modifier = Modifier.fillMaxWidth().onFocusChanged { nameFocused = it.isFocused }
                 )
                 OutlinedTextField(
                     value = bioText,
                     onValueChange = { bioText = it },
                     label = { Text(LocalStrings.current.editProfileBio) },
-                    modifier = Modifier.fillMaxWidth()
+                    trailingIcon = if (bioFocused) hideKeyboardIcon else null,
+                    modifier = Modifier.fillMaxWidth().onFocusChanged { bioFocused = it.isFocused }
                 )
-                if (WindowInsets.isImeVisible) {
-                    Row(horizontalArrangement = Arrangement.End, modifier = Modifier.fillMaxWidth()) {
-                        IconButton(onClick = {
-                            focusManager.clearFocus(force = true)
-                            keyboardController?.hide()
-                        }) {
-                            Icon(Icons.Default.KeyboardArrowDown, contentDescription = LocalStrings.current.hideKeyboard)
-                        }
-                    }
-                }
             }
         },
         confirmButton = {
