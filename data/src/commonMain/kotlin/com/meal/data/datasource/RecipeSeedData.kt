@@ -1,38 +1,55 @@
 package com.meal.data.datasource
 
+import com.meal.data.datasource.seed.americanRecipes
+import com.meal.data.datasource.seed.chineseRecipes
+import com.meal.data.datasource.seed.indianRecipes
+import com.meal.data.datasource.seed.ingredient
+import com.meal.data.datasource.seed.italianRecipes
+import com.meal.data.datasource.seed.japaneseRecipes
+import com.meal.data.datasource.seed.koreanRecipes
+import com.meal.data.datasource.seed.mexicanRecipes
+import com.meal.data.datasource.seed.recipe
+import com.meal.data.datasource.seed.thaiRecipes
+import com.meal.data.datasource.seed.vietnameseRecipes
 import com.meal.data.model.RecipeDto
-import com.meal.domain.model.BUNDLED_IMAGE_PREFIX
-import com.meal.domain.model.Ingredient
-import com.meal.domain.model.Instruction
-import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
-import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.FoodCategory.DESSERT
 import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
-import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
 import com.meal.domain.model.enums.MeasurementUnit.TABLESPOON
 import com.meal.domain.model.enums.MeasurementUnit.TEASPOON
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 /**
- * Built-in Filipino recipes inserted on first install. Each [recipe] names its photo, which is
- * packaged in `shared/src/commonMain/composeResources/files/recipes/` as `<image>.webp`.
+ * Built-in recipes, inserted on first install and added to existing installs when missing.
+ * Each [recipe] names its photo, which is packaged in
+ * `shared/src/commonMain/composeResources/files/recipes/` as `<image>.webp`.
  *
  * The shopping list merges ingredients by name and unit, so each ingredient keeps the same
  * name and unit across recipes (meat in grams, garlic in cloves, sauces in tablespoons).
+ * Every ingredient name is an ingredient catalogue name, so it gets the catalogue picture.
  */
 @OptIn(ExperimentalUuidApi::class)
 object RecipeSeedData {
 
-    fun recipes(): List<RecipeDto> = baseRecipes().map { it.copy(isUserCreated = false, cuisine = Cuisine.FILIPINO) }
+    fun recipes(): List<RecipeDto> = listOf(
+        Cuisine.FILIPINO to filipinoRecipes(),
+        Cuisine.CHINESE to chineseRecipes(),
+        Cuisine.JAPANESE to japaneseRecipes(),
+        Cuisine.KOREAN to koreanRecipes(),
+        Cuisine.THAI to thaiRecipes(),
+        Cuisine.VIETNAMESE to vietnameseRecipes(),
+        Cuisine.INDIAN to indianRecipes(),
+        Cuisine.ITALIAN to italianRecipes(),
+        Cuisine.MEXICAN to mexicanRecipes(),
+        Cuisine.AMERICAN to americanRecipes(),
+    ).flatMap { (cuisine, recipes) -> recipes.map { it.copy(isUserCreated = false, cuisine = cuisine) } }
 
-    private fun baseRecipes(): List<RecipeDto> = listOf(
+    private fun filipinoRecipes(): List<RecipeDto> = listOf(
         // ---------- Main dishes ----------
         recipe(
             name = "Chicken Adobo",
@@ -1151,28 +1168,4 @@ object RecipeSeedData {
             ),
         ),
     )
-
-    private fun recipe(
-        name: String,
-        image: String,
-        description: String,
-        category: FoodCategory,
-        minutes: Int,
-        servings: Int,
-        ingredients: List<RecipeIngredient>,
-        steps: List<String>,
-    ) = RecipeDto(
-        id = Uuid.random(),
-        name = name,
-        description = description,
-        category = category,
-        preparationTimeMinutes = minutes,
-        servings = servings,
-        imageUrl = "$BUNDLED_IMAGE_PREFIX$image.webp",
-        ingredients = ingredients,
-        instructions = steps.mapIndexed { index, step -> Instruction(index + 1, step) },
-    )
-
-    private fun ingredient(name: String, quantity: Double, unit: MeasurementUnit) =
-        RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), name), quantity, unit)
 }

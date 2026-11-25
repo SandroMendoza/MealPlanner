@@ -35,14 +35,19 @@ class RecipeLocalDataSource(
             .asFlow()
             .mapToList(ioDispatcher)
             .map { rows -> withContext(ioDispatcher) { toDtos(rows) } }
-            .onStart { seedOnFirstInstall() }
+            .onStart { seedMissingRecipes() }
 
-    // Recipes are only ever soft-deleted, so a table with no rows at all means a fresh
-    // database: the seed runs once per install and deleted seed recipes stay deleted.
-    private suspend fun seedOnFirstInstall() = withContext(ioDispatcher) {
-        if (queries.countAllRecipes().executeAsOne() == 0L) {
-            RecipeSeedData.recipes().forEach { insertRecipeBlocking(it) }
-        }
+    // Adds every built-in recipe the database has never held. Recipes are only ever
+    // soft-deleted, so deleted built-in recipes still count as held and stay deleted. A
+    // built-in recipe counts as held when a row has its photo or its name, so renaming it or
+    // changing its photo alone doesn't bring the original back.
+    private suspend fun seedMissingRecipes() = withContext(ioDispatcher) {
+        val held = queries.selectAllRecipeNamesAndImages().executeAsList()
+        val heldNames = held.mapTo(HashSet()) { it.name.trim().lowercase() }
+        val heldImages = held.mapNotNullTo(HashSet()) { it.imageUrl }
+        RecipeSeedData.recipes()
+            .filter { it.imageUrl !in heldImages && it.name.trim().lowercase() !in heldNames }
+            .forEach { insertRecipeBlocking(it) }
     }
 
     suspend fun getRecipeById(id: Uuid): RecipeDto? = withContext(ioDispatcher) {
