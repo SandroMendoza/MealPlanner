@@ -174,6 +174,7 @@ val frenchStrings = Strings(
     chooseFromGallery = "Choisir dans la galerie",
     category = "Catégorie",
     cuisine = "Cuisine",
+    mealType = "Type de repas",
     ingredients = "Ingrédients",
     instructions = "Instructions",
     totalSpent = "Total dépensé",

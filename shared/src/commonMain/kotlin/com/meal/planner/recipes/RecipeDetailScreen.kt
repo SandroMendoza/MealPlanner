@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Close
@@ -572,6 +573,20 @@ private fun RecipeDetailSummary(recipe: Recipe, modifier: Modifier = Modifier) {
                 RecipeDetailMetaItem(
                     icon = Icons.Filled.Public,
                     text = cuisine.displayName()
+                )
+            }
+        }
+
+        if (recipe.mealTypes.isNotEmpty()) {
+            val strings = LocalStrings.current
+            Row(
+                modifier = Modifier.padding(top = spacing.xs),
+                horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RecipeDetailMetaItem(
+                    icon = Icons.Filled.Restaurant,
+                    text = recipe.mealTypes.joinToString(" · ") { strings.mealTypeName(it) }
                 )
             }
         }

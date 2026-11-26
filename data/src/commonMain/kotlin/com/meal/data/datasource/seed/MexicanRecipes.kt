@@ -5,6 +5,7 @@ import com.meal.domain.model.enums.FoodCategory.DESSERT
 import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
@@ -16,6 +17,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Enchiladas",
         image = "chicken_enchiladas",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Corn tortillas rolled around shredded chicken, covered in red chilli sauce and cheese, then baked.",
         category = MAIN_DISH,
         minutes = 75, servings = 4,
@@ -48,6 +50,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tacos al Pastor",
         image = "tacos_al_pastor",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Thin slices of chilli-marinated pork seared until charred, served in tortillas with pineapple and onion.",
         category = MAIN_DISH,
         minutes = 180, servings = 6,
@@ -81,6 +84,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Carne Asada Tacos",
         image = "carne_asada_tacos",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Citrus and garlic marinated flank steak, grilled hot and sliced thin for tacos.",
         category = MAIN_DISH,
         minutes = 100, servings = 4,
@@ -111,6 +115,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Fajitas",
         image = "chicken_fajitas",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Spiced chicken strips and sizzling peppers and onion, wrapped in warm flour tortillas.",
         category = MAIN_DISH,
         minutes = 45, servings = 4,
@@ -143,6 +148,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Beef and Bean Burritos",
         image = "beef_and_bean_burritos",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Large flour tortillas filled with spiced beef, black beans, rice, cheese and lettuce.",
         category = MAIN_DISH,
         minutes = 40, servings = 4,
@@ -176,6 +182,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chilaquiles",
         image = "chilaquiles",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH),
         description = "Crisp fried tortilla pieces simmered briefly in red salsa and topped with fried eggs and cheese.",
         category = MAIN_DISH,
         minutes = 35, servings = 4,
@@ -206,6 +213,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Huevos Rancheros",
         image = "huevos_rancheros",
+        mealTypes = setOf(MealType.BREAKFAST),
         description = "Fried eggs on crisp tortillas with refried beans and a warm tomato and chilli salsa.",
         category = MAIN_DISH,
         minutes = 30, servings = 2,
@@ -235,6 +243,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Mole",
         image = "chicken_mole",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Poached chicken in a dark, rich sauce of dried chillies, nuts, raisins, spices and chocolate.",
         category = MAIN_DISH,
         minutes = 100, servings = 6,
@@ -270,6 +279,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Cochinita Pibil",
         image = "cochinita_pibil",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH),
         description = "Pork shoulder marinated in annatto and citrus, slow-roasted in banana leaves until it falls apart.",
         category = MAIN_DISH,
         minutes = 450, servings = 6,
@@ -303,6 +313,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Pork Carnitas",
         image = "pork_carnitas",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Pork shoulder braised with orange and spices until tender, then crisped in its own fat.",
         category = MAIN_DISH,
         minutes = 180, servings = 6,
@@ -334,6 +345,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chiles Rellenos",
         image = "chiles_rellenos",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Roasted poblano peppers stuffed with melting cheese, fried in a light egg batter and served in tomato sauce.",
         category = MAIN_DISH,
         minutes = 70, servings = 4,
@@ -363,6 +375,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Tinga Tostadas",
         image = "chicken_tinga_tostadas",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Shredded chicken in a smoky chipotle and tomato sauce, piled on crisp tortillas with beans.",
         category = MAIN_DISH,
         minutes = 50, servings = 4,
@@ -396,6 +409,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tortilla Soup",
         image = "tortilla_soup",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Tomato and chilli chicken broth with shredded chicken, topped with crisp tortilla strips, avocado and cheese.",
         category = SOUP,
         minutes = 50, servings = 4,
@@ -427,6 +441,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Sopa de Fideo",
         image = "sopa_de_fideo",
+        mealTypes = setOf(MealType.LUNCH),
         description = "Toasted thin noodles simmered in a light tomato and chicken broth.",
         category = SOUP,
         minutes = 30, servings = 4,
@@ -452,6 +467,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Albondigas Soup",
         image = "albondigas_soup",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Mint and rice meatballs simmered with vegetables in a tomato broth.",
         category = SOUP,
         minutes = 60, servings = 6,
@@ -488,6 +504,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Guacamole",
         image = "guacamole",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Mashed avocado with lime, onion, tomato, chilli and cilantro, served with tortilla chips.",
         category = SIDE_DISH,
         minutes = 15, servings = 4,
@@ -511,6 +528,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Mexican Rice",
         image = "mexican_rice",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Long-grain rice toasted in oil, then cooked in tomato broth with carrot and peas.",
         category = SIDE_DISH,
         minutes = 40, servings = 4,
@@ -538,6 +556,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Elote",
         image = "elote",
+        mealTypes = setOf(MealType.SNACK),
         description = "Grilled corn on the cob spread with creamy sauce and rolled in cheese, chilli powder and lime.",
         category = SIDE_DISH,
         minutes = 25, servings = 4,
@@ -564,6 +583,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Churros",
         image = "churros",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.SNACK),
         description = "Crisp fried ridged dough sticks rolled in cinnamon sugar.",
         category = DESSERT,
         minutes = 40, servings = 4,
@@ -590,6 +610,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Flan",
         image = "flan",
+        mealTypes = setOf(MealType.SNACK),
         description = "Baked vanilla custard made with whole eggs and two kinds of milk, under a layer of caramel.",
         category = DESSERT,
         minutes = 350, servings = 8,

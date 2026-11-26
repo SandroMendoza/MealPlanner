@@ -4,6 +4,7 @@ import com.meal.domain.model.AppSettings
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.presentation.fakes.FakeRecipeRepository
@@ -145,5 +146,51 @@ class RecipeViewModelTest {
 
         vm.onCreatedOnlyTabSelected(true)
         assertEquals(listOf(quickSoup), vm.state.value.filteredRecipes)
+    }
+
+    @Test
+    fun mealTypeFilterShowsOnlyRecipesTaggedWithIt() {
+        val silog = recipe(name = "Tapsilog", mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH))
+        val stew = recipe(name = "Beef Stew", mealTypes = setOf(MealType.DINNER))
+        val untagged = recipe(name = "Leftovers")
+        repository.recipes.value = listOf(silog, stew, untagged)
+        val vm = viewModel()
+
+        vm.onMealTypeSelected(MealType.BREAKFAST)
+        assertEquals(listOf(silog), vm.state.value.filteredRecipes)
+        assertTrue(vm.state.value.hasActiveFilters)
+
+        vm.onSearchQueryChange("stew")
+        assertTrue(vm.state.value.filteredRecipes.isEmpty())
+        vm.onSearchQueryChange("")
+
+        vm.onMealTypeSelected(MealType.BREAKFAST)
+        assertNull(vm.state.value.selectedMealType)
+        assertEquals(3, vm.state.value.filteredRecipes.size)
+    }
+
+    @Test
+    fun setMealTypeFilterDoesNotToggle() {
+        val vm = viewModel()
+
+        vm.setMealTypeFilter(MealType.DINNER)
+        vm.setMealTypeFilter(MealType.DINNER)
+
+        assertEquals(MealType.DINNER, vm.state.value.selectedMealType)
+    }
+
+    @Test
+    fun clearFiltersResetsEveryFilter() {
+        val vm = viewModel()
+        vm.onCategorySelected(FoodCategory.SOUP)
+        vm.onCuisineSelected(Cuisine.THAI)
+        vm.onMealTypeSelected(MealType.SNACK)
+        vm.onFavoritesTabSelected(true)
+        vm.onCreatedOnlyTabSelected(true)
+        vm.onPrepTimeRangeChange(0f..30f)
+
+        vm.clearFilters()
+
+        assertFalse(vm.state.value.hasActiveFilters)
     }
 }

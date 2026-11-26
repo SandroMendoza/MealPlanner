@@ -12,6 +12,7 @@ import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.ingredientDisplayName
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -107,6 +108,9 @@ class RecipeLocalDataSource(
 
     private fun replaceChildren(dto: RecipeDto) {
         val recipeId = dto.id.toString()
+        queries.deleteMealTypesForRecipe(recipeId)
+        dto.mealTypes.forEach { queries.insertMealType(recipeId, it.name) }
+
         queries.deleteRecipeIngredientsForRecipe(recipeId)
         dto.ingredients.forEach { recipeIngredient ->
             queries.insertRecipeIngredient(
@@ -137,8 +141,11 @@ class RecipeLocalDataSource(
     }
 
     // Loads the child rows of every active recipe in one query per table, so building the
-    // list costs the same three queries however many recipes there are.
+    // list costs the same four queries however many recipes there are.
     private fun toDtos(rows: List<RecipeEntity>): List<RecipeDto> {
+        val mealTypes = queries.selectMealTypesForActiveRecipes { recipeId, mealType ->
+            recipeId to MealType.valueOf(mealType)
+        }.executeAsList().groupBy({ it.first }, { it.second })
         val ingredients = queries.selectRecipeIngredientsForActiveRecipes {
                 recipeId, id, quantity, unit, ingredientId, ingredientName ->
             recipeId to recipeIngredient(id, quantity, unit, ingredientId, ingredientName)
@@ -150,6 +157,7 @@ class RecipeLocalDataSource(
         return rows.map { row ->
             toDto(
                 row = row,
+                mealTypes = mealTypes[row.id].orEmpty(),
                 ingredients = ingredients[row.id].orEmpty(),
                 instructions = instructions[row.id].orEmpty()
             )
@@ -158,6 +166,9 @@ class RecipeLocalDataSource(
 
     private fun toDto(row: RecipeEntity): RecipeDto = toDto(
         row = row,
+        mealTypes = queries.selectMealTypesForRecipe(row.id)
+            .executeAsList()
+            .map { MealType.valueOf(it.mealType) },
         ingredients = queries.selectRecipeIngredientsForRecipe(row.id)
             .executeAsList()
             .map { recipeIngredient(it.id, it.quantity, it.unit, it.ingredientId, it.ingredientName) },
@@ -181,6 +192,7 @@ class RecipeLocalDataSource(
 
     private fun toDto(
         row: RecipeEntity,
+        mealTypes: List<MealType>,
         ingredients: List<RecipeIngredient>,
         instructions: List<Instruction>
     ): RecipeDto {
@@ -188,6 +200,7 @@ class RecipeLocalDataSource(
             id = Uuid.parse(row.id),
             name = row.name,
             description = row.description,
+            mealTypes = mealTypes.sorted().toSet(),
             category = FoodCategory.valueOf(row.category),
             preparationTimeMinutes = row.preparationTimeMinutes.toInt(),
             servings = row.servings.toInt(),

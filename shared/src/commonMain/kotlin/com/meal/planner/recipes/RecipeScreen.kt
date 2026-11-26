@@ -1,11 +1,6 @@
 package com.meal.planner.recipes
 
-import com.meal.planner.common.LocalCompactHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.semantics.Role
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,12 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -31,29 +24,19 @@ import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -71,15 +54,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeViewMode
-import com.meal.domain.model.enums.Cuisine
-import com.meal.domain.model.enums.FoodCategory
-import com.meal.planner.common.displayName
 import com.meal.planner.components.recipeImageModel
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
-import com.meal.planner.theme.activeFilterChipColors
 import com.meal.presentation.recipes.RecipeEmptyState
-import com.meal.presentation.recipes.RecipeUiState
 import com.meal.presentation.recipes.RecipeViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.uuid.ExperimentalUuidApi
@@ -117,11 +95,6 @@ fun RecipeScreen(
         }
     ) {
         val uiState by viewModel.state.collectAsStateWithLifecycle()
-        val hasActiveFilters = uiState.selectedCategory != null ||
-            uiState.selectedCuisine != null ||
-            uiState.showFavoritesOnly ||
-            uiState.showCreatedOnly ||
-            uiState.prepTimeRange != RecipeUiState.FULL_PREP_TIME_RANGE
         val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
         val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
         val isListView = uiState.viewMode == RecipeViewMode.LIST
@@ -163,21 +136,10 @@ fun RecipeScreen(
                                 modifier = Modifier.weight(1f)
                             )
 
-                            if (hasActiveFilters) {
-                                FilledIconButton(
-                                    onClick = { showFilterSheet = true },
-                                    colors = IconButtonDefaults.filledIconButtonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                ) {
-                                    Icon(Icons.Default.FilterAlt, contentDescription = LocalStrings.current.recipesFiltersActiveCd)
-                                }
-                            } else {
-                                IconButton(onClick = { showFilterSheet = true }) {
-                                    Icon(Icons.Default.FilterAlt, contentDescription = LocalStrings.current.recipesFilters)
-                                }
-                            }
+                            RecipeFilterButton(
+                                hasActiveFilters = uiState.hasActiveFilters,
+                                onClick = { showFilterSheet = true }
+                            )
 
                             IconButton(onClick = viewModel::onViewModeToggle) {
                                 if (isListView) {
@@ -234,19 +196,8 @@ fun RecipeScreen(
         if (showFilterSheet) {
             RecipeFilterSheet(
                 uiState = uiState,
-                onDismiss = { showFilterSheet = false },
-                onCategorySelected = viewModel::onCategorySelected,
-                onCuisineSelected = viewModel::onCuisineSelected,
-                onFavoritesOnlyChange = viewModel::onFavoritesTabSelected,
-                onCreatedOnlyChange = viewModel::onCreatedOnlyTabSelected,
-                onPrepTimeRangeChange = viewModel::onPrepTimeRangeChange,
-                onClearFilters = {
-                    viewModel.onCategorySelected(null)
-                    viewModel.onCuisineSelected(null)
-                    viewModel.onFavoritesTabSelected(false)
-                    viewModel.onCreatedOnlyTabSelected(false)
-                    viewModel.onPrepTimeRangeChange(RecipeUiState.FULL_PREP_TIME_RANGE)
-                }
+                viewModel = viewModel,
+                onDismiss = { showFilterSheet = false }
             )
         }
     }
@@ -258,124 +209,6 @@ fun RecipeEmptyState.message(): String = when (this) {
     RecipeEmptyState.NO_FAVORITES -> LocalStrings.current.recipesNoFavoritesYet
     RecipeEmptyState.NO_CREATED -> LocalStrings.current.recipesNoCreatedYet
     RecipeEmptyState.NO_MATCHES -> LocalStrings.current.recipesNoMatchesFilters
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun RecipeFilterSheet(
-    uiState: RecipeUiState,
-    onDismiss: () -> Unit,
-    onCategorySelected: (FoodCategory?) -> Unit,
-    onCuisineSelected: (Cuisine?) -> Unit,
-    onFavoritesOnlyChange: (Boolean) -> Unit,
-    onCreatedOnlyChange: (Boolean) -> Unit,
-    onPrepTimeRangeChange: (ClosedFloatingPointRange<Float>) -> Unit,
-    onClearFilters: () -> Unit
-) {
-    val spacing = MealPlannerTokens.spacing
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = LocalCompactHeight.current)
-
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = spacing.lg, vertical = spacing.sm)
-        ) {
-            Text(
-                text = LocalStrings.current.recipesFilters,
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = spacing.lg)
-                    .toggleable(value = uiState.showFavoritesOnly, role = Role.Switch, onValueChange = onFavoritesOnlyChange),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(LocalStrings.current.recipesFavoritesOnly, style = MaterialTheme.typography.bodyLarge)
-                Switch(checked = uiState.showFavoritesOnly, onCheckedChange = null)
-            }
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .toggleable(value = uiState.showCreatedOnly, role = Role.Switch, onValueChange = onCreatedOnlyChange),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(LocalStrings.current.recipesCreatedByMe, style = MaterialTheme.typography.bodyLarge)
-                Switch(checked = uiState.showCreatedOnly, onCheckedChange = null)
-            }
-
-            HorizontalDivider(modifier = Modifier.padding(vertical = spacing.lg))
-
-            SectionLabel(LocalStrings.current.category)
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-                items(listOf<FoodCategory?>(null) + FoodCategory.entries) { category ->
-                    FilterChip(
-                        selected = uiState.selectedCategory == category,
-                        onClick = { onCategorySelected(category) },
-                        label = { Text(category?.displayName() ?: LocalStrings.current.all) },
-                        colors = activeFilterChipColors()
-                    )
-                }
-            }
-
-            Column(modifier = Modifier.padding(top = spacing.lg)) {
-                SectionLabel(LocalStrings.current.cuisine)
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
-                    items(listOf<Cuisine?>(null) + Cuisine.entries) { cuisine ->
-                        FilterChip(
-                            selected = uiState.selectedCuisine == cuisine,
-                            onClick = { onCuisineSelected(cuisine) },
-                            label = { Text(cuisine?.displayName() ?: LocalStrings.current.all) },
-                            colors = activeFilterChipColors()
-                        )
-                    }
-                }
-            }
-
-            Column(modifier = Modifier.padding(top = spacing.lg, bottom = spacing.lg)) {
-                val start = uiState.prepTimeRange.start.toInt()
-                val end = uiState.prepTimeRange.endInclusive.toInt()
-                SectionLabel(
-                    if (uiState.prepTimeHasNoMax) {
-                        LocalStrings.current.recipesPrepTimeRangeNoMax(start, end)
-                    } else {
-                        LocalStrings.current.recipesPrepTimeRange(start, end)
-                    }
-                )
-                RangeSlider(
-                    value = uiState.prepTimeRange,
-                    onValueChange = onPrepTimeRangeChange,
-                    valueRange = RecipeUiState.FULL_PREP_TIME_RANGE,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-
-            TextButton(
-                onClick = onClearFilters,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(LocalStrings.current.recipesClearFilters)
-            }
-        }
-    }
-}
-
-@Composable
-private fun SectionLabel(text: String) {
-    val spacing = MealPlannerTokens.spacing
-    Text(
-        text = text,
-        style = MaterialTheme.typography.labelLarge,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        modifier = Modifier.padding(bottom = spacing.xs)
-    )
 }
 
 @OptIn(ExperimentalUuidApi::class)

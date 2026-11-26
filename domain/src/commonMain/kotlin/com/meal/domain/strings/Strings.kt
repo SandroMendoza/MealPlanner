@@ -45,6 +45,7 @@ data class Strings(
     val chooseFromGallery: String,
     val category: String,
     val cuisine: String,
+    val mealType: String,
     val ingredients: String,
     val instructions: String,
     val totalSpent: String,

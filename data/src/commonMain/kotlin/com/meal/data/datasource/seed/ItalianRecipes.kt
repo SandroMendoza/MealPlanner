@@ -6,6 +6,7 @@ import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SALAD
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
@@ -17,6 +18,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Spaghetti Carbonara",
         image = "spaghetti_carbonara",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Spaghetti tossed with crisp pancetta, eggs, pecorino and black pepper into a silky sauce.",
         category = MAIN_DISH,
         minutes = 25, servings = 4,
@@ -45,6 +47,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Spaghetti Bolognese",
         image = "spaghetti_bolognese",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Spaghetti with a slow-simmered beef and pork ragù cooked with wine, tomato and a little milk.",
         category = MAIN_DISH,
         minutes = 150, servings = 6,
@@ -80,6 +83,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Lasagna",
         image = "lasagna",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Layers of pasta, beef and tomato sauce, ricotta and melted mozzarella baked until bubbling.",
         category = MAIN_DISH,
         minutes = 120, servings = 8,
@@ -114,6 +118,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Parmesan",
         image = "chicken_parmesan",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Crumbed chicken cutlets fried until crisp, then baked with tomato sauce and melted mozzarella.",
         category = MAIN_DISH,
         minutes = 60, servings = 4,
@@ -144,6 +149,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Fettuccine Alfredo",
         image = "fettuccine_alfredo",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Fettuccine in a rich sauce of butter, cream and parmesan with a pinch of nutmeg.",
         category = MAIN_DISH,
         minutes = 25, servings = 4,
@@ -171,6 +177,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Penne all'Arrabbiata",
         image = "penne_arrabbiata",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Penne in a spicy tomato and garlic sauce with chilli flakes and fresh parsley.",
         category = MAIN_DISH,
         minutes = 30, servings = 4,
@@ -196,6 +203,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Mushroom Risotto",
         image = "mushroom_risotto",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Creamy arborio rice slowly cooked in broth with browned mushrooms, butter and parmesan.",
         category = MAIN_DISH,
         minutes = 45, servings = 4,
@@ -225,6 +233,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Margherita Pizza",
         image = "margherita_pizza",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Thin homemade pizza topped with tomato sauce, mozzarella and fresh basil.",
         category = MAIN_DISH,
         minutes = 120, servings = 4,
@@ -253,6 +262,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Piccata",
         image = "chicken_piccata",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Thin chicken cutlets in a bright lemon, butter and caper sauce.",
         category = MAIN_DISH,
         minutes = 35, servings = 4,
@@ -282,6 +292,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Spaghetti Aglio e Olio",
         image = "spaghetti_aglio_e_olio",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Spaghetti tossed in olive oil with golden garlic, chilli flakes and parsley.",
         category = MAIN_DISH,
         minutes = 20, servings = 4,
@@ -306,6 +317,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Eggplant Parmigiana",
         image = "eggplant_parmigiana",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Fried eggplant slices layered with tomato sauce, basil, mozzarella and parmesan, then baked.",
         category = MAIN_DISH,
         minutes = 120, servings = 6,
@@ -335,6 +347,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Linguine with Clams",
         image = "linguine_with_clams",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Linguine tossed with fresh clams, garlic, white wine, chilli and parsley.",
         category = MAIN_DISH,
         minutes = 50, servings = 4,
@@ -363,6 +376,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Minestrone",
         image = "minestrone",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A hearty vegetable soup with beans, tomato, small pasta and greens.",
         category = SOUP,
         minutes = 60, servings = 6,
@@ -398,6 +412,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Pasta e Fagioli",
         image = "pasta_e_fagioli",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A thick bean and pasta soup with pancetta, tomato and rosemary.",
         category = SOUP,
         minutes = 50, servings = 6,
@@ -430,6 +445,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Italian Wedding Soup",
         image = "italian_wedding_soup",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Small beef and pork meatballs simmered in broth with vegetables, orzo and spinach.",
         category = SOUP,
         minutes = 60, servings = 6,
@@ -464,6 +480,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Bruschetta",
         image = "bruschetta",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Toasted bread rubbed with garlic and topped with fresh tomato, basil and olive oil.",
         category = SIDE_DISH,
         minutes = 20, servings = 6,
@@ -488,6 +505,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Caprese Salad",
         image = "caprese_salad",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Slices of ripe tomato and fresh mozzarella with basil, olive oil and balsamic vinegar.",
         category = SALAD,
         minutes = 10, servings = 4,
@@ -510,6 +528,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Focaccia",
         image = "focaccia",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.SNACK),
         description = "Soft, dimpled flatbread baked with plenty of olive oil, rosemary and flaky salt.",
         category = SIDE_DISH,
         minutes = 150, servings = 8,
@@ -535,6 +554,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tiramisu",
         image = "tiramisu",
+        mealTypes = setOf(MealType.SNACK),
         description = "Coffee-soaked ladyfingers layered with mascarpone cream and dusted with cocoa.",
         category = DESSERT,
         minutes = 390, servings = 8,
@@ -563,6 +583,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Panna Cotta",
         image = "panna_cotta",
+        mealTypes = setOf(MealType.SNACK),
         description = "A soft, chilled vanilla cream pudding served with sweetened strawberries.",
         category = DESSERT,
         minutes = 265, servings = 6,

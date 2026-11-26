@@ -3,6 +3,7 @@ package com.meal.presentation.recipes
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 
 data class IngredientFormRow(
@@ -24,6 +25,7 @@ data class RecipeFormContent(
     val description: String,
     val category: FoodCategory,
     val cuisine: Cuisine?,
+    val mealTypes: Set<MealType>,
     val preparationTimeMinutes: String,
     val servings: String,
     val imageUrl: String,
@@ -43,6 +45,7 @@ data class RecipeFormUiState(
     val description: String = "",
     val category: FoodCategory = FoodCategory.MAIN_DISH,
     val cuisine: Cuisine? = null,
+    val mealTypes: Set<MealType> = emptySet(),
     val preparationTimeMinutes: String = "",
     val servings: String = "",
     val imageUrl: String = "",
@@ -57,6 +60,7 @@ data class RecipeFormUiState(
             description = description,
             category = category,
             cuisine = cuisine,
+            mealTypes = mealTypes,
             preparationTimeMinutes = preparationTimeMinutes,
             servings = servings,
             imageUrl = imageUrl,
