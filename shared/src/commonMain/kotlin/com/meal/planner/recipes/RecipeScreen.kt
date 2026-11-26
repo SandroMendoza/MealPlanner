@@ -433,20 +433,20 @@ fun RecipeGridCard(recipe: Recipe, onClick: () -> Unit) {
     ) {
         Column {
             Box(modifier = Modifier.fillMaxWidth().aspectRatio(1f)) {
-                if (recipe.imageUrl.isNullOrBlank()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.primaryContainer),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer
-                        )
-                    }
-                } else {
+                // The icon stays underneath the photo, so it shows while a photo loads or can't be loaded.
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primaryContainer),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
+                if (!recipe.imageUrl.isNullOrBlank()) {
                     AsyncImage(
                         model = recipeImageModel(recipe.imageUrl),
                         contentDescription = null,
