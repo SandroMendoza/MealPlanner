@@ -24,13 +24,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.enums.MealType
+import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.common.today
 import kotlinx.datetime.LocalDate
+import org.koin.compose.koinInject
 
 @Composable
 fun MealTypeDialog(
@@ -38,10 +42,14 @@ fun MealTypeDialog(
     date: LocalDate,
     onDateChange: (LocalDate) -> Unit,
     onSelect: (MealType) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    getSettingsUseCase: GetSettingsUseCase = koinInject()
 ) {
     val spacing = MealPlannerTokens.spacing
     var showDatePicker by remember { mutableStateOf(false) }
+    val settings by remember(getSettingsUseCase) { getSettingsUseCase.execute() }
+        .collectAsStateWithLifecycle(initialValue = null)
+    val earliestDate = if (settings?.lockPastDates == true) today() else null
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -94,7 +102,8 @@ fun MealTypeDialog(
         MealDatePickerDialog(
             initialDate = date,
             onDateSelected = onDateChange,
-            onDismiss = { showDatePicker = false }
+            onDismiss = { showDatePicker = false },
+            earliestDate = earliestDate
         )
     }
 }
