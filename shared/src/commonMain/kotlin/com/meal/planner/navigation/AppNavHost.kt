@@ -49,7 +49,9 @@ import com.meal.planner.profile.ProfileScreen
 import com.meal.planner.recipes.RecipeDetailScreen
 import com.meal.planner.recipes.RecipeFormScreen
 import com.meal.planner.recipes.RecipeScreen
+import com.meal.planner.onboarding.WalkthroughScreen
 import com.meal.planner.settings.AboutScreen
+import com.meal.planner.settings.FeatureGuideScreen
 import com.meal.planner.settings.NotificationSettingsScreen
 import com.meal.planner.settings.PrivacyPolicyScreen
 import com.meal.planner.settings.SettingsScreen
@@ -259,7 +261,8 @@ fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
                         onBack = { navController.popBackStack() },
                         onNotificationSettingsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) },
                         onAboutClick = { navController.navigate(Routes.ABOUT) },
-                        onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) }
+                        onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) },
+                        onFeatureGuideClick = { navController.navigate(Routes.FEATURE_GUIDE) }
                     )
                 }
                 composable(Routes.NOTIFICATION_SETTINGS) {
@@ -270,6 +273,15 @@ fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
                 }
                 composable(Routes.PRIVACY_POLICY) {
                     PrivacyPolicyScreen(onBack = { navController.popBackStack() })
+                }
+                composable(Routes.FEATURE_GUIDE) {
+                    FeatureGuideScreen(
+                        onBack = { navController.popBackStack() },
+                        onReplayWalkthrough = { navController.navigate(Routes.WALKTHROUGH) }
+                    )
+                }
+                composable(Routes.WALKTHROUGH) {
+                    WalkthroughScreen(onFinish = { navController.popBackStack() })
                 }
             }
         }

@@ -5,6 +5,7 @@ import com.meal.data.datasource.DatabaseBackupDataSource
 import com.meal.data.datasource.IngredientLocalDataSource
 import com.meal.data.datasource.MealReminderLocalDataSource
 import com.meal.data.datasource.MealSlotLocalDataSource
+import com.meal.data.datasource.OnboardingLocalDataSource
 import com.meal.data.datasource.RecipeLocalDataSource
 import com.meal.data.datasource.SettingsLocalDataSource
 import com.meal.data.datasource.ShoppingGroupLocalDataSource
@@ -16,6 +17,7 @@ import com.meal.data.db.MealPlannerDatabase
 import com.meal.data.repository.IngredientRepositoryImpl
 import com.meal.data.repository.MealPlanRepositoryImpl
 import com.meal.data.repository.MealReminderRepositoryImpl
+import com.meal.data.repository.OnboardingRepositoryImpl
 import com.meal.data.repository.RecipeRepositoryImpl
 import com.meal.data.repository.SettingsRepositoryImpl
 import com.meal.data.repository.ShoppingGroupRepositoryImpl
@@ -25,6 +27,7 @@ import com.meal.data.repository.WeekNoteRepositoryImpl
 import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.MealReminderRepository
+import com.meal.domain.repository.OnboardingRepository
 import com.meal.domain.repository.RecipeRepository
 import com.meal.domain.repository.SettingsRepository
 import com.meal.domain.repository.ShoppingGroupRepository
@@ -46,6 +49,7 @@ val dataModule = module {
     single { SettingsLocalDataSource(get()) }
     single { MealReminderLocalDataSource(get()) }
     single { WeekNoteLocalDataSource(get()) }
+    single { OnboardingLocalDataSource(get()) }
 
     single <RecipeRepository> {
         RecipeRepositoryImpl(
@@ -60,4 +64,5 @@ val dataModule = module {
     single <SettingsRepository> { SettingsRepositoryImpl(get()) }
     single <MealReminderRepository> { MealReminderRepositoryImpl(get()) }
     single <WeekNoteRepository> { WeekNoteRepositoryImpl(get()) }
+    single <OnboardingRepository> { OnboardingRepositoryImpl(get()) }
 }

@@ -374,5 +374,126 @@ val englishStrings = Strings(
     spendingPdfTitle = "Spending Report",
     spendingPdfDateRange = { start, end -> "$start to $end" },
     spendingPdfTotalSpent = { amount -> "Total spent: $amount" },
-    spendingShareChooserTitle = "Share spending report"
+    spendingShareChooserTitle = "Share spending report",
+
+    // Walkthrough
+    walkthroughSkip = "Skip",
+    walkthroughNext = "Next",
+    walkthroughGetStarted = "Get started",
+    walkthroughPageOf = { page, total -> "Page $page of $total" },
+    walkthroughAddMeal = WalkthroughText("Plan a meal", "On the Meal plan tab, tap Add meal to put a recipe on any day."),
+    walkthroughPickMeal = WalkthroughText("Choose the meal and day", "Pick a recipe, then choose breakfast, lunch, dinner or a snack. Tap Change to pick another day."),
+    walkthroughRemoveMeal = WalkthroughText("Remove a meal", "Swipe a meal to the left to remove it. The app asks you to confirm first."),
+    walkthroughCreateRecipe = WalkthroughText("Create a recipe", "On the Recipes tab, tap + to add your own recipe with a photo, ingredients and steps."),
+    walkthroughFilterRecipes = WalkthroughText("Find the right recipe", "Tap the filter button to show recipes by meal type, cuisine, category or prep time."),
+    walkthroughCheckItem = WalkthroughText("Check off what you buy", "Your shopping list fills itself from your meal plan. Tap an item to check it off."),
+    walkthroughRemoveItem = WalkthroughText("Remove an item", "Swipe an item to the left to remove it from the list."),
+    walkthroughGroupItem = WalkthroughText("Group your items", "Swipe an item to the right to put it in a group, such as a store or an aisle."),
+    walkthroughRecordPrice = WalkthroughText("Note what you paid", "Tap the price on an item to record what you paid. Spending reports add it up."),
+    walkthroughReminders = WalkthroughText("Get meal reminders", "On Home, tap the bell to turn on a daily reminder for each meal."),
+
+    // Feature guide
+    featureGuide = "How to use Meal Planner",
+    featureGuideReplayWalkthrough = "Replay the walkthrough",
+    featureGuideTrySaying = "Try saying",
+    featureGuideSections = listOf(
+        GuideSection(
+            title = "Home",
+            items = listOf(
+                "See today's meals in meal order. Tap a meal to open its recipe, or View all to open the meal plan.",
+                "Add a meal opens the meal plan, and Shopping list opens your shopping list.",
+                "The bell opens meal reminder settings.",
+                "With Read aloud on in Settings, the speaker button reads today's meals."
+            )
+        ),
+        GuideSection(
+            title = "Meal plan",
+            items = listOf(
+                "Switch between Day and Week at the top. Settings sets which one opens first.",
+                "Use the arrows to change the week, the calendar button to jump to a date, and the today button to come back.",
+                "Tap Add meal, or + on a day in Week view, pick a recipe, then choose the meal and the date.",
+                "Swipe a meal to the left to remove it. The app asks you to confirm first.",
+                "In Day view, a meal's ⋮ menu lets you view its recipe, change it to another recipe or remove it.",
+                "Write notes for the week in the box at the bottom. They save as you type.",
+                "Turn on Lock past dates in Settings so meals on earlier days can't be removed by accident."
+            )
+        ),
+        GuideSection(
+            title = "Recipes",
+            items = listOf(
+                "Search by name, description or ingredient.",
+                "The filter button narrows the list by favorites, your own recipes, category, meal type, cuisine and prep time.",
+                "Switch between grid and list with the button next to the filter.",
+                "Tap + to create a recipe with a photo, ingredients, meal types and steps. Steps are optional.",
+                "In the steps editor, Write all lets you type every step at once, one per line.",
+                "On a recipe, tap the heart to add it to your favorites, or Add to meal plan to plan it.",
+                "With Read aloud on, the speaker reads the ingredients and cook mode reads the steps one by one.",
+                "Your favorites and the recipes you created are also on the Profile tab."
+            )
+        ),
+        GuideSection(
+            title = "Shopping list",
+            items = listOf(
+                "The list fills itself from the meals you planned and adds up the same ingredient across recipes.",
+                "Choose Week, Day or Range at the top to pick the dates the list covers.",
+                "Tap an item to check it off, and tap it again to uncheck it.",
+                "Swipe an item to the left to remove it from the list.",
+                "Swipe an item to the right to put it in a group, such as a store or an aisle. You can create a new group there.",
+                "Tap the folder button to rename or delete groups.",
+                "Tap Add item for things that aren't in a recipe.",
+                "Tap the price on an item to note what you paid. The list shows the total spent."
+            )
+        ),
+        GuideSection(
+            title = "Spending",
+            items = listOf(
+                "Open Spending reports from the Profile tab.",
+                "It adds up the prices you note on the shopping list.",
+                "Pick Week, Day or Range to see the total, the average and a bar chart. Tap a bar to see its amount.",
+                "Tap the share button to send the report as a PDF."
+            )
+        ),
+        GuideSection(
+            title = "Reminders",
+            items = listOf(
+                "Open Settings, then Notifications, or tap the bell on Home.",
+                "Turn on a reminder for breakfast, lunch, dinner or a snack, and tap its time to change it.",
+                "The first time, the app asks for permission to send notifications.",
+                "Reminders go off every day at about the time you set."
+            )
+        ),
+        GuideSection(
+            title = "Backup and restore",
+            items = listOf(
+                "In Settings, Save a backup file keeps your recipes, meal plans, shopping lists, settings and photos in one .zip file.",
+                "Restore from a backup file replaces everything in the app with the backup, then restarts the app.",
+                "Keep the backup file somewhere safe, such as your cloud storage, to move your data to a new phone."
+            )
+        ),
+        GuideSection(
+            title = "Settings",
+            items = listOf(
+                "Theme: System, Light or Dark.",
+                "Lock past dates, Read aloud, and the meal plan and recipe views that open first.",
+                "Currency for prices on the shopping list and in spending reports.",
+                "About Meal Planner and the privacy policy."
+            )
+        ),
+        GuideSection(
+            title = "Ask Gemini",
+            items = listOf(
+                "On Android 16 and later, Gemini can use Meal Planner for you.",
+                "It can read your shopping list, add items to it and check them off.",
+                "It can search recipes, read a recipe aloud and add a new recipe.",
+                "It can read your meal plan for today or this week and add a recipe to it.",
+                "It can tell you how much you spent today, this week or this month."
+            ),
+            examples = listOf(
+                "“Hey Gemini, add milk to my Meal Planner shopping list”",
+                "“Hey Gemini, what's on my meal plan today?”",
+                "“Hey Gemini, find a chicken adobo recipe in Meal Planner”",
+                "“Hey Gemini, how much did I spend this week in Meal Planner?”"
+            )
+        )
+    )
 )

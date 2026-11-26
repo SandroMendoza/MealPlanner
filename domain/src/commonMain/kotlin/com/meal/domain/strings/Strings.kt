@@ -249,5 +249,27 @@ data class Strings(
     val spendingPdfTitle: String,
     val spendingPdfDateRange: (start: String, end: String) -> String,
     val spendingPdfTotalSpent: (amount: String) -> String,
-    val spendingShareChooserTitle: String
+    val spendingShareChooserTitle: String,
+
+    // Walkthrough shown on first launch
+    val walkthroughSkip: String,
+    val walkthroughNext: String,
+    val walkthroughGetStarted: String,
+    val walkthroughPageOf: (page: Int, total: Int) -> String,
+    val walkthroughAddMeal: WalkthroughText,
+    val walkthroughPickMeal: WalkthroughText,
+    val walkthroughRemoveMeal: WalkthroughText,
+    val walkthroughCreateRecipe: WalkthroughText,
+    val walkthroughFilterRecipes: WalkthroughText,
+    val walkthroughCheckItem: WalkthroughText,
+    val walkthroughRemoveItem: WalkthroughText,
+    val walkthroughGroupItem: WalkthroughText,
+    val walkthroughRecordPrice: WalkthroughText,
+    val walkthroughReminders: WalkthroughText,
+
+    // Feature guide in Settings
+    val featureGuide: String,
+    val featureGuideReplayWalkthrough: String,
+    val featureGuideTrySaying: String,
+    val featureGuideSections: List<GuideSection>
 )
