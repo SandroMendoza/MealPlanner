@@ -1,0 +1,10 @@
+CREATE TABLE OnboardingEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    walkthroughSeen INTEGER NOT NULL
+);
+
+selectOnboarding:
+SELECT * FROM OnboardingEntity WHERE id = 1;
+
+markWalkthroughSeen:
+INSERT OR REPLACE INTO OnboardingEntity(id, walkthroughSeen) VALUES (1, 1);

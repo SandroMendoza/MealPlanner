@@ -13,6 +13,7 @@ import com.meal.domain.model.enums.MealType
 import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.MealReminderRepository
+import com.meal.domain.repository.OnboardingRepository
 import com.meal.domain.repository.RecipeRepository
 import com.meal.domain.repository.SettingsRepository
 import com.meal.domain.repository.ShoppingGroupRepository
@@ -154,6 +155,16 @@ class FakeWeekNoteRepository(initial: Map<LocalDate, String> = emptyMap()) : Wee
     override suspend fun updateNote(weekStart: LocalDate, note: String) {
         updates += weekStart to note
         notes.value = notes.value + (weekStart to note)
+    }
+}
+
+class FakeOnboardingRepository(seen: Boolean = false) : OnboardingRepository {
+    val walkthroughSeen = MutableStateFlow(seen)
+
+    override fun walkthroughSeen(): Flow<Boolean> = walkthroughSeen
+
+    override suspend fun markWalkthroughSeen() {
+        walkthroughSeen.value = true
     }
 }
 

@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.ViewList
@@ -89,6 +90,7 @@ fun SettingsScreen(
     onNotificationSettingsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
+    onFeatureGuideClick: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val spacing = MealPlannerTokens.spacing
@@ -245,6 +247,10 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(spacing.sectionGap))
             SectionLabel(LocalStrings.current.settingsAbout)
+            SettingsRow(label = LocalStrings.current.featureGuide, icon = Icons.AutoMirrored.Filled.Help, onClick = onFeatureGuideClick) {
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsAboutMealPlanner, icon = Icons.Default.Info, onClick = onAboutClick) {
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }

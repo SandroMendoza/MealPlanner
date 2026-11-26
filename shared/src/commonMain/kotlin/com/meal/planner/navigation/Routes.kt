@@ -17,6 +17,8 @@ object Routes {
     const val NOTIFICATION_SETTINGS = "settings/notifications"
     const val ABOUT = "settings/about"
     const val PRIVACY_POLICY = "settings/privacy"
+    const val FEATURE_GUIDE = "settings/guide"
+    const val WALKTHROUGH = "settings/guide/walkthrough"
 
     /** Sentinel path segment meaning "ask which meal type after a recipe is picked". */
     const val ANY_MEAL_TYPE = "any"
