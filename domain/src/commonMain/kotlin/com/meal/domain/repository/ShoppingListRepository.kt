@@ -17,6 +17,8 @@ interface ShoppingListRepository {
     suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate)
     /** Changes the item's quantity and unit for this range only; its key, group, price and checked state stay. */
     suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit)
+    /** Puts the named items in the "At home" section, or back among the items to buy, for every list. */
+    suspend fun setItemsAtHome(names: Collection<String>, atHome: Boolean)
     suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate)
     suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double)
     fun getPricedItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<SpendingLineItem>>

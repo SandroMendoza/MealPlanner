@@ -31,6 +31,10 @@ class ShoppingListRepositoryImpl(
         localDataSource.setQuantityAndUnit(itemKey, rangeStart, rangeEnd, quantity, unit)
     }
 
+    override suspend fun setItemsAtHome(names: Collection<String>, atHome: Boolean) {
+        localDataSource.setAtHome(names, atHome)
+    }
+
     override suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) {
         localDataSource.remove(itemKey, rangeStart, rangeEnd)
     }

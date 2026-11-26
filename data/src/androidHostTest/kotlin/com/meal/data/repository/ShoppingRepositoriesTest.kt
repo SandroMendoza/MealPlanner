@@ -82,6 +82,29 @@ class ShoppingRepositoriesTest {
     }
 
     @Test
+    fun pantryStaplesStartAtHomeAndOtherItemsDoNot() = runTest {
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("salt|GRAMS", "Salt"), item("rice|GRAMS", "Rice")))
+
+        val atHome = list.getItems(weekStart, weekEnd).first().associate { it.name to it.atHome }
+
+        assertEquals(mapOf("Rice" to false, "Salt" to true), atHome)
+    }
+
+    @Test
+    fun movingAnItemIsRememberedForOtherListsByName() = runTest {
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("salt|GRAMS", "Salt"), item("rice|GRAMS", "Rice")))
+
+        list.setItemsAtHome(listOf("Salt"), atHome = false)
+        list.setItemsAtHome(listOf("Rice"), atHome = true)
+        list.syncGeneratedItems(day, day, listOf(item("salt|PIECE", "salt "), item("rice|GRAMS", "Rice")))
+
+        val week = list.getItems(weekStart, weekEnd).first().associate { it.name to it.atHome }
+        val dayList = list.getItems(day, day).first().associate { it.name to it.atHome }
+        assertEquals(mapOf("Rice" to true, "Salt" to false), week)
+        assertEquals(mapOf("Rice" to true, "salt " to false), dayList)
+    }
+
+    @Test
     fun syncDoesNotBringBackRemovedItems() = runTest {
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice")))
         list.removeItem("rice", weekStart, weekEnd)

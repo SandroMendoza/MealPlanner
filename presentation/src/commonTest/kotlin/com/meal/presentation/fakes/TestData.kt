@@ -60,7 +60,8 @@ fun shoppingItem(
     unit: MeasurementUnit = MeasurementUnit.PIECE,
     checked: Boolean = false,
     price: Double? = null,
-    groupId: String? = null
+    groupId: String? = null,
+    atHome: Boolean = false
 ) = ShoppingListItem(
     itemKey = key,
     name = name,
@@ -68,5 +69,6 @@ fun shoppingItem(
     unit = unit,
     checked = checked,
     price = price,
-    groupId = groupId
+    groupId = groupId,
+    atHome = atHome
 )

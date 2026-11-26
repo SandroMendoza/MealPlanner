@@ -21,6 +21,7 @@ import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
+import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
 import com.meal.domain.service.TtsSpeaker
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.formatAmount
@@ -49,6 +50,7 @@ class ShoppingListViewModel(
     private val deleteShoppingGroupUseCase: DeleteShoppingGroupUseCase,
     private val assignItemToGroupUseCase: AssignItemToGroupUseCase,
     private val updateShoppingListItemAmountUseCase: UpdateShoppingListItemAmountUseCase,
+    private val setShoppingItemsAtHomeUseCase: SetShoppingItemsAtHomeUseCase,
     private val ttsSpeaker: TtsSpeaker
 ) : ViewModel() {
 
@@ -163,6 +165,19 @@ class ShoppingListViewModel(
         val rangeEnd = _uiState.value.rangeEnd
         viewModelScope.launch {
             keys.forEach { removeShoppingListItemUseCase.execute(it, rangeStart, rangeEnd) }
+        }
+        clearSelection()
+    }
+
+    /**
+     * Moves the selected items to "At home", or back among the items to buy when every selected
+     * item is already at home.
+     */
+    fun moveSelectedAtHome() {
+        val selected = _uiState.value.items.filter { it.itemKey in _uiState.value.selectedItemKeys }
+        val toAtHome = !selected.all { it.atHome }
+        viewModelScope.launch {
+            setShoppingItemsAtHomeUseCase.execute(selected.map { it.name }, toAtHome)
         }
         clearSelection()
     }

@@ -226,6 +226,12 @@ class FakeShoppingListRepository : ShoppingListRepository {
         })
     }
 
+    override suspend fun setItemsAtHome(names: Collection<String>, atHome: Boolean) {
+        itemsByRange.value = itemsByRange.value.mapValues { (_, items) ->
+            items.map { if (it.name in names) it.copy(atHome = atHome) else it }
+        }
+    }
+
     override suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) {
         removedItems += itemKey to (rangeStart to rangeEnd)
         setItems(rangeStart, rangeEnd, itemsFor(rangeStart, rangeEnd).filterNot { it.itemKey == itemKey })

@@ -98,6 +98,7 @@ class FakeShoppingListRepository : ShoppingListRepository {
     val removedCalls = mutableListOf<ItemCall>()
     val priceCalls = mutableListOf<ItemCall>()
     val amountCalls = mutableListOf<ItemCall>()
+    val atHomeCalls = mutableListOf<Pair<Collection<String>, Boolean>>()
 
     override fun getItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>> = items
 
@@ -115,6 +116,10 @@ class FakeShoppingListRepository : ShoppingListRepository {
 
     override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) {
         amountCalls += ItemCall(itemKey, rangeStart, rangeEnd, quantity to unit)
+    }
+
+    override suspend fun setItemsAtHome(names: Collection<String>, atHome: Boolean) {
+        atHomeCalls += names to atHome
     }
 
     override suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) {
