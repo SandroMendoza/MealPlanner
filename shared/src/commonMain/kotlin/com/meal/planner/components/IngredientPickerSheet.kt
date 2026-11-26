@@ -103,7 +103,8 @@ fun IngredientPickerSheet(
     onDismiss: () -> Unit,
     defaultQuantity: String = "",
     requireQuantity: Boolean = false,
-    canChangeName: Boolean = true
+    canChangeName: Boolean = true,
+    amountExtras: (@Composable () -> Unit)? = null
 ) {
     val spacing = MealPlannerTokens.spacing
     val compact = LocalCompactHeight.current
@@ -184,7 +185,8 @@ fun IngredientPickerSheet(
                     canConfirm = canConfirm,
                     compact = compact,
                     onBack = if (canChangeName) { { searching = true } } else null,
-                    onConfirm = confirm
+                    onConfirm = confirm,
+                    extras = amountExtras
                 )
             }
         }
@@ -305,7 +307,8 @@ private fun ColumnScope.AmountStep(
     canConfirm: Boolean,
     compact: Boolean,
     onBack: (() -> Unit)?,
-    onConfirm: (closeAfter: Boolean) -> Unit
+    onConfirm: (closeAfter: Boolean) -> Unit,
+    extras: (@Composable () -> Unit)? = null
 ) {
     val strings = LocalStrings.current
     val spacing = MealPlannerTokens.spacing
@@ -378,6 +381,7 @@ private fun ColumnScope.AmountStep(
             items(units, key = { it.name }) { unitChip(it) }
             item { moreUnitsChip() }
         }
+        extras?.invoke()
         return
     }
 
@@ -399,6 +403,7 @@ private fun ColumnScope.AmountStep(
             units.forEach { unitChip(it) }
             moreUnitsChip()
         }
+        extras?.invoke()
     }
     Row(
         horizontalArrangement = Arrangement.spacedBy(spacing.sm, Alignment.End),

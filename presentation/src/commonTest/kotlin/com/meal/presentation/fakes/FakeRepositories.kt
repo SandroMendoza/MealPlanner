@@ -215,9 +215,10 @@ class FakeShoppingListRepository : ShoppingListRepository {
         setItems(rangeStart, rangeEnd, itemsFor(rangeStart, rangeEnd).map { if (it.itemKey == itemKey) it.copy(checked = checked) else it })
     }
 
-    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) {
+    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String {
         manualItems += item to (rangeStart to rangeEnd)
         setItems(rangeStart, rangeEnd, itemsFor(rangeStart, rangeEnd) + item)
+        return item.itemKey
     }
 
     override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) {

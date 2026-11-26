@@ -300,6 +300,7 @@ val englishStrings = Strings(
     shoppingCancelSelectionCd = "Cancel selection",
     shoppingSelectItemCd = "Select",
     shoppingAtHome = "At home",
+    shoppingGroupLabel = "Group",
     shoppingMoveToAtHomeCd = "Move to At home",
     shoppingMoveToListCd = "Move back to the list",
     shoppingRemoveSelectedTitle = "Remove items?",

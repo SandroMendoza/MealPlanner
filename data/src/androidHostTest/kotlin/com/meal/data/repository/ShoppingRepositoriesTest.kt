@@ -167,8 +167,9 @@ class ShoppingRepositoriesTest {
     fun addingAnItemAlreadyOnTheListAddsToItsQuantity() = runTest {
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("taro|GRAMS", "Taro", 200.0)))
 
-        list.addManualItem(item("manual-1", "taro", 300.0), weekStart, weekEnd)
+        val key = list.addManualItem(item("manual-1", "taro", 300.0), weekStart, weekEnd)
 
+        assertEquals("taro|GRAMS", key)
         val taro = list.getItems(weekStart, weekEnd).first().single()
         assertEquals("taro|GRAMS", taro.itemKey)
         assertEquals(500.0, taro.totalQuantity)
@@ -178,8 +179,9 @@ class ShoppingRepositoriesTest {
     fun addingAnItemInAnotherUnitKeepsItsOwnRow() = runTest {
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("taro|GRAMS", "Taro", 200.0)))
 
-        list.addManualItem(item("manual-1", "Taro", 2.0).copy(unit = MeasurementUnit.PIECE), weekStart, weekEnd)
+        val key = list.addManualItem(item("manual-1", "Taro", 2.0).copy(unit = MeasurementUnit.PIECE), weekStart, weekEnd)
 
+        assertEquals("manual-1", key)
         assertEquals(2, list.getItems(weekStart, weekEnd).first().size)
     }
 

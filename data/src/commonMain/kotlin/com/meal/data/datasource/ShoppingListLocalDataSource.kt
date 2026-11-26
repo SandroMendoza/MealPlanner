@@ -93,9 +93,9 @@ class ShoppingListLocalDataSource(
             )
         }
 
-    suspend fun addManual(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) =
+    suspend fun addManual(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String =
         withContext(ioDispatcher) {
-            database.transaction {
+            database.transactionWithResult {
                 val existingKey = queries.selectActiveItemByName(
                     rangeStart = rangeStart.toString(),
                     rangeEnd = rangeEnd.toString(),
@@ -109,6 +109,7 @@ class ShoppingListLocalDataSource(
                         rangeStart = rangeStart.toString(),
                         rangeEnd = rangeEnd.toString()
                     )
+                    existingKey
                 } else {
                     queries.insertItem(
                         itemKey = item.itemKey,
@@ -119,6 +120,7 @@ class ShoppingListLocalDataSource(
                         unit = item.unit.name,
                         checked = 0
                     )
+                    item.itemKey
                 }
             }
         }

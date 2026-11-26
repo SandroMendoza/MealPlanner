@@ -182,9 +182,11 @@ class ShoppingListViewModel(
         clearSelection()
     }
 
-    fun addItem(name: String, quantity: Double, unit: MeasurementUnit) {
+    /** Adds the item, and puts it in the group with [groupId] when one is given. */
+    fun addItem(name: String, quantity: Double, unit: MeasurementUnit, groupId: String? = null) {
         viewModelScope.launch {
-            addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
+            val itemKey = addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
+            if (groupId != null) assignItemToGroupUseCase.execute(itemKey, groupId)
         }
     }
 

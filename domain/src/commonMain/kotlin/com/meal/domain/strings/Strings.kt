@@ -180,6 +180,7 @@ data class Strings(
     val shoppingCancelSelectionCd: String,
     val shoppingSelectItemCd: String,
     val shoppingAtHome: String,
+    val shoppingGroupLabel: String,
     val shoppingMoveToAtHomeCd: String,
     val shoppingMoveToListCd: String,
     val shoppingRemoveSelectedTitle: String,

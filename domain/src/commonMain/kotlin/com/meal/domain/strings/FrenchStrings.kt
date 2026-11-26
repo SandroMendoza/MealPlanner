@@ -307,6 +307,7 @@ val frenchStrings = Strings(
     shoppingCancelSelectionCd = "Annuler la sélection",
     shoppingSelectItemCd = "Sélectionner",
     shoppingAtHome = "À la maison",
+    shoppingGroupLabel = "Groupe",
     shoppingMoveToAtHomeCd = "Déplacer vers À la maison",
     shoppingMoveToListCd = "Remettre dans la liste",
     shoppingRemoveSelectedTitle = "Supprimer les articles ?",

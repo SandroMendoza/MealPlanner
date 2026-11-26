@@ -30,6 +30,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -56,6 +58,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -78,6 +81,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.IngredientUnits
+import com.meal.domain.model.ShoppingGroup
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.IngredientPickerSheet
@@ -207,13 +211,17 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
         }
 
         if (uiState.showAddItemDialog) {
+            var groupId by remember { mutableStateOf<String?>(null) }
             IngredientPickerSheet(
                 knownNames = remember(uiState.availableIngredients) { uiState.availableIngredients.map { it.name } },
                 editing = null,
-                onConfirm = { row -> row.quantity.toDoubleOrNull()?.let { viewModel.addItem(row.name, it, row.unit) } },
+                onConfirm = { row -> row.quantity.toDoubleOrNull()?.let { viewModel.addItem(row.name, it, row.unit, groupId) } },
                 onDismiss = { viewModel.dismissAddItemDialog() },
                 defaultQuantity = "1",
-                requireQuantity = true
+                requireQuantity = true,
+                amountExtras = if (uiState.groups.isEmpty()) null else {
+                    { GroupChoice(groups = uiState.groups, selectedId = groupId, onSelect = { groupId = it }) }
+                }
             )
         }
 
@@ -616,6 +624,25 @@ private fun ShoppingListContent(
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+/** Picks the group a new item goes into; no pick leaves it ungrouped. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun GroupChoice(groups: List<ShoppingGroup>, selectedId: String?, onSelect: (String?) -> Unit) {
+    val spacing = MealPlannerTokens.spacing
+    Column(verticalArrangement = Arrangement.spacedBy(spacing.sm)) {
+        Text(LocalStrings.current.shoppingGroupLabel, style = MaterialTheme.typography.labelLarge)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm), modifier = Modifier.fillMaxWidth()) {
+            groups.sortedBy { it.sortOrder }.forEach { group ->
+                FilterChip(
+                    selected = group.id == selectedId,
+                    onClick = { onSelect(if (group.id == selectedId) null else group.id) },
+                    label = { Text(group.name) }
+                )
             }
         }
     }
