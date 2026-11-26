@@ -2,6 +2,7 @@ package com.meal.planner.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -15,8 +16,8 @@ import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImage
 
 /**
- * Shows the recipe's photo when available, falling back to a tinted icon
- * (the look every screen used before images were wired up) when it isn't.
+ * Shows the recipe's photo on top of a tinted icon, so the icon shows when there is no photo,
+ * while it loads, or when it can't be loaded.
  */
 @Composable
 fun RecipeThumbnail(
@@ -26,27 +27,25 @@ fun RecipeThumbnail(
     shape: androidx.compose.ui.graphics.Shape = MaterialTheme.shapes.small,
     modifier: Modifier = Modifier
 ) {
-    if (imageUrl.isNullOrBlank()) {
-        Box(
-            modifier = modifier
-                .size(size)
-                .background(MaterialTheme.colorScheme.primaryContainer, shape),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                imageVector = fallbackIcon,
+    Box(
+        modifier = modifier
+            .size(size)
+            .clip(shape)
+            .background(MaterialTheme.colorScheme.primaryContainer),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = fallbackIcon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+        )
+        if (!imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = recipeImageModel(imageUrl),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
             )
         }
-    } else {
-        AsyncImage(
-            model = recipeImageModel(imageUrl),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .size(size)
-                .clip(shape)
-        )
     }
 }

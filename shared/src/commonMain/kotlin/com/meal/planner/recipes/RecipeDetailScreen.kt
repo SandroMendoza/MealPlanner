@@ -452,21 +452,21 @@ private fun RecipeDetailImage(
     overlay: @Composable BoxScope.() -> Unit = {}
 ) {
     Box(modifier = modifier) {
-        if (recipe.imageUrl.isNullOrBlank()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.MenuBook,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                    modifier = Modifier.size(64.dp)
-                )
-            }
-        } else {
+        // The icon stays underneath the photo, so it shows while a photo loads or can't be loaded.
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.MenuBook,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier.size(64.dp)
+            )
+        }
+        if (!recipe.imageUrl.isNullOrBlank()) {
             AsyncImage(
                 model = recipeImageModel(recipe.imageUrl),
                 contentDescription = null,

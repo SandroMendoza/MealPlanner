@@ -63,8 +63,41 @@ class RecipeRepositoryImplTest {
         val recipes = repository.getAllRecipes().first()
 
         assertEquals(seedCount, recipes.size)
-        assertTrue(recipes.all { !it.isUserCreated && it.cuisine == Cuisine.FILIPINO })
+        assertTrue(recipes.all { !it.isUserCreated && it.cuisine != null })
         assertTrue(recipes.all { it.ingredients.isNotEmpty() && it.instructions.isNotEmpty() })
+    }
+
+    @Test
+    fun everyCuisineHasAtLeastTwentyBuiltInRecipes() {
+        val perCuisine = RecipeSeedData.recipes().groupingBy { it.cuisine }.eachCount()
+
+        Cuisine.entries.filter { it != Cuisine.OTHER }.forEach { cuisine ->
+            assertTrue((perCuisine[cuisine] ?: 0) >= 20, "$cuisine has ${perCuisine[cuisine] ?: 0}")
+        }
+    }
+
+    @Test
+    fun builtInRecipesHaveUniqueNamesAndPhotos() {
+        val seed = RecipeSeedData.recipes()
+
+        assertEquals(seed.size, seed.map { it.name.lowercase() }.toSet().size)
+        assertEquals(seed.size, seed.map { it.imageUrl }.toSet().size)
+    }
+
+    @Test
+    fun databaseWithOtherRecipesGetsTheMissingBuiltInRecipes() = runTest {
+        repository.addRecipe(recipe())
+
+        assertEquals(seedCount + 1, repository.getAllRecipes().first().size)
+    }
+
+    @Test
+    fun renamedBuiltInRecipeIsNotSeededAgain() = runTest {
+        val seeded = repository.getAllRecipes().first().first()
+
+        repository.updateRecipe(seeded.copy(name = "Renamed"))
+
+        assertEquals(seedCount, repository.getAllRecipes().first().size)
     }
 
     @Test
