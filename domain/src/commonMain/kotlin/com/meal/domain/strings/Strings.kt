@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -73,8 +74,8 @@ data class Strings(
     val navProfile: String,
 
     // Home
-    val homeGreetingDefault: String,
-    val homeGreetingWithName: (String) -> String,
+    val homeGreetingDefault: (DayPeriod) -> String,
+    val homeGreetingWithName: (DayPeriod, String) -> String,
     val homeSubtitle: String,
     val homeNotificationsCd: String,
     val homeTodaysPlan: String,

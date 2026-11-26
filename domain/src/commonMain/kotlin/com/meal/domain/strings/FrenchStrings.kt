@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -19,6 +20,11 @@ private val FRENCH_WEEKDAY_INITIAL = mapOf(
 private val FRENCH_MONTH_ABBREVIATIONS = listOf(
     "Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"
 )
+
+private fun frenchGreeting(period: DayPeriod): String = when (period) {
+    DayPeriod.MORNING, DayPeriod.AFTERNOON -> "Bonjour"
+    DayPeriod.EVENING -> "Bonsoir"
+}
 
 private fun frenchMealTypeName(mealType: MealType): String = when (mealType) {
     MealType.BREAKFAST -> "Petit-déjeuner"
@@ -199,8 +205,8 @@ val frenchStrings = Strings(
     navShopping = "Courses",
     navProfile = "Profil",
 
-    homeGreetingDefault = "Bonjour !",
-    homeGreetingWithName = { name -> "Bonjour, $name !" },
+    homeGreetingDefault = { period -> "${frenchGreeting(period)} !" },
+    homeGreetingWithName = { period, name -> "${frenchGreeting(period)}, $name !" },
     homeSubtitle = "Planifions vos repas.",
     homeNotificationsCd = "Notifications",
     homeTodaysPlan = "Plan du jour",
