@@ -112,7 +112,8 @@ class UiStateTest {
         assertTrue(validForm.canSave)
         assertFalse(validForm.copy(name = " ").canSave)
         assertFalse(validForm.copy(ingredients = listOf(IngredientFormRow(name = " "))).canSave)
-        assertFalse(validForm.copy(instructions = listOf(InstructionFormRow(""))).canSave)
+        assertTrue(validForm.copy(instructions = listOf(InstructionFormRow(""))).canSave)
+        assertTrue(validForm.copy(instructions = emptyList()).canSave)
     }
 
     @Test

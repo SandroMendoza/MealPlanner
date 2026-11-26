@@ -203,6 +203,20 @@ class RecipeFormViewModelTest {
     }
 
     @Test
+    fun aRecipeWithoutStepsCanBeSaved() {
+        val vm = viewModel()
+        vm.updateName("Toast")
+        vm.addIngredient(IngredientFormRow("Bread", "2", MeasurementUnit.PIECE))
+        vm.addInstructionRow()
+
+        vm.save()
+
+        val saved = recipes.added.single()
+        assertTrue(saved.instructions.isEmpty())
+        assertTrue(vm.state.value.saved)
+    }
+
+    @Test
     fun saveDoesNothingForADuplicateName() {
         val vm = viewModel()
         vm.fillValidForm(name = " pancit ")
