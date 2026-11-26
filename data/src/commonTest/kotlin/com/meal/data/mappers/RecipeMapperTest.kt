@@ -6,6 +6,7 @@ import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -29,7 +30,8 @@ class RecipeMapperTest {
         instructions = listOf(Instruction(1, "Marinate"), Instruction(2, "Simmer")),
         isFavorite = true,
         isUserCreated = false,
-        cuisine = Cuisine.FILIPINO
+        cuisine = Cuisine.FILIPINO,
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER)
     )
 
     @Test
@@ -48,6 +50,7 @@ class RecipeMapperTest {
         assertEquals(dto.isFavorite, recipe.isFavorite)
         assertEquals(dto.isUserCreated, recipe.isUserCreated)
         assertEquals(dto.cuisine, recipe.cuisine)
+        assertEquals(dto.mealTypes, recipe.mealTypes)
     }
 
     @Test

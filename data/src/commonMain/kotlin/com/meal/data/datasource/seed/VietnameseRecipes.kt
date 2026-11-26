@@ -7,6 +7,7 @@ import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SALAD
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
@@ -18,6 +19,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Bun Cha",
         image = "bun_cha",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Grilled pork patties and pork belly served in a sweet and sour fish sauce dip with rice noodles and herbs.",
         category = MAIN_DISH,
         minutes = 75, servings = 4,
@@ -54,6 +56,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Banh Mi",
         image = "banh_mi",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.SNACK),
         description = "Crisp baguette filled with caramelised lemongrass pork, liver pâté, quick pickles, cucumber and cilantro.",
         category = MAIN_DISH,
         minutes = 60, servings = 4,
@@ -90,6 +93,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Com Tam",
         image = "com_tam",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Lemongrass grilled pork chops on rice with a fried egg, spring onion oil and sweet fish sauce.",
         category = MAIN_DISH,
         minutes = 70, servings = 4,
@@ -126,6 +130,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Ca Kho To",
         image = "ca_kho_to",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Catfish braised in a dark caramel and fish sauce until sticky, savoury and peppery.",
         category = MAIN_DISH,
         minutes = 55, servings = 4,
@@ -152,6 +157,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Thit Kho",
         image = "thit_kho",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Pork belly and boiled eggs braised in coconut water and caramel until tender and glossy.",
         category = MAIN_DISH,
         minutes = 105, servings = 4,
@@ -181,6 +187,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Shaking Beef",
         image = "shaking_beef",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Seared cubes of garlicky beef tossed in butter and served over watercress with a lime and pepper dip.",
         category = MAIN_DISH,
         minutes = 45, servings = 4,
@@ -213,6 +220,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Vietnamese Lemongrass Chicken",
         image = "vietnamese_lemongrass_chicken",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chicken thighs stir-fried with lemongrass, chilli and fish sauce until sticky and golden.",
         category = MAIN_DISH,
         minutes = 45, servings = 4,
@@ -241,6 +249,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Banh Xeo",
         image = "banh_xeo",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Crisp turmeric and coconut rice crêpes filled with pork, shrimp and bean sprouts, wrapped in lettuce.",
         category = MAIN_DISH,
         minutes = 75, servings = 4,
@@ -277,6 +286,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Bo Kho",
         image = "bo_kho",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Beef stew with lemongrass, star anise and carrots in a coconut water broth, served with baguette.",
         category = MAIN_DISH,
         minutes = 165, servings = 6,
@@ -312,6 +322,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Vietnamese Chicken Curry",
         image = "vietnamese_chicken_curry",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Mild coconut curry of chicken, sweet potato and carrot, fragrant with lemongrass.",
         category = MAIN_DISH,
         minutes = 85, servings = 6,
@@ -343,6 +354,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Beef Pho",
         image = "beef_pho",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Rice noodles in a clear beef broth spiced with star anise and charred ginger, topped with thin beef and herbs.",
         category = SOUP,
         minutes = 180, servings = 6,
@@ -384,6 +396,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Pho",
         image = "chicken_pho",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Light, gingery chicken broth with rice noodles, shredded chicken, herbs and lime.",
         category = SOUP,
         minutes = 120, servings = 4,
@@ -418,6 +431,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Canh Chua",
         image = "canh_chua",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Sweet and sour tamarind soup with catfish, pineapple, tomato, okra and bean sprouts.",
         category = SOUP,
         minutes = 45, servings = 4,
@@ -452,6 +466,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Cha Gio",
         image = "cha_gio",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Crisp fried rice paper rolls filled with pork, shrimp, glass noodles and mushrooms.",
         category = SIDE_DISH,
         minutes = 75, servings = 6,
@@ -487,6 +502,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Goi Cuon",
         image = "goi_cuon",
+        mealTypes = setOf(MealType.LUNCH, MealType.SNACK),
         description = "Fresh rice paper rolls with shrimp, pork, noodles and herbs, served with a hoisin and peanut dip.",
         category = SIDE_DISH,
         minutes = 50, servings = 4,
@@ -517,6 +533,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Goi Ga",
         image = "goi_ga",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Shredded chicken and cabbage salad with herbs, lime and fish sauce dressing, peanuts and fried shallots.",
         category = SALAD,
         minutes = 45, servings = 4,
@@ -550,6 +567,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Garlic Stir-Fried Water Spinach",
         image = "garlic_stir_fried_water_spinach",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Water spinach flash-fried with plenty of garlic and a splash of fish sauce until just wilted.",
         category = SIDE_DISH,
         minutes = 15, servings = 4,
@@ -574,6 +592,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Che Chuoi",
         image = "che_chuoi",
+        mealTypes = setOf(MealType.SNACK),
         description = "Warm bananas and sago pearls in sweet pandan coconut milk, topped with toasted peanuts and sesame.",
         category = DESSERT,
         minutes = 40, servings = 4,
@@ -600,6 +619,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Banh Flan",
         image = "banh_flan",
+        mealTypes = setOf(MealType.SNACK),
         description = "Silky caramel custard made with condensed milk and served with a little black coffee poured over.",
         category = DESSERT,
         minutes = 300, servings = 6,
@@ -625,6 +645,7 @@ internal fun vietnameseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Vietnamese Iced Coffee",
         image = "vietnamese_iced_coffee",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.SNACK),
         description = "Strong dark coffee dripped over sweetened condensed milk and poured over ice.",
         category = BEVERAGE,
         minutes = 10, servings = 2,

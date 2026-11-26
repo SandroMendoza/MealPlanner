@@ -12,6 +12,12 @@ CREATE TABLE RecipeEntity (
     cuisine TEXT
 );
 
+CREATE TABLE RecipeMealTypeEntity (
+    recipeId TEXT NOT NULL,
+    mealType TEXT NOT NULL,
+    FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id)
+);
+
 CREATE TABLE RecipeIngredientEntity (
     id TEXT NOT NULL PRIMARY KEY,
     recipeId TEXT NOT NULL,
@@ -39,6 +45,9 @@ SELECT name, imageUrl FROM RecipeEntity;
 selectRecipeById:
 SELECT * FROM RecipeEntity WHERE id = ?;
 
+selectMealTypesForRecipe:
+SELECT * FROM RecipeMealTypeEntity WHERE recipeId = ?;
+
 selectRecipeIngredientsForRecipe:
 SELECT
     RecipeIngredientEntity.id,
@@ -52,6 +61,12 @@ WHERE RecipeIngredientEntity.recipeId = ?;
 
 selectInstructionsForRecipe:
 SELECT * FROM InstructionEntity WHERE recipeId = ? ORDER BY stepNumber;
+
+selectMealTypesForActiveRecipes:
+SELECT RecipeMealTypeEntity.recipeId, RecipeMealTypeEntity.mealType
+FROM RecipeMealTypeEntity
+JOIN RecipeEntity ON RecipeEntity.id = RecipeMealTypeEntity.recipeId
+WHERE RecipeEntity.isDeleted = 0;
 
 selectRecipeIngredientsForActiveRecipes:
 SELECT
@@ -87,6 +102,12 @@ UPDATE RecipeEntity SET isDeleted = 1 WHERE id = ?;
 
 updateFavorite:
 UPDATE RecipeEntity SET isFavorite = ? WHERE id = ?;
+
+insertMealType:
+INSERT INTO RecipeMealTypeEntity(recipeId, mealType) VALUES (?, ?);
+
+deleteMealTypesForRecipe:
+DELETE FROM RecipeMealTypeEntity WHERE recipeId = ?;
 
 insertRecipeIngredient:
 INSERT INTO RecipeIngredientEntity(id, recipeId, ingredientId, quantity, unit) VALUES (?, ?, ?, ?, ?);

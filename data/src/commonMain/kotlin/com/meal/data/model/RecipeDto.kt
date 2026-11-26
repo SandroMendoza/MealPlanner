@@ -4,6 +4,7 @@ import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -20,5 +21,6 @@ data class RecipeDto(
     val instructions: List<Instruction>,
     val isFavorite: Boolean = false,
     val isUserCreated: Boolean = true,
-    val cuisine: Cuisine? = null
+    val cuisine: Cuisine? = null,
+    val mealTypes: Set<MealType> = emptySet()
 )

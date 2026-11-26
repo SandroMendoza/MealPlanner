@@ -6,6 +6,7 @@ import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -15,6 +16,7 @@ import kotlin.uuid.Uuid
 internal fun recipe(
     name: String,
     image: String,
+    mealTypes: Set<MealType>,
     description: String,
     category: FoodCategory,
     minutes: Int,
@@ -25,6 +27,7 @@ internal fun recipe(
     id = Uuid.random(),
     name = name,
     description = description,
+    mealTypes = mealTypes,
     category = category,
     preparationTimeMinutes = minutes,
     servings = servings,

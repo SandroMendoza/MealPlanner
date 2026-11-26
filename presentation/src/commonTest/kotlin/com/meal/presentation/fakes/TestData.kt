@@ -24,6 +24,7 @@ fun recipe(
     description: String? = null,
     category: FoodCategory = FoodCategory.MAIN_DISH,
     cuisine: Cuisine? = null,
+    mealTypes: Set<MealType> = emptySet(),
     preparationTimeMinutes: Int = 30,
     servings: Int = 4,
     imageUrl: String? = null,
@@ -44,7 +45,8 @@ fun recipe(
     instructions = instructions,
     isFavorite = isFavorite,
     isUserCreated = isUserCreated,
-    cuisine = cuisine
+    cuisine = cuisine,
+    mealTypes = mealTypes
 )
 
 @OptIn(ExperimentalUuidApi::class)

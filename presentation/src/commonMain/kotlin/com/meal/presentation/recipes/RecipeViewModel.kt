@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,6 +71,16 @@ class RecipeViewModel(
         _uiState.value = _uiState.value.copy(selectedCuisine = if (current == cuisine) null else cuisine)
     }
 
+    fun onMealTypeSelected(mealType: MealType?) {
+        val current = _uiState.value.selectedMealType
+        _uiState.value = _uiState.value.copy(selectedMealType = if (current == mealType) null else mealType)
+    }
+
+    /** Filters by [mealType] without toggling, for screens that open on a given meal. */
+    fun setMealTypeFilter(mealType: MealType?) {
+        _uiState.value = _uiState.value.copy(selectedMealType = mealType)
+    }
+
     fun onViewModeToggle() {
         val next = if (_uiState.value.viewMode == RecipeViewMode.GRID) RecipeViewMode.LIST else RecipeViewMode.GRID
         _uiState.value = _uiState.value.copy(viewMode = next)
@@ -85,5 +96,16 @@ class RecipeViewModel(
 
     fun onCreatedOnlyTabSelected(showCreatedOnly: Boolean) {
         _uiState.value = _uiState.value.copy(showCreatedOnly = showCreatedOnly)
+    }
+
+    fun clearFilters() {
+        _uiState.value = _uiState.value.copy(
+            selectedCategory = null,
+            selectedCuisine = null,
+            selectedMealType = null,
+            showFavoritesOnly = false,
+            showCreatedOnly = false,
+            prepTimeRange = RecipeUiState.FULL_PREP_TIME_RANGE
+        )
     }
 }

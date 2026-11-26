@@ -17,6 +17,7 @@ import com.meal.domain.model.enums.FoodCategory.DESSERT
 import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
@@ -54,6 +55,7 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Adobo",
             image = "chicken_adobo",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Chicken braised in soy sauce, vinegar, garlic and bay leaves until tender and glossy.",
             category = MAIN_DISH,
             minutes = 75, servings = 4,
@@ -81,6 +83,7 @@ object RecipeSeedData {
         recipe(
             name = "Pork Barbecue",
             image = "pork_barbecue",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Sweet and savoury pork skewers marinated overnight and grilled with a sticky glaze.",
             category = MAIN_DISH,
             minutes = 300, servings = 6,
@@ -109,6 +112,7 @@ object RecipeSeedData {
         recipe(
             name = "Kare-Kare",
             image = "kare_kare",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Oxtail and vegetables in a thick, savoury peanut sauce, served with shrimp paste.",
             category = MAIN_DISH,
             minutes = 180, servings = 6,
@@ -141,6 +145,7 @@ object RecipeSeedData {
         recipe(
             name = "Bistek Tagalog",
             image = "bistek_tagalog",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Thin beef slices braised in soy sauce and calamansi, topped with soft onion rings.",
             category = MAIN_DISH,
             minutes = 60, servings = 4,
@@ -167,6 +172,7 @@ object RecipeSeedData {
         recipe(
             name = "Pork Menudo",
             image = "pork_menudo",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Pork and liver stewed in tomato sauce with potatoes, carrots, peas and raisins.",
             category = MAIN_DISH,
             minutes = 90, servings = 6,
@@ -202,6 +208,7 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Afritada",
             image = "chicken_afritada",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Chicken stewed in tomato sauce with potatoes, carrots and bell peppers.",
             category = MAIN_DISH,
             minutes = 60, servings = 5,
@@ -236,6 +243,7 @@ object RecipeSeedData {
         recipe(
             name = "Beef Caldereta",
             image = "beef_caldereta",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Slow-cooked beef in a rich tomato and liver spread sauce with vegetables and cheese.",
             category = MAIN_DISH,
             minutes = 150, servings = 6,
@@ -269,6 +277,7 @@ object RecipeSeedData {
         recipe(
             name = "Pork Sisig",
             image = "pork_sisig",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Crisp chopped pork and liver with onion, chili and calamansi, served sizzling.",
             category = MAIN_DISH,
             minutes = 90, servings = 4,
@@ -302,6 +311,7 @@ object RecipeSeedData {
         recipe(
             name = "Lechon Kawali",
             image = "lechon_kawali",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Boiled then deep-fried pork belly with crackling skin and juicy meat.",
             category = MAIN_DISH,
             minutes = 150, servings = 4,
@@ -327,6 +337,7 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Inasal",
             image = "chicken_inasal",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Grilled chicken marinated in lemongrass, ginger, garlic and vinegar, basted with annatto oil.",
             category = MAIN_DISH,
             minutes = 240, servings = 4,
@@ -357,6 +368,7 @@ object RecipeSeedData {
         recipe(
             name = "Pancit Canton",
             image = "pancit_canton",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Stir-fried egg noodles with pork, shrimp and vegetables in a savoury sauce.",
             category = MAIN_DISH,
             minutes = 45, servings = 6,
@@ -389,6 +401,7 @@ object RecipeSeedData {
         recipe(
             name = "Pancit Bihon",
             image = "pancit_bihon",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Thin rice noodles stir-fried with chicken and vegetables.",
             category = MAIN_DISH,
             minutes = 45, servings = 6,
@@ -421,6 +434,7 @@ object RecipeSeedData {
         recipe(
             name = "Lumpiang Shanghai",
             image = "lumpiang_shanghai",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Thin, crisp spring rolls filled with seasoned ground pork and vegetables.",
             category = SIDE_DISH,
             minutes = 60, servings = 8,
@@ -449,6 +463,7 @@ object RecipeSeedData {
         recipe(
             name = "Tortang Talong",
             image = "tortang_talong",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Grilled eggplant flattened and fried in a beaten egg coating.",
             category = MAIN_DISH,
             minutes = 30, servings = 4,
@@ -472,6 +487,7 @@ object RecipeSeedData {
         recipe(
             name = "Ginisang Ampalaya",
             image = "ginisang_ampalaya",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Sautéed bitter gourd with tomato, onion and egg.",
             category = SIDE_DISH,
             minutes = 30, servings = 4,
@@ -498,6 +514,7 @@ object RecipeSeedData {
         recipe(
             name = "Pinakbet",
             image = "pinakbet",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Mixed vegetables cooked with pork and shrimp paste.",
             category = MAIN_DISH,
             minutes = 40, servings = 4,
@@ -528,6 +545,7 @@ object RecipeSeedData {
         recipe(
             name = "Laing",
             image = "laing",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Dried taro leaves slow-cooked in coconut milk with pork, ginger and chili.",
             category = SIDE_DISH,
             minutes = 70, servings = 4,
@@ -554,6 +572,7 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Curry",
             image = "chicken_curry",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Filipino-style chicken curry with coconut milk, potatoes and carrots.",
             category = MAIN_DISH,
             minutes = 50, servings = 5,
@@ -585,6 +604,7 @@ object RecipeSeedData {
         recipe(
             name = "Pork Binagoongan",
             image = "pork_binagoongan",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Pork belly braised with shrimp paste and tomatoes, with fried eggplant.",
             category = MAIN_DISH,
             minutes = 60, servings = 4,
@@ -615,6 +635,7 @@ object RecipeSeedData {
         recipe(
             name = "Daing na Bangus",
             image = "daing_na_bangus",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Milkfish marinated overnight in garlic and vinegar, then fried until crisp.",
             category = MAIN_DISH,
             minutes = 270, servings = 4,
@@ -637,6 +658,7 @@ object RecipeSeedData {
         recipe(
             name = "Fish Escabeche",
             image = "fish_escabeche",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Fried whole fish topped with a sweet and sour sauce and crisp vegetables.",
             category = MAIN_DISH,
             minutes = 40, servings = 4,
@@ -670,6 +692,7 @@ object RecipeSeedData {
         recipe(
             name = "Ginataang Kalabasa at Sitaw",
             image = "ginataang_kalabasa_at_sitaw",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Squash and string beans with shrimp in coconut milk.",
             category = MAIN_DISH,
             minutes = 35, servings = 4,
@@ -697,6 +720,7 @@ object RecipeSeedData {
         recipe(
             name = "Beef Mechado",
             image = "beef_mechado",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Beef braised in tomato sauce with soy sauce, calamansi, potatoes and carrots.",
             category = MAIN_DISH,
             minutes = 150, servings = 6,
@@ -729,6 +753,7 @@ object RecipeSeedData {
         recipe(
             name = "Pork Giniling",
             image = "pork_giniling",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Ground pork sautéed in tomato sauce with diced potatoes, carrots, peas and raisins.",
             category = MAIN_DISH,
             minutes = 35, servings = 4,
@@ -759,6 +784,7 @@ object RecipeSeedData {
         recipe(
             name = "Ginataang Hipon",
             image = "ginataang_hipon",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Shrimp simmered in coconut milk with ginger and green chili.",
             category = MAIN_DISH,
             minutes = 30, servings = 4,
@@ -786,6 +812,7 @@ object RecipeSeedData {
         recipe(
             name = "Sinigang na Baboy",
             image = "sinigang_na_baboy",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Sour tamarind soup with pork ribs and vegetables.",
             category = SOUP,
             minutes = 90, servings = 6,
@@ -817,6 +844,7 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Tinola",
             image = "chicken_tinola",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Light ginger broth with chicken, green papaya and chili leaves.",
             category = SOUP,
             minutes = 50, servings = 5,
@@ -844,6 +872,7 @@ object RecipeSeedData {
         recipe(
             name = "Bulalo",
             image = "bulalo",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Slow-simmered beef shank and bone marrow soup with corn and greens.",
             category = SOUP,
             minutes = 240, servings = 6,
@@ -870,6 +899,7 @@ object RecipeSeedData {
         recipe(
             name = "Nilagang Baka",
             image = "nilagang_baka",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Clear beef soup with potatoes, saba bananas, corn and cabbage.",
             category = SOUP,
             minutes = 180, servings = 6,
@@ -897,6 +927,7 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Sopas",
             image = "chicken_sopas",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.DINNER, MealType.SNACK),
             description = "Creamy chicken macaroni soup with vegetables and evaporated milk.",
             category = SOUP,
             minutes = 45, servings = 6,
@@ -928,6 +959,7 @@ object RecipeSeedData {
         recipe(
             name = "Beef Tapa",
             image = "beef_tapa",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH),
             description = "Sweet and garlicky cured beef, the centre of a classic tapsilog breakfast.",
             category = MAIN_DISH,
             minutes = 270, servings = 4,
@@ -952,6 +984,7 @@ object RecipeSeedData {
         recipe(
             name = "Skinless Longganisa",
             image = "skinless_longganisa",
+            mealTypes = setOf(MealType.BREAKFAST),
             description = "Sweet garlic pork sausages shaped by hand, no casing needed.",
             category = MAIN_DISH,
             minutes = 230, servings = 6,
@@ -978,6 +1011,7 @@ object RecipeSeedData {
         recipe(
             name = "Sinangag",
             image = "sinangag",
+            mealTypes = setOf(MealType.BREAKFAST),
             description = "Garlic fried rice made from day-old rice.",
             category = SIDE_DISH,
             minutes = 15, servings = 4,
@@ -1000,6 +1034,7 @@ object RecipeSeedData {
         recipe(
             name = "Arroz Caldo",
             image = "arroz_caldo",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.SNACK),
             description = "Chicken and rice porridge with ginger, topped with toasted garlic, egg and calamansi.",
             category = SOUP,
             minutes = 60, servings = 6,
@@ -1031,6 +1066,7 @@ object RecipeSeedData {
         recipe(
             name = "Champorado",
             image = "champorado",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.SNACK),
             description = "Chocolate rice porridge made with cacao tablets, drizzled with evaporated milk.",
             category = DESSERT,
             minutes = 35, servings = 4,
@@ -1054,6 +1090,7 @@ object RecipeSeedData {
         recipe(
             name = "Leche Flan",
             image = "leche_flan",
+            mealTypes = setOf(MealType.SNACK),
             description = "Silky steamed custard with a layer of caramel.",
             category = DESSERT,
             minutes = 345, servings = 8,
@@ -1076,6 +1113,7 @@ object RecipeSeedData {
         recipe(
             name = "Turon",
             image = "turon",
+            mealTypes = setOf(MealType.SNACK),
             description = "Banana and jackfruit spring rolls fried in a crisp caramel coating.",
             category = DESSERT,
             minutes = 30, servings = 8,
@@ -1098,6 +1136,7 @@ object RecipeSeedData {
         recipe(
             name = "Maja Blanca",
             image = "maja_blanca",
+            mealTypes = setOf(MealType.SNACK),
             description = "Coconut milk and corn pudding topped with toasted coconut.",
             category = DESSERT,
             minutes = 180, servings = 12,
@@ -1124,6 +1163,7 @@ object RecipeSeedData {
         recipe(
             name = "Buko Pandan",
             image = "buko_pandan",
+            mealTypes = setOf(MealType.SNACK),
             description = "Young coconut and pandan jelly in a sweet cream dressing.",
             category = DESSERT,
             minutes = 205, servings = 8,
@@ -1148,6 +1188,7 @@ object RecipeSeedData {
         recipe(
             name = "Biko",
             image = "biko",
+            mealTypes = setOf(MealType.SNACK),
             description = "Sticky rice cake cooked in coconut milk and brown sugar, topped with latik.",
             category = DESSERT,
             minutes = 75, servings = 12,

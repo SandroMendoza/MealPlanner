@@ -31,10 +31,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +50,8 @@ import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.components.MealTypeDialog
 import com.meal.planner.recipes.RECIPE_GRID_CARD_MIN_WIDTH
+import com.meal.planner.recipes.RecipeFilterButton
+import com.meal.planner.recipes.RecipeFilterSheet
 import com.meal.planner.recipes.RecipeGridCard
 import com.meal.planner.recipes.message
 import com.meal.planner.strings.LocalStrings
@@ -81,6 +85,17 @@ fun RecipePickerScreen(
     var assignDate by remember { mutableStateOf(date) }
     val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
     val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
+    var showFilterSheet by remember { mutableStateOf(false) }
+
+    // Opening from a meal's slot starts the list on recipes for that meal, once; clearing the
+    // filter afterwards sticks across configuration changes.
+    var mealTypeFilterApplied by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(mealType) {
+        if (mealType != null && !mealTypeFilterApplied) {
+            recipeViewModel.setMealTypeFilter(mealType)
+            mealTypeFilterApplied = true
+        }
+    }
 
     fun assign(recipeId: Uuid, chosenMealType: MealType, onDate: LocalDate = date) {
         coroutineScope.launch {
@@ -95,23 +110,41 @@ fun RecipePickerScreen(
 
     val compactHeight = LocalCompactHeight.current
     val searchField: @Composable (Modifier) -> Unit = { modifier ->
-        OutlinedTextField(
-            value = uiState.searchQuery,
-            onValueChange = recipeViewModel::onSearchQueryChange,
-            placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder) },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            trailingIcon = {
-                if (uiState.searchQuery.isNotEmpty()) {
-                    IconButton(onClick = { recipeViewModel.onSearchQueryChange("") }) {
-                        Icon(Icons.Default.Clear, contentDescription = LocalStrings.current.clearSearch)
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(spacing.sm)
+        ) {
+            OutlinedTextField(
+                value = uiState.searchQuery,
+                onValueChange = recipeViewModel::onSearchQueryChange,
+                placeholder = { Text(LocalStrings.current.searchRecipesPlaceholder) },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                trailingIcon = {
+                    if (uiState.searchQuery.isNotEmpty()) {
+                        IconButton(onClick = { recipeViewModel.onSearchQueryChange("") }) {
+                            Icon(Icons.Default.Clear, contentDescription = LocalStrings.current.clearSearch)
+                        }
                     }
-                }
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
-            shape = MaterialTheme.shapes.extraLarge,
-            modifier = modifier
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() }),
+                shape = MaterialTheme.shapes.extraLarge,
+                modifier = Modifier.weight(1f)
+            )
+            RecipeFilterButton(
+                hasActiveFilters = uiState.hasActiveFilters,
+                onClick = { showFilterSheet = true }
+            )
+        }
+    }
+
+    if (showFilterSheet) {
+        RecipeFilterSheet(
+            uiState = uiState,
+            viewModel = recipeViewModel,
+            onDismiss = { showFilterSheet = false }
         )
     }
 

@@ -166,6 +166,7 @@ val englishStrings = Strings(
     chooseFromGallery = "Choose from Gallery",
     category = "Category",
     cuisine = "Cuisine",
+    mealType = "Meal type",
     ingredients = "Ingredients",
     instructions = "Instructions",
     totalSpent = "Total spent",

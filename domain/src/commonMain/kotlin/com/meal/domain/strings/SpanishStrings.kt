@@ -174,6 +174,7 @@ val spanishStrings = Strings(
     chooseFromGallery = "Elegir de la galería",
     category = "Categoría",
     cuisine = "Cocina",
+    mealType = "Tipo de comida",
     ingredients = "Ingredientes",
     instructions = "Instrucciones",
     totalSpent = "Total gastado",

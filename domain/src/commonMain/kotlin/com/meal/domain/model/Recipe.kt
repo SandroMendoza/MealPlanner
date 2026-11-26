@@ -2,6 +2,7 @@ package com.meal.domain.model
 
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -18,5 +19,6 @@ data class Recipe(
     val instructions: List<Instruction>,
     val isFavorite: Boolean = false,
     val isUserCreated: Boolean = true,
-    val cuisine: Cuisine? = null
+    val cuisine: Cuisine? = null,
+    val mealTypes: Set<MealType> = emptySet()
 )
