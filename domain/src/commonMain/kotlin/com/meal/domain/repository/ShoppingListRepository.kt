@@ -2,6 +2,7 @@ package com.meal.domain.repository
 
 import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.model.SpendingLineItem
+import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
@@ -14,6 +15,8 @@ interface ShoppingListRepository {
      * (ignoring case) and unit, [item]'s quantity is added to that item instead of a new row.
      */
     suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate)
+    /** Changes the item's quantity and unit for this range only; its key, group, price and checked state stay. */
+    suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit)
     suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate)
     suspend fun setItemPrice(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, price: Double)
     fun getPricedItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<SpendingLineItem>>

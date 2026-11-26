@@ -303,6 +303,7 @@ val spanishStrings = Strings(
 
     shoppingNoMealsPlannedPeriod = "No hay comidas planificadas para este período.",
     shoppingAddItemButton = "Añadir Artículo",
+    shoppingEditAmountCd = "Editar cantidad",
     shoppingRemoveItemTitle = "¿Eliminar artículo?",
     shoppingRemoveItemBody = { itemName -> "¿Eliminar $itemName de la lista de compras?" },
     recordPriceTitle = { itemName -> "¿Cuánto costó $itemName?" },

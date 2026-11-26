@@ -175,6 +175,7 @@ data class Strings(
     // Shopping list
     val shoppingNoMealsPlannedPeriod: String,
     val shoppingAddItemButton: String,
+    val shoppingEditAmountCd: String,
     val shoppingRemoveItemTitle: String,
     val shoppingRemoveItemBody: (itemName: String) -> String,
     val recordPriceTitle: (itemName: String) -> String,
