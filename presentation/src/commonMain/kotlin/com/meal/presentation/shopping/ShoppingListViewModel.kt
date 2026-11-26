@@ -132,6 +132,41 @@ class ShoppingListViewModel(
         _uiState.value = _uiState.value.copy(itemPendingDeletion = null)
     }
 
+    fun startSelection(itemKey: String) {
+        _uiState.value = _uiState.value.copy(selectedItemKeys = _uiState.value.selectedItemKeys + itemKey)
+    }
+
+    fun toggleSelection(itemKey: String) {
+        val selected = _uiState.value.selectedItemKeys
+        _uiState.value = _uiState.value.copy(
+            selectedItemKeys = if (itemKey in selected) selected - itemKey else selected + itemKey
+        )
+    }
+
+    fun clearSelection() {
+        _uiState.value = _uiState.value.copy(selectedItemKeys = emptySet(), confirmingRemoveSelected = false)
+    }
+
+    fun requestRemoveSelected() {
+        if (_uiState.value.isSelecting) {
+            _uiState.value = _uiState.value.copy(confirmingRemoveSelected = true)
+        }
+    }
+
+    fun dismissRemoveSelected() {
+        _uiState.value = _uiState.value.copy(confirmingRemoveSelected = false)
+    }
+
+    fun confirmRemoveSelected() {
+        val keys = _uiState.value.selectedItemKeys
+        val rangeStart = _uiState.value.rangeStart
+        val rangeEnd = _uiState.value.rangeEnd
+        viewModelScope.launch {
+            keys.forEach { removeShoppingListItemUseCase.execute(it, rangeStart, rangeEnd) }
+        }
+        clearSelection()
+    }
+
     fun addItem(name: String, quantity: Double, unit: MeasurementUnit) {
         viewModelScope.launch {
             addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
@@ -303,7 +338,13 @@ class ShoppingListViewModel(
     }
 
     private fun setRange(mode: ShoppingListRangeMode, start: LocalDate, end: LocalDate) {
-        _uiState.value = _uiState.value.copy(mode = mode, rangeStart = start, rangeEnd = end)
+        _uiState.value = _uiState.value.copy(
+            mode = mode,
+            rangeStart = start,
+            rangeEnd = end,
+            selectedItemKeys = emptySet(),
+            confirmingRemoveSelected = false
+        )
         loadList()
     }
 

@@ -27,6 +27,7 @@ fun SwipeActionsRow(
     onSwipeLeftToDelete: () -> Unit,
     modifier: Modifier = Modifier,
     onSwipeRightToAssignGroup: (() -> Unit)? = null,
+    enabled: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val spacing = MealPlannerTokens.spacing
@@ -37,6 +38,7 @@ fun SwipeActionsRow(
         state = dismissState,
         modifier = modifier,
         enableDismissFromStartToEnd = onSwipeRightToAssignGroup != null,
+        gesturesEnabled = enabled,
         onDismiss = { value ->
             when (value) {
                 SwipeToDismissBoxValue.StartToEnd -> onSwipeRightToAssignGroup?.invoke()

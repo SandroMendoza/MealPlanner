@@ -227,6 +227,56 @@ class ShoppingListViewModelTest {
     }
 
     @Test
+    fun selectingItemsThenConfirmingRemovesAllOfThemOnce() {
+        shopping.setItems(weekStart, weekEnd, listOf(shoppingItem("rice"), shoppingItem("salt"), shoppingItem("oil")))
+        val vm = viewModel()
+
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        assertTrue(vm.state.value.isSelecting)
+        assertEquals(setOf("rice", "salt"), vm.state.value.selectedItemKeys)
+
+        vm.requestRemoveSelected()
+        assertTrue(vm.state.value.confirmingRemoveSelected)
+        assertTrue(shopping.removedItems.isEmpty())
+
+        vm.confirmRemoveSelected()
+
+        assertEquals(setOf("rice", "salt"), shopping.removedItems.map { it.first }.toSet())
+        assertEquals(listOf("oil"), vm.state.value.items.map { it.itemKey })
+        assertFalse(vm.state.value.isSelecting)
+        assertFalse(vm.state.value.confirmingRemoveSelected)
+    }
+
+    @Test
+    fun cancellingOrEmptyingTheSelectionLeavesSelectionModeWithoutRemoving() {
+        shopping.setItems(weekStart, weekEnd, listOf(shoppingItem("rice"), shoppingItem("salt")))
+        val vm = viewModel()
+
+        vm.startSelection("rice")
+        vm.toggleSelection("rice")
+        assertFalse(vm.state.value.isSelecting)
+
+        vm.startSelection("salt")
+        vm.requestRemoveSelected()
+        vm.dismissRemoveSelected()
+        vm.clearSelection()
+
+        assertFalse(vm.state.value.isSelecting)
+        assertTrue(shopping.removedItems.isEmpty())
+    }
+
+    @Test
+    fun changingTheRangeClearsTheSelection() {
+        val vm = viewModel()
+        vm.startSelection("rice")
+
+        vm.nextWeek()
+
+        assertFalse(vm.state.value.isSelecting)
+    }
+
+    @Test
     fun assigningAGroupUsesThePickedItem() {
         val milk = shoppingItem("milk")
         val vm = viewModel()
