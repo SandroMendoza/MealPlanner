@@ -78,7 +78,6 @@ data class RecipeFormUiState(
         get() = name.isNotBlank() &&
             !isDuplicateName &&
             ingredients.any { it.name.isNotBlank() } &&
-            instructions.any { it.description.isNotBlank() } &&
             (preparationTimeMinutes.isBlank() || preparationTimeMinutes.toIntOrNull() != null) &&
             (servings.isBlank() || servings.toIntOrNull() != null)
 }

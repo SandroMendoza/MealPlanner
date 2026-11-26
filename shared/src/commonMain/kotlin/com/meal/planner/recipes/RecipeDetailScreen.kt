@@ -380,53 +380,55 @@ private fun ColumnScope.RecipeDetailBody(
             }
         }
 
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = LocalStrings.current.instructions,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                if (uiState.readAloudAvailable && !uiState.cookModeActive) {
-                    TextButton(onClick = { viewModel.startCookMode() }) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = null,
-                            modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
-                        )
-                        Text(
-                            text = LocalStrings.current.recipeDetailCookMode,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.padding(start = spacing.xxs)
-                        )
+        if (recipe.instructions.isNotEmpty()) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = LocalStrings.current.instructions,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    if (uiState.readAloudAvailable && !uiState.cookModeActive) {
+                        TextButton(onClick = { viewModel.startCookMode() }) {
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                contentDescription = null,
+                                modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+                            )
+                            Text(
+                                text = LocalStrings.current.recipeDetailCookMode,
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.padding(start = spacing.xxs)
+                            )
+                        }
                     }
                 }
             }
-        }
-        if (uiState.cookModeActive) {
-            item {
-                CookModeStep(
-                    instructions = recipe.instructions,
-                    stepIndex = uiState.cookModeStepIndex,
-                    speaking = uiState.cookModeSpeaking,
-                    onPrevious = { viewModel.previousStep() },
-                    onNext = { viewModel.nextStep() },
-                    onTogglePlayPause = { viewModel.togglePlayPause() },
-                    onStop = { viewModel.stopCookMode() }
-                )
-            }
-        } else {
-            items(recipe.instructions, key = { it.stepNumber }) { instruction ->
-                Text(
-                    text = "${instruction.stepNumber}. ${instruction.description}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = spacing.sm)
-                )
+            if (uiState.cookModeActive) {
+                item {
+                    CookModeStep(
+                        instructions = recipe.instructions,
+                        stepIndex = uiState.cookModeStepIndex,
+                        speaking = uiState.cookModeSpeaking,
+                        onPrevious = { viewModel.previousStep() },
+                        onNext = { viewModel.nextStep() },
+                        onTogglePlayPause = { viewModel.togglePlayPause() },
+                        onStop = { viewModel.stopCookMode() }
+                    )
+                }
+            } else {
+                items(recipe.instructions, key = { it.stepNumber }) { instruction ->
+                    Text(
+                        text = "${instruction.stepNumber}. ${instruction.description}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = spacing.sm)
+                    )
+                }
             }
         }
     }

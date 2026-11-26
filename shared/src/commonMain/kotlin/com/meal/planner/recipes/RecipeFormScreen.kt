@@ -318,7 +318,7 @@ fun RecipeFormScreen(
                 )
             }
 
-            SectionLabel(LocalStrings.current.instructions, required = true)
+            SectionLabel(LocalStrings.current.instructions)
             InstructionStepsEditor(
                 steps = uiState.instructions.map { it.description },
                 onReplaceStep = viewModel::replaceInstructionRow,
