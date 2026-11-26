@@ -335,7 +335,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
         image = "tandoori_chicken",
         description = "Chicken legs marinated in spiced yogurt and roasted hot until charred at the edges.",
         category = MAIN_DISH,
-        minutes = 75, servings = 4,
+        minutes = 200, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Leg Quarter", 1200.0, GRAMS),
             ingredient("Lemon Juice", 2.0, TABLESPOON),
@@ -355,9 +355,9 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
         ),
         steps = listOf(
             "Remove the skin from the chicken and cut 2 or 3 deep slashes into each piece. Rub with the lemon juice, 1 teaspoon of salt and 1 teaspoon of chili powder and leave for 20 minutes.",
-            "Mix the yogurt with the grated ginger and garlic, garam masala, cumin, paprika, turmeric, oil and the remaining chili powder and salt. Coat the chicken well and refrigerate for at least 4 hours, ideally overnight.",
+            "Mix the yogurt with the grated ginger and garlic, garam masala, cumin, paprika, turmeric, oil and the remaining chili powder and salt. Coat the chicken well and refrigerate for at least 2 hours, or overnight for more flavour.",
             "Heat the oven to 240°C. Set a rack over a lined baking tray and lay the chicken on it.",
-            "Roast for 35 to 40 minutes, turning halfway, until charred at the edges and the juices run clear when pierced near the bone.",
+            "Roast for 35 to 40 minutes, turning halfway, until charred at the edges and the thickest part near the bone reaches 74°C (165°F) or higher.",
             "Brush with the melted butter and rest for 5 minutes. Serve with lemon wedges and thinly sliced red onion.",
         ),
     ),
@@ -366,7 +366,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
         image = "dal_makhani",
         description = "Black lentils and kidney beans slow-cooked into a rich, buttery and creamy dal.",
         category = MAIN_DISH,
-        minutes = 150, servings = 6,
+        minutes = 615, servings = 6,
         ingredients = listOf(
             ingredient("Black Lentils", 250.0, GRAMS),
             ingredient("Kidney Beans", 100.0, GRAMS),
@@ -386,7 +386,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
             ingredient("Heavy Cream", 0.5, CUP),
         ),
         steps = listOf(
-            "Rinse the dried lentils and kidney beans and soak them overnight in plenty of cold water, then drain.",
+            "Rinse the dried lentils and kidney beans and soak them in plenty of cold water for at least 8 hours, or overnight, then drain.",
             "Put them in a heavy pot with the water and half of the salt. Boil hard for 10 minutes, then cover and simmer for 1 hour 30 minutes, stirring now and then, until very soft and easily crushed between your fingers.",
             "In a frying pan, heat half of the butter with the oil over medium heat and fry the cumin for 20 seconds. Add the chopped onion and cook for 8 minutes until golden.",
             "Add the grated ginger and garlic and the chopped chili for 1 minute, then the tomato puree and chili powder. Cook for 5 minutes until thick and the fat separates.",
@@ -399,7 +399,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
         image = "egg_curry",
         description = "Hard-boiled eggs, lightly fried, in a spiced onion and tomato gravy.",
         category = MAIN_DISH,
-        minutes = 40, servings = 4,
+        minutes = 55, servings = 4,
         ingredients = listOf(
             ingredient("Egg", 8.0, PIECE),
             ingredient("Water", 5.0, CUP),
@@ -576,7 +576,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
         category = DESSERT,
         minutes = 75, servings = 6,
         ingredients = listOf(
-            ingredient("Basmati Rice", 0.25, CUP),
+            ingredient("Basmati Rice", 0.33, CUP),
             ingredient("Water", 1.0, CUP),
             ingredient("Fresh Milk", 6.0, CUP),
             ingredient("Cardamom", 4.0, PIECE),
@@ -599,7 +599,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
         image = "gajar_halwa",
         description = "Grated carrots cooked slowly in milk and ghee with sugar, cardamom and nuts.",
         category = DESSERT,
-        minutes = 75, servings = 6,
+        minutes = 90, servings = 6,
         ingredients = listOf(
             ingredient("Carrot", 8.0, PIECE),
             ingredient("Fresh Milk", 4.0, CUP),

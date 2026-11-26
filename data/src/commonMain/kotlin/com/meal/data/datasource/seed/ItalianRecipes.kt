@@ -107,7 +107,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
             "Mix the ricotta with the egg, half of the grated parmesan and the remaining salt. Heat the oven to 190°C.",
             "Spread a thin layer of meat sauce in a 23 x 33 cm baking dish and cover with oven-ready lasagna sheets.",
             "Add a layer of ricotta mixture, then meat sauce, then shredded mozzarella. Repeat the sheet, ricotta, sauce and mozzarella layers two more times.",
-            "Finish with sauce, the last of the mozzarella and the remaining parmesan. Cover with foil and bake for 25 minutes.",
+            "Finish with a last layer of sheets, then the remaining sauce, the last of the mozzarella and the remaining parmesan. Cover with foil and bake for 25 minutes.",
             "Remove the foil and bake for another 20 to 25 minutes until golden and bubbling. Let it rest for 15 minutes before cutting.",
         ),
     ),
@@ -308,7 +308,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
         image = "eggplant_parmigiana",
         description = "Fried eggplant slices layered with tomato sauce, basil, mozzarella and parmesan, then baked.",
         category = MAIN_DISH,
-        minutes = 90, servings = 6,
+        minutes = 120, servings = 6,
         ingredients = listOf(
             ingredient("Eggplant", 3.0, PIECE),
             ingredient("Salt", 2.0, TEASPOON),
@@ -341,7 +341,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
         ingredients = listOf(
             ingredient("Clams", 1000.0, GRAMS),
             ingredient("Water", 12.0, CUP),
-            ingredient("Salt", 2.0, TEASPOON),
+            ingredient("Salt", 8.0, TEASPOON),
             ingredient("Linguine", 400.0, GRAMS),
             ingredient("Olive Oil", 5.0, TABLESPOON),
             ingredient("Garlic", 4.0, PIECE),
@@ -351,8 +351,8 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
             ingredient("Fresh Parsley", 0.5, CUP),
         ),
         steps = listOf(
-            "Soak the clams in cold water for 20 minutes so they release any sand, then scrub them and throw away any that stay open when tapped.",
-            "Bring the water to a boil with the salt and cook the linguine until 1 minute short of al dente. Keep a cup of the cooking water, then drain.",
+            "Soak the clams for 20 minutes in about 8 cups of cold water mixed with 2 tablespoons of the salt so they release any sand, then scrub them and throw away any that stay open when tapped.",
+            "Bring the water to a boil with the remaining salt and cook the linguine until 1 minute short of al dente. Keep a cup of the cooking water, then drain.",
             "While the pasta cooks, heat the olive oil in a large pan over medium heat and cook the sliced garlic and chilli flakes for 1 minute until fragrant.",
             "Add the clams and wine, cover and cook over high heat for 4 to 6 minutes, shaking the pan, until the clams open. Throw away any that stay closed.",
             "Add the linguine, butter and a splash of the cooking water and toss for 1 to 2 minutes until the pasta is al dente and coated in the juices.",
@@ -568,7 +568,7 @@ internal fun italianRecipes(): List<RecipeDto> = listOf(
         minutes = 265, servings = 6,
         ingredients = listOf(
             ingredient("Water", 0.25, CUP),
-            ingredient("Gelatin", 2.5, TEASPOON),
+            ingredient("Gelatin", 3.0, TEASPOON),
             ingredient("Heavy Cream", 3.0, CUP),
             ingredient("Fresh Milk", 1.0, CUP),
             ingredient("Sugar", 8.0, TABLESPOON),
