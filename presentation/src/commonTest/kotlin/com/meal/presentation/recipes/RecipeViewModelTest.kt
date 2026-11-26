@@ -21,6 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
+import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 import kotlin.uuid.ExperimentalUuidApi
 
@@ -60,6 +61,28 @@ class RecipeViewModelTest {
         repository.recipes.value = all.map { if (it == all[3]) it.copy(isFavorite = true) else it }
 
         assertEquals(firstOrder, vm.state.value.recipes.map { it.id })
+    }
+
+    @Test
+    fun reshuffleGivesANewOrderAndKeepsSearchAndFilters() {
+        val all = (1..30).map { recipe(name = "Recipe $it") }
+        repository.recipes.value = all
+        val vm = viewModel()
+        vm.onSearchQueryChange("Recipe")
+        vm.onCategorySelected(FoodCategory.MAIN_DISH)
+        val firstOrder = vm.state.value.recipes.map { it.id }
+
+        vm.reshuffle()
+        val shuffledOrder = vm.state.value.recipes.map { it.id }
+
+        assertTrue(vm.state.value.isRefreshing)
+        assertNotEquals(firstOrder, shuffledOrder)
+        assertEquals(firstOrder.toSet(), shuffledOrder.toSet())
+        assertEquals("Recipe", vm.state.value.searchQuery)
+        assertEquals(FoodCategory.MAIN_DISH, vm.state.value.selectedCategory)
+
+        repository.recipes.value = all.map { if (it == all[3]) it.copy(isFavorite = true) else it }
+        assertEquals(shuffledOrder, vm.state.value.recipes.map { it.id })
     }
 
     @Test

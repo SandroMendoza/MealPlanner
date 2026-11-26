@@ -11,6 +11,7 @@ enum class RecipeEmptyState { NO_RECIPES, NO_FAVORITES, NO_CREATED, NO_MATCHES }
 data class RecipeUiState(
     val recipes: List<Recipe> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
     val searchQuery: String = "",
     val selectedCategory: FoodCategory? = null,
