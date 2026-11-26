@@ -157,7 +157,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             description = recipe.description,
             preparationTimeMinutes = recipe.preparationTimeMinutes,
             servings = recipe.servings,
-            cuisine = recipe.cuisine?.name,
+            cuisine = recipe.cuisines.joinToString(", ") { it.name }.ifEmpty { null },
             ingredients = recipe.ingredients.map {
                 RecipeIngredientResult(name = it.ingredient.name, quantity = it.quantity, unit = it.unit.unit)
             },
@@ -177,7 +177,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             id = Uuid.random(),
             name = params.name,
             description = params.description,
-            category = parseFoodCategory(params.category),
+            categories = setOf(parseFoodCategory(params.category)),
             preparationTimeMinutes = params.preparationTimeMinutes,
             servings = params.servings,
             imageUrl = null,
@@ -192,7 +192,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             instructions = params.instructions.mapIndexed { index, description -> Instruction(index + 1, description) },
             isFavorite = false,
             isUserCreated = true,
-            cuisine = parseCuisine(params.cuisine)
+            cuisines = setOfNotNull(parseCuisine(params.cuisine))
         )
         koin.get<AddRecipeUseCase>().execute(recipe)
         return ActionResult(success = true, message = "Added recipe \"${params.name}\".")

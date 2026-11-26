@@ -11,7 +11,7 @@ data class Recipe(
     val id: Uuid,
     val name: String,
     val description: String?,
-    val category: FoodCategory,
+    val categories: Set<FoodCategory> = emptySet(),
     val preparationTimeMinutes: Int,
     val servings: Int,
     val imageUrl: String?,
@@ -19,6 +19,6 @@ data class Recipe(
     val instructions: List<Instruction>,
     val isFavorite: Boolean = false,
     val isUserCreated: Boolean = true,
-    val cuisine: Cuisine? = null,
+    val cuisines: Set<Cuisine> = emptySet(),
     val mealTypes: Set<MealType> = emptySet()
 )

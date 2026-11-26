@@ -28,7 +28,7 @@ internal fun recipe(
     name = name,
     description = description,
     mealTypes = mealTypes,
-    category = category,
+    categories = setOf(category),
     preparationTimeMinutes = minutes,
     servings = servings,
     imageUrl = "$BUNDLED_IMAGE_PREFIX$image.webp",

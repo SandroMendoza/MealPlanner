@@ -36,8 +36,8 @@ class RecipeFormViewModelTest {
     private val existing = recipe(
         name = "Kare-Kare",
         description = "Oxtail in peanut sauce",
-        category = FoodCategory.MAIN_DISH,
-        cuisine = Cuisine.FILIPINO,
+        categories = setOf(FoodCategory.MAIN_DISH),
+        cuisines = setOf(Cuisine.FILIPINO),
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         preparationTimeMinutes = 120,
         servings = 6,
@@ -89,7 +89,7 @@ class RecipeFormViewModelTest {
         assertFalse(state.isLoading)
         assertEquals("Kare-Kare", state.name)
         assertEquals("Oxtail in peanut sauce", state.description)
-        assertEquals(Cuisine.FILIPINO, state.cuisine)
+        assertEquals(setOf(Cuisine.FILIPINO), state.cuisines)
         assertEquals(setOf(MealType.LUNCH, MealType.DINNER), state.mealTypes)
         assertEquals("120", state.preparationTimeMinutes)
         assertEquals("6", state.servings)
@@ -118,10 +118,11 @@ class RecipeFormViewModelTest {
     fun cuisineTogglesOnAndOff() {
         val vm = viewModel()
 
-        vm.updateCuisine(Cuisine.KOREAN)
-        assertEquals(Cuisine.KOREAN, vm.state.value.cuisine)
-        vm.updateCuisine(Cuisine.KOREAN)
-        assertNull(vm.state.value.cuisine)
+        vm.toggleCuisine(Cuisine.KOREAN)
+        vm.toggleCuisine(Cuisine.JAPANESE)
+        assertEquals(setOf(Cuisine.KOREAN, Cuisine.JAPANESE), vm.state.value.cuisines)
+        vm.toggleCuisine(Cuisine.KOREAN)
+        assertEquals(setOf(Cuisine.JAPANESE), vm.state.value.cuisines)
     }
 
     @Test
@@ -141,14 +142,14 @@ class RecipeFormViewModelTest {
         val vm = viewModel()
 
         vm.updateDescription("Crispy")
-        vm.updateCategory(FoodCategory.SIDE_DISH)
+        vm.toggleCategory(FoodCategory.SIDE_DISH)
         vm.updatePreparationTime("25")
         vm.updateServings("3")
         vm.updateImageUrl("file:x.jpg")
 
         val state = vm.state.value
         assertEquals("Crispy", state.description)
-        assertEquals(FoodCategory.SIDE_DISH, state.category)
+        assertEquals(setOf(FoodCategory.SIDE_DISH), state.categories)
         assertEquals("25", state.preparationTimeMinutes)
         assertEquals("3", state.servings)
         assertEquals("file:x.jpg", state.imageUrl)
@@ -192,14 +193,30 @@ class RecipeFormViewModelTest {
     }
 
     @Test
-    fun saveDoesNothingWhileTheFormIsInvalid() {
+    fun saveDoesNothingWithoutAName() {
         val vm = viewModel()
-        vm.updateName("Lumpia")
+        vm.updateName("   ")
+        vm.addIngredient(IngredientFormRow("Bread", "2", MeasurementUnit.PIECE))
 
         vm.save()
 
         assertTrue(recipes.added.isEmpty())
         assertFalse(vm.state.value.saved)
+    }
+
+    @Test
+    fun aRecipeWithOnlyANameCanBeSaved() {
+        val vm = viewModel()
+        vm.updateName("Lumpia")
+
+        vm.save()
+
+        val saved = recipes.added.single()
+        assertEquals("Lumpia", saved.name)
+        assertTrue(saved.ingredients.isEmpty())
+        assertTrue(saved.categories.isEmpty())
+        assertTrue(saved.cuisines.isEmpty())
+        assertTrue(vm.state.value.saved)
     }
 
     @Test

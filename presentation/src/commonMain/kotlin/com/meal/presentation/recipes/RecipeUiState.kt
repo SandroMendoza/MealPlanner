@@ -29,8 +29,8 @@ data class RecipeUiState(
             .asSequence()
             .filter { !showFavoritesOnly || it.isFavorite }
             .filter { !showCreatedOnly || it.isUserCreated }
-            .filter { selectedCategory == null || it.category == selectedCategory }
-            .filter { selectedCuisine == null || it.cuisine == selectedCuisine }
+            .filter { selectedCategory == null || selectedCategory in it.categories }
+            .filter { selectedCuisine == null || selectedCuisine in it.cuisines }
             .filter { selectedMealType == null || selectedMealType in it.mealTypes }
             .filter { matchesPrepTime(it.preparationTimeMinutes) }
             .filter { recipe -> matchesSearch(recipe, searchQuery) }

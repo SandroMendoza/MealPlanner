@@ -183,12 +183,12 @@ fun RecipeFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            SectionLabel(LocalStrings.current.category, required = true)
+            SectionLabel(LocalStrings.current.category)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(FoodCategory.entries.toList()) { category ->
                     FilterChip(
-                        selected = uiState.category == category,
-                        onClick = { viewModel.updateCategory(category) },
+                        selected = category in uiState.categories,
+                        onClick = { viewModel.toggleCategory(category) },
                         label = { Text(category.displayName()) },
                         colors = activeFilterChipColors()
                     )
@@ -199,8 +199,8 @@ fun RecipeFormScreen(
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(Cuisine.entries.toList(), key = { it.name }) { cuisine ->
                     FilterChip(
-                        selected = uiState.cuisine == cuisine,
-                        onClick = { viewModel.updateCuisine(cuisine) },
+                        selected = cuisine in uiState.cuisines,
+                        onClick = { viewModel.toggleCuisine(cuisine) },
                         label = { Text(cuisine.displayName()) },
                         colors = activeFilterChipColors()
                     )
@@ -278,7 +278,7 @@ fun RecipeFormScreen(
                 )
             }
 
-            SectionLabel(LocalStrings.current.ingredients, required = true)
+            SectionLabel(LocalStrings.current.ingredients)
             var pickerOpen by remember { mutableStateOf(false) }
             var editingIndex by remember { mutableStateOf<Int?>(null) }
             if (uiState.ingredients.isEmpty()) {
