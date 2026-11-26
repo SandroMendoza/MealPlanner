@@ -19,7 +19,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "southern_fried_chicken",
         description = "Buttermilk-soaked chicken in a peppery flour coating, fried until crisp and golden.",
         category = MAIN_DISH,
-        minutes = 90, servings = 4,
+        minutes = 120, servings = 4,
         ingredients = listOf(
             ingredient("Chicken", 1200.0, GRAMS),
             ingredient("Buttermilk", 2.0, CUP),
@@ -37,7 +37,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
             "In a wide bowl, mix the flour, paprika, garlic powder, cayenne pepper, black pepper and the remaining salt.",
             "Lift each piece out of the buttermilk, let the excess drip off, then press it into the flour so it is well coated. Rest the coated pieces on a rack for 10 minutes.",
             "Heat the oil in a deep heavy pan over medium heat to about 165°C.",
-            "Fry the chicken in batches, without crowding, for 12 to 15 minutes, turning now and then, until deep golden and the juices run clear near the bone.",
+            "Fry the chicken in batches, without crowding, for 12 to 15 minutes, turning now and then, until deep golden and a thermometer in the thickest part, away from the bone, reads 74°C (165°F) or higher.",
             "Drain on a rack and let it rest for 5 minutes before serving.",
         ),
     ),
@@ -181,7 +181,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
             "Add the beef, onion, garlic, eggs, Worcestershire sauce, salt, pepper and 3 tablespoons of the ketchup. Mix gently with your hands until just combined.",
             "Shape into a loaf about 23 by 12 cm on a lined baking tray.",
             "Stir the remaining ketchup with the brown sugar and vinegar, and spread half of it over the loaf.",
-            "Bake for 45 minutes, spread on the rest of the glaze and bake for another 15 minutes, until the centre is cooked through.",
+            "Bake for 45 minutes, spread on the rest of the glaze and bake for another 15 minutes, until a thermometer in the centre reads 71°C (160°F).",
             "Rest for 10 minutes before slicing.",
         ),
     ),
@@ -282,7 +282,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "philly_cheesesteak",
         description = "Thinly sliced steak with onions and peppers, topped with melted provolone in a crusty roll.",
         category = MAIN_DISH,
-        minutes = 35, servings = 4,
+        minutes = 50, servings = 4,
         ingredients = listOf(
             ingredient("Ribeye Steak", 600.0, GRAMS),
             ingredient("Cooking Oil", 2.0, TABLESPOON),
@@ -505,7 +505,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "classic_potato_salad",
         description = "Tender potatoes and egg in a creamy mustard dressing with celery and relish.",
         category = SALAD,
-        minutes = 45, servings = 6,
+        minutes = 75, servings = 6,
         ingredients = listOf(
             ingredient("Potato", 6.0, PIECE),
             ingredient("Water", 8.0, CUP),
@@ -535,7 +535,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "apple_pie",
         description = "Spiced apple filling baked in a flaky double crust.",
         category = DESSERT,
-        minutes = 100, servings = 8,
+        minutes = 200, servings = 8,
         ingredients = listOf(
             ingredient("Apple", 7.0, PIECE),
             ingredient("Lemon Juice", 1.0, TABLESPOON),

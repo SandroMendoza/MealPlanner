@@ -121,6 +121,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
             ingredient("Korean Rice Cakes", 450.0, GRAMS),
             ingredient("Egg", 2.0, PIECE),
             ingredient("Water", 4.0, CUP),
+            ingredient("Anchovies", 15.0, GRAMS),
             ingredient("Kombu", 10.0, GRAMS),
             ingredient("Gochujang", 3.0, TABLESPOON),
             ingredient("Gochugaru", 3.0, TEASPOON),
@@ -134,7 +135,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         steps = listOf(
             "If the rice cakes are firm, soak them in warm water for 10 minutes, then drain.",
             "Boil the eggs for 9 minutes, cool them in cold water and peel.",
-            "Put 2 cups of water and the kombu in a wide pan and simmer for 10 minutes. Take out the kombu.",
+            "Put 2 cups of water, the cleaned dried anchovies and the kombu in a wide pan and simmer for 10 minutes. Take out the anchovies and kombu.",
             "Stir in the gochujang, gochugaru, soy sauce, sugar and minced garlic until smooth.",
             "Add the rice cakes, sliced fish cake and roughly cut cabbage. Simmer over medium heat, stirring often, for 8 to 10 minutes until the rice cakes are soft and the sauce is thick and glossy.",
             "Add the spring onions, cut into lengths, and the eggs and cook for 1 more minute. Serve hot.",
@@ -167,7 +168,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         steps = listOf(
             "Pat the wings dry and season them with the salt, pepper and grated ginger. Leave for 15 minutes.",
             "Mix the potato starch, flour and baking powder. Coat the wings well and shake off the excess.",
-            "Heat the oil in a deep pot to 170°C. Fry the wings in batches for 10 minutes until cooked through and pale golden, then rest them on a rack.",
+            "Heat the oil in a deep pot to 170°C. Fry the wings in batches for 10 minutes until pale golden and 74°C (165°F) inside, then rest them on a rack.",
             "Raise the heat to 190°C and fry the wings again for 3 to 4 minutes until deep golden and very crisp.",
             "While the wings rest, simmer the gochujang, soy sauce, honey, brown sugar, minced garlic and vinegar in a large pan over low heat for 3 minutes until glossy and slightly thick. Stir in the sesame oil.",
             "Toss the hot wings in the glaze, sprinkle with sesame seeds and serve straight away while the crust is crisp.",
@@ -359,7 +360,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
             "Cut the chicken into bite-sized pieces. Mix the gochujang, gochugaru, soy sauce, sugar, curry powder, minced garlic, grated ginger and pepper, then coat the chicken and leave for 20 minutes.",
             "Cut the cabbage into large pieces, peel and slice the sweet potato 1 cm thick and slice the onion.",
             "Heat the oil in a wide, deep pan over medium-high heat. Spread the cabbage, sweet potato, onion and rice cakes in the pan and put the chicken with all its marinade on top.",
-            "Cook for about 15 minutes, stirring and turning often, until the chicken is cooked through and the sweet potato is tender. Add the water if the sauce starts to stick.",
+            "Cook for about 15 minutes, stirring and turning often, until the chicken reaches 74°C (165°F) inside and the sweet potato is tender. Add the water if the sauce starts to stick.",
             "Add the spring onions and torn perilla leaves and cook for 1 minute more.",
             "Drizzle with the sesame oil and serve straight from the pan.",
         ),
@@ -573,8 +574,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
             ingredient("Condensed Milk", 0.5, CUP),
         ),
         steps = listOf(
-            "Soak the beans overnight in plenty of water, then drain.",
-            "Cover the beans with fresh water, boil for 5 minutes and drain to remove any bitterness.",
+            "Rinse the beans, cover them with water in a pot, boil for 5 minutes and drain to remove any bitterness.",
             "Return the beans to the pot with 5 cups of water. Cover and simmer for 60 to 80 minutes until soft enough to crush between your fingers.",
             "Add the sugar and salt and cook uncovered over low heat, stirring often, for about 15 minutes until thick and most of the liquid has gone. Let the beans cool completely.",
             "Shave or crush the ice finely and pile it into chilled bowls. Drizzle with the milk.",
@@ -586,7 +586,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "yaksik",
         description = "Sweet sticky rice with chestnuts, dates and pine nuts, flavoured with honey, soy and cinnamon.",
         category = DESSERT,
-        minutes = 90, servings = 8,
+        minutes = 210, servings = 8,
         ingredients = listOf(
             ingredient("Glutinous Rice", 3.0, CUP),
             ingredient("Water", 4.0, CUP),
@@ -602,7 +602,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
             ingredient("Pine Nuts", 30.0, GRAMS),
         ),
         steps = listOf(
-            "Rinse the rice and soak it in water overnight, then drain well.",
+            "Rinse the rice and soak it in water for 2 hours, then drain well.",
             "Halve the chestnuts, and pit and quarter the dates.",
             "Mix the brown sugar, soy sauce, honey, 2 tablespoons of sesame oil, cinnamon and salt with 1.5 cups of water until the sugar dissolves.",
             "Put the rice, the sweet liquid, chestnuts, dates and raisins in a rice cooker and cook on the normal setting for 40 to 50 minutes until the rice is soft and sticky.",

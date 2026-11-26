@@ -83,7 +83,7 @@ object RecipeSeedData {
             image = "pork_barbecue",
             description = "Sweet and savoury pork skewers marinated overnight and grilled with a sticky glaze.",
             category = MAIN_DISH,
-            minutes = 60, servings = 6,
+            minutes = 300, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Shoulder", 1000.0, GRAMS),
                 ingredient("Soy Sauce", 8.0, TABLESPOON),
@@ -99,11 +99,11 @@ object RecipeSeedData {
             steps = listOf(
                 "Slice the pork into thin pieces, about 3 mm thick and 4 cm wide.",
                 "Mix the soy sauce, banana ketchup, soda, calamansi juice, minced garlic, brown sugar and pepper. Set aside half a cup for basting.",
-                "Coat the pork in the rest of the marinade and refrigerate overnight, or for at least 4 hours.",
+                "Coat the pork in the rest of the marinade and refrigerate for at least 4 hours, or overnight for more flavour.",
                 "Soak the skewers in water for 30 minutes so they don't burn, then thread 4 or 5 pieces of pork onto each one.",
                 "Simmer the reserved half cup of marinade with the oil for 3 minutes until slightly thick. Use this as the basting sauce.",
                 "Grill over medium heat for 3 to 4 minutes per side, basting often, until cooked through and lightly charred.",
-                "Serve with rice and a dip of vinegar with chopped onion and chili.",
+                "Serve hot with rice.",
             ),
         ),
         recipe(
@@ -123,6 +123,7 @@ object RecipeSeedData {
                 ingredient("Eggplant", 2.0, PIECE),
                 ingredient("String Beans", 200.0, GRAMS),
                 ingredient("Pechay", 250.0, GRAMS),
+                ingredient("Banana Heart", 1.0, PIECE),
                 ingredient("Cooking Oil", 2.0, TABLESPOON),
                 ingredient("Salt", 1.0, TEASPOON),
                 ingredient("Shrimp Paste", 6.0, TABLESPOON),
@@ -133,7 +134,7 @@ object RecipeSeedData {
                 "Heat the oil in a large pot and sauté the garlic and onion until soft.",
                 "Add the oxtail and the reserved broth. Dissolve the annatto powder in 2 tablespoons of water, stir it in and simmer for 5 minutes.",
                 "Stir in the peanut butter until smooth, then sprinkle in the toasted flour while stirring. Simmer until the sauce thickens. Season with salt.",
-                "Blanch the eggplant, string beans and pechay separately in boiling water until just tender.",
+                "Slice the banana heart and blanch it, the eggplant, string beans and pechay separately in boiling water until just tender.",
                 "Arrange the vegetables over the oxtail and serve with shrimp paste and rice.",
             ),
         ),
@@ -168,7 +169,7 @@ object RecipeSeedData {
             image = "pork_menudo",
             description = "Pork and liver stewed in tomato sauce with potatoes, carrots, peas and raisins.",
             category = MAIN_DISH,
-            minutes = 75, servings = 6,
+            minutes = 90, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Shoulder", 700.0, GRAMS),
                 ingredient("Pork Liver", 200.0, GRAMS),
@@ -290,12 +291,12 @@ object RecipeSeedData {
             ),
             steps = listOf(
                 "Boil the pork belly in the water with the bay leaves, peppercorns and salt for 45 minutes until tender. Drain and pat dry.",
-                "Grill or pan-fry the pork until crisp and lightly charred. Pan-fry the chicken liver until cooked through.",
+                "Grill or pan-fry the pork until crisp and lightly charred. Pan-fry the chicken liver until it reaches 74°C (165°F) inside.",
                 "Chop the pork and liver finely.",
                 "Melt the butter in a skillet and sauté the garlic and one chopped onion until soft.",
                 "Add the pork, liver, soy sauce and chopped chilies. Cook for 5 minutes, letting the edges crisp.",
                 "Take the pan off the heat and stir in the calamansi juice, the second chopped onion, the mayonnaise and the pepper.",
-                "Serve on a hot sizzling plate topped with a raw or fried egg, mixing it in at the table.",
+                "Serve on a very hot sizzling plate. Crack the egg on top and stir it through the hot sisig until it is cooked, or top with a fried egg.",
             ),
         ),
         recipe(
@@ -342,14 +343,15 @@ object RecipeSeedData {
                 ingredient("Annatto Seeds", 2.0, TABLESPOON),
                 ingredient("Cooking Oil", 6.0, TABLESPOON),
                 ingredient("Butter", 2.0, TABLESPOON),
+                ingredient("Bamboo Skewers", 8.0, PIECE),
             ),
             steps = listOf(
                 "Pound or blend the lemongrass, ginger and garlic. Mix with the vinegar, calamansi juice, brown sugar, salt and pepper.",
                 "Coat the chicken in the marinade and refrigerate for at least 3 hours.",
                 "Heat the oil and annatto seeds over low heat for 3 minutes until the oil turns deep red. Strain, then stir in the butter.",
                 "Thread the chicken onto skewers.",
-                "Grill over medium heat for 25 to 30 minutes, turning and basting often with the annatto oil, until cooked through.",
-                "Serve with rice, a little annatto oil and a dip of soy sauce, calamansi and chili.",
+                "Grill over medium heat for 25 to 30 minutes, turning and basting often with the annatto oil, until the thickest part reaches 74°C (165°F) or higher.",
+                "Serve with rice, a little annatto oil and calamansi.",
             ),
         ),
         recipe(
@@ -440,7 +442,7 @@ object RecipeSeedData {
                 "Finely mince the carrot, onion, garlic and spring onion.",
                 "Mix them with the ground pork, egg, soy sauce, salt and pepper.",
                 "Place about 1 tablespoon of filling along one edge of a wrapper. Roll tightly, folding in the sides, and seal the end with a little water.",
-                "Heat the oil to about 175°C. Fry the rolls in batches for 4 to 5 minutes until golden and cooked through.",
+                "Heat the oil to about 175°C. Fry the rolls in batches for 4 to 5 minutes until golden and the filling reaches 71°C (160°F).",
                 "Drain on a rack and serve with sweet chili sauce.",
             ),
         ),
@@ -615,7 +617,7 @@ object RecipeSeedData {
             image = "daing_na_bangus",
             description = "Milkfish marinated overnight in garlic and vinegar, then fried until crisp.",
             category = MAIN_DISH,
-            minutes = 30, servings = 4,
+            minutes = 270, servings = 4,
             ingredients = listOf(
                 ingredient("Milkfish", 2.0, PIECE),
                 ingredient("Vinegar", 8.0, TABLESPOON),
@@ -626,10 +628,10 @@ object RecipeSeedData {
             ),
             steps = listOf(
                 "Use butterflied, deboned milkfish. Crush the garlic and mix it with the vinegar, salt and pepper.",
-                "Lay the fish flesh side down in the marinade and refrigerate overnight, or for at least 6 hours.",
+                "Lay the fish flesh side down in the marinade and refrigerate for at least 4 hours, or overnight for more flavour.",
                 "Drain the fish and pat it dry.",
                 "Fry skin side down in hot oil for 5 to 6 minutes under a splatter guard, then flip and fry for 3 to 4 minutes until golden.",
-                "Serve with garlic fried rice, eggs and a little spiced vinegar.",
+                "Serve with garlic fried rice, eggs and a little vinegar for dipping.",
             ),
         ),
         recipe(
@@ -928,7 +930,7 @@ object RecipeSeedData {
             image = "beef_tapa",
             description = "Sweet and garlicky cured beef, the centre of a classic tapsilog breakfast.",
             category = MAIN_DISH,
-            minutes = 30, servings = 4,
+            minutes = 270, servings = 4,
             ingredients = listOf(
                 ingredient("Beef Sirloin", 500.0, GRAMS),
                 ingredient("Soy Sauce", 5.0, TABLESPOON),
@@ -941,7 +943,7 @@ object RecipeSeedData {
             ),
             steps = listOf(
                 "Slice the beef thinly against the grain.",
-                "Mix the soy sauce, calamansi juice, minced garlic, brown sugar and pepper. Marinate the beef in the refrigerator overnight.",
+                "Mix the soy sauce, calamansi juice, minced garlic, brown sugar and pepper. Marinate the beef in the refrigerator for at least 4 hours, or overnight for more flavour.",
                 "Put the beef, its marinade and the water in a pan and simmer until the liquid evaporates.",
                 "Add the oil and fry the beef until the edges caramelise.",
                 "Serve with garlic fried rice and a fried egg.",
@@ -952,7 +954,7 @@ object RecipeSeedData {
             image = "skinless_longganisa",
             description = "Sweet garlic pork sausages shaped by hand, no casing needed.",
             category = MAIN_DISH,
-            minutes = 30, servings = 6,
+            minutes = 230, servings = 6,
             ingredients = listOf(
                 ingredient("Ground Pork", 500.0, GRAMS),
                 ingredient("Garlic", 8.0, PIECE),
@@ -1054,7 +1056,7 @@ object RecipeSeedData {
             image = "leche_flan",
             description = "Silky steamed custard with a layer of caramel.",
             category = DESSERT,
-            minutes = 75, servings = 8,
+            minutes = 345, servings = 8,
             ingredients = listOf(
                 ingredient("Egg Yolk", 10.0, PIECE),
                 ingredient("Condensed Milk", 1.0, CUP),
@@ -1098,7 +1100,7 @@ object RecipeSeedData {
             image = "maja_blanca",
             description = "Coconut milk and corn pudding topped with toasted coconut.",
             category = DESSERT,
-            minutes = 45, servings = 12,
+            minutes = 180, servings = 12,
             ingredients = listOf(
                 ingredient("Coconut Milk", 4.0, CUP),
                 ingredient("Fresh Milk", 1.0, CUP),
@@ -1124,7 +1126,7 @@ object RecipeSeedData {
             image = "buko_pandan",
             description = "Young coconut and pandan jelly in a sweet cream dressing.",
             category = DESSERT,
-            minutes = 30, servings = 8,
+            minutes = 205, servings = 8,
             ingredients = listOf(
                 ingredient("Pandan Gelatin Powder", 25.0, GRAMS),
                 ingredient("Water", 4.0, CUP),

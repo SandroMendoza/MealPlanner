@@ -84,7 +84,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         category = MAIN_DISH,
         minutes = 30, servings = 4,
         ingredients = listOf(
-            ingredient("Tofu", 450.0, GRAMS),
+            ingredient("Silken Tofu", 450.0, GRAMS),
             ingredient("Salt", 1.0, TEASPOON),
             ingredient("Water", 4.0, CUP),
             ingredient("Cooking Oil", 2.0, TABLESPOON),
@@ -175,7 +175,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "char_siu",
         description = "Cantonese roast pork with a sticky, sweet and savoury honey glaze.",
         category = MAIN_DISH,
-        minutes = 80, servings = 6,
+        minutes = 320, servings = 6,
         ingredients = listOf(
             ingredient("Pork Shoulder", 1000.0, GRAMS),
             ingredient("Hoisin Sauce", 4.0, TABLESPOON),
@@ -190,7 +190,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         ),
         steps = listOf(
             "Cut the pork into long strips about 5 cm thick.",
-            "Mix the hoisin sauce, both soy sauces, Shaoxing wine, sugar, 2 tablespoons of the honey, the five-spice powder and the minced garlic. Coat the pork and marinate in the fridge overnight.",
+            "Mix the hoisin sauce, both soy sauces, Shaoxing wine, sugar, 2 tablespoons of the honey, the five-spice powder and the minced garlic. Coat the pork and marinate in the fridge for at least 4 hours, or overnight for more flavour.",
             "Heat the oven to 200°C. Set the pork on a rack over a roasting tin and pour the water into the tin so the drippings do not burn. Keep the marinade.",
             "Roast for 25 minutes, then turn the pork and brush it with the marinade. Roast for another 20 minutes.",
             "Mix the remaining honey with 1 tablespoon of the leftover marinade and brush it over the pork. Roast for 5 to 10 minutes more until sticky and charred at the edges.",

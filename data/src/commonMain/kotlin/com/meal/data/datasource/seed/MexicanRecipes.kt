@@ -50,7 +50,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
         image = "tacos_al_pastor",
         description = "Thin slices of chilli-marinated pork seared until charred, served in tortillas with pineapple and onion.",
         category = MAIN_DISH,
-        minutes = 60, servings = 6,
+        minutes = 180, servings = 6,
         ingredients = listOf(
             ingredient("Pork Shoulder", 1000.0, GRAMS),
             ingredient("Dried Chili Peppers", 4.0, PIECE),
@@ -72,7 +72,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
         steps = listOf(
             "Toast the dried chillies in a dry pan for 30 seconds per side, remove the stems and seeds, and soak them in the water, just boiled, for 15 minutes.",
             "Drain the chillies, keeping 0.25 cup of the soaking water. Blend them with that water, the orange juice, vinegar, garlic, annatto powder, cumin, oregano, salt and 100 g of the pineapple until smooth.",
-            "Slice the pork about 5 mm thick, coat it well with the marinade, cover and refrigerate for at least 4 hours or overnight.",
+            "Slice the pork about 5 mm thick, coat it well with the marinade, cover and refrigerate for at least 2 hours, or overnight for more flavour.",
             "Heat the oil in a large heavy pan over high heat. Cook the pork in batches for 3 to 4 minutes per side until charred at the edges and cooked through, then chop it into small pieces.",
             "Cut the remaining pineapple into small pieces and sear it in the same pan for about 3 minutes until caramelised.",
             "Warm the tortillas in a dry pan. Fill them with the pork and pineapple, then top with chopped white onion and cilantro and serve with lime wedges.",
@@ -272,7 +272,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
         image = "cochinita_pibil",
         description = "Pork shoulder marinated in annatto and citrus, slow-roasted in banana leaves until it falls apart.",
         category = MAIN_DISH,
-        minutes = 240, servings = 6,
+        minutes = 450, servings = 6,
         ingredients = listOf(
             ingredient("Annatto Seeds", 3.0, TABLESPOON),
             ingredient("Whole Peppercorns", 1.0, TEASPOON),
@@ -293,7 +293,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
         steps = listOf(
             "Grind the annatto seeds, peppercorns, cumin, oregano and allspice to a fine powder in a spice grinder.",
             "Blend the powder with the orange juice, the juice of 2 limes, the garlic and 1.5 teaspoons of the salt into a smooth paste.",
-            "Cut the pork into large chunks, coat it all over with the paste, cover and refrigerate overnight, or for at least 4 hours.",
+            "Cut the pork into large chunks, coat it all over with the paste, cover and refrigerate for at least 4 hours, or overnight for more flavour.",
             "Heat the oven to 160°C. Pass the banana leaves briefly over a flame to soften them and use them to line a baking dish. Add the pork and marinade, fold the leaves over and cover tightly with foil.",
             "Roast for 3 hours until the pork falls apart when pressed with a fork, then shred it in its juices.",
             "While the pork roasts, thinly slice the red onions and finely chop the habanero without its seeds. Mix them with the vinegar, the juice of the remaining lime and the rest of the salt, and leave for at least 30 minutes.",
@@ -592,7 +592,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
         image = "flan",
         description = "Baked vanilla custard made with whole eggs and two kinds of milk, under a layer of caramel.",
         category = DESSERT,
-        minutes = 90, servings = 8,
+        minutes = 350, servings = 8,
         ingredients = listOf(
             ingredient("Sugar", 12.0, TABLESPOON),
             ingredient("Egg", 5.0, PIECE),
