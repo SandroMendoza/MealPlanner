@@ -366,8 +366,10 @@ val spanishStrings = Strings(
     notificationSettingsDescription = "Elige para qué comidas quieres recibir recordatorios.",
     settingsNotificationsPermissionDenied = "Activa las notificaciones en la configuración del sistema para recibir recordatorios de comidas.",
     settingsNotificationsOpenSettings = "Abrir configuración",
-    mealReminderNotificationTitle = { mealType -> "Recordatorio de ${spanishMealTypeName(mealType).lowercase()}" },
-    mealReminderNotificationBody = "Toca para ver lo que tienes planeado.",
+    mealReminderPlannedTitle = { mealType, recipes -> "${spanishMealTypeName(mealType)}: $recipes" },
+    mealReminderPlannedBody = "Es hora de empezar a cocinar.",
+    mealReminderNothingPlannedTitle = { mealType -> "${spanishMealTypeName(mealType)}: nada planeado" },
+    mealReminderNothingPlannedBody = "Toca para planear una comida.",
 
     aboutAppName = "Meal Planner",
     aboutVersion = { version -> "Versión $version" },

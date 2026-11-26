@@ -365,8 +365,10 @@ val frenchStrings = Strings(
     notificationSettingsDescription = "Choisissez les repas pour lesquels vous souhaitez un rappel.",
     settingsNotificationsPermissionDenied = "Activez les notifications dans les paramètres système pour recevoir des rappels de repas.",
     settingsNotificationsOpenSettings = "Ouvrir les paramètres",
-    mealReminderNotificationTitle = { mealType -> "Rappel : ${frenchMealTypeName(mealType).lowercase()}" },
-    mealReminderNotificationBody = "Appuyez pour voir ce qui est prévu.",
+    mealReminderPlannedTitle = { mealType, recipes -> "${frenchMealTypeName(mealType)} : $recipes" },
+    mealReminderPlannedBody = "C'est l'heure de cuisiner.",
+    mealReminderNothingPlannedTitle = { mealType -> "${frenchMealTypeName(mealType)} : rien de prévu" },
+    mealReminderNothingPlannedBody = "Appuyez pour prévoir un repas.",
 
     aboutAppName = "Meal Planner",
     aboutVersion = { version -> "Version $version" },
