@@ -281,6 +281,7 @@ data class Strings(
     val walkthroughRemoveItem: WalkthroughText,
     val walkthroughGroupItem: WalkthroughText,
     val walkthroughRecordPrice: WalkthroughText,
+    val walkthroughPantryStaples: WalkthroughText,
     val walkthroughReminders: WalkthroughText,
 
     // Feature guide in Settings

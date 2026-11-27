@@ -85,6 +85,7 @@ private val steps = listOf(
     WalkthroughStep("swipe_left_item", Rect(0f, 0.3526f, 1f, 0.3974f), Gesture.SWIPE_LEFT) { it.walkthroughRemoveItem },
     WalkthroughStep("swipe_right_item", Rect(0f, 0.3526f, 1f, 0.3974f), Gesture.SWIPE_RIGHT) { it.walkthroughGroupItem },
     WalkthroughStep("shopping", Rect(0.9028f, 0.2259f, 0.9954f, 0.2654f), Gesture.TAP) { it.walkthroughRecordPrice },
+    WalkthroughStep("pantry_staples", Rect(0.0278f, 0.7873f, 0.9722f, 0.8268f), Gesture.TAP) { it.walkthroughPantryStaples },
     WalkthroughStep("home", Rect(0.8704f, 0.0316f, 0.9454f, 0.0671f), Gesture.TAP) { it.walkthroughReminders }
 )
 
