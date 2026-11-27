@@ -10,6 +10,6 @@ data class ShoppingListItem(
     val checked: Boolean,
     val price: Double? = null,
     val groupId: String? = null,
-    /** In the "At home" section: the user has it already, so it isn't among the items to buy. */
+    /** In the "Pantry staples" section: the user has it already, so it isn't among the items to buy. */
     val atHome: Boolean = false
 )

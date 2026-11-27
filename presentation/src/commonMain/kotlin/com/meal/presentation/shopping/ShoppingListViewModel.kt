@@ -170,7 +170,7 @@ class ShoppingListViewModel(
     }
 
     /**
-     * Moves the selected items to "At home", or back among the items to buy when every selected
+     * Moves the selected items to "Pantry staples", or back among the items to buy when every selected
      * item is already at home.
      */
     fun moveSelectedAtHome() {
