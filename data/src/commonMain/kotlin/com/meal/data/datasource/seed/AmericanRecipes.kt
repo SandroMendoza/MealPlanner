@@ -20,7 +20,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "southern_fried_chicken",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Buttermilk-soaked chicken in a peppery flour coating, fried until crisp and golden.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 120, servings = 4,
         ingredients = listOf(
             ingredient("Chicken", 1200.0, GRAMS),
@@ -48,7 +48,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "classic_cheeseburger",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Juicy beef patties with melted cheddar, lettuce, tomato and onion in toasted buns.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Ground Beef", 700.0, GRAMS),
@@ -77,7 +77,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "pulled_pork",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Pork shoulder rubbed with spices, slow-cooked until it falls apart, then tossed in barbecue sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 300, servings = 8,
         ingredients = listOf(
             ingredient("Pork Shoulder", 2000.0, GRAMS),
@@ -106,7 +106,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "buffalo_wings",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Crisp baked chicken wings tossed in a tangy, buttery hot sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 60, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Wing", 1200.0, GRAMS),
@@ -132,7 +132,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "chicken_pot_pie",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chicken and vegetables in a creamy sauce, baked under a flaky golden crust.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 75, servings = 6,
         ingredients = listOf(
             ingredient("Chicken Breast", 600.0, GRAMS),
@@ -164,9 +164,9 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Meatloaf",
         image = "meatloaf",
-        mealTypes = setOf(MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A tender beef loaf baked with a sweet and tangy ketchup glaze.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 85, servings = 6,
         ingredients = listOf(
             ingredient("Ground Beef", 900.0, GRAMS),
@@ -197,7 +197,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "baked_mac_and_cheese",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Macaroni in a rich cheddar sauce, baked under a crisp buttery crumb topping.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 50, servings = 6,
         ingredients = listOf(
             ingredient("Macaroni", 400.0, GRAMS),
@@ -224,9 +224,9 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Pot Roast",
         image = "pot_roast",
-        mealTypes = setOf(MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Beef chuck braised slowly with potatoes and carrots in a savoury gravy.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 240, servings = 6,
         ingredients = listOf(
             ingredient("Beef Chuck", 1500.0, GRAMS),
@@ -259,7 +259,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "jambalaya",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A Louisiana one-pot rice dish with chicken, sausage, shrimp and Cajun spices.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 60, servings = 6,
         ingredients = listOf(
             ingredient("Cooking Oil", 2.0, TABLESPOON),
@@ -290,9 +290,9 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Philly Cheesesteak",
         image = "philly_cheesesteak",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Thinly sliced steak with onions and peppers, topped with melted provolone in a crusty roll.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 50, servings = 4,
         ingredients = listOf(
             ingredient("Ribeye Steak", 600.0, GRAMS),
@@ -317,7 +317,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "shrimp_and_grits",
         mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Garlicky shrimp and bacon spooned over creamy cheddar cornmeal grits.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 40, servings = 4,
         ingredients = listOf(
             ingredient("Water", 2.0, CUP),
@@ -345,9 +345,9 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Buttermilk Pancakes",
         image = "buttermilk_pancakes",
-        mealTypes = setOf(MealType.BREAKFAST),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH),
         description = "Thick, fluffy pancakes served warm with butter and maple syrup.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("All-Purpose Flour", 2.0, CUP),
@@ -376,7 +376,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "new_england_clam_chowder",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A thick, creamy soup of clams, potatoes and bacon.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 50, servings = 4,
         ingredients = listOf(
             ingredient("Bacon", 120.0, GRAMS),
@@ -407,7 +407,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "chicken_noodle_soup",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A light, comforting broth with chicken, vegetables and egg noodles.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 50, servings = 6,
         ingredients = listOf(
             ingredient("Butter", 2.0, TABLESPOON),
@@ -438,7 +438,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "beef_chili",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A thick, spicy stew of ground beef, beans and tomatoes.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 80, servings = 6,
         ingredients = listOf(
             ingredient("Cooking Oil", 1.0, TABLESPOON),
@@ -472,7 +472,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "coleslaw",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Crunchy shredded cabbage and carrot in a creamy, tangy dressing.",
-        category = SALAD,
+        categories = setOf(SIDE_DISH, SALAD),
         minutes = 20, servings = 6,
         ingredients = listOf(
             ingredient("Cabbage", 500.0, GRAMS),
@@ -495,9 +495,9 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Cornbread",
         image = "cornbread",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "A golden, slightly sweet cornmeal bread with a tender crumb.",
-        category = SIDE_DISH,
+        categories = setOf(SIDE_DISH),
         minutes = 35, servings = 8,
         ingredients = listOf(
             ingredient("Cornmeal", 1.0, CUP),
@@ -523,7 +523,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "classic_potato_salad",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Tender potatoes and egg in a creamy mustard dressing with celery and relish.",
-        category = SALAD,
+        categories = setOf(SIDE_DISH, SALAD),
         minutes = 75, servings = 6,
         ingredients = listOf(
             ingredient("Potato", 6.0, PIECE),
@@ -554,7 +554,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "apple_pie",
         mealTypes = setOf(MealType.SNACK),
         description = "Spiced apple filling baked in a flaky double crust.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 200, servings = 8,
         ingredients = listOf(
             ingredient("Apple", 7.0, PIECE),
@@ -584,7 +584,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "chocolate_chip_cookies",
         mealTypes = setOf(MealType.SNACK),
         description = "Chewy cookies with crisp edges and plenty of chocolate chips.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 40, servings = 8,
         ingredients = listOf(
             ingredient("Butter", 8.0, TABLESPOON),

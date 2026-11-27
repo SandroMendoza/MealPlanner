@@ -20,7 +20,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "kung_pao_chicken",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Diced chicken stir-fried with dried chillies, Sichuan pepper and peanuts in a tangy, slightly sweet sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 35, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Thigh", 500.0, GRAMS),
@@ -53,7 +53,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "sweet_and_sour_pork",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Crisp fried pork pieces tossed with pineapple and peppers in a bright sweet and sour sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 45, servings = 4,
         ingredients = listOf(
             ingredient("Pork Shoulder", 500.0, GRAMS),
@@ -85,7 +85,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "mapo_tofu",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Soft tofu and minced pork simmered in a spicy, numbing Sichuan chilli bean sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Silken Tofu", 450.0, GRAMS),
@@ -119,7 +119,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "beef_and_broccoli",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Thinly sliced beef and crisp-tender broccoli stir-fried in a glossy oyster sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Flank Steak", 450.0, GRAMS),
@@ -149,7 +149,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "general_tsos_chicken",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Crisp fried chicken in a sticky sweet, tangy and gently spicy sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 45, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Thigh", 600.0, GRAMS),
@@ -179,9 +179,9 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Char Siu",
         image = "char_siu",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Cantonese roast pork with a sticky, sweet and savoury honey glaze.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 320, servings = 6,
         ingredients = listOf(
             ingredient("Pork Shoulder", 1000.0, GRAMS),
@@ -207,9 +207,9 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Egg Fried Rice",
         image = "egg_fried_rice",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Day-old rice stir-fried with egg, peas, carrot and spring onions.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 20, servings = 4,
         ingredients = listOf(
             ingredient("Cooking Oil", 3.0, TABLESPOON),
@@ -234,9 +234,9 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Chow Mein",
         image = "chicken_chow_mein",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Egg noodles stir-fried with chicken, cabbage, carrot and bean sprouts in a savoury sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Egg Noodles", 300.0, GRAMS),
@@ -267,9 +267,9 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Pork and Cabbage Dumplings",
         image = "pork_and_cabbage_dumplings",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Juicy pork and napa cabbage dumplings, boiled and served with a black vinegar dip.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 75, servings = 6,
         ingredients = listOf(
             ingredient("Napa Cabbage", 300.0, GRAMS),
@@ -300,7 +300,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "red_braised_pork_belly",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Pork belly slowly braised with caramelised sugar, soy sauce and star anise until meltingly soft.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 105, servings = 4,
         ingredients = listOf(
             ingredient("Pork Belly", 700.0, GRAMS),
@@ -330,7 +330,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "steamed_fish_with_ginger_and_spring_onion",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Whole fish steamed until just flaky, then finished with sizzling oil, ginger and spring onions.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Sea Bass", 1.0, PIECE),
@@ -357,9 +357,9 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tomato and Egg Stir-Fry",
         image = "tomato_and_egg_stir_fry",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Soft scrambled eggs folded into a sweet and savoury tomato sauce, a classic home dish over rice.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 15, servings = 3,
         ingredients = listOf(
             ingredient("Egg", 4.0, PIECE),
@@ -384,7 +384,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "hot_and_sour_soup",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A thick, peppery broth with pork, tofu, mushrooms and bamboo shoots, sharpened with black vinegar.",
-        category = SOUP,
+        categories = setOf(SIDE_DISH, SOUP),
         minutes = 40, servings = 4,
         ingredients = listOf(
             ingredient("Pork Loin", 150.0, GRAMS),
@@ -415,9 +415,9 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Wonton Soup",
         image = "wonton_soup",
-        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Silky pork and shrimp wontons in a clear, gingery chicken broth with bok choy.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 50, servings = 4,
         ingredients = listOf(
             ingredient("Ground Pork", 250.0, GRAMS),
@@ -448,7 +448,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "egg_drop_soup",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A light chicken broth thickened slightly and filled with soft ribbons of egg.",
-        category = SOUP,
+        categories = setOf(SIDE_DISH, SOUP),
         minutes = 15, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Broth", 4.0, CUP),
@@ -475,7 +475,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "smashed_cucumber_salad",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Cold smashed cucumbers dressed with garlic, black vinegar, soy sauce and chilli oil.",
-        category = SALAD,
+        categories = setOf(SIDE_DISH, SALAD),
         minutes = 20, servings = 4,
         ingredients = listOf(
             ingredient("Cucumber", 2.0, PIECE),
@@ -500,7 +500,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "garlic_bok_choy",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Bok choy quickly stir-fried with plenty of garlic and a little oyster sauce.",
-        category = SIDE_DISH,
+        categories = setOf(SIDE_DISH),
         minutes = 15, servings = 4,
         ingredients = listOf(
             ingredient("Bok Choy", 500.0, GRAMS),
@@ -524,7 +524,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "dry_fried_green_beans",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Sichuan-style green beans fried until blistered, then tossed with pork, garlic and chillies.",
-        category = SIDE_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 25, servings = 4,
         ingredients = listOf(
             ingredient("Green Beans", 450.0, GRAMS),
@@ -553,7 +553,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "egg_tarts",
         mealTypes = setOf(MealType.BREAKFAST, MealType.SNACK),
         description = "Flaky pastry cases filled with a smooth, just-set egg custard, as sold in Hong Kong bakeries.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 50, servings = 6,
         ingredients = listOf(
             ingredient("Puff Pastry", 300.0, GRAMS),
@@ -577,7 +577,7 @@ internal fun chineseRecipes(): List<RecipeDto> = listOf(
         image = "tang_yuan",
         mealTypes = setOf(MealType.SNACK),
         description = "Chewy glutinous rice balls served warm in a gingery brown sugar syrup.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 35, servings = 4,
         ingredients = listOf(
             ingredient("Glutinous Rice Flour", 16.0, TABLESPOON),
