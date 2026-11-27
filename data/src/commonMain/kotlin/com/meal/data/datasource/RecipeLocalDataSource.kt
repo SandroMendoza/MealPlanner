@@ -79,10 +79,10 @@ class RecipeLocalDataSource(
             ) return@forEach
             queries.updateBuiltInRecipe(
                 description = seed.description,
-                category = seed.category.name,
+                category = encodeCategories(seed.categories),
                 preparationTimeMinutes = seed.preparationTimeMinutes.toLong(),
                 servings = seed.servings.toLong(),
-                cuisine = seed.cuisine?.name,
+                cuisine = encodeCuisines(seed.cuisines),
                 builtInFingerprint = fingerprint,
                 id = row.id
             )
@@ -91,6 +91,20 @@ class RecipeLocalDataSource(
     }
 
     private fun normalizedName(name: String) = name.trim().lowercase()
+
+    // A recipe's categories and cuisines are stored comma-separated in the single category and
+    // cuisine columns, in enum order, so rows written with one value read back as a set of one.
+    private fun encodeCategories(categories: Set<FoodCategory>): String =
+        categories.sortedBy { it.ordinal }.joinToString(",") { it.name }
+
+    private fun encodeCuisines(cuisines: Set<Cuisine>): String? =
+        cuisines.sortedBy { it.ordinal }.joinToString(",") { it.name }.ifEmpty { null }
+
+    private fun decodeCategories(value: String): Set<FoodCategory> =
+        value.split(',').mapNotNullTo(LinkedHashSet()) { name -> FoodCategory.entries.firstOrNull { it.name == name.trim() } }
+
+    private fun decodeCuisines(value: String?): Set<Cuisine> =
+        value.orEmpty().split(',').mapNotNullTo(LinkedHashSet()) { name -> Cuisine.entries.firstOrNull { it.name == name.trim() } }
 
     suspend fun getRecipeById(id: Uuid): RecipeDto? = withContext(ioDispatcher) {
         queries.selectRecipeById(id.toString()).executeAsOneOrNull()?.let { toDto(it) }
@@ -111,11 +125,11 @@ class RecipeLocalDataSource(
             queries.updateRecipe(
                 name = dto.name,
                 description = dto.description,
-                category = dto.category.name,
+                category = encodeCategories(dto.categories),
                 preparationTimeMinutes = dto.preparationTimeMinutes.toLong(),
                 servings = dto.servings.toLong(),
                 imageUrl = dto.imageUrl,
-                cuisine = dto.cuisine?.name,
+                cuisine = encodeCuisines(dto.cuisines),
                 id = dto.id.toString()
             )
             replaceChildren(dto)
@@ -136,12 +150,12 @@ class RecipeLocalDataSource(
                 id = dto.id.toString(),
                 name = dto.name,
                 description = dto.description,
-                category = dto.category.name,
+                category = encodeCategories(dto.categories),
                 preparationTimeMinutes = dto.preparationTimeMinutes.toLong(),
                 servings = dto.servings.toLong(),
                 imageUrl = dto.imageUrl,
                 isUserCreated = if (dto.isUserCreated) 1 else 0,
-                cuisine = dto.cuisine?.name,
+                cuisine = encodeCuisines(dto.cuisines),
                 builtInFingerprint = builtInFingerprint
             )
             replaceChildren(dto)
@@ -243,7 +257,7 @@ class RecipeLocalDataSource(
             name = row.name,
             description = row.description,
             mealTypes = mealTypes.sorted().toSet(),
-            category = FoodCategory.valueOf(row.category),
+            categories = decodeCategories(row.category),
             preparationTimeMinutes = row.preparationTimeMinutes.toInt(),
             servings = row.servings.toInt(),
             imageUrl = row.imageUrl,
@@ -251,7 +265,7 @@ class RecipeLocalDataSource(
             instructions = instructions,
             isFavorite = row.isFavorite != 0L,
             isUserCreated = row.isUserCreated != 0L,
-            cuisine = row.cuisine?.let { Cuisine.valueOf(it) }
+            cuisines = decodeCuisines(row.cuisine)
         )
     }
 }

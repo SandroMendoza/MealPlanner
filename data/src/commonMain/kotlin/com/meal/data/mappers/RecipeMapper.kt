@@ -12,7 +12,7 @@ object RecipeMapper {
             id = dto.id,
             name = dto.name,
             description = dto.description,
-            category = dto.category,
+            categories = dto.categories,
             preparationTimeMinutes = dto.preparationTimeMinutes,
             servings = dto.servings,
             imageUrl = dto.imageUrl,
@@ -20,7 +20,7 @@ object RecipeMapper {
             instructions = dto.instructions,
             isFavorite = dto.isFavorite,
             isUserCreated = dto.isUserCreated,
-            cuisine = dto.cuisine,
+            cuisines = dto.cuisines,
             mealTypes = dto.mealTypes
         )
     }
@@ -34,7 +34,7 @@ object RecipeMapper {
             id = domain.id,
             name = domain.name,
             description = domain.description,
-            category = domain.category,
+            categories = domain.categories,
             preparationTimeMinutes = domain.preparationTimeMinutes,
             servings = domain.servings,
             imageUrl = domain.imageUrl,
@@ -42,7 +42,7 @@ object RecipeMapper {
             instructions = domain.instructions,
             isFavorite = domain.isFavorite,
             isUserCreated = domain.isUserCreated,
-            cuisine = domain.cuisine,
+            cuisines = domain.cuisines,
             mealTypes = domain.mealTypes
         )
     }

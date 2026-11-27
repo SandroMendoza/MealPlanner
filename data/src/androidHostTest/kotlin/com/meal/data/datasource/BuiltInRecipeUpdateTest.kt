@@ -38,14 +38,14 @@ class BuiltInRecipeUpdateTest {
         id = Uuid.random(),
         name = name,
         description = "$name description",
-        category = FoodCategory.MAIN_DISH,
+        categories = setOf(FoodCategory.MAIN_DISH),
         preparationTimeMinutes = minutes,
         servings = 4,
         imageUrl = "seed:$image.webp",
         ingredients = listOf(RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Garlic"), 3.0, MeasurementUnit.CLOVE)),
         instructions = steps.mapIndexed { index, step -> Instruction(index + 1, step) },
         isUserCreated = false,
-        cuisine = Cuisine.FILIPINO,
+        cuisines = setOf(Cuisine.FILIPINO),
         mealTypes = setOf(MealType.DINNER)
     )
 

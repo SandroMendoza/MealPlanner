@@ -6,16 +6,16 @@ internal const val LEGACY_BUILT_IN_FINGERPRINT = "legacy"
 
 /**
  * A stable fingerprint of the built-in recipe content that updates replace: description,
- * category, time, servings, cuisine, meal types, ingredients and steps. Name and photo are
+ * categories, time, servings, cuisines, meal types, ingredients and steps. Name and photo are
  * left out because they identify which row a built-in recipe belongs to.
  */
 internal fun builtInFingerprint(recipe: RecipeDto): String = fnv1a64(
     buildString {
         append(recipe.description.orEmpty()).append('\u0000')
-        append(recipe.category.name).append('\u0000')
+        append(recipe.categories.sortedBy { it.ordinal }.joinToString(",") { it.name }).append('\u0000')
         append(recipe.preparationTimeMinutes).append('\u0000')
         append(recipe.servings).append('\u0000')
-        append(recipe.cuisine?.name.orEmpty()).append('\u0000')
+        append(recipe.cuisines.sortedBy { it.ordinal }.joinToString(",") { it.name }).append('\u0000')
         recipe.mealTypes.map { it.name }.sorted().forEach { append(it).append(',') }
         append('\u0000')
         recipe.ingredients.forEach {

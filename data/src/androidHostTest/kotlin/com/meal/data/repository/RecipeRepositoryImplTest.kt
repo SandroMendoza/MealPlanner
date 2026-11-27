@@ -46,7 +46,7 @@ class RecipeRepositoryImplTest {
         id = Uuid.random(),
         name = name,
         description = "Stir-fried noodles",
-        category = FoodCategory.MAIN_DISH,
+        categories = setOf(FoodCategory.MAIN_DISH, FoodCategory.SOUP),
         preparationTimeMinutes = 30,
         servings = 4,
         imageUrl = null,
@@ -56,7 +56,7 @@ class RecipeRepositoryImplTest {
         instructions = listOf(Instruction(1, "Boil"), Instruction(2, "Fry")),
         isFavorite = false,
         isUserCreated = true,
-        cuisine = Cuisine.CHINESE,
+        cuisines = setOf(Cuisine.CHINESE, Cuisine.FILIPINO),
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER)
     )
 
@@ -65,14 +65,14 @@ class RecipeRepositoryImplTest {
         val recipes = repository.getAllRecipes().first()
 
         assertEquals(seedCount, recipes.size)
-        assertTrue(recipes.all { !it.isUserCreated && it.cuisine != null })
+        assertTrue(recipes.all { !it.isUserCreated && it.cuisines.size == 1 && it.categories.size == 1 })
         assertTrue(recipes.all { it.ingredients.isNotEmpty() && it.instructions.isNotEmpty() })
         assertEquals(emptyList<String>(), recipes.filter { it.mealTypes.isEmpty() }.map { it.name })
     }
 
     @Test
     fun everyCuisineHasAtLeastTwentyBuiltInRecipes() {
-        val perCuisine = RecipeSeedData.recipes().groupingBy { it.cuisine }.eachCount()
+        val perCuisine = RecipeSeedData.recipes().groupingBy { it.cuisines.single() }.eachCount()
 
         Cuisine.entries.filter { it != Cuisine.OTHER }.forEach { cuisine ->
             assertTrue((perCuisine[cuisine] ?: 0) >= 20, "$cuisine has ${perCuisine[cuisine] ?: 0}")
@@ -129,10 +129,10 @@ class RecipeRepositoryImplTest {
 
         assertEquals(added.name, stored.name)
         assertEquals(added.description, stored.description)
-        assertEquals(added.category, stored.category)
+        assertEquals(added.categories, stored.categories)
         assertEquals(added.preparationTimeMinutes, stored.preparationTimeMinutes)
         assertEquals(added.servings, stored.servings)
-        assertEquals(added.cuisine, stored.cuisine)
+        assertEquals(added.cuisines, stored.cuisines)
         assertEquals(added.mealTypes, stored.mealTypes)
         assertTrue(stored.isUserCreated)
         assertEquals(added.instructions, stored.instructions)
@@ -171,7 +171,8 @@ class RecipeRepositoryImplTest {
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cabbage"), 2.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(Instruction(1, "Toss everything")),
-            cuisine = null,
+            cuisines = emptySet(),
+            categories = emptySet(),
             mealTypes = setOf(MealType.SNACK)
         )
 
@@ -180,7 +181,8 @@ class RecipeRepositoryImplTest {
 
         assertEquals("Pancit Canton", stored.name)
         assertNull(stored.description)
-        assertNull(stored.cuisine)
+        assertTrue(stored.cuisines.isEmpty())
+        assertTrue(stored.categories.isEmpty())
         assertEquals(setOf(MealType.SNACK), stored.mealTypes)
         assertEquals(listOf("Cabbage"), stored.ingredients.map { it.ingredient.name })
         assertEquals(listOf(Instruction(1, "Toss everything")), stored.instructions)

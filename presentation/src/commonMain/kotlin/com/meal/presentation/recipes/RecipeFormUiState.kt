@@ -23,8 +23,8 @@ data class InstructionFormRow(
 data class RecipeFormContent(
     val name: String,
     val description: String,
-    val category: FoodCategory,
-    val cuisine: Cuisine?,
+    val categories: Set<FoodCategory>,
+    val cuisines: Set<Cuisine>,
     val mealTypes: Set<MealType>,
     val preparationTimeMinutes: String,
     val servings: String,
@@ -43,8 +43,8 @@ data class RecipeFormUiState(
     val errorMessage: String? = null,
     val name: String = "",
     val description: String = "",
-    val category: FoodCategory = FoodCategory.MAIN_DISH,
-    val cuisine: Cuisine? = null,
+    val categories: Set<FoodCategory> = emptySet(),
+    val cuisines: Set<Cuisine> = emptySet(),
     val mealTypes: Set<MealType> = emptySet(),
     val preparationTimeMinutes: String = "",
     val servings: String = "",
@@ -58,8 +58,8 @@ data class RecipeFormUiState(
         get() = RecipeFormContent(
             name = name,
             description = description,
-            category = category,
-            cuisine = cuisine,
+            categories = categories,
+            cuisines = cuisines,
             mealTypes = mealTypes,
             preparationTimeMinutes = preparationTimeMinutes,
             servings = servings,
@@ -77,7 +77,6 @@ data class RecipeFormUiState(
     val canSave: Boolean
         get() = name.isNotBlank() &&
             !isDuplicateName &&
-            ingredients.any { it.name.isNotBlank() } &&
             (preparationTimeMinutes.isBlank() || preparationTimeMinutes.toIntOrNull() != null) &&
             (servings.isBlank() || servings.toIntOrNull() != null)
 }
