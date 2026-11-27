@@ -419,6 +419,7 @@ val frenchStrings = Strings(
     walkthroughRemoveItem = WalkthroughText("Retirez un article", "Balayez un article vers la gauche pour le retirer de la liste."),
     walkthroughGroupItem = WalkthroughText("Regroupez vos articles", "Balayez un article vers la droite pour le mettre dans un groupe, comme un magasin ou un rayon."),
     walkthroughRecordPrice = WalkthroughText("Notez ce que vous payez", "Touchez le prix d'un article pour noter ce que vous avez payé. Les rapports de dépenses font le total."),
+    walkthroughPantryStaples = WalkthroughText("Produits de base", "Le sel, l'huile et les autres produits de base que vous avez sans doute sont rangés sous Produits de base. Touchez le titre pour les afficher."),
     walkthroughReminders = WalkthroughText("Recevez des rappels", "Sur l'accueil, touchez la cloche pour activer un rappel quotidien pour chaque repas."),
 
     // Feature guide
@@ -469,7 +470,9 @@ val frenchStrings = Strings(
                 "Balayez un article vers la gauche pour le retirer de la liste.",
                 "Balayez un article vers la droite pour le mettre dans un groupe, comme un magasin ou un rayon. Vous pouvez y créer un groupe.",
                 "Touchez le bouton dossier pour renommer ou supprimer des groupes.",
-                "Touchez Ajouter un article pour ce qui ne vient pas d'une recette.",
+                "Touchez Ajouter un article pour ce qui ne vient pas d'une recette. Laissez la quantité vide si elle n'est pas utile.",
+                "Le sel, l'huile et les autres produits de base que vous avez sans doute sont rangés sous Produits de base, en bas de la liste. Touchez le titre pour les afficher ou les masquer.",
+                "Appuyez longuement sur des articles pour les sélectionner, puis déplacez-les vers Produits de base ou remettez-les dans la liste.",
                 "Touchez le prix d'un article pour noter ce que vous avez payé. La liste affiche le total dépensé."
             )
         ),
