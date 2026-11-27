@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
+import com.meal.planner.common.LocalWideLandscape
 import com.meal.planner.common.LocalWideWidth
 import com.meal.planner.common.WideContentWidth
 import com.meal.planner.common.centeredMaxWidth
@@ -72,6 +73,7 @@ fun HomeScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val spacing = MealPlannerTokens.spacing
     val wide = LocalWideWidth.current
+    val sideBySide = LocalWideLandscape.current
     val todaysPlanParts = mutableListOf<String>()
     for (entry in uiState.todaysEntries) {
         todaysPlanParts += "${entry.mealType.displayName()}: ${entry.recipe.name}"
@@ -88,7 +90,13 @@ fun HomeScreen(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .then(if (wide) Modifier.centeredMaxWidth(WideContentWidth) else Modifier)
+                .then(
+                    when {
+                        sideBySide -> Modifier.centeredMaxWidth(WideContentWidth)
+                        wide -> Modifier.centeredMaxWidth()
+                        else -> Modifier
+                    }
+                )
                 .padding(spacing.lg)
         ) {
             Row(
@@ -142,7 +150,7 @@ fun HomeScreen(
 
             Spacer(Modifier.height(spacing.sectionGap))
 
-            if (wide) {
+            if (sideBySide) {
                 Row(horizontalArrangement = Arrangement.spacedBy(spacing.sectionGap), modifier = Modifier.fillMaxWidth()) {
                     TodaysPlanSection(uiState, onViewAllClick, onMealClick, Modifier.weight(3f))
                     QuickActionsSection(stacked = true, onAddMealClick, onShoppingListClick, Modifier.weight(2f))
