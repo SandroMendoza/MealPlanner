@@ -5,7 +5,9 @@ package com.meal.domain.usecase
 import com.meal.domain.fakes.FakeIngredientRepository
 import com.meal.domain.fakes.FakeMealPlanRepository
 import com.meal.domain.fakes.FakeRecipeRepository
+import com.meal.domain.fakes.FakeSettingsRepository
 import com.meal.domain.fakes.recipe
+import com.meal.domain.model.AppSettings
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.MealSlot
 import com.meal.domain.model.enums.MealType
@@ -14,6 +16,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.uuid.ExperimentalUuidApi
@@ -84,12 +87,32 @@ class RecipeAndMealPlanUseCasesTest {
         val mealPlan = FakeMealPlanRepository()
         val recipeId = Uuid.random()
 
-        AddRecipeToSlotUseCase(mealPlan).execute(date, MealType.LUNCH, recipeId)
+        AddRecipeToSlotUseCase(mealPlan, FakeSettingsRepository()).execute(date, MealType.LUNCH, recipeId)
 
         val slot = mealPlan.slots.value.single()
         assertEquals(date, slot.date)
         assertEquals(MealType.LUNCH, slot.mealType)
         assertEquals(recipeId, slot.recipeId)
+    }
+
+    @Test
+    fun lockedPastDatesRejectAddingToAPastDayButNotToToday() = runTest {
+        val mealPlan = FakeMealPlanRepository()
+        val locked = FakeSettingsRepository(AppSettings(lockPastDates = true))
+        val useCase = AddRecipeToSlotUseCase(mealPlan, locked, today = { date })
+
+        assertFalse(useCase.execute(LocalDate(2026, 11, 13), MealType.LUNCH, Uuid.random()))
+        assertTrue(useCase.execute(date, MealType.LUNCH, Uuid.random()))
+
+        assertEquals(listOf(date), mealPlan.slots.value.map { it.date })
+    }
+
+    @Test
+    fun unlockedPastDatesAllowAddingToAPastDay() = runTest {
+        val mealPlan = FakeMealPlanRepository()
+        val useCase = AddRecipeToSlotUseCase(mealPlan, FakeSettingsRepository(), today = { date })
+
+        assertTrue(useCase.execute(LocalDate(2026, 11, 13), MealType.LUNCH, Uuid.random()))
     }
 
     @Test

@@ -48,7 +48,7 @@ object RecipeSeedData {
         Cuisine.ITALIAN to italianRecipes(),
         Cuisine.MEXICAN to mexicanRecipes(),
         Cuisine.AMERICAN to americanRecipes(),
-    ).flatMap { (cuisine, recipes) -> recipes.map { it.copy(isUserCreated = false, cuisine = cuisine) } }
+    ).flatMap { (cuisine, recipes) -> recipes.map { it.copy(isUserCreated = false, cuisines = setOf(cuisine)) } }
 
     private fun filipinoRecipes(): List<RecipeDto> = listOf(
         // ---------- Main dishes ----------

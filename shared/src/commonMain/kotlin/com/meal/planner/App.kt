@@ -30,6 +30,7 @@ import com.meal.planner.common.isExpandedWidth
 import com.meal.planner.common.isWideWidth
 import com.meal.planner.components.KeyboardDismissButton
 import com.meal.planner.navigation.AppNavHost
+import com.meal.planner.navigation.NavigationRequest
 import com.meal.planner.onboarding.WalkthroughScreen
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTheme
@@ -38,7 +39,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App(startRoute: String? = null, quickAddItemName: String? = null) {
+fun App(startRoute: String? = null, quickAddItemName: String? = null, navigationRequest: NavigationRequest? = null) {
     val preferencesViewModel: AppPreferencesViewModel = koinViewModel()
     val themeMode by preferencesViewModel.themeMode.collectAsStateWithLifecycle()
     val language by preferencesViewModel.language.collectAsStateWithLifecycle()
@@ -66,7 +67,11 @@ fun App(startRoute: String? = null, quickAddItemName: String? = null) {
                                 .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.displayCutout))
                         )
                         false -> {
-                            AppNavHost(startRoute = startRoute, quickAddItemName = quickAddItemName)
+                            AppNavHost(
+                                startRoute = startRoute,
+                                quickAddItemName = quickAddItemName,
+                                navigationRequest = navigationRequest
+                            )
                             KeyboardDismissButton(modifier = Modifier.align(Alignment.BottomEnd))
                         }
                         // Until the walkthrough state is read, show only the background, so a new

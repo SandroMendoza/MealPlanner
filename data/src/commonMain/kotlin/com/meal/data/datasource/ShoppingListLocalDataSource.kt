@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.meal.data.db.MealPlannerDatabase
 import com.meal.data.db.SelectPricedItemsInRange
 import com.meal.data.db.ShoppingListItemEntity
+import com.meal.domain.model.PantryStaples
 import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.model.SpendingLineItem
 import com.meal.domain.model.enums.MeasurementUnit
@@ -23,12 +24,26 @@ class ShoppingListLocalDataSource(
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val queries = database.shoppingListItemQueries
+    private val atHomeQueries = database.shoppingAtHomeQueries
 
     fun items(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>> =
         combine(
             queries.selectActiveItems(rangeStart.toString(), rangeEnd.toString()).asFlow().mapToList(ioDispatcher),
-            groupLocalDataSource.assignments()
-        ) { rows, assignments -> rows.map { toDomain(it, assignments[it.itemKey]) } }
+            groupLocalDataSource.assignments(),
+            atHomeQueries.selectAll().asFlow().mapToList(ioDispatcher)
+        ) { rows, assignments, atHomeRows ->
+            val atHomeByName = atHomeRows.associate { it.normalizedName to (it.atHome != 0L) }
+            rows.map { row ->
+                val atHome = atHomeByName[normalizedIngredientName(row.name)] ?: PantryStaples.isStaple(row.name)
+                toDomain(row, assignments[row.itemKey], atHome)
+            }
+        }
+
+    suspend fun setAtHome(names: Collection<String>, atHome: Boolean) = withContext(ioDispatcher) {
+        database.transaction {
+            names.forEach { atHomeQueries.setAtHome(normalizedIngredientName(it), if (atHome) 1L else 0L) }
+        }
+    }
 
     suspend fun syncGenerated(rangeStart: LocalDate, rangeEnd: LocalDate, required: List<ShoppingListItem>) =
         withContext(ioDispatcher) {
@@ -78,9 +93,9 @@ class ShoppingListLocalDataSource(
             )
         }
 
-    suspend fun addManual(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) =
+    suspend fun addManual(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String =
         withContext(ioDispatcher) {
-            database.transaction {
+            database.transactionWithResult {
                 val existingKey = queries.selectActiveItemByName(
                     rangeStart = rangeStart.toString(),
                     rangeEnd = rangeEnd.toString(),
@@ -94,6 +109,7 @@ class ShoppingListLocalDataSource(
                         rangeStart = rangeStart.toString(),
                         rangeEnd = rangeEnd.toString()
                     )
+                    existingKey
                 } else {
                     queries.insertItem(
                         itemKey = item.itemKey,
@@ -104,8 +120,22 @@ class ShoppingListLocalDataSource(
                         unit = item.unit.name,
                         checked = 0
                     )
+                    item.itemKey
                 }
             }
+        }
+
+    // Generated rows are only ever inserted when missing, so an edited amount stays for this
+    // range even when the list is regenerated from the meal plan.
+    suspend fun setQuantityAndUnit(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) =
+        withContext(ioDispatcher) {
+            queries.setQuantityAndUnit(
+                quantity = quantity,
+                unit = unit.name,
+                itemKey = itemKey,
+                rangeStart = rangeStart.toString(),
+                rangeEnd = rangeEnd.toString()
+            )
         }
 
     suspend fun remove(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) =
@@ -129,14 +159,15 @@ class ShoppingListLocalDataSource(
             .mapToList(ioDispatcher)
             .map { rows -> rows.map { toSpendingLineItem(it) } }
 
-    private fun toDomain(row: ShoppingListItemEntity, groupId: String?) = ShoppingListItem(
+    private fun toDomain(row: ShoppingListItemEntity, groupId: String?, atHome: Boolean) = ShoppingListItem(
         itemKey = row.itemKey,
         name = row.name,
         totalQuantity = row.quantity,
         unit = MeasurementUnit.valueOf(row.unit),
         checked = row.checked != 0L,
         price = row.price,
-        groupId = groupId
+        groupId = groupId,
+        atHome = atHome
     )
 
     private fun toSpendingLineItem(row: SelectPricedItemsInRange) = SpendingLineItem(

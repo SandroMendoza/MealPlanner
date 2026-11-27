@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -19,6 +20,11 @@ private val FRENCH_WEEKDAY_INITIAL = mapOf(
 private val FRENCH_MONTH_ABBREVIATIONS = listOf(
     "Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"
 )
+
+private fun frenchGreeting(period: DayPeriod): String = when (period) {
+    DayPeriod.MORNING, DayPeriod.AFTERNOON -> "Bonjour"
+    DayPeriod.EVENING -> "Bonsoir"
+}
 
 private fun frenchMealTypeName(mealType: MealType): String = when (mealType) {
     MealType.BREAKFAST -> "Petit-déjeuner"
@@ -199,8 +205,8 @@ val frenchStrings = Strings(
     navShopping = "Courses",
     navProfile = "Profil",
 
-    homeGreetingDefault = "Bonjour !",
-    homeGreetingWithName = { name -> "Bonjour, $name !" },
+    homeGreetingDefault = { period -> "${frenchGreeting(period)} !" },
+    homeGreetingWithName = { period, name -> "${frenchGreeting(period)}, $name !" },
     homeSubtitle = "Planifions vos repas.",
     homeNotificationsCd = "Notifications",
     homeTodaysPlan = "Plan du jour",
@@ -296,6 +302,16 @@ val frenchStrings = Strings(
 
     shoppingNoMealsPlannedPeriod = "Aucun repas prévu pour cette période.",
     shoppingAddItemButton = "Ajouter un Article",
+    shoppingEditAmountCd = "Modifier la quantité",
+    shoppingSelectedCount = { count -> if (count == 1) "1 sélectionné" else "$count sélectionnés" },
+    shoppingCancelSelectionCd = "Annuler la sélection",
+    shoppingSelectItemCd = "Sélectionner",
+    shoppingAtHome = "À la maison",
+    shoppingGroupLabel = "Groupe",
+    shoppingMoveToAtHomeCd = "Déplacer vers À la maison",
+    shoppingMoveToListCd = "Remettre dans la liste",
+    shoppingRemoveSelectedTitle = "Supprimer les articles ?",
+    shoppingRemoveSelectedBody = { count -> if (count == 1) "Supprimer 1 article de cette liste ?" else "Supprimer $count articles de cette liste ?" },
     shoppingRemoveItemTitle = "Supprimer l'article ?",
     shoppingRemoveItemBody = { itemName -> "Supprimer $itemName de la liste de courses ?" },
     recordPriceTitle = { itemName -> "Combien a coûté $itemName ?" },
@@ -349,8 +365,10 @@ val frenchStrings = Strings(
     notificationSettingsDescription = "Choisissez les repas pour lesquels vous souhaitez un rappel.",
     settingsNotificationsPermissionDenied = "Activez les notifications dans les paramètres système pour recevoir des rappels de repas.",
     settingsNotificationsOpenSettings = "Ouvrir les paramètres",
-    mealReminderNotificationTitle = { mealType -> "Rappel : ${frenchMealTypeName(mealType).lowercase()}" },
-    mealReminderNotificationBody = "Appuyez pour voir ce qui est prévu.",
+    mealReminderPlannedTitle = { mealType, recipes -> "${frenchMealTypeName(mealType)} : $recipes" },
+    mealReminderPlannedBody = "C'est l'heure de cuisiner.",
+    mealReminderNothingPlannedTitle = { mealType -> "${frenchMealTypeName(mealType)} : rien de prévu" },
+    mealReminderNothingPlannedBody = "Appuyez pour prévoir un repas.",
 
     aboutAppName = "Meal Planner",
     aboutVersion = { version -> "Version $version" },

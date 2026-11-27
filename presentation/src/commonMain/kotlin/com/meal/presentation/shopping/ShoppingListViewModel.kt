@@ -20,6 +20,8 @@ import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
+import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
+import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
 import com.meal.domain.service.TtsSpeaker
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.formatAmount
@@ -47,6 +49,8 @@ class ShoppingListViewModel(
     private val renameShoppingGroupUseCase: RenameShoppingGroupUseCase,
     private val deleteShoppingGroupUseCase: DeleteShoppingGroupUseCase,
     private val assignItemToGroupUseCase: AssignItemToGroupUseCase,
+    private val updateShoppingListItemAmountUseCase: UpdateShoppingListItemAmountUseCase,
+    private val setShoppingItemsAtHomeUseCase: SetShoppingItemsAtHomeUseCase,
     private val ttsSpeaker: TtsSpeaker
 ) : ViewModel() {
 
@@ -130,9 +134,59 @@ class ShoppingListViewModel(
         _uiState.value = _uiState.value.copy(itemPendingDeletion = null)
     }
 
-    fun addItem(name: String, quantity: Double, unit: MeasurementUnit) {
+    fun startSelection(itemKey: String) {
+        _uiState.value = _uiState.value.copy(selectedItemKeys = _uiState.value.selectedItemKeys + itemKey)
+    }
+
+    fun toggleSelection(itemKey: String) {
+        val selected = _uiState.value.selectedItemKeys
+        _uiState.value = _uiState.value.copy(
+            selectedItemKeys = if (itemKey in selected) selected - itemKey else selected + itemKey
+        )
+    }
+
+    fun clearSelection() {
+        _uiState.value = _uiState.value.copy(selectedItemKeys = emptySet(), confirmingRemoveSelected = false)
+    }
+
+    fun requestRemoveSelected() {
+        if (_uiState.value.isSelecting) {
+            _uiState.value = _uiState.value.copy(confirmingRemoveSelected = true)
+        }
+    }
+
+    fun dismissRemoveSelected() {
+        _uiState.value = _uiState.value.copy(confirmingRemoveSelected = false)
+    }
+
+    fun confirmRemoveSelected() {
+        val keys = _uiState.value.selectedItemKeys
+        val rangeStart = _uiState.value.rangeStart
+        val rangeEnd = _uiState.value.rangeEnd
         viewModelScope.launch {
-            addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
+            keys.forEach { removeShoppingListItemUseCase.execute(it, rangeStart, rangeEnd) }
+        }
+        clearSelection()
+    }
+
+    /**
+     * Moves the selected items to "At home", or back among the items to buy when every selected
+     * item is already at home.
+     */
+    fun moveSelectedAtHome() {
+        val selected = _uiState.value.items.filter { it.itemKey in _uiState.value.selectedItemKeys }
+        val toAtHome = !selected.all { it.atHome }
+        viewModelScope.launch {
+            setShoppingItemsAtHomeUseCase.execute(selected.map { it.name }, toAtHome)
+        }
+        clearSelection()
+    }
+
+    /** Adds the item, and puts it in the group with [groupId] when one is given. */
+    fun addItem(name: String, quantity: Double, unit: MeasurementUnit, groupId: String? = null) {
+        viewModelScope.launch {
+            val itemKey = addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
+            if (groupId != null) assignItemToGroupUseCase.execute(itemKey, groupId)
         }
     }
 
@@ -142,6 +196,24 @@ class ShoppingListViewModel(
 
     fun dismissAddItemDialog() {
         _uiState.value = _uiState.value.copy(showAddItemDialog = false)
+    }
+
+    fun openEditAmount(item: ShoppingListItem) {
+        _uiState.value = _uiState.value.copy(itemBeingEdited = item)
+    }
+
+    fun dismissEditAmount() {
+        _uiState.value = _uiState.value.copy(itemBeingEdited = null)
+    }
+
+    fun updateItemAmount(quantity: Double, unit: MeasurementUnit) {
+        val item = _uiState.value.itemBeingEdited ?: return
+        val rangeStart = _uiState.value.rangeStart
+        val rangeEnd = _uiState.value.rangeEnd
+        viewModelScope.launch {
+            updateShoppingListItemAmountUseCase.execute(item.itemKey, quantity, unit, rangeStart, rangeEnd)
+        }
+        dismissEditAmount()
     }
 
     fun recordItemPrice(itemKey: String, price: Double) {
@@ -283,7 +355,13 @@ class ShoppingListViewModel(
     }
 
     private fun setRange(mode: ShoppingListRangeMode, start: LocalDate, end: LocalDate) {
-        _uiState.value = _uiState.value.copy(mode = mode, rangeStart = start, rangeEnd = end)
+        _uiState.value = _uiState.value.copy(
+            mode = mode,
+            rangeStart = start,
+            rangeEnd = end,
+            selectedItemKeys = emptySet(),
+            confirmingRemoveSelected = false
+        )
         loadList()
     }
 

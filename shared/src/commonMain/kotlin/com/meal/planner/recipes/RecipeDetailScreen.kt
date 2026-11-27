@@ -321,7 +321,7 @@ private fun ColumnScope.RecipeDetailBody(
                 RecipeDetailSummary(recipe, Modifier.padding(top = spacing.lg))
             }
 
-            Row(
+            if (recipe.ingredients.isNotEmpty()) Row(
                 modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -560,13 +560,15 @@ private fun RecipeDetailSummary(recipe: Recipe, modifier: Modifier = Modifier) {
                 icon = Icons.Filled.People,
                 text = LocalStrings.current.servingsLabel(recipe.servings)
             )
-            RecipeDetailMetaItem(
-                icon = Icons.AutoMirrored.Filled.MenuBook,
-                text = recipe.category.displayName()
-            )
+            if (recipe.categories.isNotEmpty()) {
+                RecipeDetailMetaItem(
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    text = recipe.categories.sortedBy { it.ordinal }.map { it.displayName() }.joinToString(" · ")
+                )
+            }
         }
 
-        recipe.cuisine?.let { cuisine ->
+        if (recipe.cuisines.isNotEmpty()) {
             Row(
                 modifier = Modifier.padding(top = spacing.xs),
                 horizontalArrangement = Arrangement.spacedBy(spacing.lg),
@@ -574,7 +576,7 @@ private fun RecipeDetailSummary(recipe: Recipe, modifier: Modifier = Modifier) {
             ) {
                 RecipeDetailMetaItem(
                     icon = Icons.Filled.Public,
-                    text = cuisine.displayName()
+                    text = recipe.cuisines.sortedBy { it.ordinal }.map { it.displayName() }.joinToString(" · ")
                 )
             }
         }

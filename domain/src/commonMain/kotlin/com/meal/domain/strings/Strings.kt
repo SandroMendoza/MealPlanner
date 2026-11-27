@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -73,8 +74,8 @@ data class Strings(
     val navProfile: String,
 
     // Home
-    val homeGreetingDefault: String,
-    val homeGreetingWithName: (String) -> String,
+    val homeGreetingDefault: (DayPeriod) -> String,
+    val homeGreetingWithName: (DayPeriod, String) -> String,
     val homeSubtitle: String,
     val homeNotificationsCd: String,
     val homeTodaysPlan: String,
@@ -174,6 +175,16 @@ data class Strings(
     // Shopping list
     val shoppingNoMealsPlannedPeriod: String,
     val shoppingAddItemButton: String,
+    val shoppingEditAmountCd: String,
+    val shoppingSelectedCount: (Int) -> String,
+    val shoppingCancelSelectionCd: String,
+    val shoppingSelectItemCd: String,
+    val shoppingAtHome: String,
+    val shoppingGroupLabel: String,
+    val shoppingMoveToAtHomeCd: String,
+    val shoppingMoveToListCd: String,
+    val shoppingRemoveSelectedTitle: String,
+    val shoppingRemoveSelectedBody: (Int) -> String,
     val shoppingRemoveItemTitle: String,
     val shoppingRemoveItemBody: (itemName: String) -> String,
     val recordPriceTitle: (itemName: String) -> String,
@@ -230,8 +241,11 @@ data class Strings(
     val notificationSettingsDescription: String,
     val settingsNotificationsPermissionDenied: String,
     val settingsNotificationsOpenSettings: String,
-    val mealReminderNotificationTitle: (MealType) -> String,
-    val mealReminderNotificationBody: String,
+    /** Title for a meal with recipes planned: the meal and the recipe names, already joined. */
+    val mealReminderPlannedTitle: (MealType, String) -> String,
+    val mealReminderPlannedBody: String,
+    val mealReminderNothingPlannedTitle: (MealType) -> String,
+    val mealReminderNothingPlannedBody: String,
 
     // About screen
     val aboutAppName: String,

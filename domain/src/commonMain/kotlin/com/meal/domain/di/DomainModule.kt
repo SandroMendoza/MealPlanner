@@ -30,6 +30,8 @@ import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
+import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
+import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.domain.usecase.ToggleFavoriteUseCase
@@ -68,7 +70,7 @@ val domainModule = module {
         GetWeeklyMealPlanUseCase(get<MealPlanRepository>(), get<RecipeRepository>())
     }
     factory {
-        AddRecipeToSlotUseCase(get<MealPlanRepository>())
+        AddRecipeToSlotUseCase(get<MealPlanRepository>(), get<SettingsRepository>())
     }
     factory {
         ReplaceRecipeInSlotUseCase(get<MealPlanRepository>())
@@ -87,6 +89,12 @@ val domainModule = module {
     }
     factory {
         RemoveShoppingListItemUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        UpdateShoppingListItemAmountUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        SetShoppingItemsAtHomeUseCase(get<ShoppingListRepository>())
     }
     factory {
         RecordItemPriceUseCase(get<ShoppingListRepository>())

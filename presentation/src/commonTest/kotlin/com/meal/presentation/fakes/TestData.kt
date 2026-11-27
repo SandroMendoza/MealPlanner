@@ -22,8 +22,8 @@ fun ingredientLine(name: String, quantity: Double, unit: MeasurementUnit = Measu
 fun recipe(
     name: String = "Chicken Adobo",
     description: String? = null,
-    category: FoodCategory = FoodCategory.MAIN_DISH,
-    cuisine: Cuisine? = null,
+    categories: Set<FoodCategory> = setOf(FoodCategory.MAIN_DISH),
+    cuisines: Set<Cuisine> = emptySet(),
     mealTypes: Set<MealType> = emptySet(),
     preparationTimeMinutes: Int = 30,
     servings: Int = 4,
@@ -37,7 +37,7 @@ fun recipe(
     id = id,
     name = name,
     description = description,
-    category = category,
+    categories = categories,
     preparationTimeMinutes = preparationTimeMinutes,
     servings = servings,
     imageUrl = imageUrl,
@@ -45,7 +45,7 @@ fun recipe(
     instructions = instructions,
     isFavorite = isFavorite,
     isUserCreated = isUserCreated,
-    cuisine = cuisine,
+    cuisines = cuisines,
     mealTypes = mealTypes
 )
 
@@ -60,7 +60,8 @@ fun shoppingItem(
     unit: MeasurementUnit = MeasurementUnit.PIECE,
     checked: Boolean = false,
     price: Double? = null,
-    groupId: String? = null
+    groupId: String? = null,
+    atHome: Boolean = false
 ) = ShoppingListItem(
     itemKey = key,
     name = name,
@@ -68,5 +69,6 @@ fun shoppingItem(
     unit = unit,
     checked = checked,
     price = price,
-    groupId = groupId
+    groupId = groupId,
+    atHome = atHome
 )

@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -19,6 +20,12 @@ private val ENGLISH_WEEKDAY_INITIAL = mapOf(
 private val ENGLISH_MONTH_ABBREVIATIONS = listOf(
     "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 )
+
+private fun englishGreeting(period: DayPeriod): String = when (period) {
+    DayPeriod.MORNING -> "Good morning"
+    DayPeriod.AFTERNOON -> "Good afternoon"
+    DayPeriod.EVENING -> "Good evening"
+}
 
 private fun englishMealTypeName(mealType: MealType): String = when (mealType) {
     MealType.BREAKFAST -> "Breakfast"
@@ -191,8 +198,8 @@ val englishStrings = Strings(
     navShopping = "Shopping",
     navProfile = "Profile",
 
-    homeGreetingDefault = "Good morning!",
-    homeGreetingWithName = { name -> "Good morning, $name" },
+    homeGreetingDefault = { period -> "${englishGreeting(period)}!" },
+    homeGreetingWithName = { period, name -> "${englishGreeting(period)}, $name" },
     homeSubtitle = "Let's plan your meals.",
     homeNotificationsCd = "Notifications",
     homeTodaysPlan = "Today's plan",
@@ -288,6 +295,16 @@ val englishStrings = Strings(
 
     shoppingNoMealsPlannedPeriod = "No meals planned for this period.",
     shoppingAddItemButton = "Add Item",
+    shoppingEditAmountCd = "Edit amount",
+    shoppingSelectedCount = { count -> "$count selected" },
+    shoppingCancelSelectionCd = "Cancel selection",
+    shoppingSelectItemCd = "Select",
+    shoppingAtHome = "At home",
+    shoppingGroupLabel = "Group",
+    shoppingMoveToAtHomeCd = "Move to At home",
+    shoppingMoveToListCd = "Move back to the list",
+    shoppingRemoveSelectedTitle = "Remove items?",
+    shoppingRemoveSelectedBody = { count -> if (count == 1) "Remove 1 item from this list?" else "Remove $count items from this list?" },
     shoppingRemoveItemTitle = "Remove item?",
     shoppingRemoveItemBody = { itemName -> "Remove $itemName from the shopping list?" },
     recordPriceTitle = { itemName -> "How much did $itemName cost?" },
@@ -341,8 +358,10 @@ val englishStrings = Strings(
     notificationSettingsDescription = "Choose which meals you want to be reminded about.",
     settingsNotificationsPermissionDenied = "Enable notifications in system settings to receive meal reminders.",
     settingsNotificationsOpenSettings = "Open settings",
-    mealReminderNotificationTitle = { mealType -> "${englishMealTypeName(mealType)} reminder" },
-    mealReminderNotificationBody = "Tap to see what's planned.",
+    mealReminderPlannedTitle = { mealType, recipes -> "${englishMealTypeName(mealType)}: $recipes" },
+    mealReminderPlannedBody = "Time to start cooking.",
+    mealReminderNothingPlannedTitle = { mealType -> "${englishMealTypeName(mealType)}: nothing planned" },
+    mealReminderNothingPlannedBody = "Tap to plan a meal.",
 
     aboutAppName = "Meal Planner",
     aboutVersion = { version -> "Version $version" },

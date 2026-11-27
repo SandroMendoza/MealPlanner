@@ -18,7 +18,7 @@ fun recipe(
     id = id,
     name = name,
     description = null,
-    category = FoodCategory.MAIN_DISH,
+    categories = setOf(FoodCategory.MAIN_DISH),
     preparationTimeMinutes = 30,
     servings = 4,
     imageUrl = null,

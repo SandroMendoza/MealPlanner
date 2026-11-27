@@ -10,6 +10,7 @@ import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.model.SpendingLineItem
 import com.meal.domain.model.UserProfile
 import com.meal.domain.model.enums.MealType
+import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.MealReminderRepository
@@ -214,9 +215,22 @@ class FakeShoppingListRepository : ShoppingListRepository {
         setItems(rangeStart, rangeEnd, itemsFor(rangeStart, rangeEnd).map { if (it.itemKey == itemKey) it.copy(checked = checked) else it })
     }
 
-    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) {
+    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String {
         manualItems += item to (rangeStart to rangeEnd)
         setItems(rangeStart, rangeEnd, itemsFor(rangeStart, rangeEnd) + item)
+        return item.itemKey
+    }
+
+    override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) {
+        setItems(rangeStart, rangeEnd, itemsFor(rangeStart, rangeEnd).map {
+            if (it.itemKey == itemKey) it.copy(totalQuantity = quantity, unit = unit) else it
+        })
+    }
+
+    override suspend fun setItemsAtHome(names: Collection<String>, atHome: Boolean) {
+        itemsByRange.value = itemsByRange.value.mapValues { (_, items) ->
+            items.map { if (it.name in names) it.copy(atHome = atHome) else it }
+        }
     }
 
     override suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) {

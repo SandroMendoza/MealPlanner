@@ -5,6 +5,7 @@ import androidx.compose.material3.DisplayMode
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -20,18 +21,24 @@ import kotlin.time.Instant
 /**
  * Date picker dialog for scheduling a meal, backed by [kotlinx.datetime.LocalDate].
  * Dates are mapped to/from millis at UTC midnight so the picked calendar day doesn't
- * shift under the device's local timezone.
+ * shift under the device's local timezone. Days before [earliestDate] can't be picked.
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTime::class)
 @Composable
 fun MealDatePickerDialog(
     initialDate: LocalDate,
     onDateSelected: (LocalDate) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    earliestDate: LocalDate? = null
 ) {
+    val earliestMillis = earliestDate?.atStartOfDayIn(TimeZone.UTC)?.toEpochMilliseconds()
     val state = rememberDatePickerState(
         initialSelectedDateMillis = initialDate.atStartOfDayIn(TimeZone.UTC).toEpochMilliseconds(),
-        initialDisplayMode = if (LocalCompactHeight.current) DisplayMode.Input else DisplayMode.Picker
+        initialDisplayMode = if (LocalCompactHeight.current) DisplayMode.Input else DisplayMode.Picker,
+        selectableDates = object : SelectableDates {
+            override fun isSelectableDate(utcTimeMillis: Long) = earliestMillis == null || utcTimeMillis >= earliestMillis
+            override fun isSelectableYear(year: Int) = earliestDate == null || year >= earliestDate.year
+        }
     )
 
     DatePickerDialog(

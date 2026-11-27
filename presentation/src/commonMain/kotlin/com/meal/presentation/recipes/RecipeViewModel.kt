@@ -13,8 +13,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlin.random.Random
+import kotlinx.coroutines.delay
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
+private const val REFRESH_INDICATOR_MILLIS = 400L
 
 @OptIn(ExperimentalUuidApi::class)
 class RecipeViewModel(
@@ -54,6 +57,21 @@ class RecipeViewModel(
                     errorMessage = "Failed to load recipes: ${e.message}"
                 )
             }
+        }
+    }
+
+    /** Gives every recipe a new random position; search and filters stay as they are. */
+    fun reshuffle() {
+        if (_uiState.value.isRefreshing) return
+        shuffleKeys.clear()
+        _uiState.value = _uiState.value.copy(
+            recipes = _uiState.value.recipes.sortedBy { shuffleKeys.getOrPut(it.id) { Random.nextDouble() } },
+            isRefreshing = true
+        )
+        viewModelScope.launch {
+            // The reorder is instant, so the indicator stays up briefly to show the pull worked.
+            delay(REFRESH_INDICATOR_MILLIS)
+            _uiState.value = _uiState.value.copy(isRefreshing = false)
         }
     }
 
