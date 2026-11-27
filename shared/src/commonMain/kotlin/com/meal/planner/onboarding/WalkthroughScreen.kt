@@ -55,6 +55,7 @@ import coil3.compose.AsyncImage
 import com.meal.domain.strings.Strings
 import com.meal.domain.strings.WalkthroughText
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalWideLandscape
 import com.meal.planner.common.LocalWideWidth
 import com.meal.planner.common.centeredMaxWidth
 import com.meal.planner.strings.LocalStrings
@@ -65,8 +66,8 @@ import mealplanner.shared.generated.resources.Res
 private enum class Gesture { TAP, SWIPE_LEFT, SWIPE_RIGHT }
 
 /**
- * One walkthrough page: a screenshot from `composeResources/files/walkthrough/`, and the part of it
- * to point at, as fractions of the screenshot's width and height.
+ * One walkthrough page: a screenshot from `composeResources/files/walkthrough/` (its name without the
+ * theme suffix), and the part of it to point at, as fractions of the screenshot's width and height.
  */
 private class WalkthroughStep(
     val screenshot: String,
@@ -75,7 +76,14 @@ private class WalkthroughStep(
     val text: (Strings) -> WalkthroughText
 )
 
-private val steps = listOf(
+/**
+ * The walkthrough pages for one kind of screen. Every set has the same steps in the same order, so
+ * the current page carries over when a tablet is rotated.
+ */
+private class WalkthroughSet(val steps: List<WalkthroughStep>, val screenshotAspectRatio: Float)
+
+/** Screenshots of a 1080x2400 phone screen without its status bar. */
+private val phoneSet = WalkthroughSet(listOf(
     WalkthroughStep("add_meal", Rect(0.0389f, 0.8395f, 0.9611f, 0.8842f), Gesture.TAP) { it.walkthroughAddMeal },
     WalkthroughStep("pick_meal", Rect(0.1991f, 0.4211f, 0.8380f, 0.4627f), Gesture.TAP) { it.walkthroughPickMeal },
     WalkthroughStep("swipe_meal", Rect(0.0389f, 0.3351f, 0.9611f, 0.4298f), Gesture.SWIPE_LEFT) { it.walkthroughRemoveMeal },
@@ -87,10 +95,37 @@ private val steps = listOf(
     WalkthroughStep("shopping", Rect(0.9028f, 0.2259f, 0.9954f, 0.2654f), Gesture.TAP) { it.walkthroughRecordPrice },
     WalkthroughStep("pantry_staples", Rect(0.0278f, 0.7873f, 0.9722f, 0.8268f), Gesture.TAP) { it.walkthroughPantryStaples },
     WalkthroughStep("home", Rect(0.8704f, 0.0316f, 0.9454f, 0.0671f), Gesture.TAP) { it.walkthroughReminders }
-)
+), screenshotAspectRatio = 1080f / 2280f)
 
-/** Width over height of the bundled screenshots (a 1080x2400 screen without its status bar). */
-private const val SCREENSHOT_ASPECT_RATIO = 1080f / 2280f
+/** Screenshots of a 2560x1600 tablet screen in landscape without its status bar. */
+private val tabletLandscapeSet = WalkthroughSet(listOf(
+    WalkthroughStep("tablet_land_add_meal", Rect(0.2625f, 0.9175f, 0.8000f, 0.9794f), Gesture.TAP) { it.walkthroughAddMeal },
+    WalkthroughStep("tablet_land_pick_meal", Rect(0.3000f, 0.4008f, 0.7000f, 0.4523f), Gesture.TAP) { it.walkthroughPickMeal },
+    WalkthroughStep("tablet_land_swipe_meal", Rect(0.1375f, 0.2519f, 0.5281f, 0.3582f), Gesture.SWIPE_LEFT) { it.walkthroughRemoveMeal },
+    WalkthroughStep("tablet_land_recipes", Rect(0.9437f, 0.9072f, 0.9875f, 0.9794f), Gesture.TAP) { it.walkthroughCreateRecipe },
+    WalkthroughStep("tablet_land_recipes", Rect(0.9156f, 0.0412f, 0.9344f, 0.0722f), Gesture.TAP) { it.walkthroughFilterRecipes },
+    WalkthroughStep("tablet_land_shopping", Rect(0.5008f, 0.1450f, 1f, 0.2068f), Gesture.TAP) { it.walkthroughCheckItem },
+    WalkthroughStep("tablet_land_swipe_left_item", Rect(0.5008f, 0.1450f, 1f, 0.2068f), Gesture.SWIPE_LEFT) { it.walkthroughRemoveItem },
+    WalkthroughStep("tablet_land_swipe_right_item", Rect(0.5008f, 0.1450f, 1f, 0.2068f), Gesture.SWIPE_RIGHT) { it.walkthroughGroupItem },
+    WalkthroughStep("tablet_land_shopping", Rect(0.9512f, 0.0219f, 0.9887f, 0.0831f), Gesture.TAP) { it.walkthroughRecordPrice },
+    WalkthroughStep("tablet_land_pantry_staples", Rect(0.5008f, 0.9381f, 1f, 1f), Gesture.TAP) { it.walkthroughPantryStaples },
+    WalkthroughStep("tablet_land_home", Rect(0.8984f, 0.0335f, 0.9172f, 0.0644f), Gesture.TAP) { it.walkthroughReminders }
+), screenshotAspectRatio = 2560f / 1552f)
+
+/** Screenshots of a 1600x2560 tablet screen in portrait without its status bar. */
+private val tabletPortraitSet = WalkthroughSet(listOf(
+    WalkthroughStep("tablet_port_add_meal", Rect(0.0700f, 0.8854f, 0.9300f, 0.9236f), Gesture.TAP) { it.walkthroughAddMeal },
+    WalkthroughStep("tablet_port_pick_meal", Rect(0.1800f, 0.4387f, 0.8200f, 0.4705f), Gesture.TAP) { it.walkthroughPickMeal },
+    WalkthroughStep("tablet_port_swipe_meal", Rect(0.0700f, 0.1557f, 0.9300f, 0.2213f), Gesture.SWIPE_LEFT) { it.walkthroughRemoveMeal },
+    WalkthroughStep("tablet_port_recipes", Rect(0.9100f, 0.8790f, 0.9800f, 0.9236f), Gesture.TAP) { it.walkthroughCreateRecipe },
+    WalkthroughStep("tablet_port_recipes", Rect(0.8650f, 0.0255f, 0.8950f, 0.0446f), Gesture.TAP) { it.walkthroughFilterRecipes },
+    WalkthroughStep("tablet_port_shopping", Rect(0f, 0.1469f, 0.5000f, 0.1851f), Gesture.TAP) { it.walkthroughCheckItem },
+    WalkthroughStep("tablet_port_swipe_left_item", Rect(0f, 0.1469f, 0.5000f, 0.1851f), Gesture.SWIPE_LEFT) { it.walkthroughRemoveItem },
+    WalkthroughStep("tablet_port_swipe_right_item", Rect(0f, 0.1469f, 0.5000f, 0.1851f), Gesture.SWIPE_RIGHT) { it.walkthroughGroupItem },
+    WalkthroughStep("tablet_port_shopping", Rect(0.4219f, 0.1091f, 0.4819f, 0.1469f), Gesture.TAP) { it.walkthroughRecordPrice },
+    WalkthroughStep("tablet_port_pantry_staples", Rect(0f, 0.8471f, 1f, 0.8854f), Gesture.TAP) { it.walkthroughPantryStaples },
+    WalkthroughStep("tablet_port_home", Rect(0.8875f, 0.0207f, 0.9175f, 0.0398f), Gesture.TAP) { it.walkthroughReminders }
+), screenshotAspectRatio = 1600f / 2512f)
 
 /**
  * Steps through screenshots of the app, each pointing at the button to tap or the row to swipe.
@@ -100,6 +135,12 @@ private const val SCREENSHOT_ASPECT_RATIO = 1080f / 2280f
 fun WalkthroughScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
     val spacing = MealPlannerTokens.spacing
     val strings = LocalStrings.current
+    val set = when {
+        LocalWideLandscape.current -> tabletLandscapeSet
+        LocalWideWidth.current -> tabletPortraitSet
+        else -> phoneSet
+    }
+    val steps = set.steps
     val pagerState = rememberPagerState { steps.size }
     val scope = rememberCoroutineScope()
     val onLastPage = pagerState.currentPage == steps.lastIndex
@@ -121,7 +162,7 @@ fun WalkthroughScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
             state = pagerState,
             modifier = Modifier.weight(1f).fillMaxWidth()
         ) { index ->
-            WalkthroughPage(steps[index], theme, strings)
+            WalkthroughPage(steps[index], set.screenshotAspectRatio, theme, strings)
         }
 
         Column(
@@ -154,19 +195,23 @@ fun WalkthroughScreen(onFinish: () -> Unit, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun WalkthroughPage(step: WalkthroughStep, theme: String, strings: Strings) {
+private fun WalkthroughPage(step: WalkthroughStep, aspectRatio: Float, theme: String, strings: Strings) {
     val spacing = MealPlannerTokens.spacing
     val text = step.text(strings)
-    val sideBySide = LocalWideWidth.current || LocalCompactHeight.current
+    val wideLandscape = LocalWideLandscape.current
 
-    if (sideBySide) {
+    if (wideLandscape || LocalCompactHeight.current) {
         Row(
             modifier = Modifier.fillMaxSize().padding(horizontal = spacing.xxl, vertical = spacing.sm),
             horizontalArrangement = Arrangement.spacedBy(spacing.xxl, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(modifier = Modifier.weight(1f).fillMaxSize(), contentAlignment = Alignment.CenterEnd) {
-                AnnotatedScreenshot(step, theme)
+            // A landscape tablet screenshot needs most of the width to stay legible.
+            Box(
+                modifier = Modifier.weight(if (wideLandscape) 2f else 1f).fillMaxSize(),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                AnnotatedScreenshot(step, aspectRatio, theme)
             }
             Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.CenterStart) {
                 StepText(text, TextAlign.Start)
@@ -179,9 +224,11 @@ private fun WalkthroughPage(step: WalkthroughStep, theme: String, strings: Strin
             verticalArrangement = Arrangement.spacedBy(spacing.lg)
         ) {
             Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.Center) {
-                AnnotatedScreenshot(step, theme)
+                AnnotatedScreenshot(step, aspectRatio, theme)
             }
-            StepText(text, TextAlign.Center)
+            Box(modifier = Modifier.centeredMaxWidth()) {
+                StepText(text, TextAlign.Center)
+            }
         }
     }
 }
@@ -212,7 +259,7 @@ private fun StepText(text: WalkthroughText, align: TextAlign) {
 
 /** The screenshot, dimmed everywhere but the target, with a ring and a tap or swipe hint on it. */
 @Composable
-private fun AnnotatedScreenshot(step: WalkthroughStep, theme: String) {
+private fun AnnotatedScreenshot(step: WalkthroughStep, aspectRatio: Float, theme: String) {
     val shape = MaterialTheme.shapes.large
     val accent = MaterialTheme.colorScheme.primary
     val transition = rememberInfiniteTransition()
@@ -224,7 +271,7 @@ private fun AnnotatedScreenshot(step: WalkthroughStep, theme: String) {
 
     Box(
         modifier = Modifier
-            .aspectRatio(SCREENSHOT_ASPECT_RATIO, matchHeightConstraintsFirst = true)
+            .aspectRatio(aspectRatio, matchHeightConstraintsFirst = true)
             .clip(shape)
             .border(MealPlannerTokens.spacing.xxs, MaterialTheme.colorScheme.outlineVariant, shape)
     ) {
