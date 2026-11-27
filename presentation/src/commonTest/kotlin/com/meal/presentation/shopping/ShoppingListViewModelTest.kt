@@ -340,6 +340,18 @@ class ShoppingListViewModelTest {
     }
 
     @Test
+    fun togglingASectionHidesAndShowsItsItems() {
+        val vm = viewModel()
+
+        vm.toggleSection("dairy")
+        vm.toggleSection(UNGROUPED_SECTION_KEY)
+        assertEquals(setOf("dairy", UNGROUPED_SECTION_KEY), vm.state.value.collapsedSectionKeys)
+
+        vm.toggleSection("dairy")
+        assertEquals(setOf(UNGROUPED_SECTION_KEY), vm.state.value.collapsedSectionKeys)
+    }
+
+    @Test
     fun groupManagementRenamesAndDeletesWithConfirmation() {
         val produce = ShoppingGroup("produce", "Produce", 0)
         groups.groups.value = listOf(produce)

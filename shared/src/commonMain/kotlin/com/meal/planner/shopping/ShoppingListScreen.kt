@@ -643,27 +643,21 @@ private fun ShoppingListContent(
         }
         else -> LazyColumn(modifier = modifier) {
             (sections + listOfNotNull(uiState.atHomeSection)).forEach { section ->
-                val headerKey = if (section.atHome) "at-home" else section.group?.id ?: "ungrouped"
-                item(key = "header-$headerKey") {
-                    if (section.atHome) {
-                        PantryStaplesHeader(
-                            itemCount = section.items.size,
-                            expanded = pantryStaplesExpanded,
-                            onToggle = { pantryStaplesExpanded = !pantryStaplesExpanded }
-                        )
-                    } else {
-                        Text(
-                            text = section.group?.name ?: LocalStrings.current.shoppingUngrouped,
-                            style = MaterialTheme.typography.titleSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.background)
-                                .padding(horizontal = spacing.lg)
-                        )
-                    }
+                val expanded = if (section.atHome) pantryStaplesExpanded else section.key !in uiState.collapsedSectionKeys
+                item(key = "header-${section.key}") {
+                    SectionHeader(
+                        title = when {
+                            section.atHome -> LocalStrings.current.shoppingAtHome
+                            else -> section.group?.name ?: LocalStrings.current.shoppingUngrouped
+                        },
+                        itemCount = section.items.size,
+                        expanded = expanded,
+                        onToggle = {
+                            if (section.atHome) pantryStaplesExpanded = !pantryStaplesExpanded else viewModel.toggleSection(section.key)
+                        }
+                    )
                 }
-                if (section.atHome && !pantryStaplesExpanded) return@forEach
+                if (!expanded) return@forEach
                 if (columns == 1) {
                     items(section.items, key = { it.itemKey }) { item -> ItemRow(item) }
                 } else {
@@ -679,9 +673,9 @@ private fun ShoppingListContent(
     }
 }
 
-/** Header of the pantry staples section; tapping it shows or hides the section's items. */
+/** Header of a list section with its item count; tapping it shows or hides the section's items. */
 @Composable
-private fun PantryStaplesHeader(itemCount: Int, expanded: Boolean, onToggle: () -> Unit) {
+private fun SectionHeader(title: String, itemCount: Int, expanded: Boolean, onToggle: () -> Unit) {
     val spacing = MealPlannerTokens.spacing
     val strings = LocalStrings.current
     Row(
@@ -694,7 +688,7 @@ private fun PantryStaplesHeader(itemCount: Int, expanded: Boolean, onToggle: () 
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "${strings.shoppingAtHome} ($itemCount)",
+            text = "$title ($itemCount)",
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.weight(1f)

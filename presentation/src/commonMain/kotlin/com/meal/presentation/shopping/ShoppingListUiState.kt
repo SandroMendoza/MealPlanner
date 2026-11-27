@@ -12,7 +12,18 @@ data class ShoppingListSection(
     val group: ShoppingGroup?,
     val items: List<ShoppingListItem>,
     val atHome: Boolean = false
-)
+) {
+    /** Identifies the section across list updates: the group's id, or a fixed key for the others. */
+    val key: String
+        get() = when {
+            atHome -> AT_HOME_SECTION_KEY
+            group != null -> group.id
+            else -> UNGROUPED_SECTION_KEY
+        }
+}
+
+const val AT_HOME_SECTION_KEY = "at-home"
+const val UNGROUPED_SECTION_KEY = "ungrouped"
 
 data class ShoppingListUiState(
     val mode: ShoppingListRangeMode,
@@ -33,6 +44,8 @@ data class ShoppingListUiState(
     val itemPendingGroupAssignment: ShoppingListItem? = null,
     val groupManagementOpen: Boolean = false,
     val groupPendingDeletion: ShoppingGroup? = null,
+    /** [ShoppingListSection.key]s of the group sections whose items are hidden. */
+    val collapsedSectionKeys: Set<String> = emptySet(),
     val currencySymbol: String = "$",
     val readAloudAvailable: Boolean = false,
     val isSpeaking: Boolean = false
