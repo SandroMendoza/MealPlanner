@@ -24,6 +24,13 @@ val LocalCompactHeight = staticCompositionLocalOf { false }
 val LocalWideWidth = staticCompositionLocalOf { false }
 
 /**
+ * True when the window is wide and wider than it is tall, such as a tablet in landscape. A
+ * tablet in portrait is wide but has too little width for side-by-side columns, so screens use
+ * this flag for multi-column layouts and keep portrait to a single readable column.
+ */
+val LocalWideLandscape = staticCompositionLocalOf { false }
+
+/**
  * True when the window is at least Material's expanded width and not short. The navigation
  * bar becomes a rail at this width.
  */
@@ -48,6 +55,9 @@ fun isCompactHeight(windowHeight: Dp): Boolean = windowHeight < CompactHeightThr
 
 fun isWideWidth(windowWidth: Dp, windowHeight: Dp): Boolean =
     windowWidth >= MediumWidthThreshold && !isCompactHeight(windowHeight)
+
+fun isWideLandscape(windowWidth: Dp, windowHeight: Dp): Boolean =
+    isWideWidth(windowWidth, windowHeight) && windowWidth > windowHeight
 
 fun isExpandedWidth(windowWidth: Dp, windowHeight: Dp): Boolean =
     windowWidth >= ExpandedWidthThreshold && !isCompactHeight(windowHeight)

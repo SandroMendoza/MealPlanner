@@ -23,10 +23,12 @@ import com.meal.domain.model.ThemeMode
 import com.meal.domain.strings.strings
 import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.LocalExpandedWidth
+import com.meal.planner.common.LocalWideLandscape
 import com.meal.planner.common.LocalWideWidth
 import com.meal.planner.common.SystemBarAppearance
 import com.meal.planner.common.isCompactHeight
 import com.meal.planner.common.isExpandedWidth
+import com.meal.planner.common.isWideLandscape
 import com.meal.planner.common.isWideWidth
 import com.meal.planner.components.KeyboardDismissButton
 import com.meal.planner.navigation.AppNavHost
@@ -57,6 +59,7 @@ fun App(startRoute: String? = null, quickAddItemName: String? = null, navigation
                 CompositionLocalProvider(
                     LocalCompactHeight provides isCompactHeight(maxHeight),
                     LocalWideWidth provides isWideWidth(maxWidth, maxHeight),
+                    LocalWideLandscape provides isWideLandscape(maxWidth, maxHeight),
                     LocalExpandedWidth provides isExpandedWidth(maxWidth, maxHeight)
                 ) {
                     when (showWalkthrough) {

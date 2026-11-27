@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.meal.domain.model.SpendingBucket
 import com.meal.domain.strings.Strings
@@ -44,7 +45,12 @@ private fun bucketAxisLabel(bucket: SpendingBucket, strings: Strings): String =
  * tallest bar by default - surfaces its exact amount above the chart.
  */
 @Composable
-fun SpendingBarChart(buckets: List<SpendingBucket>, currencySymbol: String = "$", modifier: Modifier = Modifier) {
+fun SpendingBarChart(
+    buckets: List<SpendingBucket>,
+    currencySymbol: String = "$",
+    modifier: Modifier = Modifier,
+    chartHeight: Dp = 160.dp
+) {
     if (buckets.isEmpty()) return
 
     val spacing = MealPlannerTokens.spacing
@@ -72,7 +78,7 @@ fun SpendingBarChart(buckets: List<SpendingBucket>, currencySymbol: String = "$"
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(160.dp)
+                .height(chartHeight)
                 .pointerInput(buckets) {
                     detectTapGestures { offset ->
                         val slotWidth = size.width / buckets.size.toFloat()

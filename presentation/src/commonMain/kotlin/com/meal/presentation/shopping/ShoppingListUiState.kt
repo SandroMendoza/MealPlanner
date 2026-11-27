@@ -12,7 +12,18 @@ data class ShoppingListSection(
     val group: ShoppingGroup?,
     val items: List<ShoppingListItem>,
     val atHome: Boolean = false
-)
+) {
+    /** Identifies the section across list updates: the group's id, or a fixed key for the others. */
+    val key: String
+        get() = when {
+            atHome -> AT_HOME_SECTION_KEY
+            group != null -> group.id
+            else -> UNGROUPED_SECTION_KEY
+        }
+}
+
+const val AT_HOME_SECTION_KEY = "at-home"
+const val UNGROUPED_SECTION_KEY = "ungrouped"
 
 data class ShoppingListUiState(
     val mode: ShoppingListRangeMode,
@@ -31,8 +42,12 @@ data class ShoppingListUiState(
     val confirmingRemoveSelected: Boolean = false,
     val itemPendingDeletion: ShoppingListItem? = null,
     val itemPendingGroupAssignment: ShoppingListItem? = null,
+    /** True while the group picker is open for every selected item at once. */
+    val selectionPendingGroupAssignment: Boolean = false,
     val groupManagementOpen: Boolean = false,
     val groupPendingDeletion: ShoppingGroup? = null,
+    /** [ShoppingListSection.key]s of the group sections whose items are hidden. */
+    val collapsedSectionKeys: Set<String> = emptySet(),
     val currencySymbol: String = "$",
     val readAloudAvailable: Boolean = false,
     val isSpeaking: Boolean = false
@@ -42,6 +57,9 @@ data class ShoppingListUiState(
 
     val isSelecting: Boolean
         get() = selectedItemKeys.isNotEmpty()
+
+    val isPickingGroup: Boolean
+        get() = itemPendingGroupAssignment != null || selectionPendingGroupAssignment
 
     /** True when every selected item is in "Pantry staples", so the move action sends them back to the list. */
     val selectionIsAtHome: Boolean
