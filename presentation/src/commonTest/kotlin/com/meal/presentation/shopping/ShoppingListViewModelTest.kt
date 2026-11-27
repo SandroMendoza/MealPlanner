@@ -21,6 +21,8 @@ import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
 import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
+import com.meal.domain.usecase.GetCollapsedShoppingSectionsUseCase
+import com.meal.domain.usecase.SetShoppingSectionCollapsedUseCase
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
@@ -88,6 +90,8 @@ class ShoppingListViewModelTest {
         AssignItemToGroupUseCase(groups),
         UpdateShoppingListItemAmountUseCase(shopping),
         SetShoppingItemsAtHomeUseCase(shopping),
+        GetCollapsedShoppingSectionsUseCase(groups),
+        SetShoppingSectionCollapsedUseCase(groups),
         tts
     )
 
@@ -384,15 +388,26 @@ class ShoppingListViewModelTest {
     }
 
     @Test
-    fun togglingASectionHidesAndShowsItsItems() {
+    fun togglingASectionHidesAndShowsItsItemsAndSavesTheChoice() {
         val vm = viewModel()
 
         vm.toggleSection("dairy")
         vm.toggleSection(UNGROUPED_SECTION_KEY)
         assertEquals(setOf("dairy", UNGROUPED_SECTION_KEY), vm.state.value.collapsedSectionKeys)
+        assertEquals(setOf("dairy", UNGROUPED_SECTION_KEY), groups.collapsedSections.value)
 
         vm.toggleSection("dairy")
         assertEquals(setOf(UNGROUPED_SECTION_KEY), vm.state.value.collapsedSectionKeys)
+        assertEquals(setOf(UNGROUPED_SECTION_KEY), groups.collapsedSections.value)
+    }
+
+    @Test
+    fun hiddenSectionsSavedEarlierStartHidden() {
+        groups.collapsedSections.value = setOf("dairy")
+
+        val vm = viewModel()
+
+        assertEquals(setOf("dairy"), vm.state.value.collapsedSectionKeys)
     }
 
     @Test

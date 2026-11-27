@@ -14,6 +14,7 @@ import com.meal.domain.usecase.CreateShoppingGroupUseCase
 import com.meal.domain.usecase.DeleteShoppingGroupUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
+import com.meal.domain.usecase.GetCollapsedShoppingSectionsUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.GetShoppingGroupsUseCase
 import com.meal.domain.usecase.RecordItemPriceUseCase
@@ -22,6 +23,7 @@ import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
 import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
+import com.meal.domain.usecase.SetShoppingSectionCollapsedUseCase
 import com.meal.domain.service.TtsSpeaker
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.formatAmount
@@ -51,6 +53,8 @@ class ShoppingListViewModel(
     private val assignItemToGroupUseCase: AssignItemToGroupUseCase,
     private val updateShoppingListItemAmountUseCase: UpdateShoppingListItemAmountUseCase,
     private val setShoppingItemsAtHomeUseCase: SetShoppingItemsAtHomeUseCase,
+    private val getCollapsedShoppingSectionsUseCase: GetCollapsedShoppingSectionsUseCase,
+    private val setShoppingSectionCollapsedUseCase: SetShoppingSectionCollapsedUseCase,
     private val ttsSpeaker: TtsSpeaker
 ) : ViewModel() {
 
@@ -86,6 +90,11 @@ class ShoppingListViewModel(
         viewModelScope.launch {
             getShoppingGroupsUseCase.execute().collect { groups ->
                 _uiState.value = _uiState.value.copy(groups = groups)
+            }
+        }
+        viewModelScope.launch {
+            getCollapsedShoppingSectionsUseCase.execute().collect { keys ->
+                _uiState.value = _uiState.value.copy(collapsedSectionKeys = keys)
             }
         }
     }
@@ -284,10 +293,10 @@ class ShoppingListViewModel(
 
     /** Hides the items of the section with [key], or shows them again when they are hidden. */
     fun toggleSection(key: String) {
-        val collapsed = _uiState.value.collapsedSectionKeys
-        _uiState.value = _uiState.value.copy(
-            collapsedSectionKeys = if (key in collapsed) collapsed - key else collapsed + key
-        )
+        val collapse = key !in _uiState.value.collapsedSectionKeys
+        viewModelScope.launch {
+            setShoppingSectionCollapsedUseCase.execute(key, collapse)
+        }
     }
 
     fun openGroupManagement() {

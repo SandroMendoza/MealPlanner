@@ -157,6 +157,14 @@ class FakeShoppingGroupRepository : ShoppingGroupRepository {
     override suspend fun assignItemToGroup(itemKey: String, groupId: String?) {
         assignments[itemKey] = groupId
     }
+
+    val collapsedSections = MutableStateFlow<Set<String>>(emptySet())
+
+    override fun getCollapsedSections(): Flow<Set<String>> = collapsedSections
+
+    override suspend fun setSectionCollapsed(sectionKey: String, collapsed: Boolean) {
+        collapsedSections.value = if (collapsed) collapsedSections.value + sectionKey else collapsedSections.value - sectionKey
+    }
 }
 
 class FakeSettingsRepository(initial: AppSettings = AppSettings()) : SettingsRepository {
