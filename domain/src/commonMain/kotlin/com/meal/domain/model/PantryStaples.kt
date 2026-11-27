@@ -2,7 +2,7 @@ package com.meal.domain.model
 
 /**
  * Pantry staples most kitchens already have. On the shopping list they start in the
- * "At home" section until the user moves them to the items to buy.
+ * "Pantry staples" section until the user moves them to the items to buy.
  */
 object PantryStaples {
     private val names: Set<String> = listOf(
