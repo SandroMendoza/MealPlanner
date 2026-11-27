@@ -68,7 +68,7 @@ val domainModule = module {
         GetWeeklyMealPlanUseCase(get<MealPlanRepository>(), get<RecipeRepository>())
     }
     factory {
-        AddRecipeToSlotUseCase(get<MealPlanRepository>())
+        AddRecipeToSlotUseCase(get<MealPlanRepository>(), get<SettingsRepository>())
     }
     factory {
         ReplaceRecipeInSlotUseCase(get<MealPlanRepository>())

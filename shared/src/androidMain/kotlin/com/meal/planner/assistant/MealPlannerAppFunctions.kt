@@ -230,7 +230,10 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
         val parsedDate = parseLocalDate(date)
         val parsedMealType = parseMealType(mealType)
         val parsedRecipeId = parseUuid(recipeId)
-        koin.get<AddRecipeToSlotUseCase>().execute(parsedDate, parsedMealType, parsedRecipeId)
+        val added = koin.get<AddRecipeToSlotUseCase>().execute(parsedDate, parsedMealType, parsedRecipeId)
+        if (!added) {
+            return ActionResult(success = false, message = "Past dates are locked in Settings, so $date can't be changed.")
+        }
         return ActionResult(success = true, message = "Added the recipe to $date ($mealType).")
     }
 
