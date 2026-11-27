@@ -25,6 +25,9 @@ data class ShoppingListUiState(
     val showAddItemDialog: Boolean = false,
     val itemBeingPriced: ShoppingListItem? = null,
     val itemBeingEdited: ShoppingListItem? = null,
+    /** Keys of the items picked in selection mode; selection mode is on while it isn't empty. */
+    val selectedItemKeys: Set<String> = emptySet(),
+    val confirmingRemoveSelected: Boolean = false,
     val itemPendingDeletion: ShoppingListItem? = null,
     val itemPendingGroupAssignment: ShoppingListItem? = null,
     val groupManagementOpen: Boolean = false,
@@ -35,6 +38,9 @@ data class ShoppingListUiState(
 ) {
     val isEmpty: Boolean
         get() = !isLoading && items.isEmpty() && errorMessage == null
+
+    val isSelecting: Boolean
+        get() = selectedItemKeys.isNotEmpty()
 
     val totalSpent: Double
         get() = items.sumOf { it.price ?: 0.0 }
