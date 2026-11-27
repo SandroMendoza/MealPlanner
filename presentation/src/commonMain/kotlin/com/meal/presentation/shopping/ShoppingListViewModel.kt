@@ -20,6 +20,7 @@ import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
+import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
 import com.meal.domain.service.TtsSpeaker
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.formatAmount
@@ -47,6 +48,7 @@ class ShoppingListViewModel(
     private val renameShoppingGroupUseCase: RenameShoppingGroupUseCase,
     private val deleteShoppingGroupUseCase: DeleteShoppingGroupUseCase,
     private val assignItemToGroupUseCase: AssignItemToGroupUseCase,
+    private val updateShoppingListItemAmountUseCase: UpdateShoppingListItemAmountUseCase,
     private val ttsSpeaker: TtsSpeaker
 ) : ViewModel() {
 
@@ -142,6 +144,24 @@ class ShoppingListViewModel(
 
     fun dismissAddItemDialog() {
         _uiState.value = _uiState.value.copy(showAddItemDialog = false)
+    }
+
+    fun openEditAmount(item: ShoppingListItem) {
+        _uiState.value = _uiState.value.copy(itemBeingEdited = item)
+    }
+
+    fun dismissEditAmount() {
+        _uiState.value = _uiState.value.copy(itemBeingEdited = null)
+    }
+
+    fun updateItemAmount(quantity: Double, unit: MeasurementUnit) {
+        val item = _uiState.value.itemBeingEdited ?: return
+        val rangeStart = _uiState.value.rangeStart
+        val rangeEnd = _uiState.value.rangeEnd
+        viewModelScope.launch {
+            updateShoppingListItemAmountUseCase.execute(item.itemKey, quantity, unit, rangeStart, rangeEnd)
+        }
+        dismissEditAmount()
     }
 
     fun recordItemPrice(itemKey: String, price: Double) {

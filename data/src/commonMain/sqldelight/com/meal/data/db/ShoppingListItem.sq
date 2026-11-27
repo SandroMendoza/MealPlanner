@@ -43,6 +43,10 @@ setChecked:
 UPDATE ShoppingListItemEntity SET checked = :checked
 WHERE itemKey = :itemKey AND removed = 0 AND rangeStart <= :rangeEnd AND rangeEnd >= :rangeStart;
 
+setQuantityAndUnit:
+UPDATE ShoppingListItemEntity SET quantity = :quantity, unit = :unit
+WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
+
 setRemoved:
 UPDATE ShoppingListItemEntity SET removed = 1 WHERE itemKey = :itemKey AND rangeStart = :rangeStart AND rangeEnd = :rangeEnd;
 

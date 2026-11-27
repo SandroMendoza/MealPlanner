@@ -53,6 +53,35 @@ class ShoppingRepositoriesTest {
     }
 
     @Test
+    fun editedAmountStaysThroughASyncAndKeepsPriceCheckAndGroup() = runTest {
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice", quantity = 1.5)))
+        list.setItemPrice("rice", weekStart, weekEnd, 4.0)
+        val dry = groups.createGroup("Dry goods")
+        groups.assignItemToGroup("rice", dry.id)
+
+        list.updateItemAmount("rice", weekStart, weekEnd, 2.0, MeasurementUnit.KILOGRAMS)
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice", quantity = 1.5)))
+        val rice = list.getItems(weekStart, weekEnd).first().single()
+
+        assertEquals(2.0, rice.totalQuantity)
+        assertEquals(MeasurementUnit.KILOGRAMS, rice.unit)
+        assertEquals(4.0, rice.price)
+        assertTrue(rice.checked)
+        assertEquals(dry.id, rice.groupId)
+    }
+
+    @Test
+    fun editedAmountOnlyChangesThatRange() = runTest {
+        list.syncGeneratedItems(day, day, listOf(item("rice", quantity = 1.0)))
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice", quantity = 3.0)))
+
+        list.updateItemAmount("rice", day, day, 2.0, MeasurementUnit.GRAMS)
+
+        assertEquals(2.0, list.getItems(day, day).first().single().totalQuantity)
+        assertEquals(3.0, list.getItems(weekStart, weekEnd).first().single().totalQuantity)
+    }
+
+    @Test
     fun syncDoesNotBringBackRemovedItems() = runTest {
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice")))
         list.removeItem("rice", weekStart, weekEnd)

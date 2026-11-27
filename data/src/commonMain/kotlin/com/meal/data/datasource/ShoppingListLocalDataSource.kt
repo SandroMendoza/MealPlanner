@@ -108,6 +108,19 @@ class ShoppingListLocalDataSource(
             }
         }
 
+    // Generated rows are only ever inserted when missing, so an edited amount stays for this
+    // range even when the list is regenerated from the meal plan.
+    suspend fun setQuantityAndUnit(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) =
+        withContext(ioDispatcher) {
+            queries.setQuantityAndUnit(
+                quantity = quantity,
+                unit = unit.name,
+                itemKey = itemKey,
+                rangeStart = rangeStart.toString(),
+                rangeEnd = rangeEnd.toString()
+            )
+        }
+
     suspend fun remove(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) =
         withContext(ioDispatcher) {
             queries.setRemoved(itemKey, rangeStart.toString(), rangeEnd.toString())

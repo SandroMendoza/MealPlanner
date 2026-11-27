@@ -24,6 +24,7 @@ data class ShoppingListUiState(
     val availableIngredients: List<Ingredient> = emptyList(),
     val showAddItemDialog: Boolean = false,
     val itemBeingPriced: ShoppingListItem? = null,
+    val itemBeingEdited: ShoppingListItem? = null,
     val itemPendingDeletion: ShoppingListItem? = null,
     val itemPendingGroupAssignment: ShoppingListItem? = null,
     val groupManagementOpen: Boolean = false,

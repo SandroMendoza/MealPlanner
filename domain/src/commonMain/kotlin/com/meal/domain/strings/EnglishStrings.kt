@@ -295,6 +295,7 @@ val englishStrings = Strings(
 
     shoppingNoMealsPlannedPeriod = "No meals planned for this period.",
     shoppingAddItemButton = "Add Item",
+    shoppingEditAmountCd = "Edit amount",
     shoppingRemoveItemTitle = "Remove item?",
     shoppingRemoveItemBody = { itemName -> "Remove $itemName from the shopping list?" },
     recordPriceTitle = { itemName -> "How much did $itemName cost?" },

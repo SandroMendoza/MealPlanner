@@ -78,6 +78,8 @@ import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.formatAmount
+import com.meal.presentation.common.formatQuantity
+import com.meal.presentation.recipes.IngredientFormRow
 import com.meal.presentation.common.today
 import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.shopping.ShoppingListViewModel
@@ -170,6 +172,17 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                 onDismiss = { viewModel.dismissAddItemDialog() },
                 defaultQuantity = "1",
                 requireQuantity = true
+            )
+        }
+
+        uiState.itemBeingEdited?.let { item ->
+            IngredientPickerSheet(
+                knownNames = emptyList(),
+                editing = IngredientFormRow(item.name, formatQuantity(item.totalQuantity), item.unit),
+                onConfirm = { row -> row.quantity.toDoubleOrNull()?.let { viewModel.updateItemAmount(it, row.unit) } },
+                onDismiss = { viewModel.dismissEditAmount() },
+                requireQuantity = true,
+                canChangeName = false
             )
         }
 
@@ -510,7 +523,11 @@ private fun ShoppingListContent(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = contentColor,
                                 textDecoration = textDecoration,
-                                modifier = Modifier.padding(end = spacing.sm)
+                                modifier = Modifier
+                                    .clickable(onClickLabel = LocalStrings.current.shoppingEditAmountCd) {
+                                        viewModel.openEditAmount(item)
+                                    }
+                                    .padding(horizontal = spacing.xs, vertical = spacing.sm)
                             )
                             val price = item.price
                             if (price != null) {

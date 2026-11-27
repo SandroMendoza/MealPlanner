@@ -102,7 +102,8 @@ fun IngredientPickerSheet(
     onConfirm: (IngredientFormRow) -> Unit,
     onDismiss: () -> Unit,
     defaultQuantity: String = "",
-    requireQuantity: Boolean = false
+    requireQuantity: Boolean = false,
+    canChangeName: Boolean = true
 ) {
     val spacing = MealPlannerTokens.spacing
     val compact = LocalCompactHeight.current
@@ -182,7 +183,7 @@ fun IngredientPickerSheet(
                     isEditing = editing != null,
                     canConfirm = canConfirm,
                     compact = compact,
-                    onBack = { searching = true },
+                    onBack = if (canChangeName) { { searching = true } } else null,
                     onConfirm = confirm
                 )
             }
@@ -303,7 +304,7 @@ private fun ColumnScope.AmountStep(
     isEditing: Boolean,
     canConfirm: Boolean,
     compact: Boolean,
-    onBack: () -> Unit,
+    onBack: (() -> Unit)?,
     onConfirm: (closeAfter: Boolean) -> Unit
 ) {
     val strings = LocalStrings.current
@@ -312,8 +313,10 @@ private fun ColumnScope.AmountStep(
     LaunchedEffect(Unit) { qtyFocus.requestFocus() }
 
     val header = @Composable { modifier: Modifier ->
-        IconButton(onClick = onBack) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = strings.back)
+        if (onBack != null) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = strings.back)
+            }
         }
         IngredientThumbnail(name = name, size = MealPlannerTokens.iconSize.lg)
         Text(

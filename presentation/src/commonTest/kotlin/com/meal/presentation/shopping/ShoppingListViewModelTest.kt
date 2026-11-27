@@ -19,6 +19,7 @@ import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
+import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
@@ -84,6 +85,7 @@ class ShoppingListViewModelTest {
         RenameShoppingGroupUseCase(groups),
         DeleteShoppingGroupUseCase(groups),
         AssignItemToGroupUseCase(groups),
+        UpdateShoppingListItemAmountUseCase(shopping),
         tts
     )
 
@@ -206,6 +208,22 @@ class ShoppingListViewModelTest {
         vm.openRecordPriceDialog(milk)
         vm.dismissRecordPriceDialog()
         assertNull(vm.state.value.itemBeingPriced)
+    }
+
+    @Test
+    fun editingAnAmountUpdatesThatItemAndClosesTheEditor() {
+        shopping.setItems(weekStart, weekEnd, listOf(shoppingItem("rice", quantity = 1.5, unit = MeasurementUnit.KILOGRAMS, price = 3.0)))
+        val vm = viewModel()
+        val rice = vm.state.value.items.single()
+
+        vm.openEditAmount(rice)
+        assertEquals(rice, vm.state.value.itemBeingEdited)
+        vm.updateItemAmount(2.0, MeasurementUnit.KILOGRAMS)
+
+        assertNull(vm.state.value.itemBeingEdited)
+        val edited = vm.state.value.items.single()
+        assertEquals(2.0, edited.totalQuantity)
+        assertEquals(3.0, edited.price)
     }
 
     @Test
