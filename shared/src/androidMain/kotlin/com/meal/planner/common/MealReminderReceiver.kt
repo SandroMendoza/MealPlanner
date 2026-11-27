@@ -1,6 +1,7 @@
 package com.meal.planner.common
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -52,9 +53,22 @@ class MealReminderReceiver : BroadcastReceiver() {
             .setContentTitle(strings.mealReminderNotificationTitle(mealType))
             .setContentText(strings.mealReminderNotificationBody)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(openAppIntent(context, mealType))
             .setAutoCancel(true)
             .build()
         NotificationManagerCompat.from(context).notify(mealType.ordinal, notification)
+    }
+
+    private fun openAppIntent(context: Context, mealType: MealType): PendingIntent? {
+        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+            ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            ?: return null
+        return PendingIntent.getActivity(
+            context,
+            mealType.ordinal,
+            launchIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     }
 
     companion object {
