@@ -3,6 +3,7 @@ package com.meal.planner.shopping
 import com.meal.presentation.shopping.ShoppingListUiState
 import com.meal.presentation.shopping.ShoppingListSection
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalWideLandscape
 import com.meal.planner.common.LocalWideWidth
 import com.meal.planner.common.centeredMaxWidth
 import androidx.compose.ui.unit.dp
@@ -85,6 +86,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.IngredientUnits
 import com.meal.domain.model.ShoppingGroup
+import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.IngredientPickerSheet
@@ -105,6 +107,9 @@ import com.meal.presentation.shopping.ShoppingListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 private val CONTROLS_PANE_WIDTH = 280.dp
+
+/** Wide enough for the range label, its arrows and the range actions to share one row. */
+private val WIDE_CONTROLS_PANE_WIDTH = 560.dp
 
 @Composable
 private fun ShoppingListRangeMode.label(): String = when (this) {
@@ -133,17 +138,18 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
         contentWindowInsets = WindowInsets(0)
     ) { padding ->
         val wide = LocalWideWidth.current
-        if (LocalCompactHeight.current || wide) {
+        val wideLandscape = LocalWideLandscape.current
+        if (LocalCompactHeight.current || wideLandscape) {
             Row(modifier = Modifier.padding(padding).fillMaxSize()) {
                 Column(
                     modifier = Modifier
-                        .width(CONTROLS_PANE_WIDTH)
+                        .width(if (wideLandscape) WIDE_CONTROLS_PANE_WIDTH else CONTROLS_PANE_WIDTH)
                         .fillMaxHeight()
                         .verticalScroll(rememberScrollState())
                         .padding(spacing.lg),
                     verticalArrangement = Arrangement.spacedBy(spacing.sm)
                 ) {
-                    ShoppingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true }, stacked = true)
+                    ShoppingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true }, stacked = !wideLandscape)
                     Spacer(Modifier.height(spacing.sectionGap))
                     if (uiState.isSelecting) {
                         SelectionBar(uiState, viewModel)
@@ -160,7 +166,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                     modifier = Modifier
                         .weight(1f)
                         .fillMaxHeight()
-                        .then(if (wide) Modifier.centeredMaxWidth() else Modifier)
+                        .then(if (wideLandscape) Modifier.centeredMaxWidth() else Modifier)
                 )
             }
         } else {
@@ -173,7 +179,13 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
                         }
                     }
                 ) {
-                    ShoppingListContent(uiState = uiState, sections = sections, viewModel = viewModel, modifier = Modifier.fillMaxSize())
+                    ShoppingListContent(
+                        uiState = uiState,
+                        sections = sections,
+                        viewModel = viewModel,
+                        modifier = Modifier.fillMaxSize(),
+                        columns = if (wide) 2 else 1
+                    )
                 }
 
                 Row(
@@ -502,11 +514,115 @@ private fun ShoppingListContent(
     uiState: ShoppingListUiState,
     sections: List<ShoppingListSection>,
     viewModel: ShoppingListViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    columns: Int = 1
 ) {
     val spacing = MealPlannerTokens.spacing
     // Pantry staples are things most people already have, so the section starts hidden each time the list is shown.
     var pantryStaplesExpanded by remember { mutableStateOf(false) }
+
+    @Composable
+    fun ItemRow(item: ShoppingListItem) {
+        val selecting = uiState.isSelecting
+        val selected = item.itemKey in uiState.selectedItemKeys
+        SwipeActionsRow(
+            onSwipeRightToAssignGroup = { viewModel.openGroupPicker(item) },
+            onSwipeLeftToDelete = { viewModel.requestDeleteItem(item) },
+            enabled = !selecting
+        ) {
+            val contentColor = if (item.checked) {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            }
+            val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background
+                    )
+                    .semantics {
+                        if (selecting) this.selected = selected else toggleableState = ToggleableState(item.checked)
+                    }
+                    .combinedClickable(
+                        role = if (selecting) null else Role.Checkbox,
+                        onLongClickLabel = LocalStrings.current.shoppingSelectItemCd,
+                        onLongClick = {
+                            if (selecting) viewModel.toggleSelection(item.itemKey) else viewModel.startSelection(item.itemKey)
+                        },
+                        onClick = {
+                            if (selecting) viewModel.toggleSelection(item.itemKey) else viewModel.toggleItem(item.itemKey, !item.checked)
+                        }
+                    )
+                    .heightIn(min = MealPlannerTokens.iconSize.xl)
+                    .padding(horizontal = spacing.lg),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (selected) {
+                    Icon(
+                        Icons.Filled.CheckCircle,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(end = spacing.md).size(MealPlannerTokens.iconSize.lg)
+                    )
+                } else {
+                    IngredientThumbnail(
+                        name = item.name,
+                        alpha = if (item.checked) 0.4f else 1f,
+                        modifier = Modifier.padding(end = spacing.md)
+                    )
+                }
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = contentColor,
+                    textDecoration = textDecoration,
+                    modifier = Modifier.weight(1f).padding(end = spacing.sm)
+                )
+                val amount = formatAmount(item.totalQuantity, item.unit, LocalStrings.current)
+                val editAmountModifier = Modifier
+                    .clickable(enabled = !selecting, onClickLabel = LocalStrings.current.shoppingEditAmountCd) {
+                        viewModel.openEditAmount(item)
+                    }
+                    .padding(horizontal = spacing.xs, vertical = spacing.sm)
+                if (amount.isEmpty()) {
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = LocalStrings.current.shoppingEditAmountCd,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = editAmountModifier.size(MealPlannerTokens.iconSize.sm)
+                    )
+                } else {
+                    Text(
+                        text = amount,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = contentColor,
+                        textDecoration = textDecoration,
+                        modifier = editAmountModifier
+                    )
+                }
+                val price = item.price
+                if (price != null) {
+                    Text(
+                        text = "${uiState.currencySymbol}${formatPrice(price)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable(enabled = !selecting) { viewModel.openRecordPriceDialog(item) }
+                    )
+                } else {
+                    Text(
+                        text = uiState.currencySymbol,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clickable(enabled = !selecting) { viewModel.openRecordPriceDialog(item) }
+                    )
+                }
+            }
+        }
+    }
+
     when {
         uiState.isLoading -> Box(modifier = modifier, contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -548,103 +664,13 @@ private fun ShoppingListContent(
                     }
                 }
                 if (section.atHome && !pantryStaplesExpanded) return@forEach
-                items(section.items, key = { it.itemKey }) { item ->
-                    val selecting = uiState.isSelecting
-                    val selected = item.itemKey in uiState.selectedItemKeys
-                    SwipeActionsRow(
-                        onSwipeRightToAssignGroup = { viewModel.openGroupPicker(item) },
-                        onSwipeLeftToDelete = { viewModel.requestDeleteItem(item) },
-                        enabled = !selecting
-                    ) {
-                        val contentColor = if (item.checked) {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        }
-                        val textDecoration = if (item.checked) TextDecoration.LineThrough else TextDecoration.None
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.background
-                                )
-                                .semantics {
-                                    if (selecting) this.selected = selected else toggleableState = ToggleableState(item.checked)
-                                }
-                                .combinedClickable(
-                                    role = if (selecting) null else Role.Checkbox,
-                                    onLongClickLabel = LocalStrings.current.shoppingSelectItemCd,
-                                    onLongClick = {
-                                        if (selecting) viewModel.toggleSelection(item.itemKey) else viewModel.startSelection(item.itemKey)
-                                    },
-                                    onClick = {
-                                        if (selecting) viewModel.toggleSelection(item.itemKey) else viewModel.toggleItem(item.itemKey, !item.checked)
-                                    }
-                                )
-                                .heightIn(min = MealPlannerTokens.iconSize.xl)
-                                .padding(horizontal = spacing.lg),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            if (selected) {
-                                Icon(
-                                    Icons.Filled.CheckCircle,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.padding(end = spacing.md).size(MealPlannerTokens.iconSize.lg)
-                                )
-                            } else {
-                                IngredientThumbnail(
-                                    name = item.name,
-                                    alpha = if (item.checked) 0.4f else 1f,
-                                    modifier = Modifier.padding(end = spacing.md)
-                                )
-                            }
-                            Text(
-                                text = item.name,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = contentColor,
-                                textDecoration = textDecoration,
-                                modifier = Modifier.weight(1f).padding(end = spacing.sm)
-                            )
-                            val amount = formatAmount(item.totalQuantity, item.unit, LocalStrings.current)
-                            val editAmountModifier = Modifier
-                                .clickable(enabled = !selecting, onClickLabel = LocalStrings.current.shoppingEditAmountCd) {
-                                    viewModel.openEditAmount(item)
-                                }
-                                .padding(horizontal = spacing.xs, vertical = spacing.sm)
-                            if (amount.isEmpty()) {
-                                Icon(
-                                    Icons.Filled.Edit,
-                                    contentDescription = LocalStrings.current.shoppingEditAmountCd,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = editAmountModifier.size(MealPlannerTokens.iconSize.sm)
-                                )
-                            } else {
-                                Text(
-                                    text = amount,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = contentColor,
-                                    textDecoration = textDecoration,
-                                    modifier = editAmountModifier
-                                )
-                            }
-                            val price = item.price
-                            if (price != null) {
-                                Text(
-                                    text = "${uiState.currencySymbol}${formatPrice(price)}",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.clickable(enabled = !selecting) { viewModel.openRecordPriceDialog(item) }
-                                )
-                            } else {
-                                Text(
-                                    text = uiState.currencySymbol,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.clickable(enabled = !selecting) { viewModel.openRecordPriceDialog(item) }
-                                )
-                            }
+                if (columns == 1) {
+                    items(section.items, key = { it.itemKey }) { item -> ItemRow(item) }
+                } else {
+                    items(section.items.chunked(columns), key = { it.first().itemKey }) { rowItems ->
+                        Row {
+                            rowItems.forEach { item -> Box(Modifier.weight(1f)) { ItemRow(item) } }
+                            repeat(columns - rowItems.size) { Spacer(Modifier.weight(1f)) }
                         }
                     }
                 }
