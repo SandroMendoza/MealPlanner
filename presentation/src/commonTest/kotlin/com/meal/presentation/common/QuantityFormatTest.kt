@@ -56,6 +56,12 @@ class QuantityFormatTest {
     }
 
     @Test
+    fun missingMeasurementIsEmpty() {
+        assertEquals("", formatAmount(null, null, englishStrings))
+        assertEquals("", formatAmount(2.0, null, englishStrings))
+    }
+
+    @Test
     fun toTasteAmountHasNoNumber() {
         assertEquals("to taste", formatAmount(1.0, MeasurementUnit.TO_TASTE, englishStrings))
         assertEquals("au goût", formatAmount(1.0, MeasurementUnit.TO_TASTE, frenchStrings))

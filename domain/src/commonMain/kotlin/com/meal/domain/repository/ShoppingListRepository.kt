@@ -13,11 +13,15 @@ interface ShoppingListRepository {
     /**
      * Adds [item] to the range's list. When the list already has an item with the same name
      * (ignoring case) and unit, [item]'s quantity is added to that item instead of a new row.
+     * Items without a measurement match other items without one.
      * Returns the key of the item that now holds it.
      */
     suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String
-    /** Changes the item's quantity and unit for this range only; its key, group, price and checked state stay. */
-    suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit)
+    /**
+     * Changes the item's quantity and unit for this range only; its key, group, price and checked
+     * state stay. Null for both clears the measurement.
+     */
+    suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double?, unit: MeasurementUnit?)
     /** Puts the named items in the "Pantry staples" section, or back among the items to buy, for every list. */
     suspend fun setItemsAtHome(names: Collection<String>, atHome: Boolean)
     suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate)

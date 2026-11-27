@@ -73,7 +73,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
                     itemKey = item.itemKey,
                     name = item.name,
                     quantity = item.totalQuantity,
-                    unit = item.unit.unit,
+                    unit = item.unit?.unit,
                     checked = item.checked
                 )
             }

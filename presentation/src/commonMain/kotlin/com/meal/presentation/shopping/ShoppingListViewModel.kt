@@ -183,7 +183,7 @@ class ShoppingListViewModel(
     }
 
     /** Adds the item, and puts it in the group with [groupId] when one is given. */
-    fun addItem(name: String, quantity: Double, unit: MeasurementUnit, groupId: String? = null) {
+    fun addItem(name: String, quantity: Double?, unit: MeasurementUnit?, groupId: String? = null) {
         viewModelScope.launch {
             val itemKey = addShoppingListItemUseCase.execute(name, quantity, unit, _uiState.value.rangeStart, _uiState.value.rangeEnd)
             if (groupId != null) assignItemToGroupUseCase.execute(itemKey, groupId)
@@ -206,7 +206,7 @@ class ShoppingListViewModel(
         _uiState.value = _uiState.value.copy(itemBeingEdited = null)
     }
 
-    fun updateItemAmount(quantity: Double, unit: MeasurementUnit) {
+    fun updateItemAmount(quantity: Double?, unit: MeasurementUnit?) {
         val item = _uiState.value.itemBeingEdited ?: return
         val rangeStart = _uiState.value.rangeStart
         val rangeEnd = _uiState.value.rangeEnd
@@ -373,7 +373,7 @@ class ShoppingListViewModel(
         }
         val items = _uiState.value.sections.flatMap { it.items }.filterNot { it.checked }
         if (items.isEmpty()) return
-        val text = items.joinToString(". ") { "${formatAmount(it.totalQuantity, it.unit, strings)} ${it.name}" }
+        val text = items.joinToString(". ") { "${formatAmount(it.totalQuantity, it.unit, strings)} ${it.name}".trim() }
         _uiState.value = _uiState.value.copy(isSpeaking = true)
         ttsSpeaker.speak(text) {
             _uiState.value = _uiState.value.copy(isSpeaking = false)

@@ -26,7 +26,7 @@ class ShoppingListRepositoryImpl(
     override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String =
         localDataSource.addManual(item, rangeStart, rangeEnd)
 
-    override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) {
+    override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double?, unit: MeasurementUnit?) {
         localDataSource.setQuantityAndUnit(itemKey, rangeStart, rangeEnd, quantity, unit)
     }
 
