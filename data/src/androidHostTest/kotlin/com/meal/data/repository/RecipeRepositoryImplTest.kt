@@ -65,7 +65,7 @@ class RecipeRepositoryImplTest {
         val recipes = repository.getAllRecipes().first()
 
         assertEquals(seedCount, recipes.size)
-        assertTrue(recipes.all { !it.isUserCreated && it.cuisines.size == 1 && it.categories.size == 1 })
+        assertTrue(recipes.all { !it.isUserCreated && it.cuisines.size == 1 && it.categories.isNotEmpty() })
         assertTrue(recipes.all { it.ingredients.isNotEmpty() && it.instructions.isNotEmpty() })
         assertEquals(emptyList<String>(), recipes.filter { it.mealTypes.isEmpty() }.map { it.name })
     }

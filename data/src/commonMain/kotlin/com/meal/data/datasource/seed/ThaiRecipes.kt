@@ -2,6 +2,7 @@ package com.meal.data.datasource.seed
 
 import com.meal.data.model.RecipeDto
 import com.meal.domain.model.enums.FoodCategory.BEVERAGE
+import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.DESSERT
 import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SALAD
@@ -20,7 +21,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "pad_thai",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Stir-fried rice noodles with shrimp, egg, tofu and bean sprouts in a sweet-sour tamarind sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 40, servings = 4,
         ingredients = listOf(
             ingredient("Rice Noodles", 250.0, GRAMS),
@@ -54,7 +55,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "thai_green_curry",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chicken and eggplant simmered in coconut milk with green curry paste, kaffir lime and Thai basil.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 35, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Thigh", 600.0, GRAMS),
@@ -83,7 +84,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "thai_red_curry",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Beef and vegetables in a rich, mildly spicy red curry and coconut milk sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 45, servings = 4,
         ingredients = listOf(
             ingredient("Beef Sirloin", 500.0, GRAMS),
@@ -111,7 +112,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "massaman_curry",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A mild, warmly spiced beef and potato curry with coconut milk, tamarind and peanuts.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 120, servings = 6,
         ingredients = listOf(
             ingredient("Beef Chuck", 800.0, GRAMS),
@@ -143,7 +144,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "panang_curry",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Thick, nutty red curry with chicken, coconut cream and finely shredded kaffir lime leaves.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Breast", 500.0, GRAMS),
@@ -170,9 +171,9 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Thai Basil Chicken",
         image = "thai_basil_chicken",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Minced chicken stir-fried with garlic, chillies and Thai basil, served over rice with a fried egg.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 20, servings = 4,
         ingredients = listOf(
             ingredient("Ground Chicken", 500.0, GRAMS),
@@ -205,7 +206,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "pad_see_ew",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Wide rice noodles stir-fried with chicken, Chinese broccoli and egg in a sweet soy sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 45, servings = 4,
         ingredients = listOf(
             ingredient("Rice Noodles", 400.0, GRAMS),
@@ -235,7 +236,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "drunken_noodles",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Spicy wide rice noodles stir-fried with beef, chillies, vegetables and Thai basil.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 45, servings = 4,
         ingredients = listOf(
             ingredient("Rice Noodles", 400.0, GRAMS),
@@ -265,9 +266,9 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Thai Fried Rice",
         image = "thai_fried_rice",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Jasmine rice fried with shrimp, egg, onion and tomato, finished with lime and spring onion.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 20, servings = 4,
         ingredients = listOf(
             ingredient("Cooked Rice", 4.0, CUP),
@@ -299,7 +300,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "thai_cashew_chicken",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chicken stir-fried with toasted cashews, onion, bell pepper and dried chillies in a savoury sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 25, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Breast", 500.0, GRAMS),
@@ -330,9 +331,9 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Thai Grilled Chicken",
         image = "thai_grilled_chicken",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Chicken marinated in garlic, lemongrass, cilantro and fish sauce, then grilled until charred.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 75, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Leg Quarter", 1200.0, GRAMS),
@@ -356,9 +357,9 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Thai Garlic Pepper Pork",
         image = "thai_garlic_pepper_pork",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Thin slices of pork fried with plenty of garlic and white pepper, served with rice.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 40, servings = 4,
         ingredients = listOf(
             ingredient("Pork Loin", 500.0, GRAMS),
@@ -388,7 +389,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "tom_yum_goong",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Hot and sour shrimp soup with lemongrass, galangal, kaffir lime, mushrooms and chillies.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Shrimp", 400.0, GRAMS),
@@ -418,7 +419,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "tom_kha_gai",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Creamy chicken and coconut milk soup scented with galangal, lemongrass and lime.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 35, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Breast", 400.0, GRAMS),
@@ -447,9 +448,9 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Som Tam",
         image = "som_tam",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Shredded green papaya pounded with lime, chillies, fish sauce, tomatoes, beans and peanuts.",
-        category = SALAD,
+        categories = setOf(SIDE_DISH, SALAD),
         minutes = 20, servings = 4,
         ingredients = listOf(
             ingredient("Green Papaya", 400.0, GRAMS),
@@ -477,7 +478,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "larb_gai",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Warm minced chicken salad with lime, fish sauce, shallots, fresh herbs and toasted rice powder.",
-        category = SALAD,
+        categories = setOf(MAIN_DISH, SALAD),
         minutes = 25, servings = 4,
         ingredients = listOf(
             ingredient("Ground Chicken", 500.0, GRAMS),
@@ -506,7 +507,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "glass_noodle_salad",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Glass noodles tossed with shrimp, pork, celery and onion in a sharp lime and chilli dressing.",
-        category = SALAD,
+        categories = setOf(MAIN_DISH, SALAD),
         minutes = 25, servings = 4,
         ingredients = listOf(
             ingredient("Glass Noodles", 100.0, GRAMS),
@@ -539,7 +540,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "mango_sticky_rice",
         mealTypes = setOf(MealType.SNACK),
         description = "Sweet coconut sticky rice served with ripe mango and a salty coconut cream sauce.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 290, servings = 4,
         ingredients = listOf(
             ingredient("Glutinous Rice", 1.5, CUP),
@@ -567,7 +568,7 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
         image = "bananas_in_coconut_milk",
         mealTypes = setOf(MealType.SNACK),
         description = "Ripe bananas simmered in lightly salted, sweet coconut milk with pandan.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 20, servings = 4,
         ingredients = listOf(
             ingredient("Saba Banana", 6.0, PIECE),
@@ -588,9 +589,9 @@ internal fun thaiRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Thai Iced Tea",
         image = "thai_iced_tea",
-        mealTypes = setOf(MealType.SNACK),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Strong spiced black tea sweetened with sugar and condensed milk, poured over ice.",
-        category = BEVERAGE,
+        categories = setOf(BEVERAGE),
         minutes = 30, servings = 4,
         ingredients = listOf(
             ingredient("Black Tea", 4.0, TABLESPOON),
