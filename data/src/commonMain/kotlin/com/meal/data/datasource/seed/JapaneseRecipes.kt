@@ -278,9 +278,9 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Gyoza",
         image = "gyoza",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Pork and cabbage dumplings pan-fried until crisp on the bottom and steamed tender on top.",
-        category = MAIN_DISH,
+        category = SIDE_DISH,
         minutes = 60, servings = 4,
         ingredients = listOf(
             ingredient("Napa Cabbage", 200.0, GRAMS),

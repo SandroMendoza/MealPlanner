@@ -438,7 +438,7 @@ internal fun americanRecipes(): List<RecipeDto> = listOf(
         image = "beef_chili",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A thick, spicy stew of ground beef, beans and tomatoes.",
-        category = SOUP,
+        category = MAIN_DISH,
         minutes = 80, servings = 6,
         ingredients = listOf(
             ingredient("Cooking Oil", 1.0, TABLESPOON),

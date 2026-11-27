@@ -279,7 +279,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Cochinita Pibil",
         image = "cochinita_pibil",
-        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Pork shoulder marinated in annatto and citrus, slow-roasted in banana leaves until it falls apart.",
         category = MAIN_DISH,
         minutes = 450, servings = 6,
@@ -441,7 +441,7 @@ internal fun mexicanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Sopa de Fideo",
         image = "sopa_de_fideo",
-        mealTypes = setOf(MealType.LUNCH),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Toasted thin noodles simmered in a light tomato and chicken broth.",
         category = SOUP,
         minutes = 30, servings = 4,
