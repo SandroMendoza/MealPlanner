@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -98,6 +100,12 @@ fun RecipeScreen(
         val filteredRecipes = remember(uiState) { uiState.filteredRecipes }
         val showEmptyState = !uiState.isLoading && filteredRecipes.isEmpty() && uiState.errorMessage == null
         val isListView = uiState.viewMode == RecipeViewMode.LIST
+        val gridState = rememberLazyGridState()
+        // The grid keeps its scroll anchored to the first visible recipe, which moves when the
+        // order is reshuffled, so a refresh starts the new order from the top.
+        LaunchedEffect(uiState.isRefreshing) {
+            if (uiState.isRefreshing) gridState.scrollToItem(0)
+        }
 
         Box(modifier = Modifier.padding(it).fillMaxSize()) {
             when {
@@ -151,40 +159,47 @@ fun RecipeScreen(
                         }
                     }
 
-                    LazyVerticalGrid(
-                        columns = if (isListView) GridCells.Fixed(1) else GridCells.Adaptive(RECIPE_GRID_CARD_MIN_WIDTH),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                            start = spacing.lg,
-                            end = spacing.lg,
-                            top = spacing.sm,
-                            bottom = spacing.lg
-                        ),
-                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                        verticalArrangement = Arrangement.spacedBy(if (isListView) spacing.xs else spacing.sm),
+                    PullToRefreshBox(
+                        isRefreshing = uiState.isRefreshing,
+                        onRefresh = viewModel::reshuffle,
                         modifier = Modifier.weight(1f)
                     ) {
-                        if (showEmptyState) {
-                            item(span = { GridItemSpan(maxLineSpan) }) {
-                                Text(
-                                    text = uiState.emptyState.message(),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.fillMaxWidth().padding(top = spacing.lg),
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        } else {
-                            items(filteredRecipes, key = { it.id }) { recipe ->
-                                if (isListView) {
-                                    RecipeListRow(
-                                        recipe = recipe,
-                                        onClick = { onRecipeClick(recipe.id) }
+                        LazyVerticalGrid(
+                            state = gridState,
+                            columns = if (isListView) GridCells.Fixed(1) else GridCells.Adaptive(RECIPE_GRID_CARD_MIN_WIDTH),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                start = spacing.lg,
+                                end = spacing.lg,
+                                top = spacing.sm,
+                                bottom = spacing.lg
+                            ),
+                            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                            verticalArrangement = Arrangement.spacedBy(if (isListView) spacing.xs else spacing.sm),
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            if (showEmptyState) {
+                                item(span = { GridItemSpan(maxLineSpan) }) {
+                                    Text(
+                                        text = uiState.emptyState.message(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.fillMaxWidth().padding(top = spacing.lg),
+                                        textAlign = TextAlign.Center
                                     )
-                                } else {
-                                    RecipeGridCard(
-                                        recipe = recipe,
-                                        onClick = { onRecipeClick(recipe.id) }
-                                    )
+                                }
+                            } else {
+                                items(filteredRecipes, key = { it.id }) { recipe ->
+                                    if (isListView) {
+                                        RecipeListRow(
+                                            recipe = recipe,
+                                            onClick = { onRecipeClick(recipe.id) }
+                                        )
+                                    } else {
+                                        RecipeGridCard(
+                                            recipe = recipe,
+                                            onClick = { onRecipeClick(recipe.id) }
+                                        )
+                                    }
                                 }
                             }
                         }
