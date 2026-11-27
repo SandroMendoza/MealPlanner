@@ -146,7 +146,11 @@ class ShoppingListViewModel(
     }
 
     fun clearSelection() {
-        _uiState.value = _uiState.value.copy(selectedItemKeys = emptySet(), confirmingRemoveSelected = false)
+        _uiState.value = _uiState.value.copy(
+            selectedItemKeys = emptySet(),
+            confirmingRemoveSelected = false,
+            selectionPendingGroupAssignment = false
+        )
     }
 
     fun requestRemoveSelected() {
@@ -235,25 +239,47 @@ class ShoppingListViewModel(
         _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = item)
     }
 
+    /** Opens the group picker for every selected item at once. */
+    fun openGroupPickerForSelection() {
+        if (_uiState.value.isSelecting) {
+            _uiState.value = _uiState.value.copy(selectionPendingGroupAssignment = true)
+        }
+    }
+
     fun dismissGroupPicker() {
-        _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = null)
+        _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = null, selectionPendingGroupAssignment = false)
     }
 
     fun assignGroup(groupId: String?) {
-        val item = _uiState.value.itemPendingGroupAssignment ?: return
+        val itemKeys = itemKeysPendingGroupAssignment() ?: return
         viewModelScope.launch {
-            assignItemToGroupUseCase.execute(item.itemKey, groupId)
+            itemKeys.forEach { assignItemToGroupUseCase.execute(it, groupId) }
         }
-        dismissGroupPicker()
+        finishGroupAssignment()
     }
 
     fun createGroupAndAssign(name: String) {
-        val item = _uiState.value.itemPendingGroupAssignment ?: return
+        val itemKeys = itemKeysPendingGroupAssignment() ?: return
         viewModelScope.launch {
             val group = createShoppingGroupUseCase.execute(name)
-            assignItemToGroupUseCase.execute(item.itemKey, group.id)
+            itemKeys.forEach { assignItemToGroupUseCase.execute(it, group.id) }
         }
+        finishGroupAssignment()
+    }
+
+    /** The items the open group picker applies to, or null when it isn't open. */
+    private fun itemKeysPendingGroupAssignment(): Collection<String>? {
+        val state = _uiState.value
+        return when {
+            state.selectionPendingGroupAssignment -> state.selectedItemKeys
+            else -> state.itemPendingGroupAssignment?.let { listOf(it.itemKey) }
+        }
+    }
+
+    private fun finishGroupAssignment() {
+        val movedSelection = _uiState.value.selectionPendingGroupAssignment
         dismissGroupPicker()
+        if (movedSelection) clearSelection()
     }
 
     /** Hides the items of the section with [key], or shows them again when they are hidden. */

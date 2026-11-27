@@ -340,6 +340,50 @@ class ShoppingListViewModelTest {
     }
 
     @Test
+    fun movingTheSelectionToAGroupAssignsEverySelectedItemAndEndsSelection() {
+        val vm = viewModel()
+        vm.openGroupPickerForSelection()
+        assertFalse(vm.state.value.isPickingGroup)
+
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        vm.openGroupPickerForSelection()
+        assertTrue(vm.state.value.isPickingGroup)
+
+        vm.assignGroup("pantry")
+
+        assertEquals(setOf("rice" to "pantry", "salt" to "pantry"), groups.assignments.toSet())
+        assertFalse(vm.state.value.isPickingGroup)
+        assertFalse(vm.state.value.isSelecting)
+    }
+
+    @Test
+    fun movingTheSelectionToANewGroupCreatesItOnce() {
+        val vm = viewModel()
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        vm.openGroupPickerForSelection()
+
+        vm.createGroupAndAssign("Pantry")
+
+        val created = groups.groups.value.single()
+        assertEquals(setOf("rice" to created.id, "salt" to created.id), groups.assignments.toSet())
+        assertFalse(vm.state.value.isSelecting)
+    }
+
+    @Test
+    fun clearingTheSelectionClosesItsGroupPicker() {
+        val vm = viewModel()
+        vm.startSelection("rice")
+        vm.openGroupPickerForSelection()
+
+        vm.clearSelection()
+
+        assertFalse(vm.state.value.isPickingGroup)
+        assertTrue(groups.assignments.isEmpty())
+    }
+
+    @Test
     fun togglingASectionHidesAndShowsItsItems() {
         val vm = viewModel()
 
