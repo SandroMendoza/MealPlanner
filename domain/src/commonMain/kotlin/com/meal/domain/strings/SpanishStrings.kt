@@ -307,9 +307,11 @@ val spanishStrings = Strings(
     shoppingSelectedCount = { count -> if (count == 1) "1 seleccionado" else "$count seleccionados" },
     shoppingCancelSelectionCd = "Cancelar selección",
     shoppingSelectItemCd = "Seleccionar",
-    shoppingAtHome = "En casa",
+    shoppingAtHome = "Básicos de despensa",
+    shoppingShowSectionCd = "Mostrar artículos",
+    shoppingHideSectionCd = "Ocultar artículos",
     shoppingGroupLabel = "Grupo",
-    shoppingMoveToAtHomeCd = "Mover a En casa",
+    shoppingMoveToAtHomeCd = "Mover a Básicos de despensa",
     shoppingMoveToListCd = "Volver a la lista",
     shoppingRemoveSelectedTitle = "¿Eliminar artículos?",
     shoppingRemoveSelectedBody = { count -> if (count == 1) "¿Eliminar 1 artículo de esta lista?" else "¿Eliminar $count artículos de esta lista?" },
@@ -418,6 +420,7 @@ val spanishStrings = Strings(
     walkthroughRemoveItem = WalkthroughText("Quita un artículo", "Desliza un artículo hacia la izquierda para quitarlo de la lista."),
     walkthroughGroupItem = WalkthroughText("Agrupa tus artículos", "Desliza un artículo hacia la derecha para ponerlo en un grupo, como una tienda o un pasillo."),
     walkthroughRecordPrice = WalkthroughText("Anota lo que pagaste", "Toca el precio de un artículo para anotar lo que pagaste. Los informes de gastos lo suman."),
+    walkthroughPantryStaples = WalkthroughText("Básicos de despensa", "La sal, el aceite y otros básicos que seguramente tienes están en Básicos de despensa. Toca el título para verlos."),
     walkthroughReminders = WalkthroughText("Recibe recordatorios", "En Inicio, toca la campana para activar un recordatorio diario para cada comida."),
 
     // Feature guide
@@ -468,7 +471,9 @@ val spanishStrings = Strings(
                 "Desliza un artículo hacia la izquierda para quitarlo de la lista.",
                 "Desliza un artículo hacia la derecha para ponerlo en un grupo, como una tienda o un pasillo. Ahí puedes crear un grupo nuevo.",
                 "Toca el botón de carpeta para renombrar o borrar grupos.",
-                "Toca Añadir artículo para lo que no viene de una receta.",
+                "Toca Añadir artículo para lo que no viene de una receta. Deja la cantidad vacía si no hace falta.",
+                "La sal, el aceite y otros básicos que seguramente tienes están en Básicos de despensa, al final de la lista. Toca el título para mostrarlos u ocultarlos.",
+                "Mantén pulsados los artículos para seleccionarlos y luego muévelos a Básicos de despensa o devuélvelos a la lista.",
                 "Toca el precio de un artículo para anotar lo que pagaste. La lista muestra el total gastado."
             )
         ),

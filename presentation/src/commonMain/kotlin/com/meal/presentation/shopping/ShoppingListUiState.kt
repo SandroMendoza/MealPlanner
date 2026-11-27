@@ -43,7 +43,7 @@ data class ShoppingListUiState(
     val isSelecting: Boolean
         get() = selectedItemKeys.isNotEmpty()
 
-    /** True when every selected item is in "At home", so the move action sends them back to the list. */
+    /** True when every selected item is in "Pantry staples", so the move action sends them back to the list. */
     val selectionIsAtHome: Boolean
         get() = isSelecting && items.filter { it.itemKey in selectedItemKeys }.all { it.atHome }
 

@@ -18,9 +18,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Bulgogi",
         image = "bulgogi",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Thin slices of beef marinated in soy sauce, pear and garlic, then seared fast over high heat.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 50, servings = 4,
         ingredients = listOf(
             ingredient("Ribeye Steak", 600.0, GRAMS),
@@ -49,7 +49,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "bibimbap",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Rice bowl topped with seasoned vegetables, savoury beef and a fried egg, mixed with chilli paste.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 50, servings = 4,
         ingredients = listOf(
             ingredient("Cooked Rice", 4.0, CUP),
@@ -83,9 +83,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Japchae",
         image = "japchae",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Chewy glass noodles stir-fried with beef and vegetables in a sweet soy and sesame sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 45, servings = 4,
         ingredients = listOf(
             ingredient("Glass Noodles", 250.0, GRAMS),
@@ -118,9 +118,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tteokbokki",
         image = "tteokbokki",
-        mealTypes = setOf(MealType.LUNCH, MealType.SNACK),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Chewy rice cakes and fish cake simmered in a sweet and spicy gochujang sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 35, servings = 3,
         ingredients = listOf(
             ingredient("Korean Rice Cakes", 450.0, GRAMS),
@@ -149,9 +149,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Korean Fried Chicken",
         image = "korean_fried_chicken",
-        mealTypes = setOf(MealType.DINNER, MealType.SNACK),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Twice-fried chicken wings with a thin, crackly crust, tossed in a sticky sweet and spicy glaze.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 60, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Wing", 1000.0, GRAMS),
@@ -183,9 +183,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Galbi Jjim",
         image = "galbi_jjim",
-        mealTypes = setOf(MealType.DINNER),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Beef short ribs braised in a sweet soy and pear sauce with carrots, radish and chestnuts.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 180, servings = 4,
         ingredients = listOf(
             ingredient("Beef Short Ribs", 1500.0, GRAMS),
@@ -217,9 +217,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Jeyuk Bokkeum",
         image = "jeyuk_bokkeum",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Spicy stir-fried pork in a gochujang sauce with onion, carrot and cabbage.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 40, servings = 4,
         ingredients = listOf(
             ingredient("Pork Shoulder", 600.0, GRAMS),
@@ -252,7 +252,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "kimchi_fried_rice",
         mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Day-old rice fried with sour kimchi and pork belly, topped with a fried egg.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 20, servings = 2,
         ingredients = listOf(
             ingredient("Pork Belly", 100.0, GRAMS),
@@ -281,9 +281,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Haemul Pajeon",
         image = "haemul_pajeon",
-        mealTypes = setOf(MealType.DINNER, MealType.SNACK),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
         description = "Crisp spring onion pancake studded with shrimp and squid, served with a soy dipping sauce.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH, SIDE_DISH),
         minutes = 30, servings = 3,
         ingredients = listOf(
             ingredient("All-Purpose Flour", 1.0, CUP),
@@ -314,9 +314,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Kimbap",
         image = "kimbap",
-        mealTypes = setOf(MealType.LUNCH, MealType.SNACK),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.SNACK),
         description = "Seaweed rice rolls filled with egg, spinach, carrot, ham and pickled radish.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 60, servings = 4,
         ingredients = listOf(
             ingredient("Cooked Rice", 5.0, CUP),
@@ -346,7 +346,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "dakgalbi",
         mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Spicy stir-fried chicken with cabbage, sweet potato and rice cakes, finished with perilla leaves.",
-        category = MAIN_DISH,
+        categories = setOf(MAIN_DISH),
         minutes = 50, servings = 4,
         ingredients = listOf(
             ingredient("Chicken Thigh", 700.0, GRAMS),
@@ -381,9 +381,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Kimchi Jjigae",
         image = "kimchi_jjigae",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Hearty stew of well-fermented kimchi, pork belly and tofu in a spicy, sour broth.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 45, servings = 4,
         ingredients = listOf(
             ingredient("Pork Belly", 250.0, GRAMS),
@@ -411,9 +411,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Sundubu Jjigae",
         image = "sundubu_jjigae",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Spicy stew of silky soft tofu, pork and clams, finished with an egg cracked in at the end.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 30, servings = 2,
         ingredients = listOf(
             ingredient("Cooking Oil", 1.0, TABLESPOON),
@@ -445,7 +445,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "doenjang_jjigae",
         mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Earthy soybean paste stew with tofu, zucchini and potato in an anchovy broth.",
-        category = SOUP,
+        categories = setOf(MAIN_DISH, SOUP),
         minutes = 35, servings = 4,
         ingredients = listOf(
             ingredient("Water", 3.0, CUP),
@@ -474,9 +474,9 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Korean Cucumber Salad",
         image = "korean_cucumber_salad",
-        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Crunchy cucumber slices tossed in a sweet, sour and spicy chilli dressing.",
-        category = SALAD,
+        categories = setOf(SIDE_DISH, SALAD),
         minutes = 20, servings = 4,
         ingredients = listOf(
             ingredient("Cucumber", 2.0, PIECE),
@@ -504,7 +504,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "korean_seasoned_spinach",
         mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Blanched spinach dressed with garlic, soy sauce and toasted sesame.",
-        category = SIDE_DISH,
+        categories = setOf(SIDE_DISH),
         minutes = 15, servings = 4,
         ingredients = listOf(
             ingredient("Water", 8.0, CUP),
@@ -529,7 +529,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "korean_steamed_egg",
         mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Fluffy, savoury egg custard that puffs up in the pot, served hot alongside rice.",
-        category = SIDE_DISH,
+        categories = setOf(SIDE_DISH),
         minutes = 15, servings = 2,
         ingredients = listOf(
             ingredient("Egg", 4.0, PIECE),
@@ -553,7 +553,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "hotteok",
         mealTypes = setOf(MealType.SNACK),
         description = "Pan-fried yeasted pancakes filled with a melted brown sugar, cinnamon and walnut syrup.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 90, servings = 4,
         ingredients = listOf(
             ingredient("Water", 0.75, CUP),
@@ -582,7 +582,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "patbingsu",
         mealTypes = setOf(MealType.SNACK),
         description = "Finely shaved ice topped with sweet red beans, milk and condensed milk.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 130, servings = 4,
         ingredients = listOf(
             ingredient("Adzuki Beans", 200.0, GRAMS),
@@ -606,7 +606,7 @@ internal fun koreanRecipes(): List<RecipeDto> = listOf(
         image = "yaksik",
         mealTypes = setOf(MealType.SNACK),
         description = "Sweet sticky rice with chestnuts, dates and pine nuts, flavoured with honey, soy and cinnamon.",
-        category = DESSERT,
+        categories = setOf(DESSERT),
         minutes = 210, servings = 8,
         ingredients = listOf(
             ingredient("Glutinous Rice", 3.0, CUP),

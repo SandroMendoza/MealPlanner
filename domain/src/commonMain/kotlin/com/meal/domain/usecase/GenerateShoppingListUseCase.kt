@@ -25,7 +25,7 @@ class GenerateShoppingListUseCase(
                 val key = "${ingredient.ingredient.name.lowercase().trim()}|${ingredient.unit.name}"
                 val existing = aggregated[key]
                 aggregated[key] = if (existing != null) {
-                    existing.copy(totalQuantity = existing.totalQuantity + ingredient.quantity)
+                    existing.copy(totalQuantity = (existing.totalQuantity ?: 0.0) + ingredient.quantity)
                 } else {
                     ShoppingListItem(
                         itemKey = key,

@@ -180,6 +180,8 @@ data class Strings(
     val shoppingCancelSelectionCd: String,
     val shoppingSelectItemCd: String,
     val shoppingAtHome: String,
+    val shoppingShowSectionCd: String,
+    val shoppingHideSectionCd: String,
     val shoppingGroupLabel: String,
     val shoppingMoveToAtHomeCd: String,
     val shoppingMoveToListCd: String,
@@ -279,6 +281,7 @@ data class Strings(
     val walkthroughRemoveItem: WalkthroughText,
     val walkthroughGroupItem: WalkthroughText,
     val walkthroughRecordPrice: WalkthroughText,
+    val walkthroughPantryStaples: WalkthroughText,
     val walkthroughReminders: WalkthroughText,
 
     // Feature guide in Settings

@@ -299,9 +299,11 @@ val englishStrings = Strings(
     shoppingSelectedCount = { count -> "$count selected" },
     shoppingCancelSelectionCd = "Cancel selection",
     shoppingSelectItemCd = "Select",
-    shoppingAtHome = "At home",
+    shoppingAtHome = "Pantry staples",
+    shoppingShowSectionCd = "Show items",
+    shoppingHideSectionCd = "Hide items",
     shoppingGroupLabel = "Group",
-    shoppingMoveToAtHomeCd = "Move to At home",
+    shoppingMoveToAtHomeCd = "Move to Pantry staples",
     shoppingMoveToListCd = "Move back to the list",
     shoppingRemoveSelectedTitle = "Remove items?",
     shoppingRemoveSelectedBody = { count -> if (count == 1) "Remove 1 item from this list?" else "Remove $count items from this list?" },
@@ -409,6 +411,7 @@ val englishStrings = Strings(
     walkthroughRemoveItem = WalkthroughText("Remove an item", "Swipe an item to the left to remove it from the list."),
     walkthroughGroupItem = WalkthroughText("Group your items", "Swipe an item to the right to put it in a group, such as a store or an aisle."),
     walkthroughRecordPrice = WalkthroughText("Note what you paid", "Tap the price on an item to record what you paid. Spending reports add it up."),
+    walkthroughPantryStaples = WalkthroughText("Pantry staples", "Salt, oil and other staples you likely have wait under Pantry staples. Tap the heading to show them."),
     walkthroughReminders = WalkthroughText("Get meal reminders", "On Home, tap the bell to turn on a daily reminder for each meal."),
 
     // Feature guide
@@ -459,7 +462,9 @@ val englishStrings = Strings(
                 "Swipe an item to the left to remove it from the list.",
                 "Swipe an item to the right to put it in a group, such as a store or an aisle. You can create a new group there.",
                 "Tap the folder button to rename or delete groups.",
-                "Tap Add item for things that aren't in a recipe.",
+                "Tap Add item for things that aren't in a recipe. Leave the amount empty when it doesn't need one.",
+                "Salt, oil and other staples you likely have sit under Pantry staples at the bottom of the list. Tap the heading to show or hide them.",
+                "Press and hold items to select them, then move them to Pantry staples or back to the list.",
                 "Tap the price on an item to note what you paid. The list shows the total spent."
             )
         ),

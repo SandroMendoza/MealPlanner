@@ -42,8 +42,11 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.AlertDialog
@@ -215,10 +218,9 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
             IngredientPickerSheet(
                 knownNames = remember(uiState.availableIngredients) { uiState.availableIngredients.map { it.name } },
                 editing = null,
-                onConfirm = { row -> row.quantity.toDoubleOrNull()?.let { viewModel.addItem(row.name, it, row.unit, groupId) } },
+                onConfirm = { row -> viewModel.addItem(row.name, row.quantity.toDoubleOrNull(), row.unit, groupId) },
                 onDismiss = { viewModel.dismissAddItemDialog() },
                 defaultQuantity = "1",
-                requireQuantity = true,
                 amountExtras = if (uiState.groups.isEmpty()) null else {
                     { GroupChoice(groups = uiState.groups, selectedId = groupId, onSelect = { groupId = it }) }
                 }
@@ -228,10 +230,13 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
         uiState.itemBeingEdited?.let { item ->
             IngredientPickerSheet(
                 knownNames = emptyList(),
-                editing = IngredientFormRow(item.name, formatQuantity(item.totalQuantity), item.unit),
-                onConfirm = { row -> row.quantity.toDoubleOrNull()?.let { viewModel.updateItemAmount(it, row.unit) } },
+                editing = IngredientFormRow(
+                    name = item.name,
+                    quantity = item.totalQuantity?.let { formatQuantity(it) }.orEmpty(),
+                    unit = item.unit ?: MeasurementUnit.PIECE
+                ),
+                onConfirm = { row -> viewModel.updateItemAmount(row.quantity.toDoubleOrNull(), row.unit) },
                 onDismiss = { viewModel.dismissEditAmount() },
-                requireQuantity = true,
                 canChangeName = false
             )
         }
@@ -500,6 +505,8 @@ private fun ShoppingListContent(
     modifier: Modifier = Modifier
 ) {
     val spacing = MealPlannerTokens.spacing
+    // Pantry staples are things most people already have, so the section starts hidden each time the list is shown.
+    var pantryStaplesExpanded by remember { mutableStateOf(false) }
     when {
         uiState.isLoading -> Box(modifier = modifier, contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -522,19 +529,25 @@ private fun ShoppingListContent(
             (sections + listOfNotNull(uiState.atHomeSection)).forEach { section ->
                 val headerKey = if (section.atHome) "at-home" else section.group?.id ?: "ungrouped"
                 item(key = "header-$headerKey") {
-                    Text(
-                        text = when {
-                            section.atHome -> LocalStrings.current.shoppingAtHome
-                            else -> section.group?.name ?: LocalStrings.current.shoppingUngrouped
-                        },
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.background)
-                            .padding(horizontal = spacing.lg)
-                    )
+                    if (section.atHome) {
+                        PantryStaplesHeader(
+                            itemCount = section.items.size,
+                            expanded = pantryStaplesExpanded,
+                            onToggle = { pantryStaplesExpanded = !pantryStaplesExpanded }
+                        )
+                    } else {
+                        Text(
+                            text = section.group?.name ?: LocalStrings.current.shoppingUngrouped,
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.background)
+                                .padding(horizontal = spacing.lg)
+                        )
+                    }
                 }
+                if (section.atHome && !pantryStaplesExpanded) return@forEach
                 items(section.items, key = { it.itemKey }) { item ->
                     val selecting = uiState.isSelecting
                     val selected = item.itemKey in uiState.selectedItemKeys
@@ -594,17 +607,28 @@ private fun ShoppingListContent(
                                 textDecoration = textDecoration,
                                 modifier = Modifier.weight(1f).padding(end = spacing.sm)
                             )
-                            Text(
-                                text = formatAmount(item.totalQuantity, item.unit, LocalStrings.current),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = contentColor,
-                                textDecoration = textDecoration,
-                                modifier = Modifier
-                                    .clickable(enabled = !selecting, onClickLabel = LocalStrings.current.shoppingEditAmountCd) {
-                                        viewModel.openEditAmount(item)
-                                    }
-                                    .padding(horizontal = spacing.xs, vertical = spacing.sm)
-                            )
+                            val amount = formatAmount(item.totalQuantity, item.unit, LocalStrings.current)
+                            val editAmountModifier = Modifier
+                                .clickable(enabled = !selecting, onClickLabel = LocalStrings.current.shoppingEditAmountCd) {
+                                    viewModel.openEditAmount(item)
+                                }
+                                .padding(horizontal = spacing.xs, vertical = spacing.sm)
+                            if (amount.isEmpty()) {
+                                Icon(
+                                    Icons.Filled.Edit,
+                                    contentDescription = LocalStrings.current.shoppingEditAmountCd,
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = editAmountModifier.size(MealPlannerTokens.iconSize.sm)
+                                )
+                            } else {
+                                Text(
+                                    text = amount,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = contentColor,
+                                    textDecoration = textDecoration,
+                                    modifier = editAmountModifier
+                                )
+                            }
                             val price = item.price
                             if (price != null) {
                                 Text(
@@ -626,6 +650,34 @@ private fun ShoppingListContent(
                 }
             }
         }
+    }
+}
+
+/** Header of the pantry staples section; tapping it shows or hides the section's items. */
+@Composable
+private fun PantryStaplesHeader(itemCount: Int, expanded: Boolean, onToggle: () -> Unit) {
+    val spacing = MealPlannerTokens.spacing
+    val strings = LocalStrings.current
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .clickable(onClickLabel = if (expanded) strings.shoppingHideSectionCd else strings.shoppingShowSectionCd) { onToggle() }
+            .heightIn(min = MealPlannerTokens.iconSize.xl)
+            .padding(horizontal = spacing.lg),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = "${strings.shoppingAtHome} ($itemCount)",
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.weight(1f)
+        )
+        Icon(
+            imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 

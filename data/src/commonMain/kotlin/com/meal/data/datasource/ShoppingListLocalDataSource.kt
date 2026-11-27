@@ -67,7 +67,7 @@ class ShoppingListLocalDataSource(
                             rangeEnd = rangeEnd.toString(),
                             name = item.name,
                             quantity = item.totalQuantity,
-                            unit = item.unit.name,
+                            unit = item.unit?.name,
                             checked = if (item.itemKey in checkedKeys) 1 else 0
                         )
                         priceByKey[item.itemKey]?.let { price ->
@@ -99,7 +99,7 @@ class ShoppingListLocalDataSource(
                 val existingKey = queries.selectActiveItemByName(
                     rangeStart = rangeStart.toString(),
                     rangeEnd = rangeEnd.toString(),
-                    unit = item.unit.name,
+                    unit = item.unit?.name,
                     normalizedName = normalizedIngredientName(item.name)
                 ).executeAsOneOrNull()
                 if (existingKey != null) {
@@ -117,7 +117,7 @@ class ShoppingListLocalDataSource(
                         rangeEnd = rangeEnd.toString(),
                         name = item.name,
                         quantity = item.totalQuantity,
-                        unit = item.unit.name,
+                        unit = item.unit?.name,
                         checked = 0
                     )
                     item.itemKey
@@ -127,11 +127,11 @@ class ShoppingListLocalDataSource(
 
     // Generated rows are only ever inserted when missing, so an edited amount stays for this
     // range even when the list is regenerated from the meal plan.
-    suspend fun setQuantityAndUnit(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) =
+    suspend fun setQuantityAndUnit(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double?, unit: MeasurementUnit?) =
         withContext(ioDispatcher) {
             queries.setQuantityAndUnit(
                 quantity = quantity,
-                unit = unit.name,
+                unit = unit?.name,
                 itemKey = itemKey,
                 rangeStart = rangeStart.toString(),
                 rangeEnd = rangeEnd.toString()
@@ -163,7 +163,7 @@ class ShoppingListLocalDataSource(
         itemKey = row.itemKey,
         name = row.name,
         totalQuantity = row.quantity,
-        unit = MeasurementUnit.valueOf(row.unit),
+        unit = row.unit?.let { MeasurementUnit.valueOf(it) },
         checked = row.checked != 0L,
         price = row.price,
         groupId = groupId,
@@ -174,7 +174,7 @@ class ShoppingListLocalDataSource(
         itemKey = row.itemKey,
         name = row.name,
         totalQuantity = row.quantity,
-        unit = MeasurementUnit.valueOf(row.unit),
+        unit = row.unit?.let { MeasurementUnit.valueOf(it) },
         price = row.price,
         rangeStart = LocalDate.parse(row.rangeStart),
         rangeEnd = LocalDate.parse(row.rangeEnd)

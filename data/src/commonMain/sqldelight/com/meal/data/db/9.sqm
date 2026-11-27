@@ -1,0 +1,21 @@
+-- Shopping list items can have no measurement, so quantity and unit are nullable.
+-- SQLite can't drop NOT NULL from a column, so the table is rebuilt.
+CREATE TABLE ShoppingListItemEntity_new (
+    itemKey TEXT NOT NULL,
+    rangeStart TEXT NOT NULL,
+    rangeEnd TEXT NOT NULL,
+    name TEXT NOT NULL,
+    quantity REAL,
+    unit TEXT,
+    checked INTEGER NOT NULL DEFAULT 0,
+    removed INTEGER NOT NULL DEFAULT 0,
+    price REAL,
+    PRIMARY KEY (itemKey, rangeStart, rangeEnd)
+);
+
+INSERT INTO ShoppingListItemEntity_new(itemKey, rangeStart, rangeEnd, name, quantity, unit, checked, removed, price)
+SELECT itemKey, rangeStart, rangeEnd, name, quantity, unit, checked, removed, price FROM ShoppingListItemEntity;
+
+DROP TABLE ShoppingListItemEntity;
+
+ALTER TABLE ShoppingListItemEntity_new RENAME TO ShoppingListItemEntity;

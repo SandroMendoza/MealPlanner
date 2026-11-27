@@ -186,6 +186,30 @@ class ShoppingRepositoriesTest {
     }
 
     @Test
+    fun itemsWithoutAMeasurementMergeByName() = runTest {
+        val unmeasured = item("manual-1", "Bread").copy(totalQuantity = null, unit = null)
+        list.addManualItem(unmeasured, weekStart, weekEnd)
+
+        val key = list.addManualItem(unmeasured.copy(itemKey = "manual-2", name = "bread"), weekStart, weekEnd)
+
+        assertEquals("manual-1", key)
+        val bread = list.getItems(weekStart, weekEnd).first().single()
+        assertNull(bread.totalQuantity)
+        assertNull(bread.unit)
+    }
+
+    @Test
+    fun clearingAnAmountRemovesTheMeasurement() = runTest {
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice")))
+
+        list.updateItemAmount("rice", weekStart, weekEnd, null, null)
+
+        val rice = list.getItems(weekStart, weekEnd).first().single()
+        assertNull(rice.totalQuantity)
+        assertNull(rice.unit)
+    }
+
+    @Test
     fun removeHidesOnlyThatRangesRow() = runTest {
         list.syncGeneratedItems(day, day, listOf(item("rice")))
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice")))
