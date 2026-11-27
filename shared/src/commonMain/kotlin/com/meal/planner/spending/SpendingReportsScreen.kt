@@ -44,8 +44,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.SpendingReport
+import com.meal.planner.common.LocalWideLandscape
 import com.meal.planner.common.LocalWideWidth
 import com.meal.planner.common.WideContentWidth
 import com.meal.planner.common.centeredMaxWidth
@@ -62,6 +65,9 @@ import com.meal.presentation.shopping.ShoppingListRangeMode
 import com.meal.presentation.spending.SpendingReportsUiState
 import com.meal.presentation.spending.SpendingReportsViewModel
 import org.koin.compose.viewmodel.koinViewModel
+
+/** The chart is taller beside the breakdown on a tablet in landscape, where there is height to spare. */
+private val WIDE_CHART_HEIGHT = 280.dp
 
 @Composable
 private fun ShoppingListRangeMode.label(): String = when (this) {
@@ -109,10 +115,10 @@ fun SpendingReportsScreen(
     ) { padding ->
         val report = uiState.report
         val showReport = !uiState.isLoading && uiState.errorMessage == null && !uiState.isEmpty && report != null
-        if (LocalWideWidth.current) {
+        if (LocalWideLandscape.current) {
             Row(
                 modifier = Modifier.padding(padding).fillMaxSize().centeredMaxWidth(WideContentWidth),
-                horizontalArrangement = Arrangement.spacedBy(spacing.lg)
+                horizontalArrangement = Arrangement.spacedBy(spacing.sm)
             ) {
                 Column(modifier = Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState())) {
                     SpendingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true })
@@ -120,23 +126,40 @@ fun SpendingReportsScreen(
                         SpendingOverview(
                             report = report,
                             currencySymbol = uiState.currencySymbol,
+                            chartHeight = WIDE_CHART_HEIGHT,
                             modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm)
                         )
                     }
                 }
                 if (showReport && report != null) {
-                    LazyColumn(
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
-                        contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm)
+                    // The breakdown sits in its own card so each name stays visually tied to its
+                    // price across the pane, and the card's top lines up with the range controls.
+                    Card(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .padding(top = spacing.sm, end = spacing.lg, bottom = spacing.lg),
+                        shape = MaterialTheme.shapes.large,
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
                     ) {
-                        spendingBreakdown(report, uiState.currencySymbol)
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(spacing.cardPadding)
+                        ) {
+                            spendingBreakdown(report, uiState.currencySymbol)
+                        }
                     }
                 } else {
                     SpendingStateMessage(uiState, Modifier.weight(1f).fillMaxHeight())
                 }
             }
         } else {
-            Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .padding(padding)
+                    .fillMaxSize()
+                    .then(if (LocalWideWidth.current) Modifier.centeredMaxWidth() else Modifier)
+            ) {
                 ScrollAwayHeader(
                     modifier = Modifier.weight(1f),
                     header = { SpendingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true }) }
@@ -288,7 +311,12 @@ private fun SpendingStateMessage(uiState: SpendingReportsUiState, modifier: Modi
 }
 
 @Composable
-private fun SpendingOverview(report: SpendingReport, currencySymbol: String, modifier: Modifier = Modifier) {
+private fun SpendingOverview(
+    report: SpendingReport,
+    currencySymbol: String,
+    modifier: Modifier = Modifier,
+    chartHeight: Dp = 160.dp
+) {
     val spacing = MealPlannerTokens.spacing
     Column(modifier = modifier) {
         SpendingSummaryCard(
@@ -304,7 +332,8 @@ private fun SpendingOverview(report: SpendingReport, currencySymbol: String, mod
             SpendingBarChart(
                 buckets = report.buckets,
                 currencySymbol = currencySymbol,
-                modifier = Modifier.fillMaxWidth().padding(spacing.cardPadding)
+                modifier = Modifier.fillMaxWidth().padding(spacing.cardPadding),
+                chartHeight = chartHeight
             )
         }
     }
