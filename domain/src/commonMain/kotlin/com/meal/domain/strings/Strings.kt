@@ -241,8 +241,11 @@ data class Strings(
     val notificationSettingsDescription: String,
     val settingsNotificationsPermissionDenied: String,
     val settingsNotificationsOpenSettings: String,
-    val mealReminderNotificationTitle: (MealType) -> String,
-    val mealReminderNotificationBody: String,
+    /** Title for a meal with recipes planned: the meal and the recipe names, already joined. */
+    val mealReminderPlannedTitle: (MealType, String) -> String,
+    val mealReminderPlannedBody: String,
+    val mealReminderNothingPlannedTitle: (MealType) -> String,
+    val mealReminderNothingPlannedBody: String,
 
     // About screen
     val aboutAppName: String,

@@ -65,18 +65,28 @@ private val TAB_ROUTES = listOf(Routes.HOME, Routes.CALENDAR, Routes.RECIPES, Ro
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
+fun AppNavHost(
+    startRoute: String? = null,
+    quickAddItemName: String? = null,
+    navigationRequest: NavigationRequest? = null
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    LaunchedEffect(startRoute) {
-        if (startRoute != null) {
-            navController.navigate(startRoute) {
-                popUpTo(navController.graph.startDestinationId) { saveState = true }
-                launchSingleTop = true
-            }
+    fun openRoute(route: String) {
+        navController.navigate(route) {
+            popUpTo(navController.graph.startDestinationId) { saveState = true }
+            launchSingleTop = true
         }
+    }
+
+    LaunchedEffect(startRoute) {
+        if (startRoute != null) openRoute(startRoute)
+    }
+
+    LaunchedEffect(navigationRequest) {
+        navigationRequest?.let { openRoute(it.route) }
     }
 
     val showTabs = currentRoute in TAB_ROUTES

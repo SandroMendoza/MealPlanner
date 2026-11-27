@@ -358,8 +358,10 @@ val englishStrings = Strings(
     notificationSettingsDescription = "Choose which meals you want to be reminded about.",
     settingsNotificationsPermissionDenied = "Enable notifications in system settings to receive meal reminders.",
     settingsNotificationsOpenSettings = "Open settings",
-    mealReminderNotificationTitle = { mealType -> "${englishMealTypeName(mealType)} reminder" },
-    mealReminderNotificationBody = "Tap to see what's planned.",
+    mealReminderPlannedTitle = { mealType, recipes -> "${englishMealTypeName(mealType)}: $recipes" },
+    mealReminderPlannedBody = "Time to start cooking.",
+    mealReminderNothingPlannedTitle = { mealType -> "${englishMealTypeName(mealType)}: nothing planned" },
+    mealReminderNothingPlannedBody = "Tap to plan a meal.",
 
     aboutAppName = "Meal Planner",
     aboutVersion = { version -> "Version $version" },

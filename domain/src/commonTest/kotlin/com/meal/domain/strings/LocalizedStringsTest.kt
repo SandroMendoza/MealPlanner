@@ -82,7 +82,8 @@ class LocalizedStringsTest {
         assertEquals("Good morning, Ana", en.homeGreetingWithName(DayPeriod.MORNING, "Ana"))
         assertEquals("Good afternoon!", en.homeGreetingDefault(DayPeriod.AFTERNOON))
         assertEquals("Good evening, Ana", en.homeGreetingWithName(DayPeriod.EVENING, "Ana"))
-        assertEquals("Dinner reminder", en.mealReminderNotificationTitle(MealType.DINNER))
+        assertEquals("Dinner: Chicken Adobo", en.mealReminderPlannedTitle(MealType.DINNER, "Chicken Adobo"))
+        assertEquals("Dinner: nothing planned", en.mealReminderNothingPlannedTitle(MealType.DINNER))
     }
 
     @Test
@@ -98,7 +99,8 @@ class LocalizedStringsTest {
             assertTrue("₱" in strings.recordPricePriceLabel("₱"), "$language price label drops the currency")
             assertTrue("12.50" in strings.spendingPdfTotalSpent("12.50"), "$language total drops the amount")
             assertTrue(
-                strings.mealTypeName(MealType.LUNCH).lowercase() in strings.mealReminderNotificationTitle(MealType.LUNCH).lowercase(),
+                strings.mealTypeName(MealType.LUNCH).lowercase() in strings.mealReminderNothingPlannedTitle(MealType.LUNCH).lowercase() &&
+                    "Adobo" in strings.mealReminderPlannedTitle(MealType.LUNCH, "Adobo"),
                 "$language reminder title does not name the meal"
             )
         }
