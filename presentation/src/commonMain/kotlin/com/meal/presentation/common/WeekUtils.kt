@@ -1,16 +1,22 @@
 package com.meal.presentation.common
 
+import com.meal.domain.model.enums.DayPeriod
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+@OptIn(ExperimentalTime::class)
+fun currentDayPeriod(): DayPeriod =
+    DayPeriod.ofHour(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour)
 
 fun currentWeekSunday(): LocalDate = sundayOf(today())
 

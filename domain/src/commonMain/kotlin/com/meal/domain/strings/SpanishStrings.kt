@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -19,6 +20,12 @@ private val SPANISH_WEEKDAY_INITIAL = mapOf(
 private val SPANISH_MONTH_ABBREVIATIONS = listOf(
     "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 )
+
+private fun spanishGreeting(period: DayPeriod): String = when (period) {
+    DayPeriod.MORNING -> "Buenos días"
+    DayPeriod.AFTERNOON -> "Buenas tardes"
+    DayPeriod.EVENING -> "Buenas noches"
+}
 
 private fun spanishMealTypeName(mealType: MealType): String = when (mealType) {
     MealType.BREAKFAST -> "Desayuno"
@@ -199,8 +206,8 @@ val spanishStrings = Strings(
     navShopping = "Compras",
     navProfile = "Perfil",
 
-    homeGreetingDefault = "¡Buenos días!",
-    homeGreetingWithName = { name -> "¡Buenos días, $name!" },
+    homeGreetingDefault = { period -> "¡${spanishGreeting(period)}!" },
+    homeGreetingWithName = { period, name -> "¡${spanishGreeting(period)}, $name!" },
     homeSubtitle = "Planifiquemos tus comidas.",
     homeNotificationsCd = "Notificaciones",
     homeTodaysPlan = "Plan de hoy",
