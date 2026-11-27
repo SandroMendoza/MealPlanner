@@ -20,6 +20,7 @@ import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
+import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
@@ -86,6 +87,7 @@ class ShoppingListViewModelTest {
         DeleteShoppingGroupUseCase(groups),
         AssignItemToGroupUseCase(groups),
         UpdateShoppingListItemAmountUseCase(shopping),
+        SetShoppingItemsAtHomeUseCase(shopping),
         tts
     )
 
@@ -442,6 +444,51 @@ class ShoppingListViewModelTest {
         vm.toggleReadAloud()
         assertEquals(1, tts.stopCount)
         assertFalse(vm.state.value.isSpeaking)
+    }
+
+    @Test
+    fun atHomeItemsSitInTheirOwnSectionAndReadAloudSkipsThem() {
+        settings.settings.value = AppSettings(readAloudEnabled = true)
+        shopping.setItems(
+            weekStart,
+            weekEnd,
+            listOf(
+                shoppingItem("rice", name = "Rice"),
+                shoppingItem("salt", name = "Salt", atHome = true),
+                shoppingItem("oil", name = "Cooking Oil", atHome = true)
+            )
+        )
+        val vm = viewModel()
+
+        assertEquals(listOf("Rice"), vm.state.value.sections.flatMap { it.items }.map { it.name })
+        assertEquals(listOf("Cooking Oil", "Salt"), vm.state.value.atHomeSection?.items?.map { it.name })
+
+        vm.toggleReadAloud()
+        assertEquals("1 piece Rice", tts.spoken.single())
+    }
+
+    @Test
+    fun movingSelectedItemsToAtHomeAndBack() {
+        shopping.setItems(
+            weekStart,
+            weekEnd,
+            listOf(shoppingItem("rice", name = "Rice"), shoppingItem("salt", name = "Salt", atHome = true))
+        )
+        val vm = viewModel()
+
+        vm.startSelection("rice")
+        assertFalse(vm.state.value.selectionIsAtHome)
+        vm.moveSelectedAtHome()
+        assertFalse(vm.state.value.isSelecting)
+        assertTrue(vm.state.value.items.all { it.atHome })
+        assertTrue(vm.state.value.sections.isEmpty())
+
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        assertTrue(vm.state.value.selectionIsAtHome)
+        vm.moveSelectedAtHome()
+        assertTrue(vm.state.value.items.none { it.atHome })
+        assertNull(vm.state.value.atHomeSection)
     }
 
     @Test

@@ -57,15 +57,16 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
     private val koin get() = GlobalContext.get()
 
     /**
-     * Lists the items currently on this week's shopping list.
+     * Lists the items to buy on this week's shopping list. Items the user already has at home
+     * are left out.
      *
-     * @return The shopping list for the current week.
+     * @return The items to buy for the current week.
      */
     @AppFunctionDeclaration(isDescribedByKDoc = true)
     suspend fun listShoppingListItems(): ShoppingListResult {
         val weekStart = currentWeekSunday()
         val weekEnd = weekEndFor(weekStart)
-        val items = koin.get<GenerateShoppingListUseCase>().execute(weekStart, weekEnd).first()
+        val items = koin.get<GenerateShoppingListUseCase>().execute(weekStart, weekEnd).first().filterNot { it.atHome }
         return ShoppingListResult(
             items.map { item ->
                 ShoppingListItemResult(

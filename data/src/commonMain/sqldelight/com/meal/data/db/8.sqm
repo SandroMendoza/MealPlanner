@@ -1,0 +1,4 @@
+CREATE TABLE ShoppingAtHomeEntity (
+    normalizedName TEXT NOT NULL PRIMARY KEY,
+    atHome INTEGER NOT NULL
+);

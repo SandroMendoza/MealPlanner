@@ -35,11 +35,13 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Folder
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material.icons.filled.Today
 import androidx.compose.material3.AlertDialog
@@ -509,10 +511,14 @@ private fun ShoppingListContent(
             )
         }
         else -> LazyColumn(modifier = modifier) {
-            sections.forEach { section ->
-                item(key = "header-${section.group?.id ?: "ungrouped"}") {
+            (sections + listOfNotNull(uiState.atHomeSection)).forEach { section ->
+                val headerKey = if (section.atHome) "at-home" else section.group?.id ?: "ungrouped"
+                item(key = "header-$headerKey") {
                     Text(
-                        text = section.group?.name ?: LocalStrings.current.shoppingUngrouped,
+                        text = when {
+                            section.atHome -> LocalStrings.current.shoppingAtHome
+                            else -> section.group?.name ?: LocalStrings.current.shoppingUngrouped
+                        },
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier
@@ -631,6 +637,16 @@ private fun SelectionBar(uiState: ShoppingListUiState, viewModel: ShoppingListVi
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(1f)
         )
+        IconButton(onClick = { viewModel.moveSelectedAtHome() }) {
+            Icon(
+                imageVector = if (uiState.selectionIsAtHome) Icons.Filled.AddShoppingCart else Icons.Filled.Home,
+                contentDescription = if (uiState.selectionIsAtHome) {
+                    LocalStrings.current.shoppingMoveToListCd
+                } else {
+                    LocalStrings.current.shoppingMoveToAtHomeCd
+                }
+            )
+        }
         Button(
             onClick = { viewModel.requestRemoveSelected() },
             shape = MaterialTheme.shapes.extraLarge,
