@@ -221,7 +221,7 @@ class FakeShoppingListRepository : ShoppingListRepository {
         return item.itemKey
     }
 
-    override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) {
+    override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double?, unit: MeasurementUnit?) {
         setItems(rangeStart, rangeEnd, itemsFor(rangeStart, rangeEnd).map {
             if (it.itemKey == itemKey) it.copy(totalQuantity = quantity, unit = unit) else it
         })
