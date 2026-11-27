@@ -1,0 +1,10 @@
+-- Built-in recipes already on the device are marked 'legacy': their edit history is unknown,
+-- so the built-in update only touches the ones whose name and photo still match the original.
+ALTER TABLE RecipeEntity ADD COLUMN builtInFingerprint TEXT;
+
+UPDATE RecipeEntity SET builtInFingerprint = 'legacy' WHERE isUserCreated = 0;
+
+CREATE TABLE BuiltInRecipesStateEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    fingerprint TEXT NOT NULL
+);

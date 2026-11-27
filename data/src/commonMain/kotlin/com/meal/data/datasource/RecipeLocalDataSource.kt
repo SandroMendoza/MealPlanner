@@ -26,7 +26,8 @@ import kotlin.uuid.Uuid
 @OptIn(ExperimentalUuidApi::class)
 class RecipeLocalDataSource(
     private val database: MealPlannerDatabase,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val builtInRecipes: () -> List<RecipeDto> = RecipeSeedData::recipes
 ) {
     private val queries = database.recipeQueries
     private val ingredientQueries = database.ingredientQueries
@@ -36,20 +37,60 @@ class RecipeLocalDataSource(
             .asFlow()
             .mapToList(ioDispatcher)
             .map { rows -> withContext(ioDispatcher) { toDtos(rows) } }
-            .onStart { seedMissingRecipes() }
+            .onStart { syncBuiltInRecipes() }
+
+    private suspend fun syncBuiltInRecipes() = withContext(ioDispatcher) {
+        val seeds = builtInRecipes().map { it to builtInFingerprint(it) }
+        seedMissingRecipes(seeds)
+        val setFingerprint = builtInSetFingerprint(seeds.map { it.second })
+        if (queries.selectBuiltInRecipesFingerprint().executeAsOneOrNull() != setFingerprint) {
+            database.transaction {
+                updateUneditedBuiltInRecipes(seeds)
+                queries.setBuiltInRecipesFingerprint(setFingerprint)
+            }
+        }
+    }
 
     // Adds every built-in recipe the database has never held. Recipes are only ever
     // soft-deleted, so deleted built-in recipes still count as held and stay deleted. A
     // built-in recipe counts as held when a row has its photo or its name, so renaming it or
     // changing its photo alone doesn't bring the original back.
-    private suspend fun seedMissingRecipes() = withContext(ioDispatcher) {
+    private fun seedMissingRecipes(seeds: List<Pair<RecipeDto, String>>) {
         val held = queries.selectAllRecipeNamesAndImages().executeAsList()
-        val heldNames = held.mapTo(HashSet()) { it.name.trim().lowercase() }
+        val heldNames = held.mapTo(HashSet()) { normalizedName(it.name) }
         val heldImages = held.mapNotNullTo(HashSet()) { it.imageUrl }
-        RecipeSeedData.recipes()
-            .filter { it.imageUrl !in heldImages && it.name.trim().lowercase() !in heldNames }
-            .forEach { insertRecipeBlocking(it) }
+        seeds
+            .filter { (seed, _) -> seed.imageUrl !in heldImages && normalizedName(seed.name) !in heldNames }
+            .forEach { (seed, fingerprint) -> insertRecipeBlocking(seed, fingerprint) }
     }
+
+    // Brings built-in recipes the user hasn't edited or deleted up to the current built-in
+    // content, keeping each row's id so favourites and meal plan entries still point at it.
+    // Rows from before fingerprints were kept are only updated while their name and photo
+    // both still match the built-in recipe.
+    private fun updateUneditedBuiltInRecipes(seeds: List<Pair<RecipeDto, String>>) {
+        val byImage = seeds.associateBy { it.first.imageUrl }
+        val byName = seeds.associateBy { normalizedName(it.first.name) }
+        queries.selectUneditedBuiltInRecipes().executeAsList().forEach { row ->
+            val (seed, fingerprint) = byImage[row.imageUrl] ?: byName[normalizedName(row.name)] ?: return@forEach
+            if (row.builtInFingerprint == fingerprint) return@forEach
+            if (row.builtInFingerprint == LEGACY_BUILT_IN_FINGERPRINT &&
+                (seed.imageUrl != row.imageUrl || normalizedName(seed.name) != normalizedName(row.name))
+            ) return@forEach
+            queries.updateBuiltInRecipe(
+                description = seed.description,
+                category = seed.category.name,
+                preparationTimeMinutes = seed.preparationTimeMinutes.toLong(),
+                servings = seed.servings.toLong(),
+                cuisine = seed.cuisine?.name,
+                builtInFingerprint = fingerprint,
+                id = row.id
+            )
+            replaceChildren(seed.copy(id = Uuid.parse(row.id)))
+        }
+    }
+
+    private fun normalizedName(name: String) = name.trim().lowercase()
 
     suspend fun getRecipeById(id: Uuid): RecipeDto? = withContext(ioDispatcher) {
         queries.selectRecipeById(id.toString()).executeAsOneOrNull()?.let { toDto(it) }
@@ -89,7 +130,7 @@ class RecipeLocalDataSource(
         queries.updateFavorite(if (isFavorite) 1 else 0, id.toString())
     }
 
-    private fun insertRecipeBlocking(dto: RecipeDto) {
+    private fun insertRecipeBlocking(dto: RecipeDto, builtInFingerprint: String? = null) {
         database.transaction {
             queries.insertRecipe(
                 id = dto.id.toString(),
@@ -100,7 +141,8 @@ class RecipeLocalDataSource(
                 servings = dto.servings.toLong(),
                 imageUrl = dto.imageUrl,
                 isUserCreated = if (dto.isUserCreated) 1 else 0,
-                cuisine = dto.cuisine?.name
+                cuisine = dto.cuisine?.name,
+                builtInFingerprint = builtInFingerprint
             )
             replaceChildren(dto)
         }
