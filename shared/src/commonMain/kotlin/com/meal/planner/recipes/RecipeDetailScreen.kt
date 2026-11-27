@@ -71,7 +71,9 @@ import com.meal.domain.model.Instruction
 import com.meal.domain.model.Recipe
 import com.meal.domain.usecase.AddRecipeToSlotUseCase
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalWideLandscape
 import com.meal.planner.common.LocalWideWidth
+import com.meal.planner.common.centeredMaxWidth
 import com.meal.planner.common.displayName
 import com.meal.planner.components.IngredientThumbnail
 import com.meal.planner.components.MealTypeDialog
@@ -185,7 +187,7 @@ fun RecipeDetailScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.Center)
                 )
-                recipe != null && LocalWideWidth.current -> Row(
+                recipe != null && LocalWideLandscape.current -> Row(
                     modifier = Modifier.fillMaxSize().padding(start = spacing.lg, top = spacing.lg, end = spacing.lg),
                     horizontalArrangement = Arrangement.spacedBy(spacing.xxl)
                 ) {
@@ -287,6 +289,7 @@ fun RecipeDetailScreen(
                                     }
                                 )
                                 .background(MaterialTheme.colorScheme.background)
+                                .then(if (LocalWideWidth.current) Modifier.centeredMaxWidth() else Modifier)
                                 .padding(horizontal = spacing.lg)
                         ) {
                             RecipeDetailBody(
