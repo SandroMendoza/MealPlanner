@@ -14,6 +14,7 @@ import com.meal.domain.usecase.CreateShoppingGroupUseCase
 import com.meal.domain.usecase.DeleteShoppingGroupUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
+import com.meal.domain.usecase.GetCollapsedShoppingSectionsUseCase
 import com.meal.domain.usecase.GetSettingsUseCase
 import com.meal.domain.usecase.GetShoppingGroupsUseCase
 import com.meal.domain.usecase.RecordItemPriceUseCase
@@ -22,6 +23,7 @@ import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
 import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
+import com.meal.domain.usecase.SetShoppingSectionCollapsedUseCase
 import com.meal.domain.service.TtsSpeaker
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.formatAmount
@@ -51,6 +53,8 @@ class ShoppingListViewModel(
     private val assignItemToGroupUseCase: AssignItemToGroupUseCase,
     private val updateShoppingListItemAmountUseCase: UpdateShoppingListItemAmountUseCase,
     private val setShoppingItemsAtHomeUseCase: SetShoppingItemsAtHomeUseCase,
+    private val getCollapsedShoppingSectionsUseCase: GetCollapsedShoppingSectionsUseCase,
+    private val setShoppingSectionCollapsedUseCase: SetShoppingSectionCollapsedUseCase,
     private val ttsSpeaker: TtsSpeaker
 ) : ViewModel() {
 
@@ -86,6 +90,11 @@ class ShoppingListViewModel(
         viewModelScope.launch {
             getShoppingGroupsUseCase.execute().collect { groups ->
                 _uiState.value = _uiState.value.copy(groups = groups)
+            }
+        }
+        viewModelScope.launch {
+            getCollapsedShoppingSectionsUseCase.execute().collect { keys ->
+                _uiState.value = _uiState.value.copy(collapsedSectionKeys = keys)
             }
         }
     }
@@ -146,7 +155,11 @@ class ShoppingListViewModel(
     }
 
     fun clearSelection() {
-        _uiState.value = _uiState.value.copy(selectedItemKeys = emptySet(), confirmingRemoveSelected = false)
+        _uiState.value = _uiState.value.copy(
+            selectedItemKeys = emptySet(),
+            confirmingRemoveSelected = false,
+            selectionPendingGroupAssignment = false
+        )
     }
 
     fun requestRemoveSelected() {
@@ -235,25 +248,55 @@ class ShoppingListViewModel(
         _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = item)
     }
 
+    /** Opens the group picker for every selected item at once. */
+    fun openGroupPickerForSelection() {
+        if (_uiState.value.isSelecting) {
+            _uiState.value = _uiState.value.copy(selectionPendingGroupAssignment = true)
+        }
+    }
+
     fun dismissGroupPicker() {
-        _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = null)
+        _uiState.value = _uiState.value.copy(itemPendingGroupAssignment = null, selectionPendingGroupAssignment = false)
     }
 
     fun assignGroup(groupId: String?) {
-        val item = _uiState.value.itemPendingGroupAssignment ?: return
+        val itemKeys = itemKeysPendingGroupAssignment() ?: return
         viewModelScope.launch {
-            assignItemToGroupUseCase.execute(item.itemKey, groupId)
+            itemKeys.forEach { assignItemToGroupUseCase.execute(it, groupId) }
         }
-        dismissGroupPicker()
+        finishGroupAssignment()
     }
 
     fun createGroupAndAssign(name: String) {
-        val item = _uiState.value.itemPendingGroupAssignment ?: return
+        val itemKeys = itemKeysPendingGroupAssignment() ?: return
         viewModelScope.launch {
             val group = createShoppingGroupUseCase.execute(name)
-            assignItemToGroupUseCase.execute(item.itemKey, group.id)
+            itemKeys.forEach { assignItemToGroupUseCase.execute(it, group.id) }
         }
+        finishGroupAssignment()
+    }
+
+    /** The items the open group picker applies to, or null when it isn't open. */
+    private fun itemKeysPendingGroupAssignment(): Collection<String>? {
+        val state = _uiState.value
+        return when {
+            state.selectionPendingGroupAssignment -> state.selectedItemKeys
+            else -> state.itemPendingGroupAssignment?.let { listOf(it.itemKey) }
+        }
+    }
+
+    private fun finishGroupAssignment() {
+        val movedSelection = _uiState.value.selectionPendingGroupAssignment
         dismissGroupPicker()
+        if (movedSelection) clearSelection()
+    }
+
+    /** Hides the items of the section with [key], or shows them again when they are hidden. */
+    fun toggleSection(key: String) {
+        val collapse = key !in _uiState.value.collapsedSectionKeys
+        viewModelScope.launch {
+            setShoppingSectionCollapsedUseCase.execute(key, collapse)
+        }
     }
 
     fun openGroupManagement() {

@@ -1,0 +1,13 @@
+-- Shopping list sections the user hid: a group's id, or a fixed key for the ungrouped section.
+CREATE TABLE ShoppingCollapsedSectionEntity (
+    sectionKey TEXT NOT NULL PRIMARY KEY
+);
+
+selectAll:
+SELECT sectionKey FROM ShoppingCollapsedSectionEntity;
+
+collapse:
+INSERT OR IGNORE INTO ShoppingCollapsedSectionEntity(sectionKey) VALUES (:sectionKey);
+
+expand:
+DELETE FROM ShoppingCollapsedSectionEntity WHERE sectionKey = :sectionKey;

@@ -74,6 +74,7 @@ import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalWideLandscape
 import com.meal.planner.common.LocalWideWidth
 import com.meal.planner.common.WideContentWidth
 import com.meal.planner.common.centeredMaxWidth
@@ -118,6 +119,7 @@ fun MealCalendarScreen(
 
     val dayEntries = remember(uiState.entries, selectedDate) { uiState.entriesFor(selectedDate) }
     val wide = LocalWideWidth.current
+    val landscape = LocalWideLandscape.current
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -132,7 +134,7 @@ fun MealCalendarScreen(
                     }
                 }
             ) {
-                CalendarContent(uiState, dayEntries, selectedDate, viewModel, onSlotClick, onRecipeClick, wide)
+                CalendarContent(uiState, dayEntries, selectedDate, viewModel, onSlotClick, onRecipeClick, wide, landscape)
             }
 
             // On a short screen the open keyboard leaves no room for both this button and the
@@ -274,9 +276,34 @@ private fun CalendarContent(
     viewModel: MealCalendarViewModel,
     onSlotClick: (LocalDate, MealType?, Uuid?) -> Unit,
     onRecipeClick: (Uuid) -> Unit,
-    wide: Boolean
+    wide: Boolean,
+    landscape: Boolean
 ) {
     val spacing = MealPlannerTokens.spacing
+    val contentModifier = when {
+        landscape -> Modifier.fillMaxSize().centeredMaxWidth(WideContentWidth)
+        wide -> Modifier.fillMaxSize().centeredMaxWidth()
+        else -> Modifier.fillMaxSize()
+    }
+
+    @Composable
+    fun DayEntry(entry: MealPlanEntry) {
+        val locked = uiState.isLocked(selectedDate)
+        SwipeToRemove(
+            enabled = !locked,
+            onRemove = { viewModel.requestRemoveSlot(entry) },
+            shape = MaterialTheme.shapes.large
+        ) {
+            MealEntryCard(
+                entry = entry,
+                locked = locked,
+                onClick = { onRecipeClick(entry.recipe.id) },
+                onChange = { onSlotClick(selectedDate, entry.mealType, entry.id) },
+                onRemove = { viewModel.requestRemoveSlot(entry) }
+            )
+        }
+    }
+
     when {
         uiState.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             CircularProgressIndicator()
@@ -289,8 +316,8 @@ private fun CalendarContent(
             )
         }
         uiState.viewMode == CalendarViewMode.WEEK -> MealWeekList(
-            modifier = if (wide) Modifier.fillMaxSize().centeredMaxWidth(WideContentWidth) else Modifier.fillMaxSize(),
-            columns = if (wide) 2 else 1,
+            modifier = contentModifier,
+            columns = if (landscape) 2 else 1,
             days = uiState.days,
             entries = uiState.entries,
             weekNote = uiState.weekNote,
@@ -301,7 +328,7 @@ private fun CalendarContent(
             onRemove = viewModel::requestRemoveSlot
         )
         else -> LazyColumn(
-            modifier = if (wide) Modifier.fillMaxSize().centeredMaxWidth() else Modifier.fillMaxSize(),
+            modifier = contentModifier,
             contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm),
             verticalArrangement = Arrangement.spacedBy(spacing.sm)
         ) {
@@ -314,21 +341,16 @@ private fun CalendarContent(
                     )
                 }
             }
-            items(dayEntries, key = { it.id.toString() }) { entry ->
-                val locked = uiState.isLocked(selectedDate)
-                SwipeToRemove(
-                    enabled = !locked,
-                    onRemove = { viewModel.requestRemoveSlot(entry) },
-                    shape = MaterialTheme.shapes.large
-                ) {
-                    MealEntryCard(
-                        entry = entry,
-                        locked = locked,
-                        onClick = { onRecipeClick(entry.recipe.id) },
-                        onChange = { onSlotClick(selectedDate, entry.mealType, entry.id) },
-                        onRemove = { viewModel.requestRemoveSlot(entry) }
-                    )
+            if (landscape) {
+                // Two cards per row fill the same width as the week view's grid.
+                items(dayEntries.chunked(2), key = { it.first().id.toString() }) { rowEntries ->
+                    Row(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
+                        rowEntries.forEach { entry -> Box(Modifier.weight(1f)) { DayEntry(entry) } }
+                        repeat(2 - rowEntries.size) { Spacer(Modifier.weight(1f)) }
+                    }
                 }
+            } else {
+                items(dayEntries, key = { it.id.toString() }) { entry -> DayEntry(entry) }
             }
             item(key = "week-notes") {
                 WeekNotesCard(note = uiState.weekNote, onNoteChange = viewModel::updateWeekNote)

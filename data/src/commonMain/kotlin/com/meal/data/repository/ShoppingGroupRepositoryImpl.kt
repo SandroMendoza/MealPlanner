@@ -24,4 +24,10 @@ class ShoppingGroupRepositoryImpl(
     override suspend fun assignItemToGroup(itemKey: String, groupId: String?) {
         localDataSource.assignItem(itemKey, groupId)
     }
+
+    override fun getCollapsedSections(): Flow<Set<String>> = localDataSource.collapsedSections()
+
+    override suspend fun setSectionCollapsed(sectionKey: String, collapsed: Boolean) {
+        localDataSource.setSectionCollapsed(sectionKey, collapsed)
+    }
 }

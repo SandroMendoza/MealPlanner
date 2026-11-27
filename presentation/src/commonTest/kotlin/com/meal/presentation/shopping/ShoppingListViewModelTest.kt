@@ -21,6 +21,8 @@ import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
 import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
 import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
+import com.meal.domain.usecase.GetCollapsedShoppingSectionsUseCase
+import com.meal.domain.usecase.SetShoppingSectionCollapsedUseCase
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
@@ -88,6 +90,8 @@ class ShoppingListViewModelTest {
         AssignItemToGroupUseCase(groups),
         UpdateShoppingListItemAmountUseCase(shopping),
         SetShoppingItemsAtHomeUseCase(shopping),
+        GetCollapsedShoppingSectionsUseCase(groups),
+        SetShoppingSectionCollapsedUseCase(groups),
         tts
     )
 
@@ -337,6 +341,73 @@ class ShoppingListViewModelTest {
         vm.dismissGroupPicker()
 
         assertNull(vm.state.value.itemPendingGroupAssignment)
+    }
+
+    @Test
+    fun movingTheSelectionToAGroupAssignsEverySelectedItemAndEndsSelection() {
+        val vm = viewModel()
+        vm.openGroupPickerForSelection()
+        assertFalse(vm.state.value.isPickingGroup)
+
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        vm.openGroupPickerForSelection()
+        assertTrue(vm.state.value.isPickingGroup)
+
+        vm.assignGroup("pantry")
+
+        assertEquals(setOf("rice" to "pantry", "salt" to "pantry"), groups.assignments.toSet())
+        assertFalse(vm.state.value.isPickingGroup)
+        assertFalse(vm.state.value.isSelecting)
+    }
+
+    @Test
+    fun movingTheSelectionToANewGroupCreatesItOnce() {
+        val vm = viewModel()
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        vm.openGroupPickerForSelection()
+
+        vm.createGroupAndAssign("Pantry")
+
+        val created = groups.groups.value.single()
+        assertEquals(setOf("rice" to created.id, "salt" to created.id), groups.assignments.toSet())
+        assertFalse(vm.state.value.isSelecting)
+    }
+
+    @Test
+    fun clearingTheSelectionClosesItsGroupPicker() {
+        val vm = viewModel()
+        vm.startSelection("rice")
+        vm.openGroupPickerForSelection()
+
+        vm.clearSelection()
+
+        assertFalse(vm.state.value.isPickingGroup)
+        assertTrue(groups.assignments.isEmpty())
+    }
+
+    @Test
+    fun togglingASectionHidesAndShowsItsItemsAndSavesTheChoice() {
+        val vm = viewModel()
+
+        vm.toggleSection("dairy")
+        vm.toggleSection(UNGROUPED_SECTION_KEY)
+        assertEquals(setOf("dairy", UNGROUPED_SECTION_KEY), vm.state.value.collapsedSectionKeys)
+        assertEquals(setOf("dairy", UNGROUPED_SECTION_KEY), groups.collapsedSections.value)
+
+        vm.toggleSection("dairy")
+        assertEquals(setOf(UNGROUPED_SECTION_KEY), vm.state.value.collapsedSectionKeys)
+        assertEquals(setOf(UNGROUPED_SECTION_KEY), groups.collapsedSections.value)
+    }
+
+    @Test
+    fun hiddenSectionsSavedEarlierStartHidden() {
+        groups.collapsedSections.value = setOf("dairy")
+
+        val vm = viewModel()
+
+        assertEquals(setOf("dairy"), vm.state.value.collapsedSectionKeys)
     }
 
     @Test
