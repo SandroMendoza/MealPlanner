@@ -734,6 +734,8 @@ private fun SelectionBar(uiState: ShoppingListUiState, viewModel: ShoppingListVi
         Text(
             text = LocalStrings.current.shoppingSelectedCount(uiState.selectedItemKeys.size),
             style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f)
         )
         IconButton(onClick = { viewModel.openGroupPickerForSelection() }) {
@@ -749,14 +751,12 @@ private fun SelectionBar(uiState: ShoppingListUiState, viewModel: ShoppingListVi
                 }
             )
         }
-        Button(
-            onClick = { viewModel.requestRemoveSelected() },
-            shape = MaterialTheme.shapes.extraLarge,
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
-        ) {
-            Icon(Icons.Filled.Delete, contentDescription = null, modifier = Modifier.size(MealPlannerTokens.iconSize.sm))
-            Spacer(Modifier.width(spacing.xxs))
-            Text(LocalStrings.current.remove)
+        IconButton(onClick = { viewModel.requestRemoveSelected() }) {
+            Icon(
+                Icons.Filled.Delete,
+                contentDescription = LocalStrings.current.remove,
+                tint = MaterialTheme.colorScheme.error
+            )
         }
     }
 }
