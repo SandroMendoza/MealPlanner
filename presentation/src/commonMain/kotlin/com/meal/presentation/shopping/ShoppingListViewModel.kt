@@ -256,6 +256,14 @@ class ShoppingListViewModel(
         dismissGroupPicker()
     }
 
+    /** Hides the items of the section with [key], or shows them again when they are hidden. */
+    fun toggleSection(key: String) {
+        val collapsed = _uiState.value.collapsedSectionKeys
+        _uiState.value = _uiState.value.copy(
+            collapsedSectionKeys = if (key in collapsed) collapsed - key else collapsed + key
+        )
+    }
+
     fun openGroupManagement() {
         _uiState.value = _uiState.value.copy(groupManagementOpen = true)
     }
