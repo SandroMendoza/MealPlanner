@@ -110,8 +110,9 @@ class FakeShoppingListRepository : ShoppingListRepository {
         checkedCalls += ItemCall(itemKey, rangeStart, rangeEnd, checked)
     }
 
-    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) {
+    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String {
         addedItems += Triple(item, rangeStart, rangeEnd)
+        return item.itemKey
     }
 
     override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double, unit: MeasurementUnit) {

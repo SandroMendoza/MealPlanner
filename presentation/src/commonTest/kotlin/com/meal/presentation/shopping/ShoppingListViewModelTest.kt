@@ -159,6 +159,19 @@ class ShoppingListViewModelTest {
     }
 
     @Test
+    fun addingAnItemWithAGroupPutsItInThatGroup() {
+        val vm = viewModel()
+
+        vm.addItem("Eggs", 12.0, MeasurementUnit.PIECE, groupId = "dairy")
+        vm.addItem("Milk", 1.0, MeasurementUnit.LITER)
+
+        val eggs = shopping.manualItems.first { it.first.name == "Eggs" }.first
+        val milk = shopping.manualItems.first { it.first.name == "Milk" }.first
+        assertEquals(listOf<Pair<String, String?>>(eggs.itemKey to "dairy"), groups.assignments)
+        assertTrue(groups.assignments.none { it.first == milk.itemKey })
+    }
+
+    @Test
     fun addingAnItemSavesItTrimmedAndKeepsThePickerOpenForTheNext() {
         val vm = viewModel()
         vm.openAddItemDialog()
