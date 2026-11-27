@@ -19,6 +19,7 @@ class ShoppingGroupLocalDataSource(
 ) {
     private val groupQueries = database.shoppingGroupQueries
     private val assignmentQueries = database.shoppingItemGroupQueries
+    private val collapsedQueries = database.shoppingCollapsedSectionQueries
 
     fun groups(): Flow<List<ShoppingGroup>> =
         groupQueries.selectAllGroups()
@@ -31,6 +32,16 @@ class ShoppingGroupLocalDataSource(
             .asFlow()
             .mapToList(ioDispatcher)
             .map { rows -> rows.associate { it.itemKey to it.groupId } }
+
+    fun collapsedSections(): Flow<Set<String>> =
+        collapsedQueries.selectAll()
+            .asFlow()
+            .mapToList(ioDispatcher)
+            .map { it.toSet() }
+
+    suspend fun setSectionCollapsed(sectionKey: String, collapsed: Boolean) = withContext(ioDispatcher) {
+        if (collapsed) collapsedQueries.collapse(sectionKey) else collapsedQueries.expand(sectionKey)
+    }
 
     @OptIn(ExperimentalUuidApi::class)
     suspend fun createGroup(name: String): ShoppingGroup = withContext(ioDispatcher) {
@@ -47,6 +58,7 @@ class ShoppingGroupLocalDataSource(
     suspend fun deleteGroup(id: String) = withContext(ioDispatcher) {
         database.transaction {
             assignmentQueries.clearAssignmentsForGroup(id)
+            collapsedQueries.expand(id)
             groupQueries.deleteGroup(id)
         }
     }

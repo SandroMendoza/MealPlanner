@@ -1,0 +1,4 @@
+-- Remembers which shopping list sections the user hid.
+CREATE TABLE ShoppingCollapsedSectionEntity (
+    sectionKey TEXT NOT NULL PRIMARY KEY
+);

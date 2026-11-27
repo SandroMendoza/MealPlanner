@@ -292,6 +292,21 @@ class ShoppingRepositoriesTest {
     }
 
     @Test
+    fun hiddenSectionsAreSavedAndForgottenWithTheirGroup() = runTest {
+        val produce = groups.createGroup("Produce")
+
+        groups.setSectionCollapsed(produce.id, collapsed = true)
+        groups.setSectionCollapsed("ungrouped", collapsed = true)
+        groups.setSectionCollapsed("ungrouped", collapsed = true)
+        assertEquals(setOf(produce.id, "ungrouped"), groups.getCollapsedSections().first())
+
+        groups.setSectionCollapsed("ungrouped", collapsed = false)
+        groups.deleteGroup(produce.id)
+
+        assertEquals(emptySet(), groups.getCollapsedSections().first())
+    }
+
+    @Test
     fun deletingAGroupUngroupsItsItems() = runTest {
         val produce = groups.createGroup("Produce")
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("carrot")))
