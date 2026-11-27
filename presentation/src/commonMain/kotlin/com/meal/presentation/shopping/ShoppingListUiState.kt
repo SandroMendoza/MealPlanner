@@ -42,6 +42,8 @@ data class ShoppingListUiState(
     val confirmingRemoveSelected: Boolean = false,
     val itemPendingDeletion: ShoppingListItem? = null,
     val itemPendingGroupAssignment: ShoppingListItem? = null,
+    /** True while the group picker is open for every selected item at once. */
+    val selectionPendingGroupAssignment: Boolean = false,
     val groupManagementOpen: Boolean = false,
     val groupPendingDeletion: ShoppingGroup? = null,
     /** [ShoppingListSection.key]s of the group sections whose items are hidden. */
@@ -55,6 +57,9 @@ data class ShoppingListUiState(
 
     val isSelecting: Boolean
         get() = selectedItemKeys.isNotEmpty()
+
+    val isPickingGroup: Boolean
+        get() = itemPendingGroupAssignment != null || selectionPendingGroupAssignment
 
     /** True when every selected item is in "Pantry staples", so the move action sends them back to the list. */
     val selectionIsAtHome: Boolean

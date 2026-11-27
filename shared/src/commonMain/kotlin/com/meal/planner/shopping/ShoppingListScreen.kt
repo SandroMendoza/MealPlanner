@@ -278,7 +278,7 @@ fun ShoppingListScreen(viewModel: ShoppingListViewModel = koinViewModel(), quick
             )
         }
 
-        if (uiState.itemPendingGroupAssignment != null) {
+        if (uiState.isPickingGroup) {
             AssignGroupDialog(
                 groups = uiState.groups,
                 onAssign = { groupId -> viewModel.assignGroup(groupId) },
@@ -736,6 +736,9 @@ private fun SelectionBar(uiState: ShoppingListUiState, viewModel: ShoppingListVi
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.weight(1f)
         )
+        IconButton(onClick = { viewModel.openGroupPickerForSelection() }) {
+            Icon(Icons.Filled.Folder, contentDescription = LocalStrings.current.shoppingAssignGroupTitle)
+        }
         IconButton(onClick = { viewModel.moveSelectedAtHome() }) {
             Icon(
                 imageVector = if (uiState.selectionIsAtHome) Icons.Filled.AddShoppingCart else Icons.Filled.Home,
