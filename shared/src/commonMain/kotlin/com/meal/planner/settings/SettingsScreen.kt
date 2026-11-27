@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.ViewList
@@ -57,6 +58,8 @@ import com.meal.domain.model.ThemeMode
 import com.meal.planner.backup.isBackupSupported
 import com.meal.planner.backup.rememberBackupFileLaunchers
 import com.meal.planner.components.CurrencyDropdownField
+import com.meal.planner.common.LocalWideWidth
+import com.meal.planner.common.centeredMaxWidth
 import com.meal.planner.components.LanguageDropdownField
 import com.meal.planner.components.SettingsRow
 import com.meal.planner.components.SettingsSwitchRow
@@ -87,6 +90,7 @@ fun SettingsScreen(
     onNotificationSettingsClick: () -> Unit,
     onAboutClick: () -> Unit,
     onPrivacyPolicyClick: () -> Unit,
+    onFeatureGuideClick: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel()
 ) {
     val spacing = MealPlannerTokens.spacing
@@ -128,6 +132,7 @@ fun SettingsScreen(
                 .padding(padding)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .then(if (LocalWideWidth.current) Modifier.centeredMaxWidth() else Modifier)
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.screenVertical)
         ) {
             SectionLabel(LocalStrings.current.settingsPreferences)
@@ -242,6 +247,10 @@ fun SettingsScreen(
 
             Spacer(Modifier.height(spacing.sectionGap))
             SectionLabel(LocalStrings.current.settingsAbout)
+            SettingsRow(label = LocalStrings.current.featureGuide, icon = Icons.AutoMirrored.Filled.Help, onClick = onFeatureGuideClick) {
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
+            }
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
             SettingsRow(label = LocalStrings.current.settingsAboutMealPlanner, icon = Icons.Default.Info, onClick = onAboutClick) {
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
             }

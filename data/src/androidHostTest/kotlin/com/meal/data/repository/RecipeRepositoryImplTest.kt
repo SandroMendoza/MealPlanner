@@ -11,6 +11,7 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,7 +46,7 @@ class RecipeRepositoryImplTest {
         id = Uuid.random(),
         name = name,
         description = "Stir-fried noodles",
-        category = FoodCategory.MAIN_DISH,
+        categories = setOf(FoodCategory.MAIN_DISH, FoodCategory.SOUP),
         preparationTimeMinutes = 30,
         servings = 4,
         imageUrl = null,
@@ -55,7 +56,8 @@ class RecipeRepositoryImplTest {
         instructions = listOf(Instruction(1, "Boil"), Instruction(2, "Fry")),
         isFavorite = false,
         isUserCreated = true,
-        cuisine = Cuisine.CHINESE
+        cuisines = setOf(Cuisine.CHINESE, Cuisine.FILIPINO),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER)
     )
 
     @Test
@@ -63,8 +65,42 @@ class RecipeRepositoryImplTest {
         val recipes = repository.getAllRecipes().first()
 
         assertEquals(seedCount, recipes.size)
-        assertTrue(recipes.all { !it.isUserCreated && it.cuisine == Cuisine.FILIPINO })
+        assertTrue(recipes.all { !it.isUserCreated && it.cuisines.size == 1 && it.categories.isNotEmpty() })
         assertTrue(recipes.all { it.ingredients.isNotEmpty() && it.instructions.isNotEmpty() })
+        assertEquals(emptyList<String>(), recipes.filter { it.mealTypes.isEmpty() }.map { it.name })
+    }
+
+    @Test
+    fun everyCuisineHasAtLeastTwentyBuiltInRecipes() {
+        val perCuisine = RecipeSeedData.recipes().groupingBy { it.cuisines.single() }.eachCount()
+
+        Cuisine.entries.filter { it != Cuisine.OTHER }.forEach { cuisine ->
+            assertTrue((perCuisine[cuisine] ?: 0) >= 20, "$cuisine has ${perCuisine[cuisine] ?: 0}")
+        }
+    }
+
+    @Test
+    fun builtInRecipesHaveUniqueNamesAndPhotos() {
+        val seed = RecipeSeedData.recipes()
+
+        assertEquals(seed.size, seed.map { it.name.lowercase() }.toSet().size)
+        assertEquals(seed.size, seed.map { it.imageUrl }.toSet().size)
+    }
+
+    @Test
+    fun databaseWithOtherRecipesGetsTheMissingBuiltInRecipes() = runTest {
+        repository.addRecipe(recipe())
+
+        assertEquals(seedCount + 1, repository.getAllRecipes().first().size)
+    }
+
+    @Test
+    fun renamedBuiltInRecipeIsNotSeededAgain() = runTest {
+        val seeded = repository.getAllRecipes().first().first()
+
+        repository.updateRecipe(seeded.copy(name = "Renamed"))
+
+        assertEquals(seedCount, repository.getAllRecipes().first().size)
     }
 
     @Test
@@ -93,10 +129,11 @@ class RecipeRepositoryImplTest {
 
         assertEquals(added.name, stored.name)
         assertEquals(added.description, stored.description)
-        assertEquals(added.category, stored.category)
+        assertEquals(added.categories, stored.categories)
         assertEquals(added.preparationTimeMinutes, stored.preparationTimeMinutes)
         assertEquals(added.servings, stored.servings)
-        assertEquals(added.cuisine, stored.cuisine)
+        assertEquals(added.cuisines, stored.cuisines)
+        assertEquals(added.mealTypes, stored.mealTypes)
         assertTrue(stored.isUserCreated)
         assertEquals(added.instructions, stored.instructions)
         assertEquals(
@@ -115,6 +152,7 @@ class RecipeRepositoryImplTest {
 
         assertEquals(seedCount + 1, recipes.size)
         assertTrue(recipes.any { it.id == added.id })
+        assertEquals(added.mealTypes, recipes.single { it.id == added.id }.mealTypes)
     }
 
     @Test
@@ -133,7 +171,9 @@ class RecipeRepositoryImplTest {
                 RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), "Cabbage"), 2.0, MeasurementUnit.PIECE)
             ),
             instructions = listOf(Instruction(1, "Toss everything")),
-            cuisine = null
+            cuisines = emptySet(),
+            categories = emptySet(),
+            mealTypes = setOf(MealType.SNACK)
         )
 
         repository.updateRecipe(updated)
@@ -141,7 +181,9 @@ class RecipeRepositoryImplTest {
 
         assertEquals("Pancit Canton", stored.name)
         assertNull(stored.description)
-        assertNull(stored.cuisine)
+        assertTrue(stored.cuisines.isEmpty())
+        assertTrue(stored.categories.isEmpty())
+        assertEquals(setOf(MealType.SNACK), stored.mealTypes)
         assertEquals(listOf("Cabbage"), stored.ingredients.map { it.ingredient.name })
         assertEquals(listOf(Instruction(1, "Toss everything")), stored.instructions)
     }

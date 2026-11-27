@@ -57,22 +57,23 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
     private val koin get() = GlobalContext.get()
 
     /**
-     * Lists the items currently on this week's shopping list.
+     * Lists the items to buy on this week's shopping list. Items the user already has at home
+     * are left out.
      *
-     * @return The shopping list for the current week.
+     * @return The items to buy for the current week.
      */
     @AppFunctionDeclaration(isDescribedByKDoc = true)
     suspend fun listShoppingListItems(): ShoppingListResult {
         val weekStart = currentWeekSunday()
         val weekEnd = weekEndFor(weekStart)
-        val items = koin.get<GenerateShoppingListUseCase>().execute(weekStart, weekEnd).first()
+        val items = koin.get<GenerateShoppingListUseCase>().execute(weekStart, weekEnd).first().filterNot { it.atHome }
         return ShoppingListResult(
             items.map { item ->
                 ShoppingListItemResult(
                     itemKey = item.itemKey,
                     name = item.name,
                     quantity = item.totalQuantity,
-                    unit = item.unit.unit,
+                    unit = item.unit?.unit,
                     checked = item.checked
                 )
             }
@@ -156,7 +157,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             description = recipe.description,
             preparationTimeMinutes = recipe.preparationTimeMinutes,
             servings = recipe.servings,
-            cuisine = recipe.cuisine?.name,
+            cuisine = recipe.cuisines.joinToString(", ") { it.name }.ifEmpty { null },
             ingredients = recipe.ingredients.map {
                 RecipeIngredientResult(name = it.ingredient.name, quantity = it.quantity, unit = it.unit.unit)
             },
@@ -176,7 +177,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             id = Uuid.random(),
             name = params.name,
             description = params.description,
-            category = parseFoodCategory(params.category),
+            categories = setOf(parseFoodCategory(params.category)),
             preparationTimeMinutes = params.preparationTimeMinutes,
             servings = params.servings,
             imageUrl = null,
@@ -191,7 +192,7 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
             instructions = params.instructions.mapIndexed { index, description -> Instruction(index + 1, description) },
             isFavorite = false,
             isUserCreated = true,
-            cuisine = parseCuisine(params.cuisine)
+            cuisines = setOfNotNull(parseCuisine(params.cuisine))
         )
         koin.get<AddRecipeUseCase>().execute(recipe)
         return ActionResult(success = true, message = "Added recipe \"${params.name}\".")
@@ -230,7 +231,10 @@ abstract class BaseMealPlannerAppFunctions : AppFunctionService() {
         val parsedDate = parseLocalDate(date)
         val parsedMealType = parseMealType(mealType)
         val parsedRecipeId = parseUuid(recipeId)
-        koin.get<AddRecipeToSlotUseCase>().execute(parsedDate, parsedMealType, parsedRecipeId)
+        val added = koin.get<AddRecipeToSlotUseCase>().execute(parsedDate, parsedMealType, parsedRecipeId)
+        if (!added) {
+            return ActionResult(success = false, message = "Past dates are locked in Settings, so $date can't be changed.")
+        }
         return ActionResult(success = true, message = "Added the recipe to $date ($mealType).")
     }
 

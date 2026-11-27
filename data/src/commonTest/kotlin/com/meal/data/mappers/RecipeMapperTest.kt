@@ -6,6 +6,7 @@ import com.meal.domain.model.Instruction
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,7 +20,7 @@ class RecipeMapperTest {
         id = Uuid.random(),
         name = "Chicken Adobo",
         description = "Braised chicken",
-        category = FoodCategory.MAIN_DISH,
+        categories = setOf(FoodCategory.MAIN_DISH, FoodCategory.SOUP),
         preparationTimeMinutes = 45,
         servings = 4,
         imageUrl = "files/recipes/chicken_adobo.webp",
@@ -29,7 +30,8 @@ class RecipeMapperTest {
         instructions = listOf(Instruction(1, "Marinate"), Instruction(2, "Simmer")),
         isFavorite = true,
         isUserCreated = false,
-        cuisine = Cuisine.FILIPINO
+        cuisines = setOf(Cuisine.FILIPINO),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER)
     )
 
     @Test
@@ -39,7 +41,7 @@ class RecipeMapperTest {
         assertEquals(dto.id, recipe.id)
         assertEquals(dto.name, recipe.name)
         assertEquals(dto.description, recipe.description)
-        assertEquals(dto.category, recipe.category)
+        assertEquals(dto.categories, recipe.categories)
         assertEquals(dto.preparationTimeMinutes, recipe.preparationTimeMinutes)
         assertEquals(dto.servings, recipe.servings)
         assertEquals(dto.imageUrl, recipe.imageUrl)
@@ -47,7 +49,8 @@ class RecipeMapperTest {
         assertEquals(dto.instructions, recipe.instructions)
         assertEquals(dto.isFavorite, recipe.isFavorite)
         assertEquals(dto.isUserCreated, recipe.isUserCreated)
-        assertEquals(dto.cuisine, recipe.cuisine)
+        assertEquals(dto.cuisines, recipe.cuisines)
+        assertEquals(dto.mealTypes, recipe.mealTypes)
     }
 
     @Test
@@ -57,7 +60,7 @@ class RecipeMapperTest {
 
     @Test
     fun nullableFieldsStayNull() {
-        val bare = dto.copy(description = null, imageUrl = null, cuisine = null)
+        val bare = dto.copy(description = null, imageUrl = null, cuisines = emptySet(), categories = emptySet())
 
         val roundTripped = RecipeMapper.toDto(RecipeMapper.toDomain(bare))
 

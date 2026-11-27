@@ -1,44 +1,63 @@
 package com.meal.data.datasource
 
+import com.meal.data.datasource.seed.americanRecipes
+import com.meal.data.datasource.seed.chineseRecipes
+import com.meal.data.datasource.seed.indianRecipes
+import com.meal.data.datasource.seed.ingredient
+import com.meal.data.datasource.seed.italianRecipes
+import com.meal.data.datasource.seed.japaneseRecipes
+import com.meal.data.datasource.seed.koreanRecipes
+import com.meal.data.datasource.seed.mexicanRecipes
+import com.meal.data.datasource.seed.recipe
+import com.meal.data.datasource.seed.thaiRecipes
+import com.meal.data.datasource.seed.vietnameseRecipes
 import com.meal.data.model.RecipeDto
-import com.meal.domain.model.BUNDLED_IMAGE_PREFIX
-import com.meal.domain.model.Ingredient
-import com.meal.domain.model.Instruction
-import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
-import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.FoodCategory.DESSERT
 import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
-import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
 import com.meal.domain.model.enums.MeasurementUnit.TABLESPOON
 import com.meal.domain.model.enums.MeasurementUnit.TEASPOON
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 /**
- * Built-in Filipino recipes inserted on first install. Each [recipe] names its photo, which is
- * packaged in `shared/src/commonMain/composeResources/files/recipes/` as `<image>.webp`.
+ * Built-in recipes, inserted on first install and added to existing installs when missing.
+ * Each [recipe] names its photo, which is packaged in
+ * `shared/src/commonMain/composeResources/files/recipes/` as `<image>.webp`.
  *
  * The shopping list merges ingredients by name and unit, so each ingredient keeps the same
  * name and unit across recipes (meat in grams, garlic in cloves, sauces in tablespoons).
+ * Every ingredient name is an ingredient catalogue name, so it gets the catalogue picture.
  */
 @OptIn(ExperimentalUuidApi::class)
 object RecipeSeedData {
 
-    fun recipes(): List<RecipeDto> = baseRecipes().map { it.copy(isUserCreated = false, cuisine = Cuisine.FILIPINO) }
+    fun recipes(): List<RecipeDto> = listOf(
+        Cuisine.FILIPINO to filipinoRecipes(),
+        Cuisine.CHINESE to chineseRecipes(),
+        Cuisine.JAPANESE to japaneseRecipes(),
+        Cuisine.KOREAN to koreanRecipes(),
+        Cuisine.THAI to thaiRecipes(),
+        Cuisine.VIETNAMESE to vietnameseRecipes(),
+        Cuisine.INDIAN to indianRecipes(),
+        Cuisine.ITALIAN to italianRecipes(),
+        Cuisine.MEXICAN to mexicanRecipes(),
+        Cuisine.AMERICAN to americanRecipes(),
+    ).flatMap { (cuisine, recipes) -> recipes.map { it.copy(isUserCreated = false, cuisines = setOf(cuisine)) } }
 
-    private fun baseRecipes(): List<RecipeDto> = listOf(
+    private fun filipinoRecipes(): List<RecipeDto> = listOf(
         // ---------- Main dishes ----------
         recipe(
             name = "Chicken Adobo",
             image = "chicken_adobo",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Chicken braised in soy sauce, vinegar, garlic and bay leaves until tender and glossy.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 75, servings = 4,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
@@ -64,9 +83,10 @@ object RecipeSeedData {
         recipe(
             name = "Pork Barbecue",
             image = "pork_barbecue",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Sweet and savoury pork skewers marinated overnight and grilled with a sticky glaze.",
-            category = MAIN_DISH,
-            minutes = 60, servings = 6,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
+            minutes = 300, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Shoulder", 1000.0, GRAMS),
                 ingredient("Soy Sauce", 8.0, TABLESPOON),
@@ -82,18 +102,19 @@ object RecipeSeedData {
             steps = listOf(
                 "Slice the pork into thin pieces, about 3 mm thick and 4 cm wide.",
                 "Mix the soy sauce, banana ketchup, soda, calamansi juice, minced garlic, brown sugar and pepper. Set aside half a cup for basting.",
-                "Coat the pork in the rest of the marinade and refrigerate overnight, or for at least 4 hours.",
+                "Coat the pork in the rest of the marinade and refrigerate for at least 4 hours, or overnight for more flavour.",
                 "Soak the skewers in water for 30 minutes so they don't burn, then thread 4 or 5 pieces of pork onto each one.",
                 "Simmer the reserved half cup of marinade with the oil for 3 minutes until slightly thick. Use this as the basting sauce.",
                 "Grill over medium heat for 3 to 4 minutes per side, basting often, until cooked through and lightly charred.",
-                "Serve with rice and a dip of vinegar with chopped onion and chili.",
+                "Serve hot with rice.",
             ),
         ),
         recipe(
             name = "Kare-Kare",
             image = "kare_kare",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Oxtail and vegetables in a thick, savoury peanut sauce, served with shrimp paste.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 180, servings = 6,
             ingredients = listOf(
                 ingredient("Oxtail", 1000.0, GRAMS),
@@ -106,6 +127,7 @@ object RecipeSeedData {
                 ingredient("Eggplant", 2.0, PIECE),
                 ingredient("String Beans", 200.0, GRAMS),
                 ingredient("Pechay", 250.0, GRAMS),
+                ingredient("Banana Heart", 1.0, PIECE),
                 ingredient("Cooking Oil", 2.0, TABLESPOON),
                 ingredient("Salt", 1.0, TEASPOON),
                 ingredient("Shrimp Paste", 6.0, TABLESPOON),
@@ -116,15 +138,16 @@ object RecipeSeedData {
                 "Heat the oil in a large pot and sauté the garlic and onion until soft.",
                 "Add the oxtail and the reserved broth. Dissolve the annatto powder in 2 tablespoons of water, stir it in and simmer for 5 minutes.",
                 "Stir in the peanut butter until smooth, then sprinkle in the toasted flour while stirring. Simmer until the sauce thickens. Season with salt.",
-                "Blanch the eggplant, string beans and pechay separately in boiling water until just tender.",
+                "Slice the banana heart and blanch it, the eggplant, string beans and pechay separately in boiling water until just tender.",
                 "Arrange the vegetables over the oxtail and serve with shrimp paste and rice.",
             ),
         ),
         recipe(
             name = "Bistek Tagalog",
             image = "bistek_tagalog",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Thin beef slices braised in soy sauce and calamansi, topped with soft onion rings.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 60, servings = 4,
             ingredients = listOf(
                 ingredient("Beef Sirloin", 500.0, GRAMS),
@@ -149,9 +172,10 @@ object RecipeSeedData {
         recipe(
             name = "Pork Menudo",
             image = "pork_menudo",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Pork and liver stewed in tomato sauce with potatoes, carrots, peas and raisins.",
-            category = MAIN_DISH,
-            minutes = 75, servings = 6,
+            categories = setOf(MAIN_DISH),
+            minutes = 90, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Shoulder", 700.0, GRAMS),
                 ingredient("Pork Liver", 200.0, GRAMS),
@@ -184,8 +208,9 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Afritada",
             image = "chicken_afritada",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Chicken stewed in tomato sauce with potatoes, carrots and bell peppers.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 60, servings = 5,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
@@ -218,8 +243,9 @@ object RecipeSeedData {
         recipe(
             name = "Beef Caldereta",
             image = "beef_caldereta",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Slow-cooked beef in a rich tomato and liver spread sauce with vegetables and cheese.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 150, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Chuck", 1000.0, GRAMS),
@@ -251,8 +277,9 @@ object RecipeSeedData {
         recipe(
             name = "Pork Sisig",
             image = "pork_sisig",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Crisp chopped pork and liver with onion, chili and calamansi, served sizzling.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 90, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 500.0, GRAMS),
@@ -273,19 +300,20 @@ object RecipeSeedData {
             ),
             steps = listOf(
                 "Boil the pork belly in the water with the bay leaves, peppercorns and salt for 45 minutes until tender. Drain and pat dry.",
-                "Grill or pan-fry the pork until crisp and lightly charred. Pan-fry the chicken liver until cooked through.",
+                "Grill or pan-fry the pork until crisp and lightly charred. Pan-fry the chicken liver until it reaches 74°C (165°F) inside.",
                 "Chop the pork and liver finely.",
                 "Melt the butter in a skillet and sauté the garlic and one chopped onion until soft.",
                 "Add the pork, liver, soy sauce and chopped chilies. Cook for 5 minutes, letting the edges crisp.",
                 "Take the pan off the heat and stir in the calamansi juice, the second chopped onion, the mayonnaise and the pepper.",
-                "Serve on a hot sizzling plate topped with a raw or fried egg, mixing it in at the table.",
+                "Serve on a very hot sizzling plate. Crack the egg on top and stir it through the hot sisig until it is cooked, or top with a fried egg.",
             ),
         ),
         recipe(
             name = "Lechon Kawali",
             image = "lechon_kawali",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Boiled then deep-fried pork belly with crackling skin and juicy meat.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 150, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 1000.0, GRAMS),
@@ -309,8 +337,9 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Inasal",
             image = "chicken_inasal",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Grilled chicken marinated in lemongrass, ginger, garlic and vinegar, basted with annatto oil.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 240, servings = 4,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
@@ -325,21 +354,23 @@ object RecipeSeedData {
                 ingredient("Annatto Seeds", 2.0, TABLESPOON),
                 ingredient("Cooking Oil", 6.0, TABLESPOON),
                 ingredient("Butter", 2.0, TABLESPOON),
+                ingredient("Bamboo Skewers", 8.0, PIECE),
             ),
             steps = listOf(
                 "Pound or blend the lemongrass, ginger and garlic. Mix with the vinegar, calamansi juice, brown sugar, salt and pepper.",
                 "Coat the chicken in the marinade and refrigerate for at least 3 hours.",
                 "Heat the oil and annatto seeds over low heat for 3 minutes until the oil turns deep red. Strain, then stir in the butter.",
                 "Thread the chicken onto skewers.",
-                "Grill over medium heat for 25 to 30 minutes, turning and basting often with the annatto oil, until cooked through.",
-                "Serve with rice, a little annatto oil and a dip of soy sauce, calamansi and chili.",
+                "Grill over medium heat for 25 to 30 minutes, turning and basting often with the annatto oil, until the thickest part reaches 74°C (165°F) or higher.",
+                "Serve with rice, a little annatto oil and calamansi.",
             ),
         ),
         recipe(
             name = "Pancit Canton",
             image = "pancit_canton",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Stir-fried egg noodles with pork, shrimp and vegetables in a savoury sauce.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 45, servings = 6,
             ingredients = listOf(
                 ingredient("Pancit Canton Noodles", 450.0, GRAMS),
@@ -370,8 +401,9 @@ object RecipeSeedData {
         recipe(
             name = "Pancit Bihon",
             image = "pancit_bihon",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Thin rice noodles stir-fried with chicken and vegetables.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 45, servings = 6,
             ingredients = listOf(
                 ingredient("Rice Noodles", 450.0, GRAMS),
@@ -402,8 +434,9 @@ object RecipeSeedData {
         recipe(
             name = "Lumpiang Shanghai",
             image = "lumpiang_shanghai",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Thin, crisp spring rolls filled with seasoned ground pork and vegetables.",
-            category = SIDE_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 60, servings = 8,
             ingredients = listOf(
                 ingredient("Ground Pork", 500.0, GRAMS),
@@ -423,15 +456,16 @@ object RecipeSeedData {
                 "Finely mince the carrot, onion, garlic and spring onion.",
                 "Mix them with the ground pork, egg, soy sauce, salt and pepper.",
                 "Place about 1 tablespoon of filling along one edge of a wrapper. Roll tightly, folding in the sides, and seal the end with a little water.",
-                "Heat the oil to about 175°C. Fry the rolls in batches for 4 to 5 minutes until golden and cooked through.",
+                "Heat the oil to about 175°C. Fry the rolls in batches for 4 to 5 minutes until golden and the filling reaches 71°C (160°F).",
                 "Drain on a rack and serve with sweet chili sauce.",
             ),
         ),
         recipe(
             name = "Tortang Talong",
             image = "tortang_talong",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Grilled eggplant flattened and fried in a beaten egg coating.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Eggplant", 4.0, PIECE),
@@ -453,8 +487,9 @@ object RecipeSeedData {
         recipe(
             name = "Ginisang Ampalaya",
             image = "ginisang_ampalaya",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Sautéed bitter gourd with tomato, onion and egg.",
-            category = SIDE_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Bitter Gourd", 2.0, PIECE),
@@ -479,8 +514,9 @@ object RecipeSeedData {
         recipe(
             name = "Pinakbet",
             image = "pinakbet",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Mixed vegetables cooked with pork and shrimp paste.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 40, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 250.0, GRAMS),
@@ -509,8 +545,9 @@ object RecipeSeedData {
         recipe(
             name = "Laing",
             image = "laing",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Dried taro leaves slow-cooked in coconut milk with pork, ginger and chili.",
-            category = SIDE_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 70, servings = 4,
             ingredients = listOf(
                 ingredient("Dried Taro Leaves", 100.0, GRAMS),
@@ -535,8 +572,9 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Curry",
             image = "chicken_curry",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Filipino-style chicken curry with coconut milk, potatoes and carrots.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 50, servings = 5,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
@@ -566,8 +604,9 @@ object RecipeSeedData {
         recipe(
             name = "Pork Binagoongan",
             image = "pork_binagoongan",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Pork belly braised with shrimp paste and tomatoes, with fried eggplant.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 60, servings = 4,
             ingredients = listOf(
                 ingredient("Pork Belly", 700.0, GRAMS),
@@ -596,9 +635,10 @@ object RecipeSeedData {
         recipe(
             name = "Daing na Bangus",
             image = "daing_na_bangus",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Milkfish marinated overnight in garlic and vinegar, then fried until crisp.",
-            category = MAIN_DISH,
-            minutes = 30, servings = 4,
+            categories = setOf(MAIN_DISH),
+            minutes = 270, servings = 4,
             ingredients = listOf(
                 ingredient("Milkfish", 2.0, PIECE),
                 ingredient("Vinegar", 8.0, TABLESPOON),
@@ -609,17 +649,18 @@ object RecipeSeedData {
             ),
             steps = listOf(
                 "Use butterflied, deboned milkfish. Crush the garlic and mix it with the vinegar, salt and pepper.",
-                "Lay the fish flesh side down in the marinade and refrigerate overnight, or for at least 6 hours.",
+                "Lay the fish flesh side down in the marinade and refrigerate for at least 4 hours, or overnight for more flavour.",
                 "Drain the fish and pat it dry.",
                 "Fry skin side down in hot oil for 5 to 6 minutes under a splatter guard, then flip and fry for 3 to 4 minutes until golden.",
-                "Serve with garlic fried rice, eggs and a little spiced vinegar.",
+                "Serve with garlic fried rice, eggs and a little vinegar for dipping.",
             ),
         ),
         recipe(
             name = "Fish Escabeche",
             image = "fish_escabeche",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Fried whole fish topped with a sweet and sour sauce and crisp vegetables.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 40, servings = 4,
             ingredients = listOf(
                 ingredient("Tilapia", 2.0, PIECE),
@@ -651,8 +692,9 @@ object RecipeSeedData {
         recipe(
             name = "Ginataang Kalabasa at Sitaw",
             image = "ginataang_kalabasa_at_sitaw",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Squash and string beans with shrimp in coconut milk.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH, SIDE_DISH),
             minutes = 35, servings = 4,
             ingredients = listOf(
                 ingredient("Squash", 500.0, GRAMS),
@@ -678,8 +720,9 @@ object RecipeSeedData {
         recipe(
             name = "Beef Mechado",
             image = "beef_mechado",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Beef braised in tomato sauce with soy sauce, calamansi, potatoes and carrots.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 150, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Chuck", 1000.0, GRAMS),
@@ -710,8 +753,9 @@ object RecipeSeedData {
         recipe(
             name = "Pork Giniling",
             image = "pork_giniling",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Ground pork sautéed in tomato sauce with diced potatoes, carrots, peas and raisins.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 35, servings = 4,
             ingredients = listOf(
                 ingredient("Ground Pork", 500.0, GRAMS),
@@ -740,8 +784,9 @@ object RecipeSeedData {
         recipe(
             name = "Ginataang Hipon",
             image = "ginataang_hipon",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Shrimp simmered in coconut milk with ginger and green chili.",
-            category = MAIN_DISH,
+            categories = setOf(MAIN_DISH),
             minutes = 30, servings = 4,
             ingredients = listOf(
                 ingredient("Shrimp", 500.0, GRAMS),
@@ -767,8 +812,9 @@ object RecipeSeedData {
         recipe(
             name = "Sinigang na Baboy",
             image = "sinigang_na_baboy",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Sour tamarind soup with pork ribs and vegetables.",
-            category = SOUP,
+            categories = setOf(MAIN_DISH, SOUP),
             minutes = 90, servings = 6,
             ingredients = listOf(
                 ingredient("Pork Ribs", 1000.0, GRAMS),
@@ -798,8 +844,9 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Tinola",
             image = "chicken_tinola",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Light ginger broth with chicken, green papaya and chili leaves.",
-            category = SOUP,
+            categories = setOf(MAIN_DISH, SOUP),
             minutes = 50, servings = 5,
             ingredients = listOf(
                 ingredient("Chicken", 1000.0, GRAMS),
@@ -825,8 +872,9 @@ object RecipeSeedData {
         recipe(
             name = "Bulalo",
             image = "bulalo",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Slow-simmered beef shank and bone marrow soup with corn and greens.",
-            category = SOUP,
+            categories = setOf(MAIN_DISH, SOUP),
             minutes = 240, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Shank", 1500.0, GRAMS),
@@ -851,8 +899,9 @@ object RecipeSeedData {
         recipe(
             name = "Nilagang Baka",
             image = "nilagang_baka",
+            mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
             description = "Clear beef soup with potatoes, saba bananas, corn and cabbage.",
-            category = SOUP,
+            categories = setOf(MAIN_DISH, SOUP),
             minutes = 180, servings = 6,
             ingredients = listOf(
                 ingredient("Beef Chuck", 1000.0, GRAMS),
@@ -878,8 +927,9 @@ object RecipeSeedData {
         recipe(
             name = "Chicken Sopas",
             image = "chicken_sopas",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Creamy chicken macaroni soup with vegetables and evaporated milk.",
-            category = SOUP,
+            categories = setOf(MAIN_DISH, SOUP),
             minutes = 45, servings = 6,
             ingredients = listOf(
                 ingredient("Chicken Breast", 300.0, GRAMS),
@@ -909,9 +959,10 @@ object RecipeSeedData {
         recipe(
             name = "Beef Tapa",
             image = "beef_tapa",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Sweet and garlicky cured beef, the centre of a classic tapsilog breakfast.",
-            category = MAIN_DISH,
-            minutes = 30, servings = 4,
+            categories = setOf(MAIN_DISH),
+            minutes = 270, servings = 4,
             ingredients = listOf(
                 ingredient("Beef Sirloin", 500.0, GRAMS),
                 ingredient("Soy Sauce", 5.0, TABLESPOON),
@@ -924,7 +975,7 @@ object RecipeSeedData {
             ),
             steps = listOf(
                 "Slice the beef thinly against the grain.",
-                "Mix the soy sauce, calamansi juice, minced garlic, brown sugar and pepper. Marinate the beef in the refrigerator overnight.",
+                "Mix the soy sauce, calamansi juice, minced garlic, brown sugar and pepper. Marinate the beef in the refrigerator for at least 4 hours, or overnight for more flavour.",
                 "Put the beef, its marinade and the water in a pan and simmer until the liquid evaporates.",
                 "Add the oil and fry the beef until the edges caramelise.",
                 "Serve with garlic fried rice and a fried egg.",
@@ -933,9 +984,10 @@ object RecipeSeedData {
         recipe(
             name = "Skinless Longganisa",
             image = "skinless_longganisa",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Sweet garlic pork sausages shaped by hand, no casing needed.",
-            category = MAIN_DISH,
-            minutes = 30, servings = 6,
+            categories = setOf(MAIN_DISH),
+            minutes = 230, servings = 6,
             ingredients = listOf(
                 ingredient("Ground Pork", 500.0, GRAMS),
                 ingredient("Garlic", 8.0, PIECE),
@@ -959,8 +1011,9 @@ object RecipeSeedData {
         recipe(
             name = "Sinangag",
             image = "sinangag",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
             description = "Garlic fried rice made from day-old rice.",
-            category = SIDE_DISH,
+            categories = setOf(SIDE_DISH),
             minutes = 15, servings = 4,
             ingredients = listOf(
                 ingredient("Cooked Rice", 4.0, CUP),
@@ -981,8 +1034,9 @@ object RecipeSeedData {
         recipe(
             name = "Arroz Caldo",
             image = "arroz_caldo",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER, MealType.SNACK),
             description = "Chicken and rice porridge with ginger, topped with toasted garlic, egg and calamansi.",
-            category = SOUP,
+            categories = setOf(MAIN_DISH, SOUP),
             minutes = 60, servings = 6,
             ingredients = listOf(
                 ingredient("Chicken", 700.0, GRAMS),
@@ -1012,8 +1066,9 @@ object RecipeSeedData {
         recipe(
             name = "Champorado",
             image = "champorado",
+            mealTypes = setOf(MealType.BREAKFAST, MealType.SNACK),
             description = "Chocolate rice porridge made with cacao tablets, drizzled with evaporated milk.",
-            category = DESSERT,
+            categories = setOf(DESSERT),
             minutes = 35, servings = 4,
             ingredients = listOf(
                 ingredient("Glutinous Rice", 1.0, CUP),
@@ -1035,9 +1090,10 @@ object RecipeSeedData {
         recipe(
             name = "Leche Flan",
             image = "leche_flan",
+            mealTypes = setOf(MealType.SNACK),
             description = "Silky steamed custard with a layer of caramel.",
-            category = DESSERT,
-            minutes = 75, servings = 8,
+            categories = setOf(DESSERT),
+            minutes = 345, servings = 8,
             ingredients = listOf(
                 ingredient("Egg Yolk", 10.0, PIECE),
                 ingredient("Condensed Milk", 1.0, CUP),
@@ -1057,8 +1113,9 @@ object RecipeSeedData {
         recipe(
             name = "Turon",
             image = "turon",
+            mealTypes = setOf(MealType.SNACK),
             description = "Banana and jackfruit spring rolls fried in a crisp caramel coating.",
-            category = DESSERT,
+            categories = setOf(DESSERT),
             minutes = 30, servings = 8,
             ingredients = listOf(
                 ingredient("Saba Banana", 4.0, PIECE),
@@ -1079,9 +1136,10 @@ object RecipeSeedData {
         recipe(
             name = "Maja Blanca",
             image = "maja_blanca",
+            mealTypes = setOf(MealType.SNACK),
             description = "Coconut milk and corn pudding topped with toasted coconut.",
-            category = DESSERT,
-            minutes = 45, servings = 12,
+            categories = setOf(DESSERT),
+            minutes = 180, servings = 12,
             ingredients = listOf(
                 ingredient("Coconut Milk", 4.0, CUP),
                 ingredient("Fresh Milk", 1.0, CUP),
@@ -1105,9 +1163,10 @@ object RecipeSeedData {
         recipe(
             name = "Buko Pandan",
             image = "buko_pandan",
+            mealTypes = setOf(MealType.SNACK),
             description = "Young coconut and pandan jelly in a sweet cream dressing.",
-            category = DESSERT,
-            minutes = 30, servings = 8,
+            categories = setOf(DESSERT),
+            minutes = 205, servings = 8,
             ingredients = listOf(
                 ingredient("Pandan Gelatin Powder", 25.0, GRAMS),
                 ingredient("Water", 4.0, CUP),
@@ -1129,8 +1188,9 @@ object RecipeSeedData {
         recipe(
             name = "Biko",
             image = "biko",
+            mealTypes = setOf(MealType.SNACK),
             description = "Sticky rice cake cooked in coconut milk and brown sugar, topped with latik.",
-            category = DESSERT,
+            categories = setOf(DESSERT),
             minutes = 75, servings = 12,
             ingredients = listOf(
                 ingredient("Glutinous Rice", 2.0, CUP),
@@ -1151,28 +1211,4 @@ object RecipeSeedData {
             ),
         ),
     )
-
-    private fun recipe(
-        name: String,
-        image: String,
-        description: String,
-        category: FoodCategory,
-        minutes: Int,
-        servings: Int,
-        ingredients: List<RecipeIngredient>,
-        steps: List<String>,
-    ) = RecipeDto(
-        id = Uuid.random(),
-        name = name,
-        description = description,
-        category = category,
-        preparationTimeMinutes = minutes,
-        servings = servings,
-        imageUrl = "$BUNDLED_IMAGE_PREFIX$image.webp",
-        ingredients = ingredients,
-        instructions = steps.mapIndexed { index, step -> Instruction(index + 1, step) },
-    )
-
-    private fun ingredient(name: String, quantity: Double, unit: MeasurementUnit) =
-        RecipeIngredient(Uuid.random(), Ingredient(Uuid.random(), name), quantity, unit)
 }

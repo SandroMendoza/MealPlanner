@@ -18,10 +18,10 @@ data class ShoppingListItemResult(
     val itemKey: String,
     /** The ingredient or product name. */
     val name: String,
-    /** The total quantity needed. */
-    val quantity: Double,
-    /** The unit the quantity is measured in (e.g. "g", "cup", "piece"). */
-    val unit: String,
+    /** The total quantity needed, or null when the item has no measurement. */
+    val quantity: Double?,
+    /** The unit the quantity is measured in (e.g. "g", "cup", "piece"), or null when the item has no measurement. */
+    val unit: String?,
     /** Whether the item has already been checked off. */
     val checked: Boolean
 )

@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -41,6 +45,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.meal.domain.model.SpendingReport
+import com.meal.planner.common.LocalWideWidth
+import com.meal.planner.common.WideContentWidth
+import com.meal.planner.common.centeredMaxWidth
 import com.meal.planner.common.formatPrice
 import com.meal.planner.components.DateRangePickerDialog
 import com.meal.planner.components.MealDatePickerDialog
@@ -51,6 +59,7 @@ import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.formatAmount
 import com.meal.presentation.common.today
 import com.meal.presentation.shopping.ShoppingListRangeMode
+import com.meal.presentation.spending.SpendingReportsUiState
 import com.meal.presentation.spending.SpendingReportsViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -98,153 +107,53 @@ fun SpendingReportsScreen(
             )
         }
     ) { padding ->
-        Column(modifier = Modifier.padding(padding).fillMaxSize()) {
-            ScrollAwayHeader(
-                modifier = Modifier.weight(1f),
-                header = {
-                    Column(modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm)) {
-                        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
-                            ShoppingListRangeMode.entries.forEachIndexed { index, mode ->
-                                SegmentedButton(
-                                    selected = uiState.mode == mode,
-                                    onClick = { viewModel.selectMode(mode) },
-                                    shape = SegmentedButtonDefaults.itemShape(
-                                        index = index,
-                                        count = ShoppingListRangeMode.entries.size
-                                    )
-                                ) {
-                                    Text(mode.label())
-                                }
-                            }
-                        }
-
-                        Spacer(Modifier.height(spacing.sm))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            when (uiState.mode) {
-                                ShoppingListRangeMode.WEEK -> {
-                                    IconButton(onClick = { viewModel.previousWeek() }) {
-                                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
-                                    }
-                                    Text(
-                                        text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        if (uiState.rangeStart != currentWeekSunday()) {
-                                            IconButton(onClick = { viewModel.goToToday() }) {
-                                                Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToCurrentWeek)
-                                            }
-                                        }
-                                        IconButton(onClick = { showDatePicker = true }) {
-                                            Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickAWeek)
-                                        }
-                                        IconButton(onClick = { viewModel.nextWeek() }) {
-                                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
-                                        }
-                                    }
-                                }
-                                ShoppingListRangeMode.DAY -> {
-                                    IconButton(onClick = { viewModel.previousDay() }) {
-                                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousDay)
-                                    }
-                                    Text(
-                                        text = "${uiState.rangeStart}",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        if (uiState.rangeStart != today()) {
-                                            IconButton(onClick = { viewModel.goToToday() }) {
-                                                Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
-                                            }
-                                        }
-                                        IconButton(onClick = { showDatePicker = true }) {
-                                            Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
-                                        }
-                                        IconButton(onClick = { viewModel.nextDay() }) {
-                                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextDay)
-                                        }
-                                    }
-                                }
-                                ShoppingListRangeMode.RANGE -> {
-                                    Text(
-                                        text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    IconButton(onClick = { showDatePicker = true }) {
-                                        Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADateRange)
-                                    }
-                                }
-                            }
-                        }
+        val report = uiState.report
+        val showReport = !uiState.isLoading && uiState.errorMessage == null && !uiState.isEmpty && report != null
+        if (LocalWideWidth.current) {
+            Row(
+                modifier = Modifier.padding(padding).fillMaxSize().centeredMaxWidth(WideContentWidth),
+                horizontalArrangement = Arrangement.spacedBy(spacing.lg)
+            ) {
+                Column(modifier = Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState())) {
+                    SpendingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true })
+                    if (showReport && report != null) {
+                        SpendingOverview(
+                            report = report,
+                            currencySymbol = uiState.currencySymbol,
+                            modifier = Modifier.padding(horizontal = spacing.lg, vertical = spacing.sm)
+                        )
                     }
                 }
-            ) {
-                when {
-                    uiState.isLoading -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator()
+                if (showReport && report != null) {
+                    LazyColumn(
+                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                        contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm)
+                    ) {
+                        spendingBreakdown(report, uiState.currencySymbol)
                     }
-                    uiState.errorMessage != null -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            uiState.errorMessage.orEmpty(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    uiState.isEmpty -> Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            LocalStrings.current.spendingNoPricedItems,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    else -> {
-                        val report = uiState.report
-                        if (report != null) {
-                            LazyColumn(
-                                modifier = Modifier.fillMaxSize(),
-                                contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm)
-                            ) {
-                                item {
-                                    SpendingSummaryCard(
-                                        totalSpent = report.totalSpent,
-                                        bucketCount = report.buckets.size,
-                                        currencySymbol = uiState.currencySymbol
-                                    )
-                                    Spacer(Modifier.height(spacing.md))
-                                }
-                                item {
-                                    Card(
-                                        shape = MaterialTheme.shapes.large,
-                                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-                                    ) {
-                                        SpendingBarChart(
-                                            buckets = report.buckets,
-                                            currencySymbol = uiState.currencySymbol,
-                                            modifier = Modifier.fillMaxWidth().padding(spacing.cardPadding)
-                                        )
-                                    }
-                                    Spacer(Modifier.height(spacing.sectionGap))
-                                }
-                                item {
-                                    Text(LocalStrings.current.spendingBreakdown, style = MaterialTheme.typography.titleMedium)
-                                    Spacer(Modifier.height(spacing.sm))
-                                }
-                                items(report.lineItems, key = { "${it.itemKey}_${it.rangeStart}_${it.rangeEnd}" }) { item ->
-                                    SpendingLineItemRow(
-                                        name = item.name,
-                                        quantityLabel = formatAmount(item.totalQuantity, item.unit, LocalStrings.current),
-                                        rangeLabel = "${item.rangeStart} - ${item.rangeEnd}",
-                                        price = item.price,
-                                        currencySymbol = uiState.currencySymbol
-                                    )
-                                }
+                } else {
+                    SpendingStateMessage(uiState, Modifier.weight(1f).fillMaxHeight())
+                }
+            }
+        } else {
+            Column(modifier = Modifier.padding(padding).fillMaxSize()) {
+                ScrollAwayHeader(
+                    modifier = Modifier.weight(1f),
+                    header = { SpendingRangeControls(uiState, viewModel, onPickDate = { showDatePicker = true }) }
+                ) {
+                    if (showReport && report != null) {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(horizontal = spacing.lg, vertical = spacing.sm)
+                        ) {
+                            item {
+                                SpendingOverview(report = report, currencySymbol = uiState.currencySymbol)
+                                Spacer(Modifier.height(spacing.sectionGap))
                             }
+                            spendingBreakdown(report, uiState.currencySymbol)
                         }
+                    } else {
+                        SpendingStateMessage(uiState, Modifier.fillMaxSize())
                     }
                 }
             }
@@ -265,6 +174,155 @@ fun SpendingReportsScreen(
                 )
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SpendingRangeControls(
+    uiState: SpendingReportsUiState,
+    viewModel: SpendingReportsViewModel,
+    onPickDate: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val spacing = MealPlannerTokens.spacing
+    Column(modifier = modifier.padding(horizontal = spacing.lg, vertical = spacing.sm)) {
+        SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
+            ShoppingListRangeMode.entries.forEachIndexed { index, mode ->
+                SegmentedButton(
+                    selected = uiState.mode == mode,
+                    onClick = { viewModel.selectMode(mode) },
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = ShoppingListRangeMode.entries.size
+                    )
+                ) {
+                    Text(mode.label())
+                }
+            }
+        }
+
+        Spacer(Modifier.height(spacing.sm))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            when (uiState.mode) {
+                ShoppingListRangeMode.WEEK -> {
+                    IconButton(onClick = { viewModel.previousWeek() }) {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousWeek)
+                    }
+                    Text(
+                        text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (uiState.rangeStart != currentWeekSunday()) {
+                            IconButton(onClick = { viewModel.goToToday() }) {
+                                Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToCurrentWeek)
+                            }
+                        }
+                        IconButton(onClick = onPickDate) {
+                            Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickAWeek)
+                        }
+                        IconButton(onClick = { viewModel.nextWeek() }) {
+                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextWeek)
+                        }
+                    }
+                }
+                ShoppingListRangeMode.DAY -> {
+                    IconButton(onClick = { viewModel.previousDay() }) {
+                        Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = LocalStrings.current.previousDay)
+                    }
+                    Text(
+                        text = "${uiState.rangeStart}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (uiState.rangeStart != today()) {
+                            IconButton(onClick = { viewModel.goToToday() }) {
+                                Icon(Icons.Filled.Today, contentDescription = LocalStrings.current.goToToday)
+                            }
+                        }
+                        IconButton(onClick = onPickDate) {
+                            Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADate)
+                        }
+                        IconButton(onClick = { viewModel.nextDay() }) {
+                            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = LocalStrings.current.nextDay)
+                        }
+                    }
+                }
+                ShoppingListRangeMode.RANGE -> {
+                    Text(
+                        text = "${uiState.rangeStart} - ${uiState.rangeEnd}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    IconButton(onClick = onPickDate) {
+                        Icon(Icons.Filled.CalendarMonth, contentDescription = LocalStrings.current.pickADateRange)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SpendingStateMessage(uiState: SpendingReportsUiState, modifier: Modifier = Modifier) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        when {
+            uiState.isLoading -> CircularProgressIndicator()
+            uiState.errorMessage != null -> Text(
+                uiState.errorMessage.orEmpty(),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error
+            )
+            else -> Text(
+                LocalStrings.current.spendingNoPricedItems,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun SpendingOverview(report: SpendingReport, currencySymbol: String, modifier: Modifier = Modifier) {
+    val spacing = MealPlannerTokens.spacing
+    Column(modifier = modifier) {
+        SpendingSummaryCard(
+            totalSpent = report.totalSpent,
+            bucketCount = report.buckets.size,
+            currencySymbol = currencySymbol
+        )
+        Spacer(Modifier.height(spacing.md))
+        Card(
+            shape = MaterialTheme.shapes.large,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            SpendingBarChart(
+                buckets = report.buckets,
+                currencySymbol = currencySymbol,
+                modifier = Modifier.fillMaxWidth().padding(spacing.cardPadding)
+            )
+        }
+    }
+}
+
+private fun LazyListScope.spendingBreakdown(report: SpendingReport, currencySymbol: String) {
+    item {
+        Text(LocalStrings.current.spendingBreakdown, style = MaterialTheme.typography.titleMedium)
+        Spacer(Modifier.height(MealPlannerTokens.spacing.sm))
+    }
+    items(report.lineItems, key = { "${it.itemKey}_${it.rangeStart}_${it.rangeEnd}" }) { item ->
+        SpendingLineItemRow(
+            name = item.name,
+            quantityLabel = formatAmount(item.totalQuantity, item.unit, LocalStrings.current),
+            rangeLabel = "${item.rangeStart} - ${item.rangeEnd}",
+            price = item.price,
+            currencySymbol = currencySymbol
+        )
     }
 }
 

@@ -3,6 +3,7 @@ package com.meal.presentation.recipes
 import com.meal.domain.model.Ingredient
 import com.meal.domain.model.Instruction
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.usecase.AddRecipeUseCase
@@ -35,8 +36,9 @@ class RecipeFormViewModelTest {
     private val existing = recipe(
         name = "Kare-Kare",
         description = "Oxtail in peanut sauce",
-        category = FoodCategory.MAIN_DISH,
-        cuisine = Cuisine.FILIPINO,
+        categories = setOf(FoodCategory.MAIN_DISH),
+        cuisines = setOf(Cuisine.FILIPINO),
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         preparationTimeMinutes = 120,
         servings = 6,
         imageUrl = "seed:kare_kare.webp",
@@ -87,7 +89,8 @@ class RecipeFormViewModelTest {
         assertFalse(state.isLoading)
         assertEquals("Kare-Kare", state.name)
         assertEquals("Oxtail in peanut sauce", state.description)
-        assertEquals(Cuisine.FILIPINO, state.cuisine)
+        assertEquals(setOf(Cuisine.FILIPINO), state.cuisines)
+        assertEquals(setOf(MealType.LUNCH, MealType.DINNER), state.mealTypes)
         assertEquals("120", state.preparationTimeMinutes)
         assertEquals("6", state.servings)
         assertEquals("seed:kare_kare.webp", state.imageUrl)
@@ -115,10 +118,23 @@ class RecipeFormViewModelTest {
     fun cuisineTogglesOnAndOff() {
         val vm = viewModel()
 
-        vm.updateCuisine(Cuisine.KOREAN)
-        assertEquals(Cuisine.KOREAN, vm.state.value.cuisine)
-        vm.updateCuisine(Cuisine.KOREAN)
-        assertNull(vm.state.value.cuisine)
+        vm.toggleCuisine(Cuisine.KOREAN)
+        vm.toggleCuisine(Cuisine.JAPANESE)
+        assertEquals(setOf(Cuisine.KOREAN, Cuisine.JAPANESE), vm.state.value.cuisines)
+        vm.toggleCuisine(Cuisine.KOREAN)
+        assertEquals(setOf(Cuisine.JAPANESE), vm.state.value.cuisines)
+    }
+
+    @Test
+    fun mealTypesToggleIndependently() {
+        val vm = viewModel()
+
+        vm.toggleMealType(MealType.BREAKFAST)
+        vm.toggleMealType(MealType.SNACK)
+        assertEquals(setOf(MealType.BREAKFAST, MealType.SNACK), vm.state.value.mealTypes)
+
+        vm.toggleMealType(MealType.BREAKFAST)
+        assertEquals(setOf(MealType.SNACK), vm.state.value.mealTypes)
     }
 
     @Test
@@ -126,14 +142,14 @@ class RecipeFormViewModelTest {
         val vm = viewModel()
 
         vm.updateDescription("Crispy")
-        vm.updateCategory(FoodCategory.SIDE_DISH)
+        vm.toggleCategory(FoodCategory.SIDE_DISH)
         vm.updatePreparationTime("25")
         vm.updateServings("3")
         vm.updateImageUrl("file:x.jpg")
 
         val state = vm.state.value
         assertEquals("Crispy", state.description)
-        assertEquals(FoodCategory.SIDE_DISH, state.category)
+        assertEquals(setOf(FoodCategory.SIDE_DISH), state.categories)
         assertEquals("25", state.preparationTimeMinutes)
         assertEquals("3", state.servings)
         assertEquals("file:x.jpg", state.imageUrl)
@@ -177,14 +193,44 @@ class RecipeFormViewModelTest {
     }
 
     @Test
-    fun saveDoesNothingWhileTheFormIsInvalid() {
+    fun saveDoesNothingWithoutAName() {
         val vm = viewModel()
-        vm.updateName("Lumpia")
+        vm.updateName("   ")
+        vm.addIngredient(IngredientFormRow("Bread", "2", MeasurementUnit.PIECE))
 
         vm.save()
 
         assertTrue(recipes.added.isEmpty())
         assertFalse(vm.state.value.saved)
+    }
+
+    @Test
+    fun aRecipeWithOnlyANameCanBeSaved() {
+        val vm = viewModel()
+        vm.updateName("Lumpia")
+
+        vm.save()
+
+        val saved = recipes.added.single()
+        assertEquals("Lumpia", saved.name)
+        assertTrue(saved.ingredients.isEmpty())
+        assertTrue(saved.categories.isEmpty())
+        assertTrue(saved.cuisines.isEmpty())
+        assertTrue(vm.state.value.saved)
+    }
+
+    @Test
+    fun aRecipeWithoutStepsCanBeSaved() {
+        val vm = viewModel()
+        vm.updateName("Toast")
+        vm.addIngredient(IngredientFormRow("Bread", "2", MeasurementUnit.PIECE))
+        vm.addInstructionRow()
+
+        vm.save()
+
+        val saved = recipes.added.single()
+        assertTrue(saved.instructions.isEmpty())
+        assertTrue(vm.state.value.saved)
     }
 
     @Test
@@ -219,6 +265,7 @@ class RecipeFormViewModelTest {
         assertEquals(listOf("Wrapper"), saved.ingredients.map { it.ingredient.name })
         assertEquals(20.0, saved.ingredients.single().quantity)
         assertEquals(listOf(Instruction(1, "Roll and fry"), Instruction(2, "Serve")), saved.instructions)
+        assertTrue(saved.mealTypes.isEmpty())
     }
 
     @Test
@@ -226,6 +273,7 @@ class RecipeFormViewModelTest {
         val vm = viewModel(existing.id)
         vm.updateName("Kare-Kare Special")
         vm.updateServings("8")
+        vm.toggleMealType(MealType.DINNER)
 
         vm.save()
 
@@ -234,6 +282,7 @@ class RecipeFormViewModelTest {
         assertEquals(existing.id, saved.id)
         assertEquals("Kare-Kare Special", saved.name)
         assertEquals(8, saved.servings)
+        assertEquals(setOf(MealType.LUNCH), saved.mealTypes)
         assertTrue(vm.state.value.saved)
     }
 
@@ -261,6 +310,15 @@ class RecipeFormViewModelTest {
         val vm = viewModel()
 
         vm.updateName("Lumpia")
+
+        assertTrue(vm.state.value.hasUnsavedChanges)
+    }
+
+    @Test
+    fun changingMealTypesCountsAsUnsavedChanges() {
+        val vm = viewModel(existing.id)
+
+        vm.toggleMealType(MealType.SNACK)
 
         assertTrue(vm.state.value.hasUnsavedChanges)
     }

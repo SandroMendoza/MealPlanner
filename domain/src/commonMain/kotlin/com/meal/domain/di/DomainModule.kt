@@ -3,6 +3,7 @@ package com.meal.domain.di
 import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.MealReminderRepository
+import com.meal.domain.repository.OnboardingRepository
 import com.meal.domain.repository.RecipeRepository
 import com.meal.domain.repository.SettingsRepository
 import com.meal.domain.repository.ShoppingGroupRepository
@@ -29,6 +30,8 @@ import com.meal.domain.usecase.GetWeeklyMealPlanUseCase
 import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveMealSlotUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
+import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
+import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ReplaceRecipeInSlotUseCase
 import com.meal.domain.usecase.ToggleFavoriteUseCase
@@ -43,6 +46,8 @@ import com.meal.domain.usecase.ImportBackupUseCase
 import com.meal.domain.usecase.UpdateUserProfileUseCase
 import com.meal.domain.usecase.GetWeekNoteUseCase
 import com.meal.domain.usecase.UpdateWeekNoteUseCase
+import com.meal.domain.usecase.GetWalkthroughSeenUseCase
+import com.meal.domain.usecase.MarkWalkthroughSeenUseCase
 import org.koin.dsl.module
 
 val domainModule = module {
@@ -65,7 +70,7 @@ val domainModule = module {
         GetWeeklyMealPlanUseCase(get<MealPlanRepository>(), get<RecipeRepository>())
     }
     factory {
-        AddRecipeToSlotUseCase(get<MealPlanRepository>())
+        AddRecipeToSlotUseCase(get<MealPlanRepository>(), get<SettingsRepository>())
     }
     factory {
         ReplaceRecipeInSlotUseCase(get<MealPlanRepository>())
@@ -84,6 +89,12 @@ val domainModule = module {
     }
     factory {
         RemoveShoppingListItemUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        UpdateShoppingListItemAmountUseCase(get<ShoppingListRepository>())
+    }
+    factory {
+        SetShoppingItemsAtHomeUseCase(get<ShoppingListRepository>())
     }
     factory {
         RecordItemPriceUseCase(get<ShoppingListRepository>())
@@ -135,6 +146,12 @@ val domainModule = module {
     }
     factory {
         UpdateWeekNoteUseCase(get<WeekNoteRepository>())
+    }
+    factory {
+        GetWalkthroughSeenUseCase(get<OnboardingRepository>())
+    }
+    factory {
+        MarkWalkthroughSeenUseCase(get<OnboardingRepository>())
     }
     factory {
         ExportBackupUseCase(get<BackupService>())

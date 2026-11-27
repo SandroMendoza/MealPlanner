@@ -12,6 +12,7 @@ import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.model.SpendingLineItem
 import com.meal.domain.model.UserProfile
 import com.meal.domain.model.enums.MealType
+import com.meal.domain.model.enums.MeasurementUnit
 import com.meal.domain.repository.IngredientRepository
 import com.meal.domain.repository.MealPlanRepository
 import com.meal.domain.repository.MealReminderRepository
@@ -96,6 +97,8 @@ class FakeShoppingListRepository : ShoppingListRepository {
     val checkedCalls = mutableListOf<ItemCall>()
     val removedCalls = mutableListOf<ItemCall>()
     val priceCalls = mutableListOf<ItemCall>()
+    val amountCalls = mutableListOf<ItemCall>()
+    val atHomeCalls = mutableListOf<Pair<Collection<String>, Boolean>>()
 
     override fun getItems(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>> = items
 
@@ -107,8 +110,17 @@ class FakeShoppingListRepository : ShoppingListRepository {
         checkedCalls += ItemCall(itemKey, rangeStart, rangeEnd, checked)
     }
 
-    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate) {
+    override suspend fun addManualItem(item: ShoppingListItem, rangeStart: LocalDate, rangeEnd: LocalDate): String {
         addedItems += Triple(item, rangeStart, rangeEnd)
+        return item.itemKey
+    }
+
+    override suspend fun updateItemAmount(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate, quantity: Double?, unit: MeasurementUnit?) {
+        amountCalls += ItemCall(itemKey, rangeStart, rangeEnd, quantity to unit)
+    }
+
+    override suspend fun setItemsAtHome(names: Collection<String>, atHome: Boolean) {
+        atHomeCalls += names to atHome
     }
 
     override suspend fun removeItem(itemKey: String, rangeStart: LocalDate, rangeEnd: LocalDate) {

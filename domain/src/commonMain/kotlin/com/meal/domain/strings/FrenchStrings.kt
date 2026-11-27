@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -19,6 +20,11 @@ private val FRENCH_WEEKDAY_INITIAL = mapOf(
 private val FRENCH_MONTH_ABBREVIATIONS = listOf(
     "Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"
 )
+
+private fun frenchGreeting(period: DayPeriod): String = when (period) {
+    DayPeriod.MORNING, DayPeriod.AFTERNOON -> "Bonjour"
+    DayPeriod.EVENING -> "Bonsoir"
+}
 
 private fun frenchMealTypeName(mealType: MealType): String = when (mealType) {
     MealType.BREAKFAST -> "Petit-déjeuner"
@@ -174,6 +180,7 @@ val frenchStrings = Strings(
     chooseFromGallery = "Choisir dans la galerie",
     category = "Catégorie",
     cuisine = "Cuisine",
+    mealType = "Type de repas",
     ingredients = "Ingrédients",
     instructions = "Instructions",
     totalSpent = "Total dépensé",
@@ -198,8 +205,8 @@ val frenchStrings = Strings(
     navShopping = "Courses",
     navProfile = "Profil",
 
-    homeGreetingDefault = "Bonjour !",
-    homeGreetingWithName = { name -> "Bonjour, $name !" },
+    homeGreetingDefault = { period -> "${frenchGreeting(period)} !" },
+    homeGreetingWithName = { period, name -> "${frenchGreeting(period)}, $name !" },
     homeSubtitle = "Planifions vos repas.",
     homeNotificationsCd = "Notifications",
     homeTodaysPlan = "Plan du jour",
@@ -295,6 +302,18 @@ val frenchStrings = Strings(
 
     shoppingNoMealsPlannedPeriod = "Aucun repas prévu pour cette période.",
     shoppingAddItemButton = "Ajouter un Article",
+    shoppingEditAmountCd = "Modifier la quantité",
+    shoppingSelectedCount = { count -> if (count == 1) "1 sélectionné" else "$count sélectionnés" },
+    shoppingCancelSelectionCd = "Annuler la sélection",
+    shoppingSelectItemCd = "Sélectionner",
+    shoppingAtHome = "Produits de base",
+    shoppingShowSectionCd = "Afficher les articles",
+    shoppingHideSectionCd = "Masquer les articles",
+    shoppingGroupLabel = "Groupe",
+    shoppingMoveToAtHomeCd = "Déplacer vers Produits de base",
+    shoppingMoveToListCd = "Remettre dans la liste",
+    shoppingRemoveSelectedTitle = "Supprimer les articles ?",
+    shoppingRemoveSelectedBody = { count -> if (count == 1) "Supprimer 1 article de cette liste ?" else "Supprimer $count articles de cette liste ?" },
     shoppingRemoveItemTitle = "Supprimer l'article ?",
     shoppingRemoveItemBody = { itemName -> "Supprimer $itemName de la liste de courses ?" },
     recordPriceTitle = { itemName -> "Combien a coûté $itemName ?" },
@@ -348,8 +367,10 @@ val frenchStrings = Strings(
     notificationSettingsDescription = "Choisissez les repas pour lesquels vous souhaitez un rappel.",
     settingsNotificationsPermissionDenied = "Activez les notifications dans les paramètres système pour recevoir des rappels de repas.",
     settingsNotificationsOpenSettings = "Ouvrir les paramètres",
-    mealReminderNotificationTitle = { mealType -> "Rappel : ${frenchMealTypeName(mealType).lowercase()}" },
-    mealReminderNotificationBody = "Appuyez pour voir ce qui est prévu.",
+    mealReminderPlannedTitle = { mealType, recipes -> "${frenchMealTypeName(mealType)} : $recipes" },
+    mealReminderPlannedBody = "C'est l'heure de cuisiner.",
+    mealReminderNothingPlannedTitle = { mealType -> "${frenchMealTypeName(mealType)} : rien de prévu" },
+    mealReminderNothingPlannedBody = "Appuyez pour prévoir un repas.",
 
     aboutAppName = "Meal Planner",
     aboutVersion = { version -> "Version $version" },
@@ -382,5 +403,129 @@ val frenchStrings = Strings(
     spendingPdfTitle = "Rapport de Dépenses",
     spendingPdfDateRange = { start, end -> "$start au $end" },
     spendingPdfTotalSpent = { amount -> "Total dépensé : $amount" },
-    spendingShareChooserTitle = "Partager le rapport de dépenses"
+    spendingShareChooserTitle = "Partager le rapport de dépenses",
+
+    // Walkthrough
+    walkthroughSkip = "Passer",
+    walkthroughNext = "Suivant",
+    walkthroughGetStarted = "Commencer",
+    walkthroughPageOf = { page, total -> "Page $page sur $total" },
+    walkthroughAddMeal = WalkthroughText("Planifiez un repas", "Dans l'onglet Plan de repas, touchez Ajouter un repas pour mettre une recette sur n'importe quel jour."),
+    walkthroughPickMeal = WalkthroughText("Choisissez le repas et le jour", "Choisissez une recette, puis le petit-déjeuner, le déjeuner, le dîner ou une collation. Touchez Changer pour choisir un autre jour."),
+    walkthroughRemoveMeal = WalkthroughText("Supprimez un repas", "Balayez un repas vers la gauche pour le supprimer. L'app vous demande d'abord de confirmer."),
+    walkthroughCreateRecipe = WalkthroughText("Créez une recette", "Dans l'onglet Recettes, touchez + pour ajouter votre recette avec une photo, des ingrédients et des étapes."),
+    walkthroughFilterRecipes = WalkthroughText("Trouvez la bonne recette", "Touchez le bouton filtre pour afficher les recettes par type de repas, cuisine, catégorie ou temps de préparation."),
+    walkthroughCheckItem = WalkthroughText("Cochez vos achats", "Votre liste de courses se remplit à partir de votre plan de repas. Touchez un article pour le cocher."),
+    walkthroughRemoveItem = WalkthroughText("Retirez un article", "Balayez un article vers la gauche pour le retirer de la liste."),
+    walkthroughGroupItem = WalkthroughText("Regroupez vos articles", "Balayez un article vers la droite pour le mettre dans un groupe, comme un magasin ou un rayon."),
+    walkthroughRecordPrice = WalkthroughText("Notez ce que vous payez", "Touchez le prix d'un article pour noter ce que vous avez payé. Les rapports de dépenses font le total."),
+    walkthroughPantryStaples = WalkthroughText("Produits de base", "Le sel, l'huile et les autres produits de base que vous avez sans doute sont rangés sous Produits de base. Touchez le titre pour les afficher."),
+    walkthroughReminders = WalkthroughText("Recevez des rappels", "Sur l'accueil, touchez la cloche pour activer un rappel quotidien pour chaque repas."),
+
+    // Feature guide
+    featureGuide = "Comment utiliser Meal Planner",
+    featureGuideReplayWalkthrough = "Revoir la présentation",
+    featureGuideTrySaying = "Essayez de dire",
+    featureGuideSections = listOf(
+        GuideSection(
+            title = "Accueil",
+            items = listOf(
+                "Voyez les repas du jour dans l'ordre. Touchez un repas pour ouvrir sa recette, ou Tout voir pour ouvrir le plan de repas.",
+                "Ajouter un repas ouvre le plan de repas, et Liste de courses ouvre votre liste de courses.",
+                "La cloche ouvre les réglages des rappels de repas.",
+                "Avec Lire à voix haute activé dans Paramètres, le bouton haut-parleur lit les repas du jour."
+            )
+        ),
+        GuideSection(
+            title = "Plan de repas",
+            items = listOf(
+                "Passez de Jour à Semaine en haut. Paramètres choisit la vue qui s'ouvre en premier.",
+                "Utilisez les flèches pour changer de semaine, le bouton calendrier pour aller à une date, et le bouton aujourd'hui pour revenir.",
+                "Touchez Ajouter un repas, ou + sur un jour en vue Semaine, choisissez une recette, puis le repas et la date.",
+                "Balayez un repas vers la gauche pour le supprimer. L'app vous demande d'abord de confirmer.",
+                "En vue Jour, le menu ⋮ d'un repas permet de voir sa recette, de la remplacer ou de la supprimer.",
+                "Écrivez des notes pour la semaine dans la zone du bas. Elles sont enregistrées au fil de la saisie.",
+                "Activez Verrouiller les dates passées dans Paramètres pour ne pas supprimer par erreur les repas des jours précédents."
+            )
+        ),
+        GuideSection(
+            title = "Recettes",
+            items = listOf(
+                "Cherchez par nom, description ou ingrédient.",
+                "Le bouton filtre affine la liste par favoris, vos recettes, catégorie, type de repas, cuisine et temps de préparation.",
+                "Passez de la grille à la liste avec le bouton à côté du filtre.",
+                "Touchez + pour créer une recette avec une photo, des ingrédients, des types de repas et des étapes. Les étapes sont facultatives.",
+                "Dans l'éditeur d'étapes, Tout écrire permet de taper toutes les étapes d'un coup, une par ligne.",
+                "Sur une recette, touchez le cœur pour l'ajouter à vos favoris, ou Ajouter au plan de repas pour la planifier.",
+                "Avec Lire à voix haute activé, le haut-parleur lit les ingrédients et le mode cuisine lit les étapes une à une.",
+                "Vos favoris et les recettes que vous avez créées sont aussi dans l'onglet Profil."
+            )
+        ),
+        GuideSection(
+            title = "Liste de courses",
+            items = listOf(
+                "La liste se remplit à partir des repas planifiés et additionne le même ingrédient sur plusieurs recettes.",
+                "Choisissez Semaine, Jour ou Plage en haut pour fixer les dates de la liste.",
+                "Touchez un article pour le cocher, et touchez-le encore pour le décocher.",
+                "Balayez un article vers la gauche pour le retirer de la liste.",
+                "Balayez un article vers la droite pour le mettre dans un groupe, comme un magasin ou un rayon. Vous pouvez y créer un groupe.",
+                "Touchez le bouton dossier pour renommer ou supprimer des groupes.",
+                "Touchez Ajouter un article pour ce qui ne vient pas d'une recette. Laissez la quantité vide si elle n'est pas utile.",
+                "Le sel, l'huile et les autres produits de base que vous avez sans doute sont rangés sous Produits de base, en bas de la liste. Touchez le titre pour les afficher ou les masquer.",
+                "Appuyez longuement sur des articles pour les sélectionner, puis déplacez-les vers Produits de base ou remettez-les dans la liste.",
+                "Touchez le prix d'un article pour noter ce que vous avez payé. La liste affiche le total dépensé."
+            )
+        ),
+        GuideSection(
+            title = "Dépenses",
+            items = listOf(
+                "Ouvrez les rapports de dépenses depuis l'onglet Profil.",
+                "Ils additionnent les prix notés dans la liste de courses.",
+                "Choisissez Semaine, Jour ou Plage pour voir le total, la moyenne et un graphique. Touchez une barre pour voir son montant.",
+                "Touchez le bouton partager pour envoyer le rapport en PDF."
+            )
+        ),
+        GuideSection(
+            title = "Rappels",
+            items = listOf(
+                "Ouvrez Paramètres, puis Notifications, ou touchez la cloche sur l'accueil.",
+                "Activez un rappel pour le petit-déjeuner, le déjeuner, le dîner ou une collation, et touchez l'heure pour la changer.",
+                "La première fois, l'app demande l'autorisation d'envoyer des notifications.",
+                "Les rappels se déclenchent chaque jour vers l'heure choisie."
+            )
+        ),
+        GuideSection(
+            title = "Sauvegarde et restauration",
+            items = listOf(
+                "Dans Paramètres, Enregistrer une sauvegarde garde vos recettes, plannings, listes de courses, paramètres et photos dans un seul fichier .zip.",
+                "Restaurer une sauvegarde remplace tout le contenu de l'app par la sauvegarde, puis redémarre l'app.",
+                "Gardez le fichier de sauvegarde en lieu sûr, par exemple dans votre stockage en ligne, pour passer vos données sur un nouveau téléphone."
+            )
+        ),
+        GuideSection(
+            title = "Paramètres",
+            items = listOf(
+                "Thème : système, clair ou sombre.",
+                "Verrouiller les dates passées, Lire à voix haute, et les vues du planning et des recettes qui s'ouvrent en premier.",
+                "Devise des prix dans la liste de courses et les rapports de dépenses.",
+                "À propos de Meal Planner et la politique de confidentialité."
+            )
+        ),
+        GuideSection(
+            title = "Demandez à Gemini",
+            items = listOf(
+                "Sur Android 16 et versions ultérieures, Gemini peut utiliser Meal Planner pour vous.",
+                "Il peut lire votre liste de courses, y ajouter des articles et les cocher.",
+                "Il peut chercher des recettes, lire une recette à voix haute et ajouter une recette.",
+                "Il peut lire votre planning du jour ou de la semaine et y ajouter une recette.",
+                "Il peut vous dire combien vous avez dépensé aujourd'hui, cette semaine ou ce mois-ci."
+            ),
+            examples = listOf(
+                "« Hey Gemini, ajoute du lait à ma liste de courses Meal Planner »",
+                "« Hey Gemini, qu'est-ce qu'il y a au menu aujourd'hui dans Meal Planner ? »",
+                "« Hey Gemini, trouve une recette de poulet adobo dans Meal Planner »",
+                "« Hey Gemini, combien ai-je dépensé cette semaine dans Meal Planner ? »"
+            )
+        )
+    )
 )

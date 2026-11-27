@@ -43,12 +43,15 @@ import com.meal.domain.model.enums.MealType
 import com.meal.planner.calendar.MealCalendarScreen
 import com.meal.planner.calendar.RecipePickerScreen
 import com.meal.planner.common.LocalCompactHeight
+import com.meal.planner.common.LocalExpandedWidth
 import com.meal.planner.home.HomeScreen
 import com.meal.planner.profile.ProfileScreen
 import com.meal.planner.recipes.RecipeDetailScreen
 import com.meal.planner.recipes.RecipeFormScreen
 import com.meal.planner.recipes.RecipeScreen
+import com.meal.planner.onboarding.WalkthroughScreen
 import com.meal.planner.settings.AboutScreen
+import com.meal.planner.settings.FeatureGuideScreen
 import com.meal.planner.settings.NotificationSettingsScreen
 import com.meal.planner.settings.PrivacyPolicyScreen
 import com.meal.planner.settings.SettingsScreen
@@ -62,22 +65,32 @@ private val TAB_ROUTES = listOf(Routes.HOME, Routes.CALENDAR, Routes.RECIPES, Ro
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
-fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
+fun AppNavHost(
+    startRoute: String? = null,
+    quickAddItemName: String? = null,
+    navigationRequest: NavigationRequest? = null
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry?.destination?.route
 
-    LaunchedEffect(startRoute) {
-        if (startRoute != null) {
-            navController.navigate(startRoute) {
-                popUpTo(navController.graph.startDestinationId) { saveState = true }
-                launchSingleTop = true
-            }
+    fun openRoute(route: String) {
+        navController.navigate(route) {
+            popUpTo(navController.graph.startDestinationId) { saveState = true }
+            launchSingleTop = true
         }
     }
 
+    LaunchedEffect(startRoute) {
+        if (startRoute != null) openRoute(startRoute)
+    }
+
+    LaunchedEffect(navigationRequest) {
+        navigationRequest?.let { openRoute(it.route) }
+    }
+
     val showTabs = currentRoute in TAB_ROUTES
-    val useRail = showTabs && LocalCompactHeight.current
+    val useRail = showTabs && (LocalCompactHeight.current || LocalExpandedWidth.current)
     val strings = LocalStrings.current
     val tabs = listOf(
         TabItem(Routes.HOME, Icons.Default.Home, strings.navHome),
@@ -258,7 +271,8 @@ fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
                         onBack = { navController.popBackStack() },
                         onNotificationSettingsClick = { navController.navigate(Routes.NOTIFICATION_SETTINGS) },
                         onAboutClick = { navController.navigate(Routes.ABOUT) },
-                        onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) }
+                        onPrivacyPolicyClick = { navController.navigate(Routes.PRIVACY_POLICY) },
+                        onFeatureGuideClick = { navController.navigate(Routes.FEATURE_GUIDE) }
                     )
                 }
                 composable(Routes.NOTIFICATION_SETTINGS) {
@@ -269,6 +283,15 @@ fun AppNavHost(startRoute: String? = null, quickAddItemName: String? = null) {
                 }
                 composable(Routes.PRIVACY_POLICY) {
                     PrivacyPolicyScreen(onBack = { navController.popBackStack() })
+                }
+                composable(Routes.FEATURE_GUIDE) {
+                    FeatureGuideScreen(
+                        onBack = { navController.popBackStack() },
+                        onReplayWalkthrough = { navController.navigate(Routes.WALKTHROUGH) }
+                    )
+                }
+                composable(Routes.WALKTHROUGH) {
+                    WalkthroughScreen(onFinish = { navController.popBackStack() })
                 }
             }
         }

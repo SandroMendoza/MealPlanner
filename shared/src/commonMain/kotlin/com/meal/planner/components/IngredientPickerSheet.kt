@@ -102,7 +102,9 @@ fun IngredientPickerSheet(
     onConfirm: (IngredientFormRow) -> Unit,
     onDismiss: () -> Unit,
     defaultQuantity: String = "",
-    requireQuantity: Boolean = false
+    requireQuantity: Boolean = false,
+    canChangeName: Boolean = true,
+    amountExtras: (@Composable () -> Unit)? = null
 ) {
     val spacing = MealPlannerTokens.spacing
     val compact = LocalCompactHeight.current
@@ -182,8 +184,9 @@ fun IngredientPickerSheet(
                     isEditing = editing != null,
                     canConfirm = canConfirm,
                     compact = compact,
-                    onBack = { searching = true },
-                    onConfirm = confirm
+                    onBack = if (canChangeName) { { searching = true } } else null,
+                    onConfirm = confirm,
+                    extras = amountExtras
                 )
             }
         }
@@ -303,8 +306,9 @@ private fun ColumnScope.AmountStep(
     isEditing: Boolean,
     canConfirm: Boolean,
     compact: Boolean,
-    onBack: () -> Unit,
-    onConfirm: (closeAfter: Boolean) -> Unit
+    onBack: (() -> Unit)?,
+    onConfirm: (closeAfter: Boolean) -> Unit,
+    extras: (@Composable () -> Unit)? = null
 ) {
     val strings = LocalStrings.current
     val spacing = MealPlannerTokens.spacing
@@ -312,8 +316,10 @@ private fun ColumnScope.AmountStep(
     LaunchedEffect(Unit) { qtyFocus.requestFocus() }
 
     val header = @Composable { modifier: Modifier ->
-        IconButton(onClick = onBack) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = strings.back)
+        if (onBack != null) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = strings.back)
+            }
         }
         IngredientThumbnail(name = name, size = MealPlannerTokens.iconSize.lg)
         Text(
@@ -375,6 +381,7 @@ private fun ColumnScope.AmountStep(
             items(units, key = { it.name }) { unitChip(it) }
             item { moreUnitsChip() }
         }
+        extras?.invoke()
         return
     }
 
@@ -396,6 +403,7 @@ private fun ColumnScope.AmountStep(
             units.forEach { unitChip(it) }
             moreUnitsChip()
         }
+        extras?.invoke()
     }
     Row(
         horizontalArrangement = Arrangement.spacedBy(spacing.sm, Alignment.End),

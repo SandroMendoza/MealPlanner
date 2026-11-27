@@ -8,6 +8,7 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeIngredient
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.usecase.AddRecipeUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
 import com.meal.domain.usecase.GetAllRecipesUseCase
@@ -65,8 +66,9 @@ class RecipeFormViewModel(
                     isLoading = false,
                     name = recipe.name,
                     description = recipe.description.orEmpty(),
-                    category = recipe.category,
-                    cuisine = recipe.cuisine,
+                    categories = recipe.categories,
+                    cuisines = recipe.cuisines,
+                    mealTypes = recipe.mealTypes,
                     preparationTimeMinutes = recipe.preparationTimeMinutes.toString(),
                     servings = recipe.servings.toString(),
                     imageUrl = recipe.imageUrl.orEmpty(),
@@ -91,13 +93,19 @@ class RecipeFormViewModel(
         _uiState.value = _uiState.value.copy(description = value)
     }
 
-    fun updateCategory(value: FoodCategory) {
-        _uiState.value = _uiState.value.copy(category = value)
+    fun toggleCategory(value: FoodCategory) {
+        val current = _uiState.value.categories
+        _uiState.value = _uiState.value.copy(categories = if (value in current) current - value else current + value)
     }
 
-    fun updateCuisine(value: Cuisine) {
-        val current = _uiState.value.cuisine
-        _uiState.value = _uiState.value.copy(cuisine = if (current == value) null else value)
+    fun toggleCuisine(value: Cuisine) {
+        val current = _uiState.value.cuisines
+        _uiState.value = _uiState.value.copy(cuisines = if (value in current) current - value else current + value)
+    }
+
+    fun toggleMealType(value: MealType) {
+        val current = _uiState.value.mealTypes
+        _uiState.value = _uiState.value.copy(mealTypes = if (value in current) current - value else current + value)
     }
 
     fun updatePreparationTime(value: String) {
@@ -177,8 +185,9 @@ class RecipeFormViewModel(
                     id = recipeId ?: Uuid.random(),
                     name = current.name,
                     description = current.description.ifBlank { null },
-                    category = current.category,
-                    cuisine = current.cuisine,
+                    categories = current.categories,
+                    cuisines = current.cuisines,
+                    mealTypes = current.mealTypes,
                     preparationTimeMinutes = current.preparationTimeMinutes.toIntOrNull() ?: 0,
                     servings = current.servings.toIntOrNull() ?: 1,
                     imageUrl = current.imageUrl.ifBlank { null },

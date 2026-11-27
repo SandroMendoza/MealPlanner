@@ -4,16 +4,19 @@ import com.meal.domain.model.Recipe
 import com.meal.domain.model.RecipeViewMode
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 
 enum class RecipeEmptyState { NO_RECIPES, NO_FAVORITES, NO_CREATED, NO_MATCHES }
 
 data class RecipeUiState(
     val recipes: List<Recipe> = emptyList(),
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
     val searchQuery: String = "",
     val selectedCategory: FoodCategory? = null,
     val selectedCuisine: Cuisine? = null,
+    val selectedMealType: MealType? = null,
     val prepTimeRange: ClosedFloatingPointRange<Float> = FULL_PREP_TIME_RANGE,
     val showFavoritesOnly: Boolean = false,
     val showCreatedOnly: Boolean = false,
@@ -27,11 +30,20 @@ data class RecipeUiState(
             .asSequence()
             .filter { !showFavoritesOnly || it.isFavorite }
             .filter { !showCreatedOnly || it.isUserCreated }
-            .filter { selectedCategory == null || it.category == selectedCategory }
-            .filter { selectedCuisine == null || it.cuisine == selectedCuisine }
+            .filter { selectedCategory == null || selectedCategory in it.categories }
+            .filter { selectedCuisine == null || selectedCuisine in it.cuisines }
+            .filter { selectedMealType == null || selectedMealType in it.mealTypes }
             .filter { matchesPrepTime(it.preparationTimeMinutes) }
             .filter { recipe -> matchesSearch(recipe, searchQuery) }
             .toList()
+
+    val hasActiveFilters: Boolean
+        get() = selectedCategory != null ||
+            selectedCuisine != null ||
+            selectedMealType != null ||
+            showFavoritesOnly ||
+            showCreatedOnly ||
+            prepTimeRange != FULL_PREP_TIME_RANGE
 
     val hasFilteredRecipes: Boolean
         get() = filteredRecipes.isNotEmpty()

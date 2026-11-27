@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -41,12 +42,17 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.meal.domain.model.MealPlanEntry
+import com.meal.planner.common.LocalWideWidth
+import com.meal.planner.common.WideContentWidth
+import com.meal.planner.common.centeredMaxWidth
 import com.meal.planner.common.displayName
 import com.meal.planner.common.icon
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.common.currentDayPeriod
 import com.meal.presentation.common.today
+import com.meal.presentation.home.HomeUiState
 import com.meal.presentation.home.HomeViewModel
 import kotlinx.datetime.number
 import org.koin.compose.viewmodel.koinViewModel
@@ -65,11 +71,13 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val spacing = MealPlannerTokens.spacing
+    val wide = LocalWideWidth.current
     val todaysPlanParts = mutableListOf<String>()
     for (entry in uiState.todaysEntries) {
         todaysPlanParts += "${entry.mealType.displayName()}: ${entry.recipe.name}"
     }
     val todaysPlanSpokenText = todaysPlanParts.joinToString(". ")
+    val dayPeriod = currentDayPeriod()
 
     Column(
         modifier = Modifier
@@ -80,6 +88,7 @@ fun HomeScreen(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
+                .then(if (wide) Modifier.centeredMaxWidth(WideContentWidth) else Modifier)
                 .padding(spacing.lg)
         ) {
             Row(
@@ -90,9 +99,9 @@ fun HomeScreen(
                 Column {
                     Text(
                         text = if (uiState.greetingName.isBlank()) {
-                            LocalStrings.current.homeGreetingDefault
+                            LocalStrings.current.homeGreetingDefault(dayPeriod)
                         } else {
-                            LocalStrings.current.homeGreetingWithName(uiState.greetingName)
+                            LocalStrings.current.homeGreetingWithName(dayPeriod, uiState.greetingName)
                         },
                         style = MaterialTheme.typography.headlineSmall
                     )
@@ -133,79 +142,15 @@ fun HomeScreen(
 
             Spacer(Modifier.height(spacing.sectionGap))
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(LocalStrings.current.homeTodaysPlan, style = MaterialTheme.typography.titleLarge)
-                TextButton(onClick = onViewAllClick) {
-                    Text(LocalStrings.current.homeViewAll, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            if (wide) {
+                Row(horizontalArrangement = Arrangement.spacedBy(spacing.sectionGap), modifier = Modifier.fillMaxWidth()) {
+                    TodaysPlanSection(uiState, onViewAllClick, onMealClick, Modifier.weight(3f))
+                    QuickActionsSection(stacked = true, onAddMealClick, onShoppingListClick, Modifier.weight(2f))
                 }
-            }
-
-            val todayDate = today()
-            Text(
-                text = "${LocalStrings.current.weekdayShort(todayDate.dayOfWeek)}, " +
-                    "${LocalStrings.current.monthAbbreviation(todayDate.month.number)} ${todayDate.day}",
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(Modifier.height(spacing.sm))
-
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = MaterialTheme.shapes.large,
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-            ) {
-                when {
-                    uiState.isLoading -> Box(
-                        modifier = Modifier.fillMaxWidth().padding(spacing.xxxl),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                    uiState.todaysEntries.isEmpty() -> Text(
-                        text = LocalStrings.current.homeNoMealsPlannedToday,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(spacing.xxl)
-                    )
-                    else -> Column {
-                        uiState.todaysEntries.forEachIndexed { index, entry ->
-                            TodayPlanRow(entry = entry, onClick = { onMealClick(entry.recipe.id) })
-                            if (index != uiState.todaysEntries.lastIndex) {
-                                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-                            }
-                        }
-                    }
-                }
-            }
-
-            Spacer(Modifier.height(spacing.sectionGap))
-
-            Text(LocalStrings.current.homeQuickActions, style = MaterialTheme.typography.titleLarge)
-
-            Spacer(Modifier.height(spacing.sm))
-
-            Row(horizontalArrangement = Arrangement.spacedBy(spacing.md), modifier = Modifier.fillMaxWidth()) {
-                QuickActionCard(
-                    modifier = Modifier.weight(1f),
-                    label = LocalStrings.current.homeAddAMeal,
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    contentColor = Color.White,
-                    icon = Icons.Default.Add,
-                    onClick = onAddMealClick
-                )
-                QuickActionCard(
-                    modifier = Modifier.weight(1f),
-                    label = LocalStrings.current.homeShoppingList,
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface,
-                    icon = Icons.Default.ShoppingCart,
-                    onClick = onShoppingListClick
-                )
+            } else {
+                TodaysPlanSection(uiState, onViewAllClick, onMealClick)
+                Spacer(Modifier.height(spacing.sectionGap))
+                QuickActionsSection(stacked = false, onAddMealClick, onShoppingListClick)
             }
         }
     }
@@ -270,4 +215,123 @@ private fun QuickActionCard(
             Text(label, style = MaterialTheme.typography.titleMedium, color = contentColor)
         }
     }
+}
+
+@OptIn(ExperimentalUuidApi::class)
+@Composable
+private fun TodaysPlanSection(
+    uiState: HomeUiState,
+    onViewAllClick: () -> Unit,
+    onMealClick: (Uuid) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val spacing = MealPlannerTokens.spacing
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(LocalStrings.current.homeTodaysPlan, style = MaterialTheme.typography.titleLarge)
+            TextButton(onClick = onViewAllClick) {
+                Text(LocalStrings.current.homeViewAll, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.primary)
+            }
+        }
+
+        val todayDate = today()
+        Text(
+            text = "${LocalStrings.current.weekdayShort(todayDate.dayOfWeek)}, " +
+                "${LocalStrings.current.monthAbbreviation(todayDate.month.number)} ${todayDate.day}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(Modifier.height(spacing.sm))
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.large,
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            when {
+                uiState.isLoading -> Box(
+                    modifier = Modifier.fillMaxWidth().padding(spacing.xxxl),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+                uiState.todaysEntries.isEmpty() -> Text(
+                    text = LocalStrings.current.homeNoMealsPlannedToday,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(spacing.xxl)
+                )
+                else -> Column {
+                    uiState.todaysEntries.forEachIndexed { index, entry ->
+                        TodayPlanRow(entry = entry, onClick = { onMealClick(entry.recipe.id) })
+                        if (index != uiState.todaysEntries.lastIndex) {
+                            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuickActionsSection(
+    stacked: Boolean,
+    onAddMealClick: () -> Unit,
+    onShoppingListClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val spacing = MealPlannerTokens.spacing
+    Column(modifier = modifier) {
+        // Beside today's plan, the heading matches that section's heading row, which is as
+        // tall as its "View all" button, so the two headings line up.
+        Box(
+            modifier = if (stacked) Modifier.heightIn(min = 48.dp) else Modifier,
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text(LocalStrings.current.homeQuickActions, style = MaterialTheme.typography.titleLarge)
+        }
+
+        if (stacked) {
+            // Matches the date line under today's plan heading, so the first cards line up.
+            Text(" ", style = MaterialTheme.typography.bodySmall)
+        }
+
+        Spacer(Modifier.height(spacing.sm))
+
+        if (stacked) {
+            Column(verticalArrangement = Arrangement.spacedBy(spacing.md), modifier = Modifier.fillMaxWidth()) {
+                QuickActionCards(Modifier.fillMaxWidth(), onAddMealClick, onShoppingListClick)
+            }
+        } else {
+            Row(horizontalArrangement = Arrangement.spacedBy(spacing.md), modifier = Modifier.fillMaxWidth()) {
+                QuickActionCards(Modifier.weight(1f), onAddMealClick, onShoppingListClick)
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuickActionCards(cardModifier: Modifier, onAddMealClick: () -> Unit, onShoppingListClick: () -> Unit) {
+    QuickActionCard(
+        modifier = cardModifier,
+        label = LocalStrings.current.homeAddAMeal,
+        containerColor = MaterialTheme.colorScheme.primary,
+        contentColor = Color.White,
+        icon = Icons.Default.Add,
+        onClick = onAddMealClick
+    )
+    QuickActionCard(
+        modifier = cardModifier,
+        label = LocalStrings.current.homeShoppingList,
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface,
+        icon = Icons.Default.ShoppingCart,
+        onClick = onShoppingListClick
+    )
 }

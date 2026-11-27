@@ -17,9 +17,11 @@ fun formatQuantity(value: Double): String {
 /**
  * Quantity and unit as shown next to an ingredient ("2 cloves", "0.5 tsp"), with the unit in the
  * language of [strings] and agreeing with the quantity as displayed. A [MeasurementUnit.TO_TASTE]
- * amount has no meaningful number, so it shows as "to taste" alone.
+ * amount has no meaningful number, so it shows as "to taste" alone. An item without a measurement
+ * (null [quantity] or [unit]) gives an empty string.
  */
-fun formatAmount(quantity: Double, unit: MeasurementUnit, strings: Strings): String {
+fun formatAmount(quantity: Double?, unit: MeasurementUnit?, strings: Strings): String {
+    if (quantity == null || unit == null) return ""
     val label = strings.measurementUnitLabel(unit, roundQuantity(quantity))
     return if (unit == MeasurementUnit.TO_TASTE) label else "${formatQuantity(quantity)} $label"
 }

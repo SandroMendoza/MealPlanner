@@ -1,6 +1,7 @@
 package com.meal.data.repository
 
 import com.meal.data.datasource.MealReminderLocalDataSource
+import com.meal.data.datasource.OnboardingLocalDataSource
 import com.meal.data.datasource.SettingsLocalDataSource
 import com.meal.data.datasource.UserProfileLocalDataSource
 import com.meal.data.datasource.WeekNoteLocalDataSource
@@ -22,6 +23,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class SingleRowRepositoriesTest {
 
@@ -30,6 +33,20 @@ class SingleRowRepositoriesTest {
     private val settings = SettingsRepositoryImpl(SettingsLocalDataSource(database, Dispatchers.Unconfined))
     private val reminders = MealReminderRepositoryImpl(MealReminderLocalDataSource(database, Dispatchers.Unconfined))
     private val notes = WeekNoteRepositoryImpl(WeekNoteLocalDataSource(database, Dispatchers.Unconfined))
+    private val onboarding = OnboardingRepositoryImpl(OnboardingLocalDataSource(database, Dispatchers.Unconfined))
+
+    @Test
+    fun aFreshInstallHasNotSeenTheWalkthrough() = runTest {
+        assertFalse(onboarding.walkthroughSeen().first())
+    }
+
+    @Test
+    fun theWalkthroughStaysSeenOnceMarked() = runTest {
+        onboarding.markWalkthroughSeen()
+        onboarding.markWalkthroughSeen()
+
+        assertTrue(onboarding.walkthroughSeen().first())
+    }
 
     @Test
     fun profileHasNoNameBeforeAnyEdit() = runTest {

@@ -59,6 +59,7 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.MealType
 import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.displayName
 import com.meal.planner.common.filterIntegerInput
@@ -182,12 +183,12 @@ fun RecipeFormScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            SectionLabel(LocalStrings.current.category, required = true)
+            SectionLabel(LocalStrings.current.category)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(FoodCategory.entries.toList()) { category ->
                     FilterChip(
-                        selected = uiState.category == category,
-                        onClick = { viewModel.updateCategory(category) },
+                        selected = category in uiState.categories,
+                        onClick = { viewModel.toggleCategory(category) },
                         label = { Text(category.displayName()) },
                         colors = activeFilterChipColors()
                     )
@@ -198,9 +199,21 @@ fun RecipeFormScreen(
             LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
                 items(Cuisine.entries.toList(), key = { it.name }) { cuisine ->
                     FilterChip(
-                        selected = uiState.cuisine == cuisine,
-                        onClick = { viewModel.updateCuisine(cuisine) },
+                        selected = cuisine in uiState.cuisines,
+                        onClick = { viewModel.toggleCuisine(cuisine) },
                         label = { Text(cuisine.displayName()) },
+                        colors = activeFilterChipColors()
+                    )
+                }
+            }
+
+            SectionLabel(LocalStrings.current.mealType)
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(spacing.sm)) {
+                items(MealType.entries.toList(), key = { it.name }) { mealType ->
+                    FilterChip(
+                        selected = mealType in uiState.mealTypes,
+                        onClick = { viewModel.toggleMealType(mealType) },
+                        label = { Text(mealType.displayName()) },
                         colors = activeFilterChipColors()
                     )
                 }
@@ -265,7 +278,7 @@ fun RecipeFormScreen(
                 )
             }
 
-            SectionLabel(LocalStrings.current.ingredients, required = true)
+            SectionLabel(LocalStrings.current.ingredients)
             var pickerOpen by remember { mutableStateOf(false) }
             var editingIndex by remember { mutableStateOf<Int?>(null) }
             if (uiState.ingredients.isEmpty()) {
@@ -305,7 +318,7 @@ fun RecipeFormScreen(
                 )
             }
 
-            SectionLabel(LocalStrings.current.instructions, required = true)
+            SectionLabel(LocalStrings.current.instructions)
             InstructionStepsEditor(
                 steps = uiState.instructions.map { it.description },
                 onReplaceStep = viewModel::replaceInstructionRow,

@@ -9,7 +9,24 @@ CREATE TABLE RecipeEntity (
     isDeleted INTEGER NOT NULL DEFAULT 0,
     isFavorite INTEGER NOT NULL DEFAULT 0,
     isUserCreated INTEGER NOT NULL DEFAULT 1,
-    cuisine TEXT
+    cuisine TEXT,
+    -- Fingerprint of the built-in recipe content this row was last written from. NULL for
+    -- recipes the user created or edited, which built-in updates leave alone. 'legacy' marks
+    -- built-in rows written before fingerprints were kept.
+    builtInFingerprint TEXT
+);
+
+-- One row holding the fingerprint of the whole built-in recipe set last applied, so the
+-- update pass only runs when the built-in recipes change.
+CREATE TABLE BuiltInRecipesStateEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    fingerprint TEXT NOT NULL
+);
+
+CREATE TABLE RecipeMealTypeEntity (
+    recipeId TEXT NOT NULL,
+    mealType TEXT NOT NULL,
+    FOREIGN KEY (recipeId) REFERENCES RecipeEntity(id)
 );
 
 CREATE TABLE RecipeIngredientEntity (
@@ -33,11 +50,14 @@ CREATE TABLE InstructionEntity (
 selectActiveRecipes:
 SELECT * FROM RecipeEntity WHERE isDeleted = 0;
 
-countAllRecipes:
-SELECT COUNT(*) FROM RecipeEntity;
+selectAllRecipeNamesAndImages:
+SELECT name, imageUrl FROM RecipeEntity;
 
 selectRecipeById:
 SELECT * FROM RecipeEntity WHERE id = ?;
+
+selectMealTypesForRecipe:
+SELECT * FROM RecipeMealTypeEntity WHERE recipeId = ?;
 
 selectRecipeIngredientsForRecipe:
 SELECT
@@ -52,6 +72,12 @@ WHERE RecipeIngredientEntity.recipeId = ?;
 
 selectInstructionsForRecipe:
 SELECT * FROM InstructionEntity WHERE recipeId = ? ORDER BY stepNumber;
+
+selectMealTypesForActiveRecipes:
+SELECT RecipeMealTypeEntity.recipeId, RecipeMealTypeEntity.mealType
+FROM RecipeMealTypeEntity
+JOIN RecipeEntity ON RecipeEntity.id = RecipeMealTypeEntity.recipeId
+WHERE RecipeEntity.isDeleted = 0;
 
 selectRecipeIngredientsForActiveRecipes:
 SELECT
@@ -74,19 +100,40 @@ WHERE RecipeEntity.isDeleted = 0
 ORDER BY InstructionEntity.recipeId, InstructionEntity.stepNumber;
 
 insertRecipe:
-INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, imageUrl, isDeleted, isUserCreated, cuisine)
-VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?);
+INSERT INTO RecipeEntity(id, name, description, category, preparationTimeMinutes, servings, imageUrl, isDeleted, isUserCreated, cuisine, builtInFingerprint)
+VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?);
 
 updateRecipe:
 UPDATE RecipeEntity
-SET name = ?, description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, imageUrl = ?, cuisine = ?
+SET name = ?, description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, imageUrl = ?, cuisine = ?, builtInFingerprint = NULL
 WHERE id = ?;
+
+selectUneditedBuiltInRecipes:
+SELECT id, name, imageUrl, builtInFingerprint FROM RecipeEntity
+WHERE isUserCreated = 0 AND isDeleted = 0 AND builtInFingerprint IS NOT NULL;
+
+updateBuiltInRecipe:
+UPDATE RecipeEntity
+SET description = ?, category = ?, preparationTimeMinutes = ?, servings = ?, cuisine = ?, builtInFingerprint = ?
+WHERE id = ?;
+
+selectBuiltInRecipesFingerprint:
+SELECT fingerprint FROM BuiltInRecipesStateEntity WHERE id = 1;
+
+setBuiltInRecipesFingerprint:
+INSERT OR REPLACE INTO BuiltInRecipesStateEntity(id, fingerprint) VALUES (1, ?);
 
 softDeleteRecipe:
 UPDATE RecipeEntity SET isDeleted = 1 WHERE id = ?;
 
 updateFavorite:
 UPDATE RecipeEntity SET isFavorite = ? WHERE id = ?;
+
+insertMealType:
+INSERT INTO RecipeMealTypeEntity(recipeId, mealType) VALUES (?, ?);
+
+deleteMealTypesForRecipe:
+DELETE FROM RecipeMealTypeEntity WHERE recipeId = ?;
 
 insertRecipeIngredient:
 INSERT INTO RecipeIngredientEntity(id, recipeId, ingredientId, quantity, unit) VALUES (?, ?, ?, ?, ?);

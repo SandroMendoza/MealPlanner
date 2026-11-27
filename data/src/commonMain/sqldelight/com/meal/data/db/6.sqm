@@ -1,0 +1,8 @@
+-- A fresh install creates this table empty, so its first launch shows the walkthrough. This
+-- migration only runs on installs that already exist, so it marks the walkthrough as seen for them.
+CREATE TABLE OnboardingEntity (
+    id INTEGER NOT NULL PRIMARY KEY,
+    walkthroughSeen INTEGER NOT NULL
+);
+
+INSERT INTO OnboardingEntity(id, walkthroughSeen) VALUES (1, 1);

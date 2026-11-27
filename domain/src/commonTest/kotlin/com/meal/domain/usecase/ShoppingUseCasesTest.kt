@@ -39,6 +39,19 @@ class ShoppingUseCasesTest {
     }
 
     @Test
+    fun addingAnItemWithoutAQuantityHasNoMeasurement() = runTest {
+        val useCase = AddShoppingListItemUseCase(list)
+
+        useCase.execute("bread", null, MeasurementUnit.PIECE, start, end)
+        useCase.execute("soap", 0.0, MeasurementUnit.PIECE, start, end)
+
+        list.addedItems.forEach { (item) ->
+            assertNull(item.totalQuantity)
+            assertNull(item.unit)
+        }
+    }
+
+    @Test
     fun addedItemsGetDistinctKeysEvenWithTheSameName() = runTest {
         val useCase = AddShoppingListItemUseCase(list)
 
@@ -60,6 +73,31 @@ class ShoppingUseCasesTest {
         RemoveShoppingListItemUseCase(list).execute("garlic|PIECE", start, end)
 
         assertEquals(ItemCall("garlic|PIECE", start, end), list.removedCalls.single())
+    }
+
+    @Test
+    fun editingAnAmountPassesItsKeyRangeQuantityAndUnit() = runTest {
+        val updated = UpdateShoppingListItemAmountUseCase(list).execute("garlic|PIECE", 2.0, MeasurementUnit.KILOGRAMS, start, end)
+
+        assertTrue(updated)
+        assertEquals(ItemCall("garlic|PIECE", start, end, 2.0 to MeasurementUnit.KILOGRAMS), list.amountCalls.single())
+    }
+
+    @Test
+    fun clearingAnAmountRemovesTheMeasurement() = runTest {
+        val updated = UpdateShoppingListItemAmountUseCase(list).execute("garlic|PIECE", null, MeasurementUnit.PIECE, start, end)
+
+        assertTrue(updated)
+        assertEquals(ItemCall("garlic|PIECE", start, end, null to null), list.amountCalls.single())
+    }
+
+    @Test
+    fun editingAnAmountToZeroOrLessIsRejected() = runTest {
+        val useCase = UpdateShoppingListItemAmountUseCase(list)
+
+        assertFalse(useCase.execute("garlic|PIECE", 0.0, MeasurementUnit.PIECE, start, end))
+        assertFalse(useCase.execute("garlic|PIECE", -1.0, MeasurementUnit.PIECE, start, end))
+        assertTrue(list.amountCalls.isEmpty())
     }
 
     @Test
