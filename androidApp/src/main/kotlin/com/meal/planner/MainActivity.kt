@@ -1,14 +1,20 @@
 package com.meal.planner
 
+import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.meal.planner.di.appModule
+import com.meal.planner.navigation.NavigationRequest
 import com.meal.planner.navigation.Routes
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -17,6 +23,8 @@ import org.koin.core.logger.Level
 import org.koin.mp.KoinPlatformTools
 
 class MainActivity : ComponentActivity() {
+    private var navigationRequest by mutableStateOf<NavigationRequest?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,8 +38,7 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        val deepLinkUri = intent?.data
-            ?.takeIf { it.scheme == "mealplanner" && it.host == "open" }
+        val deepLinkUri = deepLinkUri(intent)
         val startRoute = deepLinkUri?.let { Routes.routeForDeepLinkPath(it.pathSegments.firstOrNull()) }
         val quickAddItemName = deepLinkUri
             ?.takeIf { it.pathSegments.firstOrNull() == Routes.SHOPPING_LIST }
@@ -39,9 +46,22 @@ class MainActivity : ComponentActivity() {
             ?.takeIf { it.isNotBlank() }
 
         setContent {
-            App(startRoute = startRoute, quickAddItemName = quickAddItemName)
+            App(startRoute = startRoute, quickAddItemName = quickAddItemName, navigationRequest = navigationRequest)
         }
     }
+
+    // A deep link that arrives while the app is open, such as a tapped meal reminder, reuses
+    // this activity instead of starting a new one.
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        deepLinkUri(intent)
+            ?.let { Routes.routeForDeepLinkPath(it.pathSegments.firstOrNull()) }
+            ?.let { navigationRequest = NavigationRequest(it) }
+    }
+
+    private fun deepLinkUri(intent: Intent?): Uri? =
+        intent?.data?.takeIf { it.scheme == "mealplanner" && it.host == "open" }
 
     // The system shows the navigation bar again when the window regains focus, for example after
     // a dialog, the photo picker or a return from the background.

@@ -1,8 +1,16 @@
 package com.meal.planner
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +30,8 @@ import com.meal.planner.common.isExpandedWidth
 import com.meal.planner.common.isWideWidth
 import com.meal.planner.components.KeyboardDismissButton
 import com.meal.planner.navigation.AppNavHost
+import com.meal.planner.navigation.NavigationRequest
+import com.meal.planner.onboarding.WalkthroughScreen
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTheme
 import com.meal.presentation.preferences.AppPreferencesViewModel
@@ -29,10 +39,11 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 @Preview
-fun App(startRoute: String? = null, quickAddItemName: String? = null) {
+fun App(startRoute: String? = null, quickAddItemName: String? = null, navigationRequest: NavigationRequest? = null) {
     val preferencesViewModel: AppPreferencesViewModel = koinViewModel()
     val themeMode by preferencesViewModel.themeMode.collectAsStateWithLifecycle()
     val language by preferencesViewModel.language.collectAsStateWithLifecycle()
+    val showWalkthrough by preferencesViewModel.showWalkthrough.collectAsStateWithLifecycle()
 
     CompositionLocalProvider(LocalStrings provides (language ?: Language.ENGLISH).strings()) {
         val darkTheme = when (themeMode) {
@@ -48,8 +59,25 @@ fun App(startRoute: String? = null, quickAddItemName: String? = null) {
                     LocalWideWidth provides isWideWidth(maxWidth, maxHeight),
                     LocalExpandedWidth provides isExpandedWidth(maxWidth, maxHeight)
                 ) {
-                    AppNavHost(startRoute = startRoute, quickAddItemName = quickAddItemName)
-                    KeyboardDismissButton(modifier = Modifier.align(Alignment.BottomEnd))
+                    when (showWalkthrough) {
+                        true -> WalkthroughScreen(
+                            onFinish = preferencesViewModel::finishWalkthrough,
+                            modifier = Modifier
+                                .background(MaterialTheme.colorScheme.background)
+                                .windowInsetsPadding(WindowInsets.systemBars.union(WindowInsets.displayCutout))
+                        )
+                        false -> {
+                            AppNavHost(
+                                startRoute = startRoute,
+                                quickAddItemName = quickAddItemName,
+                                navigationRequest = navigationRequest
+                            )
+                            KeyboardDismissButton(modifier = Modifier.align(Alignment.BottomEnd))
+                        }
+                        // Until the walkthrough state is read, show only the background, so a new
+                        // install doesn't flash the home screen before the walkthrough.
+                        null -> Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
+                    }
                 }
             }
         }

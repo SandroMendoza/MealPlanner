@@ -37,8 +37,8 @@ class UiStateTest {
     private val adobo = recipe(
         name = "Chicken Adobo",
         description = "Braised in vinegar",
-        category = FoodCategory.MAIN_DISH,
-        cuisine = Cuisine.FILIPINO,
+        categories = setOf(FoodCategory.MAIN_DISH),
+        cuisines = setOf(Cuisine.FILIPINO),
         preparationTimeMinutes = 60,
         ingredients = listOf(ingredientLine("Soy sauce", 2.0)),
         isFavorite = true,
@@ -46,8 +46,8 @@ class UiStateTest {
     )
     private val salad = recipe(
         name = "Garden Salad",
-        category = FoodCategory.SALAD,
-        cuisine = Cuisine.AMERICAN,
+        categories = setOf(FoodCategory.SALAD, FoodCategory.SIDE_DISH),
+        cuisines = setOf(Cuisine.AMERICAN, Cuisine.MEXICAN),
         preparationTimeMinutes = 10,
         isUserCreated = true
     )
@@ -60,6 +60,8 @@ class UiStateTest {
         assertEquals(listOf(salad), state.copy(showCreatedOnly = true).filteredRecipes)
         assertEquals(listOf(salad), state.copy(selectedCategory = FoodCategory.SALAD).filteredRecipes)
         assertEquals(listOf(adobo), state.copy(selectedCuisine = Cuisine.FILIPINO).filteredRecipes)
+        assertEquals(listOf(salad), state.copy(selectedCategory = FoodCategory.SIDE_DISH).filteredRecipes)
+        assertEquals(listOf(salad), state.copy(selectedCuisine = Cuisine.MEXICAN).filteredRecipes)
         assertEquals(listOf(salad), state.copy(prepTimeRange = 0f..30f).filteredRecipes)
     }
 
@@ -111,8 +113,9 @@ class UiStateTest {
     fun recipeFormCanSaveOnlyWhenRequiredFieldsAreFilled() {
         assertTrue(validForm.canSave)
         assertFalse(validForm.copy(name = " ").canSave)
-        assertFalse(validForm.copy(ingredients = listOf(IngredientFormRow(name = " "))).canSave)
-        assertFalse(validForm.copy(instructions = listOf(InstructionFormRow(""))).canSave)
+        assertTrue(validForm.copy(ingredients = emptyList()).canSave)
+        assertTrue(validForm.copy(instructions = listOf(InstructionFormRow(""))).canSave)
+        assertTrue(validForm.copy(instructions = emptyList()).canSave)
     }
 
     @Test

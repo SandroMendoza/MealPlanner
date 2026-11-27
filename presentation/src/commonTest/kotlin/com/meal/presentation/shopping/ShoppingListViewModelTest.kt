@@ -19,6 +19,8 @@ import com.meal.domain.usecase.RecordItemPriceUseCase
 import com.meal.domain.usecase.RemoveShoppingListItemUseCase
 import com.meal.domain.usecase.RenameShoppingGroupUseCase
 import com.meal.domain.usecase.ToggleShoppingListItemUseCase
+import com.meal.domain.usecase.UpdateShoppingListItemAmountUseCase
+import com.meal.domain.usecase.SetShoppingItemsAtHomeUseCase
 import com.meal.presentation.common.currentWeekSunday
 import com.meal.presentation.common.today
 import com.meal.presentation.common.weekEndFor
@@ -84,6 +86,8 @@ class ShoppingListViewModelTest {
         RenameShoppingGroupUseCase(groups),
         DeleteShoppingGroupUseCase(groups),
         AssignItemToGroupUseCase(groups),
+        UpdateShoppingListItemAmountUseCase(shopping),
+        SetShoppingItemsAtHomeUseCase(shopping),
         tts
     )
 
@@ -155,6 +159,19 @@ class ShoppingListViewModelTest {
     }
 
     @Test
+    fun addingAnItemWithAGroupPutsItInThatGroup() {
+        val vm = viewModel()
+
+        vm.addItem("Eggs", 12.0, MeasurementUnit.PIECE, groupId = "dairy")
+        vm.addItem("Milk", 1.0, MeasurementUnit.LITER)
+
+        val eggs = shopping.manualItems.first { it.first.name == "Eggs" }.first
+        val milk = shopping.manualItems.first { it.first.name == "Milk" }.first
+        assertEquals(listOf<Pair<String, String?>>(eggs.itemKey to "dairy"), groups.assignments)
+        assertTrue(groups.assignments.none { it.first == milk.itemKey })
+    }
+
+    @Test
     fun addingAnItemSavesItTrimmedAndKeepsThePickerOpenForTheNext() {
         val vm = viewModel()
         vm.openAddItemDialog()
@@ -206,6 +223,72 @@ class ShoppingListViewModelTest {
         vm.openRecordPriceDialog(milk)
         vm.dismissRecordPriceDialog()
         assertNull(vm.state.value.itemBeingPriced)
+    }
+
+    @Test
+    fun editingAnAmountUpdatesThatItemAndClosesTheEditor() {
+        shopping.setItems(weekStart, weekEnd, listOf(shoppingItem("rice", quantity = 1.5, unit = MeasurementUnit.KILOGRAMS, price = 3.0)))
+        val vm = viewModel()
+        val rice = vm.state.value.items.single()
+
+        vm.openEditAmount(rice)
+        assertEquals(rice, vm.state.value.itemBeingEdited)
+        vm.updateItemAmount(2.0, MeasurementUnit.KILOGRAMS)
+
+        assertNull(vm.state.value.itemBeingEdited)
+        val edited = vm.state.value.items.single()
+        assertEquals(2.0, edited.totalQuantity)
+        assertEquals(3.0, edited.price)
+    }
+
+    @Test
+    fun selectingItemsThenConfirmingRemovesAllOfThemOnce() {
+        shopping.setItems(weekStart, weekEnd, listOf(shoppingItem("rice"), shoppingItem("salt"), shoppingItem("oil")))
+        val vm = viewModel()
+
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        assertTrue(vm.state.value.isSelecting)
+        assertEquals(setOf("rice", "salt"), vm.state.value.selectedItemKeys)
+
+        vm.requestRemoveSelected()
+        assertTrue(vm.state.value.confirmingRemoveSelected)
+        assertTrue(shopping.removedItems.isEmpty())
+
+        vm.confirmRemoveSelected()
+
+        assertEquals(setOf("rice", "salt"), shopping.removedItems.map { it.first }.toSet())
+        assertEquals(listOf("oil"), vm.state.value.items.map { it.itemKey })
+        assertFalse(vm.state.value.isSelecting)
+        assertFalse(vm.state.value.confirmingRemoveSelected)
+    }
+
+    @Test
+    fun cancellingOrEmptyingTheSelectionLeavesSelectionModeWithoutRemoving() {
+        shopping.setItems(weekStart, weekEnd, listOf(shoppingItem("rice"), shoppingItem("salt")))
+        val vm = viewModel()
+
+        vm.startSelection("rice")
+        vm.toggleSelection("rice")
+        assertFalse(vm.state.value.isSelecting)
+
+        vm.startSelection("salt")
+        vm.requestRemoveSelected()
+        vm.dismissRemoveSelected()
+        vm.clearSelection()
+
+        assertFalse(vm.state.value.isSelecting)
+        assertTrue(shopping.removedItems.isEmpty())
+    }
+
+    @Test
+    fun changingTheRangeClearsTheSelection() {
+        val vm = viewModel()
+        vm.startSelection("rice")
+
+        vm.nextWeek()
+
+        assertFalse(vm.state.value.isSelecting)
     }
 
     @Test
@@ -374,6 +457,51 @@ class ShoppingListViewModelTest {
         vm.toggleReadAloud()
         assertEquals(1, tts.stopCount)
         assertFalse(vm.state.value.isSpeaking)
+    }
+
+    @Test
+    fun atHomeItemsSitInTheirOwnSectionAndReadAloudSkipsThem() {
+        settings.settings.value = AppSettings(readAloudEnabled = true)
+        shopping.setItems(
+            weekStart,
+            weekEnd,
+            listOf(
+                shoppingItem("rice", name = "Rice"),
+                shoppingItem("salt", name = "Salt", atHome = true),
+                shoppingItem("oil", name = "Cooking Oil", atHome = true)
+            )
+        )
+        val vm = viewModel()
+
+        assertEquals(listOf("Rice"), vm.state.value.sections.flatMap { it.items }.map { it.name })
+        assertEquals(listOf("Cooking Oil", "Salt"), vm.state.value.atHomeSection?.items?.map { it.name })
+
+        vm.toggleReadAloud()
+        assertEquals("1 piece Rice", tts.spoken.single())
+    }
+
+    @Test
+    fun movingSelectedItemsToAtHomeAndBack() {
+        shopping.setItems(
+            weekStart,
+            weekEnd,
+            listOf(shoppingItem("rice", name = "Rice"), shoppingItem("salt", name = "Salt", atHome = true))
+        )
+        val vm = viewModel()
+
+        vm.startSelection("rice")
+        assertFalse(vm.state.value.selectionIsAtHome)
+        vm.moveSelectedAtHome()
+        assertFalse(vm.state.value.isSelecting)
+        assertTrue(vm.state.value.items.all { it.atHome })
+        assertTrue(vm.state.value.sections.isEmpty())
+
+        vm.startSelection("rice")
+        vm.toggleSelection("salt")
+        assertTrue(vm.state.value.selectionIsAtHome)
+        vm.moveSelectedAtHome()
+        assertTrue(vm.state.value.items.none { it.atHome })
+        assertNull(vm.state.value.atHomeSection)
     }
 
     @Test

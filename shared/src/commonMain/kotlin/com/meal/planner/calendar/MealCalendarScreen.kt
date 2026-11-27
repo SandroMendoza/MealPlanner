@@ -138,7 +138,7 @@ fun MealCalendarScreen(
             // On a short screen the open keyboard leaves no room for both this button and the
             // note being typed, so the button steps aside until the keyboard closes.
             val keyboardCoversButton = LocalCompactHeight.current && WindowInsets.isImeVisible
-            if (uiState.viewMode == CalendarViewMode.DAY && !keyboardCoversButton) {
+            if (uiState.viewMode == CalendarViewMode.DAY && !keyboardCoversButton && !uiState.isLocked(selectedDate)) {
                 Button(
                     onClick = { onSlotClick(selectedDate, null, null) },
                     shape = MaterialTheme.shapes.extraLarge,
@@ -417,7 +417,7 @@ private fun MealWeekList(
             isToday = day == todayDate,
             onEntryClick = onEntryClick,
             onAddMeal = { onAddMeal(day) },
-            canRemove = !isLocked(day),
+            canEdit = !isLocked(day),
             onRemove = onRemove,
             modifier = modifier
         )
@@ -456,7 +456,7 @@ private fun WeekDayCard(
     isToday: Boolean,
     onEntryClick: (MealPlanEntry) -> Unit,
     onAddMeal: () -> Unit,
-    canRemove: Boolean,
+    canEdit: Boolean,
     onRemove: (MealPlanEntry) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -515,18 +515,20 @@ private fun WeekDayCard(
                         modifier = Modifier.weight(1f)
                     )
                 }
-                OutlinedButton(
-                    onClick = onAddMeal,
-                    shape = CircleShape,
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        containerColor = if (isToday) colors.surface else Color.Transparent
-                    ),
-                    contentPadding = PaddingValues(horizontal = spacing.md),
-                    modifier = Modifier.padding(end = spacing.md)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(iconSize.sm))
-                    Spacer(Modifier.width(spacing.xs))
-                    Text(strings.add)
+                if (canEdit) {
+                    OutlinedButton(
+                        onClick = onAddMeal,
+                        shape = CircleShape,
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = if (isToday) colors.surface else Color.Transparent
+                        ),
+                        contentPadding = PaddingValues(horizontal = spacing.md),
+                        modifier = Modifier.padding(end = spacing.md)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(iconSize.sm))
+                        Spacer(Modifier.width(spacing.xs))
+                        Text(strings.add)
+                    }
                 }
             } else {
                 Column(
@@ -535,7 +537,7 @@ private fun WeekDayCard(
                     entries.forEach { entry ->
                         key(entry.id.toString()) {
                             SwipeToRemove(
-                                enabled = canRemove,
+                                enabled = canEdit,
                                 onRemove = { onRemove(entry) },
                                 shape = MaterialTheme.shapes.small
                             ) {
@@ -548,12 +550,14 @@ private fun WeekDayCard(
                         }
                     }
                 }
-                FilledTonalIconButton(
-                    onClick = onAddMeal,
-                    colors = tonalColors,
-                    modifier = Modifier.padding(end = spacing.sm)
-                ) {
-                    Icon(Icons.Default.Add, contentDescription = strings.calendarAddMeal, modifier = Modifier.size(iconSize.sm))
+                if (canEdit) {
+                    FilledTonalIconButton(
+                        onClick = onAddMeal,
+                        colors = tonalColors,
+                        modifier = Modifier.padding(end = spacing.sm)
+                    ) {
+                        Icon(Icons.Default.Add, contentDescription = strings.calendarAddMeal, modifier = Modifier.size(iconSize.sm))
+                    }
                 }
             }
         }
@@ -694,11 +698,11 @@ private fun MealEntryCard(entry: MealPlanEntry, locked: Boolean, onClick: () -> 
                         text = { Text(LocalStrings.current.calendarViewRecipe) },
                         onClick = { menuExpanded = false; onClick() }
                     )
-                    DropdownMenuItem(
-                        text = { Text(LocalStrings.current.calendarChangeRecipe) },
-                        onClick = { menuExpanded = false; onChange() }
-                    )
                     if (!locked) {
+                        DropdownMenuItem(
+                            text = { Text(LocalStrings.current.calendarChangeRecipe) },
+                            onClick = { menuExpanded = false; onChange() }
+                        )
                         DropdownMenuItem(
                             text = { Text(LocalStrings.current.remove, color = MaterialTheme.colorScheme.error) },
                             onClick = { menuExpanded = false; onRemove() }

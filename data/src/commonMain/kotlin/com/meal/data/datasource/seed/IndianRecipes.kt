@@ -7,6 +7,7 @@ import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SALAD
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
@@ -18,6 +19,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Butter Chicken",
         image = "butter_chicken",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Marinated chicken simmered in a smooth, buttery tomato sauce finished with cream.",
         category = MAIN_DISH,
         minutes = 110, servings = 4,
@@ -52,6 +54,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Tikka Masala",
         image = "chicken_tikka_masala",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Grilled, spiced chicken pieces in a creamy, mildly spiced tomato and onion sauce.",
         category = MAIN_DISH,
         minutes = 110, servings = 4,
@@ -88,6 +91,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Biryani",
         image = "chicken_biryani",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Layers of spiced chicken and fragrant basmati rice, steamed with saffron, mint and fried onions.",
         category = MAIN_DISH,
         minutes = 150, servings = 6,
@@ -129,6 +133,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Korma",
         image = "chicken_korma",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chicken in a mild, creamy sauce of cashews, yogurt and whole spices.",
         category = MAIN_DISH,
         minutes = 60, servings = 4,
@@ -165,6 +170,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Lamb Rogan Josh",
         image = "lamb_rogan_josh",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Slow-cooked lamb in a deep red, aromatic sauce of paprika, yogurt and whole spices.",
         category = MAIN_DISH,
         minutes = 120, servings = 4,
@@ -202,6 +208,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Keema Matar",
         image = "keema_matar",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Spiced minced lamb cooked down with onion, tomato and green peas.",
         category = MAIN_DISH,
         minutes = 45, servings = 4,
@@ -235,6 +242,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Goan Fish Curry",
         image = "goan_fish_curry",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Firm white fish simmered in a tangy, gently spiced coconut and tamarind sauce.",
         category = MAIN_DISH,
         minutes = 40, servings = 4,
@@ -268,6 +276,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Palak Paneer",
         image = "palak_paneer",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Cubes of paneer in a smooth, gently spiced spinach sauce.",
         category = MAIN_DISH,
         minutes = 40, servings = 4,
@@ -301,6 +310,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chana Masala",
         image = "chana_masala",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chickpeas simmered in a tangy, spiced onion and tomato gravy.",
         category = MAIN_DISH,
         minutes = 45, servings = 4,
@@ -333,6 +343,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tandoori Chicken",
         image = "tandoori_chicken",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chicken legs marinated in spiced yogurt and roasted hot until charred at the edges.",
         category = MAIN_DISH,
         minutes = 200, servings = 4,
@@ -364,6 +375,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Dal Makhani",
         image = "dal_makhani",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Black lentils and kidney beans slow-cooked into a rich, buttery and creamy dal.",
         category = MAIN_DISH,
         minutes = 615, servings = 6,
@@ -397,6 +409,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Egg Curry",
         image = "egg_curry",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Hard-boiled eggs, lightly fried, in a spiced onion and tomato gravy.",
         category = MAIN_DISH,
         minutes = 55, servings = 4,
@@ -430,6 +443,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Mulligatawny Soup",
         image = "mulligatawny_soup",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A curry-spiced chicken and red lentil soup softened with coconut milk and a squeeze of lemon.",
         category = SOUP,
         minutes = 60, servings = 6,
@@ -464,6 +478,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Rasam",
         image = "rasam",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A thin, peppery South Indian soup of tomato and tamarind, finished with a mustard seed tempering.",
         category = SOUP,
         minutes = 30, servings = 4,
@@ -495,6 +510,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Aloo Gobi",
         image = "aloo_gobi",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Potatoes and cauliflower cooked dry with turmeric, cumin and ginger.",
         category = SIDE_DISH,
         minutes = 40, servings = 4,
@@ -527,6 +543,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Cucumber Raita",
         image = "cucumber_raita",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Cool yogurt with grated cucumber, mint and toasted cumin, served alongside curries.",
         category = SIDE_DISH,
         minutes = 10, servings = 4,
@@ -548,6 +565,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Kachumber Salad",
         image = "kachumber_salad",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A crunchy chopped salad of cucumber, tomato and red onion with lemon and green chili.",
         category = SALAD,
         minutes = 15, servings = 4,
@@ -572,6 +590,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Kheer",
         image = "kheer",
+        mealTypes = setOf(MealType.SNACK),
         description = "Rice slowly cooked in milk with cardamom and saffron, topped with nuts and raisins.",
         category = DESSERT,
         minutes = 75, servings = 6,
@@ -597,6 +616,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Gajar Halwa",
         image = "gajar_halwa",
+        mealTypes = setOf(MealType.SNACK),
         description = "Grated carrots cooked slowly in milk and ghee with sugar, cardamom and nuts.",
         category = DESSERT,
         minutes = 90, servings = 6,
@@ -621,6 +641,7 @@ internal fun indianRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Mango Lassi",
         image = "mango_lassi",
+        mealTypes = setOf(MealType.SNACK),
         description = "A thick, cold drink of ripe mango blended with yogurt, milk and a hint of cardamom.",
         category = BEVERAGE,
         minutes = 5, servings = 2,

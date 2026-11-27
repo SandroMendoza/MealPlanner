@@ -10,7 +10,8 @@ enum class ShoppingListRangeMode { WEEK, RANGE, DAY }
 
 data class ShoppingListSection(
     val group: ShoppingGroup?,
-    val items: List<ShoppingListItem>
+    val items: List<ShoppingListItem>,
+    val atHome: Boolean = false
 )
 
 data class ShoppingListUiState(
@@ -24,6 +25,10 @@ data class ShoppingListUiState(
     val availableIngredients: List<Ingredient> = emptyList(),
     val showAddItemDialog: Boolean = false,
     val itemBeingPriced: ShoppingListItem? = null,
+    val itemBeingEdited: ShoppingListItem? = null,
+    /** Keys of the items picked in selection mode; selection mode is on while it isn't empty. */
+    val selectedItemKeys: Set<String> = emptySet(),
+    val confirmingRemoveSelected: Boolean = false,
     val itemPendingDeletion: ShoppingListItem? = null,
     val itemPendingGroupAssignment: ShoppingListItem? = null,
     val groupManagementOpen: Boolean = false,
@@ -35,17 +40,32 @@ data class ShoppingListUiState(
     val isEmpty: Boolean
         get() = !isLoading && items.isEmpty() && errorMessage == null
 
+    val isSelecting: Boolean
+        get() = selectedItemKeys.isNotEmpty()
+
+    /** True when every selected item is in "At home", so the move action sends them back to the list. */
+    val selectionIsAtHome: Boolean
+        get() = isSelecting && items.filter { it.itemKey in selectedItemKeys }.all { it.atHome }
+
+    /** The items already at home, after the items to buy; null when there are none. */
+    val atHomeSection: ShoppingListSection?
+        get() = items.filter { it.atHome }
+            .sortedBy { it.name.lowercase() }
+            .takeIf { it.isNotEmpty() }
+            ?.let { ShoppingListSection(group = null, items = it, atHome = true) }
+
     val totalSpent: Double
         get() = items.sumOf { it.price ?: 0.0 }
 
     /**
-     * Items split by shopping group, in group order with ungrouped items last. Within a section,
+     * Items to buy, split by shopping group, in group order with ungrouped items last. Items at
+     * home are left out; they are in [atHomeSection]. Within a section,
      * items are ordered by ingredient category (in [com.meal.domain.model.enums.IngredientCategory]
      * order, items outside the catalogue last), then by name.
      */
     val sections: List<ShoppingListSection>
         get() {
-            val byGroupId = items.sortedWith(categoryThenName).groupBy { it.groupId }
+            val byGroupId = items.filterNot { it.atHome }.sortedWith(categoryThenName).groupBy { it.groupId }
             val groupSections = groups.sortedBy { it.sortOrder }
                 .mapNotNull { group -> byGroupId[group.id]?.let { ShoppingListSection(group, it) } }
             val ungrouped = byGroupId[null].orEmpty()

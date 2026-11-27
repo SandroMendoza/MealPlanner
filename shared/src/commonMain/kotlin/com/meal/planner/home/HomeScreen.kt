@@ -50,6 +50,7 @@ import com.meal.planner.common.icon
 import com.meal.planner.components.RecipeThumbnail
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTokens
+import com.meal.presentation.common.currentDayPeriod
 import com.meal.presentation.common.today
 import com.meal.presentation.home.HomeUiState
 import com.meal.presentation.home.HomeViewModel
@@ -76,6 +77,7 @@ fun HomeScreen(
         todaysPlanParts += "${entry.mealType.displayName()}: ${entry.recipe.name}"
     }
     val todaysPlanSpokenText = todaysPlanParts.joinToString(". ")
+    val dayPeriod = currentDayPeriod()
 
     Column(
         modifier = Modifier
@@ -97,9 +99,9 @@ fun HomeScreen(
                 Column {
                     Text(
                         text = if (uiState.greetingName.isBlank()) {
-                            LocalStrings.current.homeGreetingDefault
+                            LocalStrings.current.homeGreetingDefault(dayPeriod)
                         } else {
-                            LocalStrings.current.homeGreetingWithName(uiState.greetingName)
+                            LocalStrings.current.homeGreetingWithName(dayPeriod, uiState.greetingName)
                         },
                         style = MaterialTheme.typography.headlineSmall
                     )

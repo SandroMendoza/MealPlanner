@@ -2,6 +2,7 @@ package com.meal.domain.strings
 
 import com.meal.domain.model.Language
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -78,8 +79,11 @@ class LocalizedStringsTest {
         assertEquals("Clove", en.measurementUnitName(MeasurementUnit.CLOVE))
         assertEquals("Prep time: 10–30 min", en.recipesPrepTimeRange(10, 30))
         assertEquals("Prep time: 10–180+ min", en.recipesPrepTimeRangeNoMax(10, 180))
-        assertEquals("Good morning, Ana", en.homeGreetingWithName("Ana"))
-        assertEquals("Dinner reminder", en.mealReminderNotificationTitle(MealType.DINNER))
+        assertEquals("Good morning, Ana", en.homeGreetingWithName(DayPeriod.MORNING, "Ana"))
+        assertEquals("Good afternoon!", en.homeGreetingDefault(DayPeriod.AFTERNOON))
+        assertEquals("Good evening, Ana", en.homeGreetingWithName(DayPeriod.EVENING, "Ana"))
+        assertEquals("Dinner: Chicken Adobo", en.mealReminderPlannedTitle(MealType.DINNER, "Chicken Adobo"))
+        assertEquals("Dinner: nothing planned", en.mealReminderNothingPlannedTitle(MealType.DINNER))
     }
 
     @Test
@@ -87,13 +91,16 @@ class LocalizedStringsTest {
         allStrings.forEach { (language, strings) ->
             val deleteBody = strings.recipeDetailDeleteBody(3, "Nov 20, Nov 27")
             assertTrue("3" in deleteBody && "Nov 20, Nov 27" in deleteBody, "$language delete message: $deleteBody")
-            assertTrue("Ana" in strings.homeGreetingWithName("Ana"), "$language greeting drops the name")
+            DayPeriod.entries.forEach { period ->
+                assertTrue("Ana" in strings.homeGreetingWithName(period, "Ana"), "$language $period greeting drops the name")
+            }
             assertTrue("Garlic" in strings.shoppingRemoveItemBody("Garlic"), "$language remove message drops the item")
             assertTrue("Produce" in strings.shoppingDeleteGroupBody("Produce"), "$language delete group message drops the group")
             assertTrue("₱" in strings.recordPricePriceLabel("₱"), "$language price label drops the currency")
             assertTrue("12.50" in strings.spendingPdfTotalSpent("12.50"), "$language total drops the amount")
             assertTrue(
-                strings.mealTypeName(MealType.LUNCH).lowercase() in strings.mealReminderNotificationTitle(MealType.LUNCH).lowercase(),
+                strings.mealTypeName(MealType.LUNCH).lowercase() in strings.mealReminderNothingPlannedTitle(MealType.LUNCH).lowercase() &&
+                    "Adobo" in strings.mealReminderPlannedTitle(MealType.LUNCH, "Adobo"),
                 "$language reminder title does not name the meal"
             )
         }

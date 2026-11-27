@@ -6,6 +6,7 @@ import com.meal.domain.model.enums.FoodCategory.MAIN_DISH
 import com.meal.domain.model.enums.FoodCategory.SALAD
 import com.meal.domain.model.enums.FoodCategory.SIDE_DISH
 import com.meal.domain.model.enums.FoodCategory.SOUP
+import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit.CUP
 import com.meal.domain.model.enums.MeasurementUnit.GRAMS
 import com.meal.domain.model.enums.MeasurementUnit.PIECE
@@ -17,6 +18,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Teriyaki",
         image = "chicken_teriyaki",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Pan-fried chicken thighs with crisp skin, glazed in a glossy soy, mirin and sake sauce.",
         category = MAIN_DISH,
         minutes = 30, servings = 4,
@@ -43,6 +45,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tonkatsu",
         image = "tonkatsu",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Thick pork cutlets coated in panko and deep-fried until crisp, served with shredded cabbage.",
         category = MAIN_DISH,
         minutes = 35, servings = 4,
@@ -69,6 +72,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Japanese Chicken Curry",
         image = "japanese_chicken_curry",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A mild, thick and slightly sweet curry with chicken, potato and carrot, served over rice.",
         category = MAIN_DISH,
         minutes = 60, servings = 6,
@@ -104,6 +108,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Oyakodon",
         image = "oyakodon",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Chicken and onion simmered in a sweet dashi broth, set with soft egg and served over rice.",
         category = MAIN_DISH,
         minutes = 25, servings = 2,
@@ -131,6 +136,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Gyudon",
         image = "gyudon",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "Thinly sliced beef and onion simmered in a sweet soy broth and spooned over a bowl of rice.",
         category = MAIN_DISH,
         minutes = 25, servings = 4,
@@ -158,6 +164,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Chicken Karaage",
         image = "chicken_karaage",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Bite-sized chicken marinated in soy, sake, ginger and garlic, coated in starch and fried until crisp.",
         category = MAIN_DISH,
         minutes = 50, servings = 4,
@@ -183,6 +190,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Yakisoba",
         image = "yakisoba",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Stir-fried noodles with pork, cabbage and carrot in a tangy, savoury Worcestershire-based sauce.",
         category = MAIN_DISH,
         minutes = 25, servings = 4,
@@ -213,6 +221,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Okonomiyaki",
         image = "okonomiyaki",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Savoury cabbage pancakes topped with pork belly, tonkatsu sauce, mayonnaise and bonito flakes.",
         category = MAIN_DISH,
         minutes = 40, servings = 4,
@@ -242,6 +251,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Pork Shogayaki",
         image = "pork_shogayaki",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Thin slices of pork pan-fried with onion in a sharp ginger and soy sauce.",
         category = MAIN_DISH,
         minutes = 30, servings = 4,
@@ -268,6 +278,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Gyoza",
         image = "gyoza",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Pork and cabbage dumplings pan-fried until crisp on the bottom and steamed tender on top.",
         category = MAIN_DISH,
         minutes = 60, servings = 4,
@@ -299,6 +310,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Shrimp and Vegetable Tempura",
         image = "shrimp_and_vegetable_tempura",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Shrimp, sweet potato and mushrooms in a light, crisp batter, with a dashi and soy dipping sauce.",
         category = MAIN_DISH,
         minutes = 45, servings = 4,
@@ -328,6 +340,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Sukiyaki",
         image = "sukiyaki",
+        mealTypes = setOf(MealType.DINNER),
         description = "Thinly sliced beef, tofu, cabbage and mushrooms simmered at the table in a sweet soy broth.",
         category = MAIN_DISH,
         minutes = 40, servings = 4,
@@ -360,6 +373,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Miso Soup",
         image = "miso_soup",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "A light dashi broth with miso, soft tofu, wakame and spring onion.",
         category = SOUP,
         minutes = 15, servings = 4,
@@ -382,6 +396,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tonjiru",
         image = "tonjiru",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH, MealType.DINNER),
         description = "A hearty miso soup with pork belly, daikon, carrot and taro.",
         category = SOUP,
         minutes = 40, servings = 4,
@@ -411,6 +426,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Tamagoyaki",
         image = "tamagoyaki",
+        mealTypes = setOf(MealType.BREAKFAST, MealType.LUNCH),
         description = "A slightly sweet rolled omelette made from thin layers of egg seasoned with dashi.",
         category = SIDE_DISH,
         minutes = 20, servings = 2,
@@ -435,6 +451,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Spinach Gomaae",
         image = "spinach_gomaae",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "Blanched spinach dressed with a sweet and nutty toasted sesame and soy sauce.",
         category = SIDE_DISH,
         minutes = 15, servings = 4,
@@ -457,6 +474,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Cucumber Sunomono",
         image = "cucumber_sunomono",
+        mealTypes = setOf(MealType.LUNCH, MealType.DINNER),
         description = "A cool, sharp salad of thinly sliced cucumber and wakame in a sweet rice vinegar dressing.",
         category = SALAD,
         minutes = 20, servings = 4,
@@ -483,6 +501,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Dorayaki",
         image = "dorayaki",
+        mealTypes = setOf(MealType.SNACK),
         description = "Two soft honey pancakes sandwiched around a sweet red bean paste.",
         category = DESSERT,
         minutes = 130, servings = 6,
@@ -510,6 +529,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Matcha Ice Cream",
         image = "matcha_ice_cream",
+        mealTypes = setOf(MealType.SNACK),
         description = "A smooth, no-churn green tea ice cream made with cream and condensed milk.",
         category = DESSERT,
         minutes = 380, servings = 6,
@@ -530,6 +550,7 @@ internal fun japaneseRecipes(): List<RecipeDto> = listOf(
     recipe(
         name = "Mitarashi Dango",
         image = "mitarashi_dango",
+        mealTypes = setOf(MealType.SNACK),
         description = "Chewy grilled rice dumplings on skewers, coated in a sweet and salty soy glaze.",
         category = DESSERT,
         minutes = 35, servings = 4,

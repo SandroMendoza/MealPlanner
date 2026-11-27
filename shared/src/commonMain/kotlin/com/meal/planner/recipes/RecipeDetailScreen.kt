@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Public
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.Close
@@ -320,7 +321,7 @@ private fun ColumnScope.RecipeDetailBody(
                 RecipeDetailSummary(recipe, Modifier.padding(top = spacing.lg))
             }
 
-            Row(
+            if (recipe.ingredients.isNotEmpty()) Row(
                 modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
@@ -379,53 +380,55 @@ private fun ColumnScope.RecipeDetailBody(
             }
         }
 
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = LocalStrings.current.instructions,
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-                if (uiState.readAloudAvailable && !uiState.cookModeActive) {
-                    TextButton(onClick = { viewModel.startCookMode() }) {
-                        Icon(
-                            imageVector = Icons.Filled.PlayArrow,
-                            contentDescription = null,
-                            modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
-                        )
-                        Text(
-                            text = LocalStrings.current.recipeDetailCookMode,
-                            style = MaterialTheme.typography.labelLarge,
-                            modifier = Modifier.padding(start = spacing.xxs)
-                        )
+        if (recipe.instructions.isNotEmpty()) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(top = spacing.lg, bottom = spacing.xs),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = LocalStrings.current.instructions,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    if (uiState.readAloudAvailable && !uiState.cookModeActive) {
+                        TextButton(onClick = { viewModel.startCookMode() }) {
+                            Icon(
+                                imageVector = Icons.Filled.PlayArrow,
+                                contentDescription = null,
+                                modifier = Modifier.size(MealPlannerTokens.iconSize.sm)
+                            )
+                            Text(
+                                text = LocalStrings.current.recipeDetailCookMode,
+                                style = MaterialTheme.typography.labelLarge,
+                                modifier = Modifier.padding(start = spacing.xxs)
+                            )
+                        }
                     }
                 }
             }
-        }
-        if (uiState.cookModeActive) {
-            item {
-                CookModeStep(
-                    instructions = recipe.instructions,
-                    stepIndex = uiState.cookModeStepIndex,
-                    speaking = uiState.cookModeSpeaking,
-                    onPrevious = { viewModel.previousStep() },
-                    onNext = { viewModel.nextStep() },
-                    onTogglePlayPause = { viewModel.togglePlayPause() },
-                    onStop = { viewModel.stopCookMode() }
-                )
-            }
-        } else {
-            items(recipe.instructions, key = { it.stepNumber }) { instruction ->
-                Text(
-                    text = "${instruction.stepNumber}. ${instruction.description}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(vertical = spacing.sm)
-                )
+            if (uiState.cookModeActive) {
+                item {
+                    CookModeStep(
+                        instructions = recipe.instructions,
+                        stepIndex = uiState.cookModeStepIndex,
+                        speaking = uiState.cookModeSpeaking,
+                        onPrevious = { viewModel.previousStep() },
+                        onNext = { viewModel.nextStep() },
+                        onTogglePlayPause = { viewModel.togglePlayPause() },
+                        onStop = { viewModel.stopCookMode() }
+                    )
+                }
+            } else {
+                items(recipe.instructions, key = { it.stepNumber }) { instruction ->
+                    Text(
+                        text = "${instruction.stepNumber}. ${instruction.description}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(vertical = spacing.sm)
+                    )
+                }
             }
         }
     }
@@ -557,13 +560,15 @@ private fun RecipeDetailSummary(recipe: Recipe, modifier: Modifier = Modifier) {
                 icon = Icons.Filled.People,
                 text = LocalStrings.current.servingsLabel(recipe.servings)
             )
-            RecipeDetailMetaItem(
-                icon = Icons.AutoMirrored.Filled.MenuBook,
-                text = recipe.category.displayName()
-            )
+            if (recipe.categories.isNotEmpty()) {
+                RecipeDetailMetaItem(
+                    icon = Icons.AutoMirrored.Filled.MenuBook,
+                    text = recipe.categories.sortedBy { it.ordinal }.map { it.displayName() }.joinToString(" · ")
+                )
+            }
         }
 
-        recipe.cuisine?.let { cuisine ->
+        if (recipe.cuisines.isNotEmpty()) {
             Row(
                 modifier = Modifier.padding(top = spacing.xs),
                 horizontalArrangement = Arrangement.spacedBy(spacing.lg),
@@ -571,7 +576,21 @@ private fun RecipeDetailSummary(recipe: Recipe, modifier: Modifier = Modifier) {
             ) {
                 RecipeDetailMetaItem(
                     icon = Icons.Filled.Public,
-                    text = cuisine.displayName()
+                    text = recipe.cuisines.sortedBy { it.ordinal }.map { it.displayName() }.joinToString(" · ")
+                )
+            }
+        }
+
+        if (recipe.mealTypes.isNotEmpty()) {
+            val strings = LocalStrings.current
+            Row(
+                modifier = Modifier.padding(top = spacing.xs),
+                horizontalArrangement = Arrangement.spacedBy(spacing.lg),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RecipeDetailMetaItem(
+                    icon = Icons.Filled.Restaurant,
+                    text = recipe.mealTypes.joinToString(" · ") { strings.mealTypeName(it) }
                 )
             }
         }

@@ -53,6 +53,58 @@ class ShoppingRepositoriesTest {
     }
 
     @Test
+    fun editedAmountStaysThroughASyncAndKeepsPriceCheckAndGroup() = runTest {
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice", quantity = 1.5)))
+        list.setItemPrice("rice", weekStart, weekEnd, 4.0)
+        val dry = groups.createGroup("Dry goods")
+        groups.assignItemToGroup("rice", dry.id)
+
+        list.updateItemAmount("rice", weekStart, weekEnd, 2.0, MeasurementUnit.KILOGRAMS)
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice", quantity = 1.5)))
+        val rice = list.getItems(weekStart, weekEnd).first().single()
+
+        assertEquals(2.0, rice.totalQuantity)
+        assertEquals(MeasurementUnit.KILOGRAMS, rice.unit)
+        assertEquals(4.0, rice.price)
+        assertTrue(rice.checked)
+        assertEquals(dry.id, rice.groupId)
+    }
+
+    @Test
+    fun editedAmountOnlyChangesThatRange() = runTest {
+        list.syncGeneratedItems(day, day, listOf(item("rice", quantity = 1.0)))
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice", quantity = 3.0)))
+
+        list.updateItemAmount("rice", day, day, 2.0, MeasurementUnit.GRAMS)
+
+        assertEquals(2.0, list.getItems(day, day).first().single().totalQuantity)
+        assertEquals(3.0, list.getItems(weekStart, weekEnd).first().single().totalQuantity)
+    }
+
+    @Test
+    fun pantryStaplesStartAtHomeAndOtherItemsDoNot() = runTest {
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("salt|GRAMS", "Salt"), item("rice|GRAMS", "Rice")))
+
+        val atHome = list.getItems(weekStart, weekEnd).first().associate { it.name to it.atHome }
+
+        assertEquals(mapOf("Rice" to false, "Salt" to true), atHome)
+    }
+
+    @Test
+    fun movingAnItemIsRememberedForOtherListsByName() = runTest {
+        list.syncGeneratedItems(weekStart, weekEnd, listOf(item("salt|GRAMS", "Salt"), item("rice|GRAMS", "Rice")))
+
+        list.setItemsAtHome(listOf("Salt"), atHome = false)
+        list.setItemsAtHome(listOf("Rice"), atHome = true)
+        list.syncGeneratedItems(day, day, listOf(item("salt|PIECE", "salt "), item("rice|GRAMS", "Rice")))
+
+        val week = list.getItems(weekStart, weekEnd).first().associate { it.name to it.atHome }
+        val dayList = list.getItems(day, day).first().associate { it.name to it.atHome }
+        assertEquals(mapOf("Rice" to true, "Salt" to false), week)
+        assertEquals(mapOf("Rice" to true, "salt " to false), dayList)
+    }
+
+    @Test
     fun syncDoesNotBringBackRemovedItems() = runTest {
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("rice")))
         list.removeItem("rice", weekStart, weekEnd)
@@ -115,8 +167,9 @@ class ShoppingRepositoriesTest {
     fun addingAnItemAlreadyOnTheListAddsToItsQuantity() = runTest {
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("taro|GRAMS", "Taro", 200.0)))
 
-        list.addManualItem(item("manual-1", "taro", 300.0), weekStart, weekEnd)
+        val key = list.addManualItem(item("manual-1", "taro", 300.0), weekStart, weekEnd)
 
+        assertEquals("taro|GRAMS", key)
         val taro = list.getItems(weekStart, weekEnd).first().single()
         assertEquals("taro|GRAMS", taro.itemKey)
         assertEquals(500.0, taro.totalQuantity)
@@ -126,8 +179,9 @@ class ShoppingRepositoriesTest {
     fun addingAnItemInAnotherUnitKeepsItsOwnRow() = runTest {
         list.syncGeneratedItems(weekStart, weekEnd, listOf(item("taro|GRAMS", "Taro", 200.0)))
 
-        list.addManualItem(item("manual-1", "Taro", 2.0).copy(unit = MeasurementUnit.PIECE), weekStart, weekEnd)
+        val key = list.addManualItem(item("manual-1", "Taro", 2.0).copy(unit = MeasurementUnit.PIECE), weekStart, weekEnd)
 
+        assertEquals("manual-1", key)
         assertEquals(2, list.getItems(weekStart, weekEnd).first().size)
     }
 

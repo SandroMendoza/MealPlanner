@@ -1,6 +1,7 @@
 package com.meal.domain.strings
 
 import com.meal.domain.model.enums.Cuisine
+import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
@@ -19,6 +20,12 @@ private val SPANISH_WEEKDAY_INITIAL = mapOf(
 private val SPANISH_MONTH_ABBREVIATIONS = listOf(
     "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"
 )
+
+private fun spanishGreeting(period: DayPeriod): String = when (period) {
+    DayPeriod.MORNING -> "Buenos días"
+    DayPeriod.AFTERNOON -> "Buenas tardes"
+    DayPeriod.EVENING -> "Buenas noches"
+}
 
 private fun spanishMealTypeName(mealType: MealType): String = when (mealType) {
     MealType.BREAKFAST -> "Desayuno"
@@ -174,6 +181,7 @@ val spanishStrings = Strings(
     chooseFromGallery = "Elegir de la galería",
     category = "Categoría",
     cuisine = "Cocina",
+    mealType = "Tipo de comida",
     ingredients = "Ingredientes",
     instructions = "Instrucciones",
     totalSpent = "Total gastado",
@@ -198,8 +206,8 @@ val spanishStrings = Strings(
     navShopping = "Compras",
     navProfile = "Perfil",
 
-    homeGreetingDefault = "¡Buenos días!",
-    homeGreetingWithName = { name -> "¡Buenos días, $name!" },
+    homeGreetingDefault = { period -> "¡${spanishGreeting(period)}!" },
+    homeGreetingWithName = { period, name -> "¡${spanishGreeting(period)}, $name!" },
     homeSubtitle = "Planifiquemos tus comidas.",
     homeNotificationsCd = "Notificaciones",
     homeTodaysPlan = "Plan de hoy",
@@ -295,6 +303,16 @@ val spanishStrings = Strings(
 
     shoppingNoMealsPlannedPeriod = "No hay comidas planificadas para este período.",
     shoppingAddItemButton = "Añadir Artículo",
+    shoppingEditAmountCd = "Editar cantidad",
+    shoppingSelectedCount = { count -> if (count == 1) "1 seleccionado" else "$count seleccionados" },
+    shoppingCancelSelectionCd = "Cancelar selección",
+    shoppingSelectItemCd = "Seleccionar",
+    shoppingAtHome = "En casa",
+    shoppingGroupLabel = "Grupo",
+    shoppingMoveToAtHomeCd = "Mover a En casa",
+    shoppingMoveToListCd = "Volver a la lista",
+    shoppingRemoveSelectedTitle = "¿Eliminar artículos?",
+    shoppingRemoveSelectedBody = { count -> if (count == 1) "¿Eliminar 1 artículo de esta lista?" else "¿Eliminar $count artículos de esta lista?" },
     shoppingRemoveItemTitle = "¿Eliminar artículo?",
     shoppingRemoveItemBody = { itemName -> "¿Eliminar $itemName de la lista de compras?" },
     recordPriceTitle = { itemName -> "¿Cuánto costó $itemName?" },
@@ -348,8 +366,10 @@ val spanishStrings = Strings(
     notificationSettingsDescription = "Elige para qué comidas quieres recibir recordatorios.",
     settingsNotificationsPermissionDenied = "Activa las notificaciones en la configuración del sistema para recibir recordatorios de comidas.",
     settingsNotificationsOpenSettings = "Abrir configuración",
-    mealReminderNotificationTitle = { mealType -> "Recordatorio de ${spanishMealTypeName(mealType).lowercase()}" },
-    mealReminderNotificationBody = "Toca para ver lo que tienes planeado.",
+    mealReminderPlannedTitle = { mealType, recipes -> "${spanishMealTypeName(mealType)}: $recipes" },
+    mealReminderPlannedBody = "Es hora de empezar a cocinar.",
+    mealReminderNothingPlannedTitle = { mealType -> "${spanishMealTypeName(mealType)}: nada planeado" },
+    mealReminderNothingPlannedBody = "Toca para planear una comida.",
 
     aboutAppName = "Meal Planner",
     aboutVersion = { version -> "Versión $version" },
@@ -382,5 +402,126 @@ val spanishStrings = Strings(
     spendingPdfTitle = "Informe de Gastos",
     spendingPdfDateRange = { start, end -> "$start al $end" },
     spendingPdfTotalSpent = { amount -> "Total gastado: $amount" },
-    spendingShareChooserTitle = "Compartir informe de gastos"
+    spendingShareChooserTitle = "Compartir informe de gastos",
+
+    // Walkthrough
+    walkthroughSkip = "Omitir",
+    walkthroughNext = "Siguiente",
+    walkthroughGetStarted = "Empezar",
+    walkthroughPageOf = { page, total -> "Página $page de $total" },
+    walkthroughAddMeal = WalkthroughText("Planifica una comida", "En la pestaña Plan de comidas, toca Añadir Comida para poner una receta en cualquier día."),
+    walkthroughPickMeal = WalkthroughText("Elige la comida y el día", "Elige una receta y luego el desayuno, la comida, la cena o un snack. Toca Cambiar para elegir otro día."),
+    walkthroughRemoveMeal = WalkthroughText("Quita una comida", "Desliza una comida hacia la izquierda para quitarla. La app te pide confirmarlo antes."),
+    walkthroughCreateRecipe = WalkthroughText("Crea una receta", "En la pestaña Recetas, toca + para añadir tu propia receta con foto, ingredientes y pasos."),
+    walkthroughFilterRecipes = WalkthroughText("Encuentra la receta adecuada", "Toca el botón de filtro para ver recetas por tipo de comida, cocina, categoría o tiempo de preparación."),
+    walkthroughCheckItem = WalkthroughText("Marca lo que compras", "Tu lista de compras se llena sola con tu plan de comidas. Toca un artículo para marcarlo."),
+    walkthroughRemoveItem = WalkthroughText("Quita un artículo", "Desliza un artículo hacia la izquierda para quitarlo de la lista."),
+    walkthroughGroupItem = WalkthroughText("Agrupa tus artículos", "Desliza un artículo hacia la derecha para ponerlo en un grupo, como una tienda o un pasillo."),
+    walkthroughRecordPrice = WalkthroughText("Anota lo que pagaste", "Toca el precio de un artículo para anotar lo que pagaste. Los informes de gastos lo suman."),
+    walkthroughReminders = WalkthroughText("Recibe recordatorios", "En Inicio, toca la campana para activar un recordatorio diario para cada comida."),
+
+    // Feature guide
+    featureGuide = "Cómo usar Meal Planner",
+    featureGuideReplayWalkthrough = "Ver la presentación de nuevo",
+    featureGuideTrySaying = "Prueba a decir",
+    featureGuideSections = listOf(
+        GuideSection(
+            title = "Inicio",
+            items = listOf(
+                "Mira las comidas de hoy en orden. Toca una comida para abrir su receta, o Ver todo para abrir el plan de comidas.",
+                "Añadir una comida abre el plan de comidas, y Lista de compras abre tu lista de compras.",
+                "La campana abre los ajustes de recordatorios.",
+                "Con Leer en voz alta activado en Ajustes, el botón del altavoz lee las comidas de hoy."
+            )
+        ),
+        GuideSection(
+            title = "Plan de comidas",
+            items = listOf(
+                "Cambia entre Día y Semana arriba. Ajustes decide cuál se abre primero.",
+                "Usa las flechas para cambiar de semana, el botón de calendario para ir a una fecha y el botón de hoy para volver.",
+                "Toca Añadir comida, o + en un día en la vista Semana, elige una receta y luego la comida y la fecha.",
+                "Desliza una comida hacia la izquierda para quitarla. La app te pide confirmarlo antes.",
+                "En la vista Día, el menú ⋮ de una comida permite ver su receta, cambiarla por otra o quitarla.",
+                "Escribe notas para la semana en el cuadro de abajo. Se guardan mientras escribes.",
+                "Activa Bloquear fechas pasadas en Ajustes para no quitar por error comidas de días anteriores."
+            )
+        ),
+        GuideSection(
+            title = "Recetas",
+            items = listOf(
+                "Busca por nombre, descripción o ingrediente.",
+                "El botón de filtro acota la lista por favoritas, tus recetas, categoría, tipo de comida, cocina y tiempo de preparación.",
+                "Cambia entre cuadrícula y lista con el botón junto al filtro.",
+                "Toca + para crear una receta con foto, ingredientes, tipos de comida y pasos. Los pasos son opcionales.",
+                "En el editor de pasos, Escribir todo te deja escribir todos los pasos de una vez, uno por línea.",
+                "En una receta, toca el corazón para añadirla a tus favoritas, o Añadir al plan de comidas para planificarla.",
+                "Con Leer en voz alta activado, el altavoz lee los ingredientes y el modo cocina lee los pasos uno a uno.",
+                "Tus favoritas y las recetas que creaste también están en la pestaña Perfil."
+            )
+        ),
+        GuideSection(
+            title = "Lista de compras",
+            items = listOf(
+                "La lista se llena sola con las comidas planificadas y suma el mismo ingrediente de varias recetas.",
+                "Elige Semana, Día o Rango arriba para fijar las fechas de la lista.",
+                "Toca un artículo para marcarlo, y tócalo otra vez para desmarcarlo.",
+                "Desliza un artículo hacia la izquierda para quitarlo de la lista.",
+                "Desliza un artículo hacia la derecha para ponerlo en un grupo, como una tienda o un pasillo. Ahí puedes crear un grupo nuevo.",
+                "Toca el botón de carpeta para renombrar o borrar grupos.",
+                "Toca Añadir artículo para lo que no viene de una receta.",
+                "Toca el precio de un artículo para anotar lo que pagaste. La lista muestra el total gastado."
+            )
+        ),
+        GuideSection(
+            title = "Gastos",
+            items = listOf(
+                "Abre los informes de gastos desde la pestaña Perfil.",
+                "Suman los precios que anotas en la lista de compras.",
+                "Elige Semana, Día o Rango para ver el total, el promedio y un gráfico de barras. Toca una barra para ver su importe.",
+                "Toca el botón de compartir para enviar el informe en PDF."
+            )
+        ),
+        GuideSection(
+            title = "Recordatorios",
+            items = listOf(
+                "Abre Ajustes y luego Notificaciones, o toca la campana en Inicio.",
+                "Activa un recordatorio para el desayuno, la comida, la cena o un snack, y toca su hora para cambiarla.",
+                "La primera vez, la app pide permiso para enviar notificaciones.",
+                "Los recordatorios suenan cada día hacia la hora que elegiste."
+            )
+        ),
+        GuideSection(
+            title = "Copia de seguridad y restauración",
+            items = listOf(
+                "En Ajustes, Guardar una copia de seguridad guarda tus recetas, planes, listas de compras, ajustes y fotos en un solo archivo .zip.",
+                "Restaurar una copia de seguridad reemplaza todo en la app por la copia y luego reinicia la app.",
+                "Guarda el archivo en un lugar seguro, como tu almacenamiento en la nube, para pasar tus datos a un teléfono nuevo."
+            )
+        ),
+        GuideSection(
+            title = "Ajustes",
+            items = listOf(
+                "Tema: sistema, claro u oscuro.",
+                "Bloquear fechas pasadas, Leer en voz alta y las vistas del plan y de las recetas que se abren primero.",
+                "Moneda de los precios en la lista de compras y en los informes de gastos.",
+                "Acerca de Meal Planner y la política de privacidad."
+            )
+        ),
+        GuideSection(
+            title = "Pregúntale a Gemini",
+            items = listOf(
+                "En Android 16 y versiones posteriores, Gemini puede usar Meal Planner por ti.",
+                "Puede leer tu lista de compras, añadir artículos y marcarlos.",
+                "Puede buscar recetas, leer una receta en voz alta y añadir una receta nueva.",
+                "Puede leer tu plan de comidas de hoy o de esta semana y añadirle una receta.",
+                "Puede decirte cuánto gastaste hoy, esta semana o este mes."
+            ),
+            examples = listOf(
+                "“Hey Gemini, añade leche a mi lista de compras de Meal Planner”",
+                "“Hey Gemini, ¿qué hay hoy en mi plan de Meal Planner?”",
+                "“Hey Gemini, busca una receta de pollo adobo en Meal Planner”",
+                "“Hey Gemini, ¿cuánto gasté esta semana en Meal Planner?”"
+            )
+        )
+    )
 )
