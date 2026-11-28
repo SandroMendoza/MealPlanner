@@ -422,6 +422,23 @@ val frenchStrings = Strings(
     walkthroughPantryStaples = WalkthroughText("Produits de base", "Le sel, l'huile et les autres produits de base que vous avez sans doute sont rangés sous Produits de base. Touchez le titre pour les afficher."),
     walkthroughReminders = WalkthroughText("Recevez des rappels", "Sur l'accueil, touchez la cloche pour activer un rappel quotidien pour chaque repas."),
 
+    // Home-screen widgets
+    widget = WidgetStrings(
+        nextMeal = "Prochain repas",
+        noUpcomingMeals = "Aucun repas prévu dans les 7 prochains jours.",
+        today = "Aujourd'hui",
+        tomorrow = "Demain",
+        mealNotes = "Notes de repas",
+        noWeekNote = "Aucune note pour cette semaine.",
+        shoppingListEmpty = "Rien à acheter cette semaine.",
+        recipeOfTheDay = "Recette du jour",
+        shuffleCd = "Afficher une autre recette",
+        quickAddTitle = "Ajouter à la liste de courses",
+        addedToShoppingList = { name -> "« $name » ajouté à la liste de courses." },
+        settingsTitle = "Réglages du widget",
+        showWeekNote = "Afficher les notes de la semaine"
+    ),
+
     // Feature guide
     featureGuide = "Comment utiliser Meal Planner",
     featureGuideReplayWalkthrough = "Revoir la présentation",
@@ -509,6 +526,18 @@ val frenchStrings = Strings(
                 "Verrouiller les dates passées, Lire à voix haute, et les vues du planning et des recettes qui s'ouvrent en premier.",
                 "Devise des prix dans la liste de courses et les rapports de dépenses.",
                 "À propos de Meal Planner et la politique de confidentialité."
+            )
+        ),
+        GuideSection(
+            title = "Widgets de l'écran d'accueil",
+            items = listOf(
+                "Appuyez longuement sur un espace vide de l'écran d'accueil, touchez Widgets et cherchez Meal Planner.",
+                "Plan du jour affiche les repas du jour. Appuyez longuement dessus, puis touchez le bouton des réglages pour afficher aussi les notes de la semaine.",
+                "Notes de repas affiche les notes écrites pour cette semaine.",
+                "Liste de courses affiche la liste de la semaine. Touchez un article pour le cocher.",
+                "Prochain repas affiche le prochain repas prévu. Touchez-le pour ouvrir la recette.",
+                "Recette du jour choisit chaque jour une recette parmi vos favoris. Touchez le bouton de mélange pour en voir une autre.",
+                "Ajout rapide ouvre une case pour ajouter un article à la liste de courses sans ouvrir l'application."
             )
         ),
         GuideSection(

@@ -65,6 +65,98 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name="com.meal.planner.widget.TodayPlanWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_today_plan_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_today_plan_info" />
+        </receiver>
+
+        <receiver
+            android:name="com.meal.planner.widget.WeekNoteWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_week_note_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_week_note_info" />
+        </receiver>
+
+        <receiver
+            android:name="com.meal.planner.widget.ShoppingListWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_shopping_list_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_shopping_list_info" />
+        </receiver>
+
+        <receiver
+            android:name="com.meal.planner.widget.NextMealWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_next_meal_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_next_meal_info" />
+        </receiver>
+
+        <receiver
+            android:name="com.meal.planner.widget.QuickAddWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_quick_add_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_quick_add_info" />
+        </receiver>
+
+        <receiver
+            android:name="com.meal.planner.widget.RecipeOfTheDayWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_recipe_of_the_day_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_recipe_of_the_day_info" />
+        </receiver>
+
+        <activity
+            android:name="com.meal.planner.widget.TodayPlanConfigActivity"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.meal.planner.widget.QuickAddActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:noHistory="true"
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+
         <service
             android:name="com.meal.planner.assistant.MealPlannerAppFunctionService"
             android:permission="android.permission.BIND_APP_FUNCTION_SERVICE"

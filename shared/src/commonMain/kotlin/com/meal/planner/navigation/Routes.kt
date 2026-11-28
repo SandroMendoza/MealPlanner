@@ -1,5 +1,8 @@
 package com.meal.planner.navigation
 
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
+
 object Routes {
     const val HOME = "home"
     const val PROFILE = "profile"
@@ -32,6 +35,15 @@ object Routes {
 
     private val DEEP_LINK_ROUTES = setOf(HOME, CALENDAR, RECIPES, SHOPPING_LIST, SPENDING_REPORTS)
 
-    /** Maps a `mealplanner://open/<path>` shortcut path segment to its nav route, or null if unknown. */
-    fun routeForDeepLinkPath(path: String?): String? = path?.takeIf { it in DEEP_LINK_ROUTES }
+    /**
+     * Maps the path of a `mealplanner://open/<path>` link to its nav route, or null if unknown.
+     * Besides the tab screens, `recipes/<recipe id>` opens that recipe.
+     */
+    @OptIn(ExperimentalUuidApi::class)
+    fun routeForDeepLinkPath(path: String?): String? {
+        if (path == null) return null
+        if (path in DEEP_LINK_ROUTES) return path
+        val recipeId = path.removePrefix("$RECIPES/").takeIf { it != path } ?: return null
+        return recipeId.takeIf { runCatching { Uuid.parse(it) }.isSuccess }?.let(::recipeDetail)
+    }
 }
