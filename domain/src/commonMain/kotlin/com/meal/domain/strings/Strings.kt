@@ -284,6 +284,9 @@ data class Strings(
     val walkthroughPantryStaples: WalkthroughText,
     val walkthroughReminders: WalkthroughText,
 
+    // Home-screen widgets (grouped so this class stays under the JVM's 255-parameter limit)
+    val widget: WidgetStrings,
+
     // Feature guide in Settings
     val featureGuide: String,
     val featureGuideReplayWalkthrough: String,

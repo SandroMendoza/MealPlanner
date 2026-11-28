@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_today_plan_label">Plan de hoy</string>
+    <string name="widget_today_plan_description">Las comidas de hoy, con las notas de la semana si quieres</string>
+    <string name="widget_week_note_label">Notas de comidas</string>
+    <string name="widget_week_note_description">Las notas que escribiste para esta semana</string>
+    <string name="widget_shopping_list_label">Lista de compras</string>
+    <string name="widget_shopping_list_description">La lista de compras de esta semana. Toca un artículo para marcarlo</string>
+    <string name="widget_next_meal_label">Próxima comida</string>
+    <string name="widget_next_meal_description">La próxima comida que planificaste</string>
+    <string name="widget_quick_add_label">Añadir rápido</string>
+    <string name="widget_quick_add_description">Añadir un artículo a la lista de compras</string>
+    <string name="widget_recipe_of_the_day_label">Receta del día</string>
+    <string name="widget_recipe_of_the_day_description">Una idea de receta cada día de tus favoritas</string>
+</resources>

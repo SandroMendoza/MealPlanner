@@ -414,6 +414,23 @@ val englishStrings = Strings(
     walkthroughPantryStaples = WalkthroughText("Pantry staples", "Salt, oil and other staples you likely have wait under Pantry staples. Tap the heading to show them."),
     walkthroughReminders = WalkthroughText("Get meal reminders", "On Home, tap the bell to turn on a daily reminder for each meal."),
 
+    // Home-screen widgets
+    widget = WidgetStrings(
+        nextMeal = "Next meal",
+        noUpcomingMeals = "No meals planned for the next 7 days.",
+        today = "Today",
+        tomorrow = "Tomorrow",
+        mealNotes = "Meal Notes",
+        noWeekNote = "No notes for this week.",
+        shoppingListEmpty = "Nothing to buy this week.",
+        recipeOfTheDay = "Recipe of the day",
+        shuffleCd = "Show another recipe",
+        quickAddTitle = "Add to shopping list",
+        addedToShoppingList = { name -> "Added \"$name\" to the shopping list." },
+        settingsTitle = "Widget settings",
+        showWeekNote = "Show the week's notes"
+    ),
+
     // Feature guide
     featureGuide = "How to use Meal Planner",
     featureGuideReplayWalkthrough = "Replay the walkthrough",
@@ -501,6 +518,18 @@ val englishStrings = Strings(
                 "Lock past dates, Read aloud, and the meal plan and recipe views that open first.",
                 "Currency for prices on the shopping list and in spending reports.",
                 "About Meal Planner and the privacy policy."
+            )
+        ),
+        GuideSection(
+            title = "Home-screen widgets",
+            items = listOf(
+                "Press and hold an empty spot on your home screen, tap Widgets and find Meal Planner.",
+                "Today's plan shows today's meals. Press and hold it, then tap the settings button to show the week's notes too.",
+                "Meal Notes shows the notes you wrote for this week.",
+                "Shopping list shows this week's list. Tap an item to check it off.",
+                "Next meal shows the next meal you planned. Tap it to open the recipe.",
+                "Recipe of the day picks a recipe from your favorites each day. Tap the shuffle button for another one.",
+                "Quick add opens a box to add an item to the shopping list without opening the app."
             )
         ),
         GuideSection(

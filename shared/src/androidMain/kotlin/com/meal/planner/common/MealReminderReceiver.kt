@@ -7,12 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
-import com.meal.domain.model.BUNDLED_IMAGE_PREFIX
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.mealReminderMessage
 import com.meal.domain.repository.MealReminderRepository
@@ -27,7 +25,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import mealplanner.shared.generated.resources.Res
 import org.koin.core.context.GlobalContext
 
 class MealReminderReceiver : BroadcastReceiver() {
@@ -48,7 +45,7 @@ class MealReminderReceiver : BroadcastReceiver() {
                     .filter { it.mealType == mealType }
                     .map { it.recipe }
                 val message = mealReminderMessage(language.strings(), mealType, planned.map { it.name })
-                val photo = planned.firstNotNullOfOrNull { recipe -> recipe.imageUrl?.let { loadPhoto(context, it) } }
+                val photo = planned.firstNotNullOfOrNull { recipe -> recipe.imageUrl?.let { loadRecipePhoto(context, it, PHOTO_SIZE_PX) } }
                 showNotification(context, mealType, message.title, message.body, photo)
 
                 val reminder = mealReminderRepository.getReminders().first().first { it.mealType == mealType }
@@ -88,17 +85,6 @@ class MealReminderReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
     }
-
-    /** Decodes a recipe photo, bundled or saved on the device, at notification icon size. */
-    private suspend fun loadPhoto(context: Context, imageUrl: String): Bitmap? = runCatching {
-        val bitmap = if (imageUrl.startsWith(BUNDLED_IMAGE_PREFIX)) {
-            val bytes = Res.readBytes("files/recipes/" + imageUrl.removePrefix(BUNDLED_IMAGE_PREFIX))
-            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-        } else {
-            context.contentResolver.openInputStream(Uri.parse(imageUrl))?.use { BitmapFactory.decodeStream(it) }
-        } ?: return@runCatching null
-        Bitmap.createScaledBitmap(bitmap, PHOTO_SIZE_PX, PHOTO_SIZE_PX * bitmap.height / bitmap.width, true)
-    }.getOrNull()
 
     companion object {
         const val EXTRA_MEAL_TYPE = "meal_type"

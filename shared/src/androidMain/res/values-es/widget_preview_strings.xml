@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_preview_lunch">Almuerzo</string>
+    <string name="widget_preview_dinner">Cena</string>
+    <string name="widget_preview_recipe_lunch">Pancit Canton</string>
+    <string name="widget_preview_recipe_dinner">Chicken Adobo</string>
+    <string name="widget_preview_today_dinner">Hoy · Cena</string>
+    <string name="widget_preview_minutes">45 min</string>
+    <string name="widget_preview_note">Mercado el sábado por la mañana. Sinigang para el almuerzo del domingo.</string>
+    <string name="widget_preview_item_garlic">Ajo</string>
+    <string name="widget_preview_amount_garlic">1 cabeza</string>
+    <string name="widget_preview_item_onion">Cebolla</string>
+    <string name="widget_preview_amount_onion">2 piezas</string>
+    <string name="widget_preview_item_soy_sauce">Salsa de soja</string>
+    <string name="widget_preview_amount_soy_sauce">120 ml</string>
+    <string name="widget_preview_item_rice">Arroz</string>
+    <string name="widget_preview_amount_rice">1 kg</string>
+</resources>

@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
         }
 
         val deepLinkUri = deepLinkUri(intent)
-        val startRoute = deepLinkUri?.let { Routes.routeForDeepLinkPath(it.pathSegments.firstOrNull()) }
+        val startRoute = deepLinkUri?.let { Routes.routeForDeepLinkPath(it.pathSegments.joinToString("/")) }
         val quickAddItemName = deepLinkUri
             ?.takeIf { it.pathSegments.firstOrNull() == Routes.SHOPPING_LIST }
             ?.getQueryParameter("addItem")
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         deepLinkUri(intent)
-            ?.let { Routes.routeForDeepLinkPath(it.pathSegments.firstOrNull()) }
+            ?.let { Routes.routeForDeepLinkPath(it.pathSegments.joinToString("/")) }
             ?.let { navigationRequest = NavigationRequest(it) }
     }
 

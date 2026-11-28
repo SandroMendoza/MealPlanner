@@ -42,6 +42,7 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.koin.android)
             api(libs.androidx.appfunctions)
+            implementation(libs.androidx.glance.appwidget)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

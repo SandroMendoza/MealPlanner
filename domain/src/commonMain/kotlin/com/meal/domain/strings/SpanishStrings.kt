@@ -423,6 +423,23 @@ val spanishStrings = Strings(
     walkthroughPantryStaples = WalkthroughText("Básicos de despensa", "La sal, el aceite y otros básicos que seguramente tienes están en Básicos de despensa. Toca el título para verlos."),
     walkthroughReminders = WalkthroughText("Recibe recordatorios", "En Inicio, toca la campana para activar un recordatorio diario para cada comida."),
 
+    // Home-screen widgets
+    widget = WidgetStrings(
+        nextMeal = "Próxima comida",
+        noUpcomingMeals = "No hay comidas planificadas en los próximos 7 días.",
+        today = "Hoy",
+        tomorrow = "Mañana",
+        mealNotes = "Notas de comidas",
+        noWeekNote = "No hay notas para esta semana.",
+        shoppingListEmpty = "No hay nada que comprar esta semana.",
+        recipeOfTheDay = "Receta del día",
+        shuffleCd = "Mostrar otra receta",
+        quickAddTitle = "Añadir a la lista de compras",
+        addedToShoppingList = { name -> "Se añadió \"$name\" a la lista de compras." },
+        settingsTitle = "Ajustes del widget",
+        showWeekNote = "Mostrar las notas de la semana"
+    ),
+
     // Feature guide
     featureGuide = "Cómo usar Meal Planner",
     featureGuideReplayWalkthrough = "Ver la presentación de nuevo",
@@ -510,6 +527,18 @@ val spanishStrings = Strings(
                 "Bloquear fechas pasadas, Leer en voz alta y las vistas del plan y de las recetas que se abren primero.",
                 "Moneda de los precios en la lista de compras y en los informes de gastos.",
                 "Acerca de Meal Planner y la política de privacidad."
+            )
+        ),
+        GuideSection(
+            title = "Widgets de la pantalla de inicio",
+            items = listOf(
+                "Mantén pulsado un espacio vacío de la pantalla de inicio, toca Widgets y busca Meal Planner.",
+                "Plan de hoy muestra las comidas de hoy. Mantenlo pulsado y toca el botón de ajustes para mostrar también las notas de la semana.",
+                "Notas de comidas muestra las notas que escribiste para esta semana.",
+                "Lista de compras muestra la lista de esta semana. Toca un artículo para marcarlo.",
+                "Próxima comida muestra la próxima comida que planificaste. Tócala para abrir la receta.",
+                "Receta del día elige cada día una receta de tus favoritas. Toca el botón de mezclar para ver otra.",
+                "Añadir rápido abre un cuadro para añadir un artículo a la lista de compras sin abrir la aplicación."
             )
         ),
         GuideSection(

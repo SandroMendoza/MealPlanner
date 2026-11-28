@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_today_plan_label">Today\'s plan</string>
+    <string name="widget_today_plan_description">Today\'s meals, with the week\'s notes if you like</string>
+    <string name="widget_week_note_label">Meal Notes</string>
+    <string name="widget_week_note_description">The notes you wrote for this week</string>
+    <string name="widget_shopping_list_label">Shopping list</string>
+    <string name="widget_shopping_list_description">This week\'s shopping list. Tap an item to check it off</string>
+    <string name="widget_next_meal_label">Next meal</string>
+    <string name="widget_next_meal_description">The next meal you planned</string>
+    <string name="widget_quick_add_label">Quick add</string>
+    <string name="widget_quick_add_description">Add an item to the shopping list</string>
+    <string name="widget_recipe_of_the_day_label">Recipe of the day</string>
+    <string name="widget_recipe_of_the_day_description">A recipe idea each day from your favorites</string>
+</resources>

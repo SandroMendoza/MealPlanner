@@ -5,6 +5,7 @@ import android.content.pm.ApplicationInfo
 import com.meal.planner.backup.completePendingBackupRestore
 import com.meal.planner.common.MealReminderNotifications
 import com.meal.planner.di.appModule
+import com.meal.planner.widget.WidgetRefresher
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -24,5 +25,6 @@ class MealPlannerApplication : Application() {
         }
         MealReminderNotifications.createChannel(this)
         completePendingBackupRestore()
+        WidgetRefresher.startIfWidgetsPlaced(this)
     }
 }

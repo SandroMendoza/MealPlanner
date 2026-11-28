@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_preview_lunch">Lunch</string>
+    <string name="widget_preview_dinner">Dinner</string>
+    <string name="widget_preview_recipe_lunch">Pancit Canton</string>
+    <string name="widget_preview_recipe_dinner">Chicken Adobo</string>
+    <string name="widget_preview_today_dinner">Today · Dinner</string>
+    <string name="widget_preview_minutes">45 min</string>
+    <string name="widget_preview_note">Market run on Saturday morning. Sinigang for Sunday lunch.</string>
+    <string name="widget_preview_item_garlic">Garlic</string>
+    <string name="widget_preview_amount_garlic">1 head</string>
+    <string name="widget_preview_item_onion">Onion</string>
+    <string name="widget_preview_amount_onion">2 pieces</string>
+    <string name="widget_preview_item_soy_sauce">Soy sauce</string>
+    <string name="widget_preview_amount_soy_sauce">120 ml</string>
+    <string name="widget_preview_item_rice">Rice</string>
+    <string name="widget_preview_amount_rice">1 kg</string>
+</resources>
