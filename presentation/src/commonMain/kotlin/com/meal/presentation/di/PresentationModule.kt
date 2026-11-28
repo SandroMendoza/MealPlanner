@@ -2,6 +2,8 @@ package com.meal.presentation.di
 
 import com.meal.presentation.calendar.MealCalendarViewModel
 import com.meal.presentation.home.HomeViewModel
+import com.meal.presentation.ingredients.IngredientImagesViewModel
+import com.meal.presentation.ingredients.IngredientsViewModel
 import com.meal.presentation.notifications.NotificationSettingsViewModel
 import com.meal.presentation.preferences.AppPreferencesViewModel
 import com.meal.presentation.profile.ProfileViewModel
@@ -36,6 +38,8 @@ val presentationModule = module {
     viewModel { HomeViewModel(get(), get(), get(), get()) }
     viewModel { ProfileViewModel(get(), get(), get(), get()) }
     viewModel { SpendingReportsViewModel(get(), get()) }
+    viewModel { IngredientsViewModel(get(), get(), get(), get()) }
+    viewModel { IngredientImagesViewModel(get()) }
     viewModel { SettingsViewModel(get(), get(), get(), get()) }
     viewModel { AppPreferencesViewModel(get(), get(), get()) }
     viewModel { NotificationSettingsViewModel(get(), get()) }

@@ -129,10 +129,26 @@ class FakeUserProfileRepository(initial: UserProfile = UserProfile()) : UserProf
     }
 }
 
+@OptIn(ExperimentalUuidApi::class)
 class FakeIngredientRepository(initial: List<Ingredient> = emptyList()) : IngredientRepository {
     val ingredients = MutableStateFlow(initial)
 
     override fun getAllIngredients(): Flow<List<Ingredient>> = ingredients
+
+    override suspend fun addIngredients(names: List<String>): Int {
+        val existing = ingredients.value.map { it.name.lowercase() }.toSet()
+        val added = names.distinctBy { it.lowercase() }.filter { it.lowercase() !in existing }
+        ingredients.value = ingredients.value + added.map { Ingredient(Uuid.random(), it) }
+        return added.size
+    }
+
+    override suspend fun setImage(id: Uuid, imageUri: String?) {
+        ingredients.value = ingredients.value.map { if (it.id == id) it.copy(imageUri = imageUri) else it }
+    }
+
+    override suspend fun setStaple(id: Uuid, isStaple: Boolean) {
+        ingredients.value = ingredients.value.map { if (it.id == id) it.copy(isStaple = isStaple) else it }
+    }
 }
 
 class FakeMealReminderRepository(initial: List<MealReminder> = emptyList()) : MealReminderRepository {

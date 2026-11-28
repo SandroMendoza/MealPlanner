@@ -32,6 +32,7 @@ class DatabaseBackupDataSource(
         database.transaction {
             database.recipeQueries.rewritePhotoPaths(photoDirUri)
             database.userProfileQueries.rewritePhotoPath(photoDirUri)
+            database.ingredientQueries.rewritePhotoPaths(photoDirUri)
         }
     }
 }

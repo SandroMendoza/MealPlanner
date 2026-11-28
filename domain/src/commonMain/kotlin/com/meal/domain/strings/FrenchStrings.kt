@@ -3,6 +3,7 @@ package com.meal.domain.strings
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.IngredientCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.datetime.DayOfWeek
@@ -144,6 +145,23 @@ private fun frenchMeasurementUnitLabel(unit: MeasurementUnit, quantity: Double):
         MeasurementUnit.TO_TASTE -> "au goût"
         else -> unit.unit
     }
+}
+
+private fun frenchIngredientCategoryName(category: IngredientCategory): String = when (category) {
+    IngredientCategory.MEAT -> "Viande"
+    IngredientCategory.POULTRY -> "Volaille"
+    IngredientCategory.SEAFOOD -> "Poissons et fruits de mer"
+    IngredientCategory.VEGETABLE -> "Légumes"
+    IngredientCategory.FRUIT -> "Fruits"
+    IngredientCategory.GRAIN_AND_NOODLES -> "Céréales et nouilles"
+    IngredientCategory.LEGUMES_AND_TOFU -> "Légumineuses et tofu"
+    IngredientCategory.NUTS_AND_SEEDS -> "Noix et graines"
+    IngredientCategory.DAIRY_AND_EGGS -> "Produits laitiers et œufs"
+    IngredientCategory.CONDIMENT_AND_SAUCE -> "Condiments et sauces"
+    IngredientCategory.SPICE_AND_HERB -> "Épices et herbes"
+    IngredientCategory.OILS_AND_FATS -> "Huiles et matières grasses"
+    IngredientCategory.BAKING_AND_SWEETS -> "Pâtisserie et sucreries"
+    IngredientCategory.OTHER -> "Autre"
 }
 
 val frenchStrings = Strings(
@@ -294,6 +312,23 @@ val frenchStrings = Strings(
     ingredientAddCustom = { name -> "Ajouter « $name »" },
     ingredientAddAndNext = "Ajouter et suivant",
     ingredientDone = "Terminé",
+    ingredientsScreen = IngredientsStrings(
+        categoryName = ::frenchIngredientCategoryName,
+        title = "Ingrédients",
+        searchPlaceholder = "Rechercher des ingrédients",
+        filterAll = "Tous",
+        mine = "Mes ingrédients",
+        noResults = "Aucun ingrédient trouvé",
+        add = "Ajouter des ingrédients",
+        addFieldLabel = "Nom de l'ingrédient",
+        addHint = "Appuyez sur Entrée après chaque nom pour en ajouter plusieurs.",
+        alreadyExists = "Déjà dans vos ingrédients",
+        save = { count -> if (count == 1) "Enregistrer 1 ingrédient" else "Enregistrer $count ingrédients" },
+        defaultPicture = "Utiliser l'image par défaut",
+        staple = "Produit de base",
+        stapleHint = "Apparaît dans la section Produits de base de la liste de courses.",
+        removeFromListCd = { name -> "Retirer $name" }
+    ),
     instructionsSteps = "Étapes",
     instructionsWriteAll = "Tout écrire",
     instructionsWriteAllHint = "Une étape par ligne",

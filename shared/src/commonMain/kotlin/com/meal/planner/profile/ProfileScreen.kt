@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.automirrored.filled.ReceiptLong
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Kitchen
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.HorizontalDivider
@@ -59,6 +60,7 @@ fun ProfileScreen(
     onMyRecipesClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onSpendingReportsClick: () -> Unit,
+    onIngredientsClick: () -> Unit,
     onSettingsClick: () -> Unit,
     viewModel: ProfileViewModel = koinViewModel()
 ) {
@@ -77,6 +79,7 @@ fun ProfileScreen(
                 onMyRecipesClick = onMyRecipesClick,
                 onFavoritesClick = onFavoritesClick,
                 onSpendingReportsClick = onSpendingReportsClick,
+                onIngredientsClick = onIngredientsClick,
                 onSettingsClick = onSettingsClick
             )
         }
@@ -201,6 +204,7 @@ private fun ProfileLinks(
     onMyRecipesClick: () -> Unit,
     onFavoritesClick: () -> Unit,
     onSpendingReportsClick: () -> Unit,
+    onIngredientsClick: () -> Unit,
     onSettingsClick: () -> Unit
 ) {
     Column {
@@ -210,6 +214,8 @@ private fun ProfileLinks(
         ProfileNavRow(label = LocalStrings.current.favorites, icon = Icons.Default.Favorite, onClick = onFavoritesClick)
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         ProfileNavRow(label = LocalStrings.current.spendingReports, icon = Icons.AutoMirrored.Filled.ReceiptLong, onClick = onSpendingReportsClick)
+        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+        ProfileNavRow(label = LocalStrings.current.ingredientsScreen.title, icon = Icons.Default.Kitchen, onClick = onIngredientsClick)
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
         ProfileNavRow(label = LocalStrings.current.settings, icon = Icons.Default.Settings, onClick = onSettingsClick)
         HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

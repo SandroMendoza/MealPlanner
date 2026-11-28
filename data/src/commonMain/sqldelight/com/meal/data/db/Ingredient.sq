@@ -1,8 +1,13 @@
+-- imageUri is a picture the user chose for the ingredient, a file:// URI into the app's
+-- recipe_images folder; null shows the built-in picture. isStaple is null when the user never
+-- set it, and the PantryStaples default applies.
 CREATE TABLE IngredientEntity (
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     normalizedName TEXT NOT NULL,
-    category TEXT
+    category TEXT,
+    imageUri TEXT,
+    isStaple INTEGER
 );
 
 CREATE UNIQUE INDEX IngredientEntity_normalizedName ON IngredientEntity(normalizedName);
@@ -13,6 +18,9 @@ SELECT * FROM IngredientEntity ORDER BY name;
 selectIngredientByNormalizedName:
 SELECT * FROM IngredientEntity WHERE normalizedName = ?;
 
+selectStapleOverrides:
+SELECT normalizedName, isStaple FROM IngredientEntity WHERE isStaple IS NOT NULL;
+
 insertIngredientDefinition:
 INSERT INTO IngredientEntity(id, name, normalizedName) VALUES (?, ?, ?);
 
@@ -21,3 +29,17 @@ INSERT OR IGNORE INTO IngredientEntity(id, name, normalizedName, category) VALUE
 
 fillMissingCategory:
 UPDATE IngredientEntity SET category = :category WHERE normalizedName = :normalizedName AND category IS NULL;
+
+setImage:
+UPDATE IngredientEntity SET imageUri = :imageUri WHERE id = :id;
+
+setStaple:
+UPDATE IngredientEntity SET isStaple = :isStaple WHERE id = :id;
+
+setStapleByNormalizedName:
+UPDATE IngredientEntity SET isStaple = :isStaple WHERE normalizedName = :normalizedName;
+
+rewritePhotoPaths:
+UPDATE IngredientEntity
+SET imageUri = :photoDirUri || substr(imageUri, instr(imageUri, '/recipe_images/') + 15)
+WHERE imageUri LIKE 'file://%/recipe_images/%';

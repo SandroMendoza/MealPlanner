@@ -45,6 +45,7 @@ import com.meal.planner.calendar.RecipePickerScreen
 import com.meal.planner.common.LocalCompactHeight
 import com.meal.planner.common.LocalExpandedWidth
 import com.meal.planner.home.HomeScreen
+import com.meal.planner.ingredients.IngredientsScreen
 import com.meal.planner.profile.ProfileScreen
 import com.meal.planner.recipes.RecipeDetailScreen
 import com.meal.planner.recipes.RecipeFormScreen
@@ -260,8 +261,12 @@ fun AppNavHost(
                         onMyRecipesClick = { navController.navigateToTab(Routes.RECIPES_CREATED) },
                         onFavoritesClick = { navController.navigateToTab(Routes.RECIPES_FAVORITES) },
                         onSpendingReportsClick = { navController.navigate(Routes.SPENDING_REPORTS) },
+                        onIngredientsClick = { navController.navigate(Routes.INGREDIENTS) },
                         onSettingsClick = { navController.navigate(Routes.SETTINGS) }
                     )
+                }
+                composable(Routes.INGREDIENTS) {
+                    IngredientsScreen(onBack = { navController.popBackStack() })
                 }
                 composable(Routes.SPENDING_REPORTS) {
                     SpendingReportsScreen(onBack = { navController.popBackStack() })

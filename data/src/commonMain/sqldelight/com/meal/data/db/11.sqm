@@ -1,0 +1,24 @@
+-- Pantry staples and custom pictures belong to the ingredient. The shopping list's per-name
+-- "at home" overrides move onto the ingredient rows, creating rows for names that have none.
+ALTER TABLE IngredientEntity ADD COLUMN imageUri TEXT;
+
+ALTER TABLE IngredientEntity ADD COLUMN isStaple INTEGER;
+
+UPDATE IngredientEntity
+SET isStaple = (SELECT atHome FROM ShoppingAtHomeEntity WHERE ShoppingAtHomeEntity.normalizedName = IngredientEntity.normalizedName)
+WHERE normalizedName IN (SELECT normalizedName FROM ShoppingAtHomeEntity);
+
+INSERT INTO IngredientEntity(id, name, normalizedName, isStaple)
+SELECT
+    substr(u, 1, 8) || '-' || substr(u, 9, 4) || '-4' || substr(u, 14, 3) || '-' ||
+        substr('89ab', 1 + (abs(random()) % 4), 1) || substr(u, 18, 3) || '-' || substr(u, 21, 12),
+    coalesce(
+        (SELECT trim(item.name) FROM ShoppingListItemEntity item WHERE lower(trim(item.name)) = overrides.normalizedName LIMIT 1),
+        overrides.normalizedName
+    ),
+    overrides.normalizedName,
+    overrides.atHome
+FROM (SELECT lower(hex(randomblob(16))) AS u, normalizedName, atHome FROM ShoppingAtHomeEntity) AS overrides
+WHERE overrides.normalizedName NOT IN (SELECT normalizedName FROM IngredientEntity);
+
+DROP TABLE ShoppingAtHomeEntity;

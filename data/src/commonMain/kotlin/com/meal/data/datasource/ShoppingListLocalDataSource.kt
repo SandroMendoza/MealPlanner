@@ -9,6 +9,7 @@ import com.meal.domain.model.PantryStaples
 import com.meal.domain.model.ShoppingListItem
 import com.meal.domain.model.SpendingLineItem
 import com.meal.domain.model.enums.MeasurementUnit
+import com.meal.domain.model.ingredientDisplayName
 import com.meal.domain.model.normalizedIngredientName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -17,31 +18,41 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class ShoppingListLocalDataSource(
     private val database: MealPlannerDatabase,
     private val groupLocalDataSource: ShoppingGroupLocalDataSource,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
     private val queries = database.shoppingListItemQueries
-    private val atHomeQueries = database.shoppingAtHomeQueries
+    private val ingredientQueries = database.ingredientQueries
 
     fun items(rangeStart: LocalDate, rangeEnd: LocalDate): Flow<List<ShoppingListItem>> =
         combine(
             queries.selectActiveItems(rangeStart.toString(), rangeEnd.toString()).asFlow().mapToList(ioDispatcher),
             groupLocalDataSource.assignments(),
-            atHomeQueries.selectAll().asFlow().mapToList(ioDispatcher)
-        ) { rows, assignments, atHomeRows ->
-            val atHomeByName = atHomeRows.associate { it.normalizedName to (it.atHome != 0L) }
+            ingredientQueries.selectStapleOverrides().asFlow().mapToList(ioDispatcher)
+        ) { rows, assignments, stapleRows ->
+            val atHomeByName = stapleRows.associate { it.normalizedName to (it.isStaple != 0L) }
             rows.map { row ->
                 val atHome = atHomeByName[normalizedIngredientName(row.name)] ?: PantryStaples.isStaple(row.name)
                 toDomain(row, assignments[row.itemKey], atHome)
             }
         }
 
+    /** Marks the ingredients named [names] as pantry staples or not, adding ingredients that don't exist yet. */
     suspend fun setAtHome(names: Collection<String>, atHome: Boolean) = withContext(ioDispatcher) {
         database.transaction {
-            names.forEach { atHomeQueries.setAtHome(normalizedIngredientName(it), if (atHome) 1L else 0L) }
+            names.forEach { name ->
+                val normalized = normalizedIngredientName(name)
+                if (ingredientQueries.selectIngredientByNormalizedName(normalized).executeAsOneOrNull() == null) {
+                    ingredientQueries.insertIngredientDefinition(Uuid.random().toString(), ingredientDisplayName(name), normalized)
+                }
+                ingredientQueries.setStapleByNormalizedName(isStaple = if (atHome) 1L else 0L, normalizedName = normalized)
+            }
         }
     }
 

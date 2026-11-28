@@ -166,6 +166,7 @@ data class Strings(
     val ingredientAddCustom: (name: String) -> String,
     val ingredientAddAndNext: String,
     val ingredientDone: String,
+    val ingredientsScreen: IngredientsStrings,
     val instructionsSteps: String,
     val instructionsWriteAll: String,
     val instructionsWriteAllHint: String,
