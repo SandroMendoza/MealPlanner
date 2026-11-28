@@ -18,6 +18,10 @@ dependencies {
     implementation(libs.compose.uiToolingPreview)
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+    // The widget receivers declared in this module's manifest extend Glance's
+    // GlanceAppWidgetReceiver; lint needs Glance on this classpath to see that they are
+    // BroadcastReceivers.
+    implementation(libs.androidx.glance.appwidget)
     debugImplementation(libs.compose.uiTooling)
 }
 
