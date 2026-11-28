@@ -16,6 +16,7 @@ object Routes {
     const val CALENDAR_SLOT_PICK_PATTERN = "calendar/{date}/{mealType}/pick?replaceSlotId={replaceSlotId}"
     const val SHOPPING_LIST = "shoppingList"
     const val SPENDING_REPORTS = "spendingReports"
+    const val INGREDIENTS = "ingredients"
     const val SETTINGS = "settings"
     const val NOTIFICATION_SETTINGS = "settings/notifications"
     const val ABOUT = "settings/about"

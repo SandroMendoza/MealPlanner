@@ -31,11 +31,13 @@ import com.meal.planner.common.isExpandedWidth
 import com.meal.planner.common.isWideLandscape
 import com.meal.planner.common.isWideWidth
 import com.meal.planner.components.KeyboardDismissButton
+import com.meal.planner.components.LocalIngredientImages
 import com.meal.planner.navigation.AppNavHost
 import com.meal.planner.navigation.NavigationRequest
 import com.meal.planner.onboarding.WalkthroughScreen
 import com.meal.planner.strings.LocalStrings
 import com.meal.planner.theme.MealPlannerTheme
+import com.meal.presentation.ingredients.IngredientImagesViewModel
 import com.meal.presentation.preferences.AppPreferencesViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -46,8 +48,13 @@ fun App(startRoute: String? = null, quickAddItemName: String? = null, navigation
     val themeMode by preferencesViewModel.themeMode.collectAsStateWithLifecycle()
     val language by preferencesViewModel.language.collectAsStateWithLifecycle()
     val showWalkthrough by preferencesViewModel.showWalkthrough.collectAsStateWithLifecycle()
+    val ingredientImagesViewModel: IngredientImagesViewModel = koinViewModel()
+    val ingredientImages by ingredientImagesViewModel.images.collectAsStateWithLifecycle()
 
-    CompositionLocalProvider(LocalStrings provides (language ?: Language.ENGLISH).strings()) {
+    CompositionLocalProvider(
+        LocalStrings provides (language ?: Language.ENGLISH).strings(),
+        LocalIngredientImages provides ingredientImages
+    ) {
         val darkTheme = when (themeMode) {
             ThemeMode.DARK -> true
             ThemeMode.LIGHT -> false

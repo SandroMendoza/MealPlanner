@@ -3,6 +3,7 @@ package com.meal.domain.strings
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.IngredientCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.datetime.DayOfWeek
@@ -137,6 +138,23 @@ private fun englishMeasurementUnitLabel(unit: MeasurementUnit, quantity: Double)
         MeasurementUnit.LOAF -> word("loaf", "loaves")
         else -> unit.unit
     }
+}
+
+private fun englishIngredientCategoryName(category: IngredientCategory): String = when (category) {
+    IngredientCategory.MEAT -> "Meat"
+    IngredientCategory.POULTRY -> "Poultry"
+    IngredientCategory.SEAFOOD -> "Seafood"
+    IngredientCategory.VEGETABLE -> "Vegetables"
+    IngredientCategory.FRUIT -> "Fruit"
+    IngredientCategory.GRAIN_AND_NOODLES -> "Grains and noodles"
+    IngredientCategory.LEGUMES_AND_TOFU -> "Legumes and tofu"
+    IngredientCategory.NUTS_AND_SEEDS -> "Nuts and seeds"
+    IngredientCategory.DAIRY_AND_EGGS -> "Dairy and eggs"
+    IngredientCategory.CONDIMENT_AND_SAUCE -> "Condiments and sauces"
+    IngredientCategory.SPICE_AND_HERB -> "Spices and herbs"
+    IngredientCategory.OILS_AND_FATS -> "Oils and fats"
+    IngredientCategory.BAKING_AND_SWEETS -> "Baking and sweets"
+    IngredientCategory.OTHER -> "Other"
 }
 
 val englishStrings = Strings(
@@ -287,6 +305,23 @@ val englishStrings = Strings(
     ingredientAddCustom = { name -> "Add \"$name\"" },
     ingredientAddAndNext = "Add & next",
     ingredientDone = "Done",
+    ingredientsScreen = IngredientsStrings(
+        categoryName = ::englishIngredientCategoryName,
+        title = "Ingredients",
+        searchPlaceholder = "Search ingredients",
+        filterAll = "All",
+        mine = "My ingredients",
+        noResults = "No ingredients found",
+        add = "Add ingredients",
+        addFieldLabel = "Ingredient name",
+        addHint = "Press Enter after each name to add several at once.",
+        alreadyExists = "Already in your ingredients",
+        save = { count -> if (count == 1) "Save 1 ingredient" else "Save $count ingredients" },
+        defaultPicture = "Use default picture",
+        staple = "Pantry staple",
+        stapleHint = "Starts in the Pantry staples section of the shopping list.",
+        removeFromListCd = { name -> "Remove $name" }
+    ),
     instructionsSteps = "Steps",
     instructionsWriteAll = "Write all",
     instructionsWriteAllHint = "One step per line",

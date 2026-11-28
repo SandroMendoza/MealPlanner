@@ -20,7 +20,10 @@ import com.meal.domain.usecase.CreateShoppingGroupUseCase
 import com.meal.domain.usecase.DeleteRecipeUseCase
 import com.meal.domain.usecase.DeleteShoppingGroupUseCase
 import com.meal.domain.usecase.GenerateShoppingListUseCase
+import com.meal.domain.usecase.AddIngredientsUseCase
 import com.meal.domain.usecase.GetAllIngredientsUseCase
+import com.meal.domain.usecase.SetIngredientImageUseCase
+import com.meal.domain.usecase.SetIngredientStapleUseCase
 import com.meal.domain.usecase.GetAllRecipesUseCase
 import com.meal.domain.usecase.GetMealRemindersUseCase
 import com.meal.domain.usecase.GetRecipeByIdUseCase
@@ -130,6 +133,15 @@ val domainModule = module {
     }
     factory {
         GetAllIngredientsUseCase(get<IngredientRepository>())
+    }
+    factory {
+        AddIngredientsUseCase(get<IngredientRepository>())
+    }
+    factory {
+        SetIngredientImageUseCase(get<IngredientRepository>())
+    }
+    factory {
+        SetIngredientStapleUseCase(get<IngredientRepository>())
     }
     factory {
         GetUserProfileUseCase(get<UserProfileRepository>())

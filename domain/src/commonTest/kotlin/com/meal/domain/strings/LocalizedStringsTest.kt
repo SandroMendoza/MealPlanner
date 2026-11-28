@@ -4,6 +4,7 @@ import com.meal.domain.model.Language
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.IngredientCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.datetime.DayOfWeek
@@ -51,6 +52,12 @@ class LocalizedStringsTest {
     @Test
     fun everyCuisineHasADistinctName() =
         assertDistinctNonBlankNames("cuisine", Cuisine.entries) { s, cuisine -> s.cuisineName(cuisine) }
+
+    @Test
+    fun everyIngredientCategoryHasADistinctName() =
+        assertDistinctNonBlankNames("ingredient category", IngredientCategory.entries) { s, category ->
+            s.ingredientsScreen.categoryName(category)
+        }
 
     @Test
     fun everyMeasurementUnitNameShowsItsSymbolUnlessTheNameIsTheSymbol() {

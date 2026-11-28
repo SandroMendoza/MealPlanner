@@ -3,6 +3,7 @@ package com.meal.domain.strings
 import com.meal.domain.model.enums.Cuisine
 import com.meal.domain.model.enums.DayPeriod
 import com.meal.domain.model.enums.FoodCategory
+import com.meal.domain.model.enums.IngredientCategory
 import com.meal.domain.model.enums.MealType
 import com.meal.domain.model.enums.MeasurementUnit
 import kotlinx.datetime.DayOfWeek
@@ -145,6 +146,23 @@ private fun spanishMeasurementUnitLabel(unit: MeasurementUnit, quantity: Double)
         MeasurementUnit.TO_TASTE -> "al gusto"
         else -> unit.unit
     }
+}
+
+private fun spanishIngredientCategoryName(category: IngredientCategory): String = when (category) {
+    IngredientCategory.MEAT -> "Carne"
+    IngredientCategory.POULTRY -> "Aves"
+    IngredientCategory.SEAFOOD -> "Pescados y mariscos"
+    IngredientCategory.VEGETABLE -> "Verduras"
+    IngredientCategory.FRUIT -> "Frutas"
+    IngredientCategory.GRAIN_AND_NOODLES -> "Cereales y fideos"
+    IngredientCategory.LEGUMES_AND_TOFU -> "Legumbres y tofu"
+    IngredientCategory.NUTS_AND_SEEDS -> "Frutos secos y semillas"
+    IngredientCategory.DAIRY_AND_EGGS -> "Lácteos y huevos"
+    IngredientCategory.CONDIMENT_AND_SAUCE -> "Condimentos y salsas"
+    IngredientCategory.SPICE_AND_HERB -> "Especias y hierbas"
+    IngredientCategory.OILS_AND_FATS -> "Aceites y grasas"
+    IngredientCategory.BAKING_AND_SWEETS -> "Repostería y dulces"
+    IngredientCategory.OTHER -> "Otros"
 }
 
 val spanishStrings = Strings(
@@ -295,6 +313,23 @@ val spanishStrings = Strings(
     ingredientAddCustom = { name -> "Añadir «$name»" },
     ingredientAddAndNext = "Añadir y otro",
     ingredientDone = "Listo",
+    ingredientsScreen = IngredientsStrings(
+        categoryName = ::spanishIngredientCategoryName,
+        title = "Ingredientes",
+        searchPlaceholder = "Buscar ingredientes",
+        filterAll = "Todos",
+        mine = "Mis ingredientes",
+        noResults = "No se encontraron ingredientes",
+        add = "Añadir ingredientes",
+        addFieldLabel = "Nombre del ingrediente",
+        addHint = "Pulsa Intro después de cada nombre para añadir varios a la vez.",
+        alreadyExists = "Ya está en tus ingredientes",
+        save = { count -> if (count == 1) "Guardar 1 ingrediente" else "Guardar $count ingredientes" },
+        defaultPicture = "Usar imagen predeterminada",
+        staple = "Básico de despensa",
+        stapleHint = "Aparece en la sección Básicos de despensa de la lista de compras.",
+        removeFromListCd = { name -> "Quitar $name" }
+    ),
     instructionsSteps = "Pasos",
     instructionsWriteAll = "Escribir todo",
     instructionsWriteAllHint = "Un paso por línea",

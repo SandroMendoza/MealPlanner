@@ -27,11 +27,14 @@ class DatabaseBackupDataSourceTest {
         database.userProfileQueries.upsertProfile(
             "Chef", "", "file:///data/data/sandragon.inc.mealplanner/files/recipe_images/me.jpg"
         )
+        database.ingredientQueries.insertIngredientDefinition("i", "Salt", "salt")
+        database.ingredientQueries.setImage("file:///data/user/0/sandragon.inc.mealplanner/files/recipe_images/salt.jpg", "i")
 
         dataSource.rewritePhotoPaths(newDir)
 
         assertEquals("${newDir}a.jpg", imageUrl("a"))
         assertEquals("${newDir}me.jpg", database.userProfileQueries.selectProfile().executeAsOne().avatarUrl)
+        assertEquals("${newDir}salt.jpg", database.ingredientQueries.selectIngredientByNormalizedName("salt").executeAsOne().imageUri)
     }
 
     @Test
